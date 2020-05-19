@@ -1,1 +1,1 @@
-[Sample Preparation](/Sample_preparation_All_in_One_xaringan.html)
+[Sample Preparation](/Sample_Preparation_All_in_One_xaringan.html)

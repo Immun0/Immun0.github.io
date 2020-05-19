@@ -1,4 +1,1 @@
-[slide link](/Sample_preparation_All_in_one_xaringan.html)
-
-
-
+[Sample Preparation](/Sample_preparation_All_in_One_xaringan.html)

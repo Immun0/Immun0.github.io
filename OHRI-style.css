@@ -260,8 +260,8 @@ thead, tfoot, tr:nth-child(even) { background: none; }
 /* SECTION DIVIDERS */
 /*~~~~~~~~~~~~~~~~~~*/
 
-/* section divider blue */
-.title-slide-section-blue {
+/* segue blue */
+.segue-blue {
   background-image: url("OHRI_Logo_Bilingual.png");
   background-position: 15% 15%;
   background-size: 250px;
@@ -269,13 +269,13 @@ thead, tfoot, tr:nth-child(even) { background: none; }
   padding-left: 100px;  /* delete this for 4:3 aspect ratio */
 }
 
-/* section divider blue H1 fonts */
-.title-slide-section-blue h1, .title-slide-section-blue h2, .title-slide-section-blue h3, .title-slide-section-blue p {
+/* segue blue H1 fonts */
+.segue-blue h1, .segue-blue h2, .segue-blue h3, .segue-blue p {
   color: #707372;
 }
 
-/* section divider grey */
-.title-slide-section-grey {
+/* segue grey */
+.segue-grey {
   background-image: url("OHRI_Logo_Bilingual.png");
   background-position: 15% 15%;
   background-size: 250px;
@@ -283,12 +283,12 @@ thead, tfoot, tr:nth-child(even) { background: none; }
   padding-left: 100px;  /* delete this for 4:3 aspect ratio */
 }
 
-/* section divider grey H1 fonts */
-.title-slide-section-grey h1, .title-slide-section-grey h2, .title-slide-section-grey h3 {
+/* segue grey H1 fonts */
+.segue-grey h1, .segue-grey h2, .segue-grey h3 {
   color: #295D90;
 }
 
-.title-slide-section-grey p {
+.segue-grey p {
   color: #fff;
 }
 
@@ -342,6 +342,7 @@ thead, tfoot, tr:nth-child(even) { background: none; }
 /* Add grey tag */
 .grey {
   color: #707372;
+  font-weight: bold;
 }
 
 .lightgrey {
@@ -383,6 +384,10 @@ h3 {
   color: #707372;
 }
 
+h4 {
+  color: #707372;
+}
+
 body {
   color: #295D90;
 }
@@ -397,7 +402,7 @@ body {
 }
 
 .small {
-  font-size: 0.9em;
+  font-size: 0.75em;
 }
 
 .smallest {
@@ -429,8 +434,8 @@ ohri-blockquote {
   -webkit-border-radius: 5px;
 }
 
-/* OHRI-MCS Logo Footer */
-div.my-footer {
+/* OHRI-MCS Logo Footer (animated gif)*/
+div.my-footer-gif {
 content: "";
     height: 192px;
     width: 480px;
@@ -444,6 +449,21 @@ content: "";
     background-image: url("Images/OHRI-MCS-Animation.gif");
 }
 
+
+/* OHRI-MCS Logo Footer (static png)*/
+div.my-footer-png {
+content: "";
+    height: 192px;
+    width: 480px;
+    position: absolute;
+    left: 50%;
+    margin-left: -240px;
+    top: 85%;
+    margin-top: -86px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: url("Images/OHRI_MCS_Logo_STATIC.png");
+}
 
 /* table styling*/
 

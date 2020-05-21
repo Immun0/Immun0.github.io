@@ -2,4 +2,4 @@
 
 [What to consider when preparing samples for the Helios mass cytometer](/Sample_Preparation_All_in_One_xaringan.html)
 
-[A brief guide to panel design for mass cytoemtry projects](/Panel_Design_All_in_One_xaringan.html)
+[A brief guide to panel design for mass cytometry projects](/Panel_Design_All_in_One_xaringan.html)

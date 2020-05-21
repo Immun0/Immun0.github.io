@@ -1,4 +1,4 @@
-[How to CyToF - The OHRI guide to mass cytometry](/How To CyToF - The OHRI guide yo mass cytometry.html)
+[How to CyToF - The OHRI guide to mass cytometry](/How To CyToF - The OHRI guide to mass cytometry.html)
 
 [How the Helios mass cytometer Works - and what it means for your samples](/How_it_works_All_in_One_xaringan.html)
 

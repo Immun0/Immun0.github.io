@@ -108,7 +108,7 @@ body {
     width: 1850px;
     height: 1000px;
     padding: 40px 60px;
-    background-image: url(../images/background.png);
+    background-image: url(../image/background.png);
     background-color: transparent;
     opacity: 0.2;
     border: 1px color: transparent;
@@ -330,7 +330,7 @@ footer {
 .fill {
     background-size: cover;
     background-position: center;
-    background-image: url('/examples/classic-slides/images/Fundamentals of Flow Cytometry_Flow_Cytometry_3PMTs.svg ');
+    background-image: url('/examples/classic-slides/image/Fundamentals of Flow Cytometry_Flow_Cytometry_3PMTs.svg ');
 }
 .item {
     background-color: #1EAAFC;
@@ -492,7 +492,7 @@ td {
     Specific styles for: .title slides 
 */
 .title {
-    background-image: url(../images/background-title.png);
+    background-image: url(../image/background-title.png);
     background-color: rgba(255,
     255,
     255,

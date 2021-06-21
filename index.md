@@ -6,5 +6,5 @@
 
 [A brief guide to panel design for mass cytometry projects](/Panel_Design_All_in_One_xaringan.html)
 
-[Fundamentals of Flow Cytometry](/Fundamentals of Flow Cytometry controls.html)
+[Fundamentals of Flow Cytometry](/Fundamentals_of_Flow_Cytometry_controls.html)
 

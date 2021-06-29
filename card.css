@@ -7,6 +7,12 @@ body {
     font-family: 'DM Mono', monospace;
 }
 
+a, a:visited, a:hover, a:active {
+    color:inherit;
+}
+
+
+
 .card-list {
     display: flex;
     padding: 3rem;

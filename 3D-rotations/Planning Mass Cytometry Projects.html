@@ -1,0 +1,280 @@
+<!doctype html>
+
+<!--
+  This is a simple example / template impress.js slide show. The goal is to be
+  easier to read for a first timer than the official and very feature rich
+  demo by bartaz (http://bartaz.github.io/impress.js/). It's also a very
+  traditional presentation that looks like slides (square screens with bullet
+  points...), again to make a first timer feel more at home. From this simple
+  presentation you can then go on to more powerful impress.js presentations!
+  
+  This example is hopefully helpful for people that want to create both
+  simple and (eventually) awesome presentations in impress.js and comfortable
+  doing that directly in HTML.
+  
+  By: @henrikingo (Still based on the HTML from bartaz' demo.)  
+    
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>A Study in 3D Rotations| by Henrik Ingo @henrikingo</title>
+    <meta name="Quick Intro to planning Mass Cytometry Projects" content="How to Plan Mass Cytometry Projects" />
+    <meta name="author" content="Damian Carragher" />
+    <link href="..\..\css\impress-common.css" rel="stylesheet" />
+    <link href="css/Planning Mass Cytometry Projects.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet"> 
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet"> 
+</head>
+
+<body class="impress-not-supported">
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+</div>
+
+<div id="impress" data-transition-duration="2000">
+
+<!-- <div id="overview" class="step overview" data-x="1350" data-y="100" data-z="100" data-scale="3" data-rotate-y="90">
+        <div id = grey-box>
+            <div> <h1>How to Plan Mass Cytometry Projects</h1></div>
+        </div>
+    </div>
+-->
+<div id="Title" class="step overview" data-x="2018" data-y="106" data-z="3018" data-scale="2">
+         <img src = "Images/Front_Page -Planning_Projects.png" style = "vertical-align: middle;height: 100%;"> 
+</div>
+
+<div id="step-1" class="step" data-x="0" data-y="0" data-z="0"
+         data-goto-prev="overview">
+        
+    <div id = "yellow-box">
+        If you're interested in what's involved in planning a mass cytometry project or are planning a project for yourself, then you've come to the right place. Here, we'll spell out the may things you need to think about when planning your project. A little planning will let you reap the highest rewards. 
+    </div>
+    </br>
+    <div id = "yellow-box">
+        <body> A mass cytometry project workflow consists of:
+        <ol style = "text-align: center;list-style-position: inside;">
+            <li> Define your scientific question</li>
+            <li>Panel Design</li>
+            <li>Reagent Acquisition</li>
+            <li>Reagent Validation</li>
+            <li>Sample Staining (and Optimization)</li>
+            <li>Acquisition</li>
+            <li>Data Analysis</li>
+        </ol>
+        </body>
+    </div>
+</div>
+
+   
+
+    
+<div id="step-2" class="step" data-x="420" data-y="-70" data-z="-250" data-rotate-z="45" data-rotate-y="-45" data-rotate-order="zyx">
+        <div id = "grey-box">
+            <h1>Your Scientific Question</h1>
+        </div>
+     
+  
+    <br>
+        <div id = "grey-box" class = "grey-box">
+            It's is very important  that you have a clear scientific question in mind. 
+            This question defines the markers we need to analyze, which defines your panel. 
+            40-50 parameters are a lot in cytometry terms but relatively small compared to other 
+            -omics platforms. Without a clear question in mind it's very easy to acquire precious 
+            samples and realize we haven't measured everything we needed. We need to use each and 
+            every one of them to drill down on your specific question.
+        </div>
+        
+    </div>
+
+<div id="step-3" class="step" data-x="700" data-y="350" data-z="-350" data-rotate-z="90" data-rotate-y="-90" data-rotate-order="zyx">
+    <div id = blue-box class = blue-box>
+        <h1>Panel Design</h1>
+    </div>
+    <br>
+    <div id = "blue-box">
+            Panel design is the process of pairing up your markers of interest 
+            with the instrument's channels. We do this so that when we acquire your samples, 
+            we attain the highest resolution and lowest background possible. 
+    </div>
+</br>
+     <div id = blue-box>
+                When designing your panel:
+        <ul>
+            <li>Assign the most important markers to the most sensitive channels</li>
+            <li>Assign highly expressed markers to the least sensitive channels</li>
+            <li>Ensure markers expressed on the same cell are not neighbours</li>
+        </ul>
+
+    
+
+        </div>
+    </div>
+
+    <div id="step-4" class="step" data-x="422" data-y="780" data-z="-250" data-rotate-z="135" data-rotate-y="-135" data-rotate-order="zyx">
+        <div id = blue-box class = blue-box>
+            <h1>Panel Design</h1>
+        </div>
+               <div id= blue-box class = blue-box style = "font-size: 18pt;">
+        Panel Design is analogous to planning 
+        the seating chart for a dinner party or wedding. 
+        We want our most important guests at the head of the 
+        table where they can be seen and heard easily. We want our 
+        brash loud uncle further down the table out of the way of quieter guests (-people will be able to hear him anyway no matter where we seat him).
+        We also want to avoid clashes (maybe we seat the in-laws apart). 
+        </div>
+        <br>
+        <div id= grey-box >
+            <h1 style = "font-size: 24pt;">Design a big panel at the start!</h1>
+        </div>
+        
+        <div id = grey-box class = grey-box style = "font-size: 18pt;">
+            We can stretch the analogy a little further to make one more point - In the same way we wouldn't plan a seating chart with gaps at the head of the table (just in case someone shows up), we shouldn't leave gaps in our panel design. It is much better to design a large panel now and not use all of it for initial studies than to design a small panel now and hope to expand it further down the line.
+        </div>
+    </div>
+
+
+    <div id="step-5" class="step" data-x="0" data-y="702" data-z="0" data-rotate-z="180" data-rotate-y="-180" data-rotate-order="zyx">
+        <div id = blue-box class = blue-box>
+            <h1>Reagent Selection</h1>
+        </div>
+        <div id = "blue-box">
+            <h1 style = "text-align: left; font-size: 24pt;">PRE-CONJUGATED ANTIBODIES</h1>
+            <p style = "font-size: 16pt">Antibodies already conjugated to lanthanide metals are primarily available from Fluidigm. 
+            They have an extensive catalogue of marker, especially if you are working in:</p>
+        <ul style = "font-size: 14pt">
+              <li>  Immunology</li>
+                <li>ImmunoOncology</li>
+                <li>Developmental Biology</li>
+        </ul>
+            
+        
+         </div>
+         <div id = blue-box>   
+            <h1 style = "text-align: left; font-size: 24pt;">CONJUGATING ANTIBODIES</h1>
+           <p style = "font-size: 16pt"> If you're working in other fields you'll have to source some of your reagents 
+            from other sources (your usual antibody vendors will be fine).purchasing antibodies for conjugation they should be: </p>
+            <ul style = "font-size: 14pt;">
+                <li> Carrier-Free</li>
+                <li> IgG</li>
+                <li> Monoclonal (preferred)</li>
+                <li> 100ug</li>
+            </ul>
+            <p style = "font-size: 16pt">We can conjugate these antibodies to any lanthanide for you.</p>
+           
+        </div>
+    </div>
+
+    <div id="step-6" class="step" data-x="379" data-y="780" data-z="270" data-rotate-z="135" data-rotate-y="-225" data-rotate-order="zyx">
+        <div id = grey-box>
+            <h1>REAGENT VALIDATION</h1>
+        </div>
+        
+        <div id = grey-box>
+        <p style = "font-size: 16pt">
+            At least a few of your markers may never have been used in mass cytometry before (or at least not on the cells and tissues that you are using). It's very important to spend some time validating your antibodies for specificity and titrating ALL of your antibodies
+                </p>
+            </div>
+         <br>
+             <div id = blue-box>
+            <h1>SAMPLE PREPARATION</h1>
+        </div>
+        
+        <div id = blue-box>
+            
+            <p style = "font-size: 16pt"> As important as your panel design is, getting your sample preparation right. Optimizing your sample preparation  helps immeasurably downstream steps like staining and acquisition.
+Your aim is to:
+	<ul style = "font-size: 16pt">
+        <li> Generate a single cell suspension</li>
+	    <li>Reduce debris and cell death</li>
+	<li>Reduce Environmental Contamination</li>
+</ul>
+                </p>
+    
+            </div>
+
+            
+    </div>
+
+    <div id="step-7" class="step" data-x="579" data-y="-70" data-z="360" data-rotate-z="45" data-rotate-y="-300" data-rotate-order="zyx" >
+        <div id = blue-box>
+            <h1>SAMPLE STAINING</h1>
+        </div>
+        <div id = blue-box>
+           <p> Once you've mastered  and optimized sample preparation you can stain your samples. If you're unfamiliar with cytometry techniques, a typical staining workflow consists of:</p><br>
+
+<p>Single cell suspension → Surface Staining → Fixation → Permeabilization →  Intracellular Staining</p><br>
+
+<p>In mass cytometry fixation is always done with 1.6%-4% PFA. All samples must be fixed in mass cytometry experiments.  Permeabilaization reagents vary depending on the targets being stained  and can range from Methanol to Saponin to Tween-20 or Triton-X.</p>
+            </div>
+        </div>
+ 
+
+
+<div id="step-8" class="step" data-x="400" data-y="-110" data-z="270" data-rotate-z="90" data-rotate-y="-300" data-rotate-order="zyx">
+    <div id = blue-box data-go-to-next = "overview">
+        <h1>SAMPLE ACQUISITION</h1>
+    </div>
+    <div id = blue-box>
+       <p style = "font-size: 16pt;"> At OHRI, we acquire samples on a 3rd-generation Helios instrument with top-of-the-line sensitivity and the highest mass range available. If you're more used to flow cytometry there are differences that you should be aware of:
+        <ul style = "font-size: 16pt;">
+        <li> <500 events / second acquisition rate </li>
+        ● Samples are acquired in ddH2O
+    </ul>    
+    </p>
+    
+        </div>
+</div>
+        
+<div id="step-9" class="step" data-x="500" data-y="-55" data-z="90" data-rotate-z="90" data-rotate-y="-360" data-rotate-order="zyx">
+
+<div id = blue-box data-go-to-next = "overview">
+            <h1>DATA ANALYSIS</h1>
+        </div>
+        <br>
+        <div id = blue-box style = "font-size: 16pt;">
+           <p> For mass cytometry we rarely use manual gating techniques. Most often we use high parameter workflows consisting of:
+            ● 
+                ● tSNE, hSNE, UMAP 
+            ● 
+                ● Phenograph, FlowSOM, SPADE
+            ● 
+                ● Pseudotime 
+            <ul>
+            <li>Dimensionality Reduction</li>
+                <ul>
+                    <li> tSNE, hSNE, UMAP 
+                </ul>
+            <li>Clustering</li>
+                <ul>
+                    <li>Phenograph, FlowSOM, SPADE</li>
+                </ul>
+            
+            <li>Trajectory Analysis</li>
+            <ul><li>e.g. Pseudotime</li>
+
+            </ul>
+        </ul>    
+        </p>
+        
+            </div>
+    </div>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="impress-toolbar"></div>
+<div id="impress-help"></div>
+
+<script type="text/javascript" src="../../js/impress.js"></script>
+<script>impress().init();</script>
+
+</body>
+</html>

@@ -23,7 +23,7 @@
     <meta name="Quick Intro to planning Mass Cytometry Projects" content="How to Plan Mass Cytometry Projects" />
     <meta name="author" content="Damian Carragher" />
     <link href="..\..\css\impress-common.css" rel="stylesheet" />
-    <link href="css/Planning Mass Cytometry Projects.css" rel="stylesheet" />
+    <link href="css/Choosing Mass Cytometry Antibodies.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet"> 
@@ -45,30 +45,20 @@
     </div>
 -->
 <div id="Title" class="step overview" data-x="2018" data-y="106" data-z="3018" data-scale="2">
-         <img src = "Images/Front_Page -Planning_Projects.png" style = "vertical-align: middle;height: 100%;"> 
+         <img src = "Images/Front_Page-Choosing_Antibodies.png" style = "vertical-align: middle;height: 100%;"> 
 </div>
 
 <div id="step-1" class="step" data-x="0" data-y="0" data-z="0"
          data-goto-prev="overview">
         
-    <div id = yellow-box><h1>Overview</h1></div>
+    <div id = yellow-box><h1>How to buy antibodies for mass cytometry conjugation</h1></div>
     <br>
-    <div id = "yellow-box">
-        If you're interested in what's involved in planning a mass cytometry project or are planning a project for yourself, then you've come to the right place. Here, we'll spell out the may things you need to think about when planning your project. A little planning will let you reap the highest rewards. 
+    <div id = "light-blue-box">
+        So you've designed your mass cytometry panel and realized that Fluidigm doesn't offer conjugated antibodies for several of your specific markers. That's where the conjugation service comes in. We can conjugate any antibody to any of the lanthanide metals. We use the MaxPar kits from Fluidigm and keep all of the metals in stock so we can conjugate your antibodies whenever you need.
     </div>
     </br>
     <div id = "yellow-box">
-        <body> A mass cytometry project workflow consists of:
-        <ol style = "text-align: center;list-style-position: inside;">
-            <li> Define your scientific question</li>
-            <li>Panel Design</li>
-            <li>Reagent Acquisition</li>
-            <li>Reagent Validation</li>
-            <li>Sample Staining (and Optimization)</li>
-            <li>Acquisition</li>
-            <li>Data Analysis</li>
-        </ol>
-        </body>
+        <body> </body>
     </div>
 </div>
 
@@ -77,58 +67,56 @@
     
 <div id="step-2" class="step" data-x="420" data-y="-70" data-z="-250" data-rotate-z="45" data-rotate-y="-45" data-rotate-order="zyx">
         <div id = "grey-box">
-            <h1>Your Scientific Question</h1>
+            <h1>How we conjugate your antibodies</h1>
         </div>
      
   
     <br>
         <div id = "grey-box" class = "grey-box">
-            It's is very important  that you have a clear scientific question in mind. 
-            This question defines the markers we need to analyze, which defines your panel. 
-            40-50 parameters are a lot in cytometry terms but relatively small compared to other 
-            -omics platforms. Without a clear question in mind it's very easy to acquire precious 
-            samples and realize we haven't measured everything we needed. We need to use each and 
-            every one of them to drill down on your specific question.
+            <p>To help understand why we recommend different types 
+            and formulations of antibody it helps to understand 
+            how we conjugate your antibodies.
+<ol>
+
+<li>The antibody is reduced to expose 	sulphide groups</li>
+
+<li>Specific lanthanides are loaded onto  	linker molecules.</li>
+
+<li>The linker is joined to the free 	sulphide groups</li>
+</ol>
+<img src = "Images/Conj_schematic._ vertical.png" style = "height:200px; width:auto">
+
+</p>
         </div>
         
     </div>
 
 <div id="step-3" class="step" data-x="700" data-y="350" data-z="-350" data-rotate-z="90" data-rotate-y="-90" data-rotate-order="zyx">
     <div id = blue-box class = blue-box>
-        <h1>Panel Design</h1>
+        <h1>No BSA</h1>
     </div>
     <br>
     <div id = "blue-box">
-            Panel design is the process of pairing up your markers of interest 
-            with the instrument's channels. We do this so that when we acquire your samples, 
-            we attain the highest resolution and lowest background possible. 
-    </div>
+        BSA is commonly used as a carrier protein in antibody formulations. It helps stabilize the antibody making it last longer in the fridge so you can use it over the course of a project.
+
+        BUT BSA is a major problem when conjugating antibodies.
+    </ul>
+        <li> BSA has >33 disulphide bridges</li>
+        <li>IgG has between 3 and 6 disulphide bridges available for conjugation</li>
+        <li>BSA will conjugate the linker-lanthanide molecule 10x more than IgG</li>
+        <li>This results in very poor conjugation efficiencies</li>
+    </ul>   
+        It's very important to purchase antibodies that are carrier free</div>
 </br>
-     <div id = blue-box>
-                When designing your panel:
-        <ul>
-            <li>Assign the most important markers to the most sensitive channels</li>
-            <li>Assign highly expressed markers to the least sensitive channels</li>
-            <li>Ensure markers expressed on the same cell are not neighbours</li>
-        </ul>
-
-    
-
-        </div>
+     
     </div>
 
     <div id="step-4" class="step" data-x="422" data-y="780" data-z="-250" data-rotate-z="135" data-rotate-y="-135" data-rotate-order="zyx">
         <div id = blue-box class = blue-box>
-            <h1>Panel Design</h1>
+            <h1>If BSA-free is unavailable...</h1>
         </div>
                <div id= blue-box class = blue-box style = "font-size: 18pt;">
-        Panel Design is analogous to planning 
-        the seating chart for a dinner party or wedding. 
-        We want our most important guests at the head of the 
-        table where they can be seen and heard easily. We want our 
-        brash loud uncle further down the table out of the way of quieter guests (-people will be able to hear him anyway no matter where we seat him).
-        We also want to avoid clashes (maybe we seat the in-laws apart). 
-        </div>
+                Sometimes BSA-free formulations are either unavailable or prohibitively expensive. All is not lost. There are BSA-removal kits available from a number of vendors. We have had success with the abcam Gold BSA removal kit and the Pierce Antibody Clean-up kit.</div>
         <br>
         <div id= grey-box >
             <h1 style = "font-size: 24pt;">Design a big panel at the start!</h1>

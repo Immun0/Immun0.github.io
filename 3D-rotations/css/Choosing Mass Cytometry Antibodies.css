@@ -37,12 +37,13 @@ body {
 }
 
 h1{
-    font-family: 'Montserrat Alternates'
+    font-family: 'Montserrat Alternates';
+    font-size: 32pt;
 }
 
 .step {
     position: relative;
-    width: 1000px;
+    width: 900px;
     height: auto;
     padding: 40px 60px;
     margin: 20px;

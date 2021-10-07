@@ -128,7 +128,7 @@ h1{
 */
 .impress-enabled .step {
     margin: 0;
-    opacity: 0.05;
+    opacity: 0.01;
     transition:         opacity 1s;
 }
 

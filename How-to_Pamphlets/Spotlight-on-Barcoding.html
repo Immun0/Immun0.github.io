@@ -44,119 +44,232 @@
         </div>
     </div>
 -->
+<div id="Title" class="step overview" data-x="2018" data-y="106" data-z="3018" data-scale="2">
+    <img src = "Images/Barcoding_Spotlight-Intro.svg" style = "vertical-align: middle;height: 100%; background-image: none;"> 
+</div>
 
-    
-<h1 id="bar-coding-for-cytometry-how-to-multiplex-samples-to-save-reagents-costs-and-batch-effects">Bar-coding for Cytometry - How to multiplex samples to save reagents, costs and batch effects</h1>
-<h1 id="bar-coding">Bar-coding</h1>
+<div id="step-1" class="step" data-x="0" data-y="0" data-z="0"
+         data-goto-prev="overview">
+    <div id = grey-box>
+        <h1 id="bar-coding-for-cytometry-how-to-multiplex-samples-to-save-reagents-costs-and-batch-effects">Bar-coding for Cytometry - How to multiplex samples to save reagents, costs and reduce batch effects</h1>
+    </div>
+</div>
+
+    <div id="step-2" class="step" data-x="420" data-y="-70" data-z="-250" data-rotate-z="45" data-rotate-y="-45" data-rotate-order="zyx">
+        <div id = "grey-box">
+        <h1 id="bar-coding">Bar-coding</h1>
 <h2 id="what-is-it">What is it?</h2>
-<p>Staining samples in a unique way so that they can be identified  for analysis even when mixed with other samples</p>
+<p>Staining individual samples in a unique way so that they can be identified  for analysis even when mixed with other samples</p>
 <ul>
 <li>Bar-coding allows us to multiplex - mix our samples together.</li>
 <li>Stain and acquire ALL samples simultaneously</li>
 <li>BUT still analyze each sample individually.</li>
 </ul>
+        </div>
+    </div>
 
 
+    <div id="step-3" class="step" data-x="700" data-y="350" data-z="-350" data-rotate-z="90" data-rotate-y="-90" data-rotate-order="zyx">
+        <div id = blue-box class = blue-box>
+            <h2 id="why-barcode">Why BARCODE?</h2>
+            <ul>
+                <li>
+                    Make work-flows more efficient
+                </li>
+            </ul>
+            <ul>
+                    <li>Stain and process one large sample
+                <ul>
+                    <li>Can reduce acquisition time</li>
+                    <li>Can reduce cell loss</li>
+                    <li>Can reduce antibody requirements</li>
+                </ul>
+            </ul>
+            <ul>
+           
+            <li>Improve data consistency</li>
+                <ul>
+                    <li>By staining and processing all our samples together
+                <ul>
+                    <li>Minimise batch effects</li>
+                    <li>Eliminate pipetting errors</li>
+                    <li>Eliminates carryover from sample to sample</li>
+                    <li>Provides additional and improved doublet discrimination</li>
+                </ul>
+            </ul>
+            
+            <li>Enables scaled-up experiments
+            <ul>
+            <li>Reduces sample processing time</li>
+            </ul>
+            </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </div>
 
+    <div id="step-4" class="step" data-x="422" data-y="780" data-z="-250" data-rotate-z="135" data-rotate-y="-135" data-rotate-order="zyx">
+        <div id = grey-box class = grey-box>
+            <h2 id="why-not-barcode">Why not BARCODE?</h2>
+            <p>All of the benefits do not come for &ldquo;free&rdquo;</p>
+            <p><em>&quot;While barcoding of samples has many benefits, it represents an additional step in the protocol, needs to be optimised on into own, and usually occupies cytometry channels which would otherwise be available to the measurement of target analytes.&quot;</em></p>
+            <p>Cossarizza et al. <em>European Journal of Immunology, 47 (2017) 1584-1797</em></p>
+           
+        </div>
+    </div>
 
-
-
-<h2 id="why-barcode">Why BARCODE?</h2>
-<ul><li><p>Make work-flows more efficient</p>
-<ul>
-<li>Stain and process one large sample
-<ul>
-<li>Can reduce acquisition time</li>
-<li>Can reduce cell loss</li>
-<li>Can reduce antibody requirements</li>
-</ul>
-</li>
-<li>Improve data consistency
-<ul>
-<li>By staining and processing all lour samples together
-<ul>
-<li>minimise batch effects</li>
-<li>eliminate pipetting errors</li>
-<li>Eliminates carryover from sample to sample</li>
-<li>Provides additional and improved doublet discrimination</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Enables scaled-up experiments
-<ul>
-<li>Reduces sample processing time</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="why-not-barcode">Why not BARCODE?</h2>
-<p>All of the benefits do not come for &ldquo;free&rdquo;</p>
-<p><em>&quot;While barcoding of samples has many benefits, it represents an additional step in the protocol, needs to be optimised on into own, and usually occupies cytometry channels which would otherwise be available to the measurement of target analytes.&quot;</em></p>
-<p>Cossarizza et al. <em>European Journal of Immunology, 47 (2017) 1584-1797</em></p>
-<ul>
-<li><p>Integrating bar-codes into existing panels</p>
-<ul>
-<li>Bar-coding reagents occupy the same channels as our targets</li>
-<li>Bar-coding can have specific requirements like fixed cells</li>
-</ul>
-</li>
-<li><p>Limited number of barcodes to use at a time</p>
-<ul>
-<li>12-20 barcodes</li>
-<li>Fluorochrome selection</li>
-<li>Instrument capability</li>
-</ul>
-</li>
-<li><p>Spillover</p>
-<ul>
-<li>Barcoding parameter spillover</li>
-</ul>
-</li>
-</ul>
-<h2 id="how-do-we-do-it">How do we do it?</h2>
-<p>Each sample is tagged with a unique identifier. In the case of flow cytometry this is a specific dilutions of one or two fluorescent dyes that react with all cells. For mass cytometry we use several different approaches. We can use Palladium-tagged dyes or dilutions of pan-specific antibodies. In mass cytometry we can often use exclusive channels like the Palladium channels so that we don&rsquo;t reduce the number of phenotypic antibodies we can use.</p>
-<h2 id="current-barcoding-options">Current Barcoding Options</h2>
-<h3 id="flow-cytometry">Flow Cytometr</h3>
-<h3 id="mass-cytometry">Mass Cytometry</h3>
-<h4 id="palladium-bar-codes-for-universal-cell-multiplexing">Palladium Bar-codes for universal cell multiplexing</h4>
-<p>Up to 20 samples can be barcoded using a 6 isotope - pick 3 format.
-Since Palladium is not traditionally used for antibody staining we don&rsquo;t lose channels when we integrate this kit into our work flow. However, the kit only works only on fixed cells. You can choose when to bar-code though
-- At very beginning
-- After surface stain
-- Just before acquisition</p>
-<h4 id="live-cell-cd45-based-bar-coding">Live cell CD45-based bar-coding</h4>
-<p>Uses anti-CD45 antibodies and 7 Cadmium and 4 Platinum conjugated antibodies in an 11 choose 3 (165 samples) or 7 choose 3 (35 samples Cadmium Only) format. Can be performed prior to marker staining. Cd45 is insensitive to fixation and allows optimal detection of fixation sensitive epitomes on other markers. The markers used are not traditionally used for target markers so you can still use a large panel. If utilising the platinum channels will need to change live-dead to Rhodium or another marker.</p>
-<h4 id="universal-live-cell-barcoding-for-human-samples">Universal live cell barcoding for human samples</h4>
-<p>Bend all lab explores ways of barcoding all the samples.</p>
-<ul>
-<li>Target ubiquitous molecules b2m and CD298</li>
-<li>Non lanthanide isotopes used for barcoding leaves all normal phenotyping channels open</li>
-<li>Unlike CD45, this approach is lineage independent so can be used for any cell types you need</li>
-</ul>
-
-<div id="refs" class="references csl-bib-body">
-    <div id="ref-Rodriguez-Martinez2020" class="csl-entry">
-    1. Rodríguez-Martínez M, Hills SA, Diffley JFX, Svejstrup JQ. <span class="nocase">Multiplex cell fate tracking by flow cytometry</span>. Methods and Protocols. 2020;3:1–9. doi:<a href="https://doi.org/10.3390/mps3030050">10.3390/mps3030050</a>.
-    </div>
-    <div id="ref-Skanland2018" class="csl-entry">
-    2. Skaanland SS. <span class="nocase">Phospho Flow Cytometry with Fluorescent Cell Barcoding for Single Cell Signaling Analysis and Biomarker Discovery</span>. Journal of visualized experiments : JoVE. 2018;58386. doi:<a href="https://doi.org/10.3791/58386">10.3791/58386</a>.
-    </div>
-    <div id="ref-Akkaya2016" class="csl-entry">
-    3. Akkaya B, Miozzo P, Holstein AH, Shevach EM, Pierce SK, Akkaya M. <span class="nocase">A Simple, Versatile Antibody-Based Barcoding Method for Flow Cytometry</span>. The Journal of Immunology. 2016;197:2027–38. doi:<a href="https://doi.org/10.4049/jimmunol.1600727">10.4049/jimmunol.1600727</a>.
-    </div>
-    <div id="ref-Spurgeon2020" class="csl-entry">
-    4. Spurgeon BEJ, Naseem KM. <span class="nocase">Phosphoflow cytometry and barcoding in blood platelets: Technical and analytical considerations</span>. 2020;98:123–30. doi:<a href="https://doi.org/10.1002/cyto.b.21851">10.1002/cyto.b.21851</a>.
-    </div>
-    <div id="ref-Meng2019" class="csl-entry">
-    5. Meng H, Warden A, Zhang L, Zhang T, Li Y, Tan Z, et al. <span class="nocase">A Mass-Ratiometry-Based CD45 Barcoding Method for Mass Cytometry Detection</span>. SLAS Technology. 2019;24:408–19. doi:<a href="https://doi.org/10.1177/2472630319834057">10.1177/2472630319834057</a>.
-    </div>
-    <div id="ref-Gaudilliere2015" class="csl-entry">
-    6. Gaudillière B, Ganio EA, Tingle M, Lancero HL, Fragiadakis GK, Baca QJ, et al. <span class="nocase">Implementing Mass Cytometry at the Bedside to Study the Immunological Basis of Human Diseases: Distinctive Immune Features in Patients with a History of Term or Preterm Birth</span>. Cytometry Part A. 2015;87:817–29. doi:<a href="https://doi.org/10.1002/cyto.a.22720">10.1002/cyto.a.22720</a>.
-    </div>
-    </div>
+    <div id="step-5" class="step" data-x="0" data-y="702" data-z="0" data-rotate-z="180" data-rotate-y="-180" data-rotate-order="zyx">
+        <div id = blue-box class = blue-box>
+            <h2 id="why-not-barcode">Why not BARCODE?</h2>
+        </div>
+        <div id = blue-box class = blue-box>
+            <ul>
+                <li><p>Integrating bar-codes into existing panels</p>
+                <ul>
+                <li>Bar-coding reagents occupy the same channels as our targets</li>
+                <li>Bar-coding can have specific requirements like fixed cells</li>
+                </ul>
+                </li>
+                <li><p>Limited number of barcodes to use at a time</p>
+                <ul>
+                <li>12-20 barcodes</li>
+                <li>Fluorochrome selection</li>
+                <li>Instrument capability</li>
+                </ul>
+                </li>
+                <li><p>Spillover</p>
+                <ul>
+                <li>Barcoding parameter spillover</li>
+                </ul>
+                </li>
+                </ul>
+            </div>
     </div>
     
+    <div id="step-6" class="step" data-x="180" data-y="402" data-z="0" data-rotate-z="180" data-rotate-y="-180" data-rotate-order="zyx">
+        <div id = blue-box class = blue-box>
+            <h2 id="how-do-we-do-it">How to Barcode</h2>
+            <p>Each sample is tagged with a unique identifier. 
+                
+            <br><br>In the case of flow cytometry this is a specific dilutions of one or two fluorescent dyes that react with all cells.
+            
+            <br><br>For mass cytometry we use several different approaches. We can use Palladium-tagged dyes or dilutions of pan-specific antibodies. In mass cytometry we can often use exclusive channels like the Palladium channels so that we don&rsquo;t reduce the number of phenotypic antibodies we can use.</p>
+        </div>
+    </div>
+   
+    <div id="step-7" class="step" data-x="379" data-y="780" data-z="270" data-rotate-z="135" data-rotate-y="-225" data-rotate-order="zyx">
+        <div id = grey-box>
+            <h3 id="current-barcoding-options">Current Barcoding Options</h3>
+     
+            
+            <h2 id="flow-cytometry"><strong>Flow Cytometry</strong></h2>
+            <p>There are 2 primary barcodifg methods for flow cytoemtry samples:</p>
+            <ul>
+                <li>Becton-Dickinson provides the<a href="https://www.bdbiosciences.com/en-us/products/reagents/flow-cytometry-reagents/research-reagents/panels-multicolor-cocktails-ruo/violet-fluorescent-cell-barcoding-kit.561570"> Violet Fluorescence Barcoding Kit</a></li>
+                <ul>
+                    <li> BV421 and BV510 equivalent fluorophores are used (CBD450 and CBD 500) </li>
+                    <li> Up to 16 samples can be barcoded</li>
+                    <li> kit is very easy to implement</li>
+                </ul>
+            </ul>
+            <ul>
+                <li>NHS-Ester dyes tagged with fluorophores such as Alexa Fluor or Cyanine dyes (avaialble from many manufacturers)</li>
+                    <ul> 
+                        <li>React and stain proteins on cells</li>
+                        <li> Combine 2 different dyes</li>
+                        <li>Can be titrated 3-5 times to provide 9-25 barcodes</li>
+                    </ul>
+            </ul>
+         
+            </div>
+    </div> 
+    
+    <div id="step-8" class="step" data-x="180" data-y="180" data-z="270" data-rotate-z="960" data-rotate-y="40" data-rotate-order="xyz">
+        <div id = grey-box>
+            <h3 id="mass-cytometry">Mass Cytometry</h3>
+            <h2 id="palladium-bar-codes-for-universal-cell-multiplexing">Palladium Bar-codes for universal cell multiplexing</h2>
+            <ul>
+            <li><p>Up to 20 samples can be barcoded using a 6 isotope - pick 3 format.</li>
+            <li>Since Palladium is not traditionally used for antibody staining we don&rsquo;t lose channels when we integrate this kit into our work flow. </li>
+             <li>However, the kit only works only on fixed cells. You can choose when to bar-code though:</li>
+                <ul>
+                    <li>At very beginning</li>
+                <li>After surface stain</li>
+                <li>Just before acquisition</li></p>
+                </ul>
+            </ul>
+        </div>
+    </div> 
+            
+    <div id="step-9" class="step" data-x="180" data-y="180" data-z="270" data-rotate-z="960" data-rotate-y="40" data-rotate-order="xyz">
+        <div id = grey-box>  
+            <h3 id="mass-cytometry">Mass Cytometry</h3>  
+            <h2 id="live-cell-cd45-based-bar-coding">Live cell CD45-based bar-coding</h2>
+            <p>Uses anti-CD45 antibodies and 7 Cadmium and 4 Platinum conjugated antibodies in an 
+                <ul>
+                    <li>11 choose 3 (165 samples) </li>
+                    <li> or 7 choose 3 (35 samples Cadmium Only) format. </li>
+                </ul>
+                <ul>
+                    <li>Can be performed prior to marker staining. </li>
+                    <li>CD45 is insensitive to fixation and allows optimal detection of fixation sensitive epitopes.</li>
+                    <li>CD45 is not traditionally used for target markers so you can still use a large panel. </li>
+                    <li>If utilising the platinum channels will need to change live-dead to Rhodium or another marker. </li></p>
+                </ul>
+            </div>   
+     </div>   
+
+    <div id="step-10" class="step" data-x="180" data-y="180" data-z="270" data-rotate-z="960" data-rotate-y="40" data-rotate-order="xyz">
+        <div id = grey-box> 
+            <h3 id="mass-cytometry">Mass Cytometry</h3>
+            <h2 id="universal-live-cell-barcoding-for-human-samples">Universal live cell barcoding for human samples</h2>
+            <p>The Bendall lab at Stanford has explored alternative ways ofbarcoding all ]samples.</p>
+            <ul>
+                <li>Target ubiquitous molecules b2m and CD298</li>
+                <li>Non lanthanide isotopes used for barcoding leaves all normal phenotyping channels open</li>
+                <li>Unlike CD45, this approach is lineage independent so can be used for any cell types you need</li>
+            </ul>
+        </div>
+    </div>
+            
+            
+        
+    <div id="step-11" class="step" data-x="379" data-y="780" data-z="270" data-rotate-z="135" data-rotate-y="-225" data-rotate-order="zyx">
+        <div id = yellow-box> <h1>References</h1></h1></div>
+        <div id = yellow-box style = "font-size: medium; font-weight: bold">
+            <div id="refs" class="references csl-bib-body">
+                <div id="ref-Rodriguez-Martinez2020" class="csl-entry">
+                1. Rodríguez-Martínez M, Hills SA, Diffley JFX, Svejstrup JQ. <span class="nocase">Multiplex cell fate tracking by flow cytometry</span>. Methods and Protocols. 2020;3:1–9. doi:<a href="https://doi.org/10.3390/mps3030050">10.3390/mps3030050</a>.
+                </div>
+                <div id="ref-Skanland2018" class="csl-entry">
+                2. Skaanland SS. <span class="nocase">Phospho Flow Cytometry with Fluorescent Cell Barcoding for Single Cell Signaling Analysis and Biomarker Discovery</span>. Journal of visualized experiments : JoVE. 2018;58386. doi:<a href="https://doi.org/10.3791/58386">10.3791/58386</a>.
+                </div>
+                <div id="ref-Akkaya2016" class="csl-entry">
+                3. Akkaya B, Miozzo P, Holstein AH, Shevach EM, Pierce SK, Akkaya M. <span class="nocase">A Simple, Versatile Antibody-Based Barcoding Method for Flow Cytometry</span>. The Journal of Immunology. 2016;197:2027–38. doi:<a href="https://doi.org/10.4049/jimmunol.1600727">10.4049/jimmunol.1600727</a>.
+                </div>
+                <div id="ref-Spurgeon2020" class="csl-entry">
+                4. Spurgeon BEJ, Naseem KM. <span class="nocase">Phosphoflow cytometry and barcoding in blood platelets: Technical and analytical considerations</span>. 2020;98:123–30. doi:<a href="https://doi.org/10.1002/cyto.b.21851">10.1002/cyto.b.21851</a>.
+                </div>
+                <div id="ref-Meng2019" class="csl-entry">
+                5. Meng H, Warden A, Zhang L, Zhang T, Li Y, Tan Z, et al. <span class="nocase">A Mass-Ratiometry-Based CD45 Barcoding Method for Mass Cytometry Detection</span>. SLAS Technology. 2019;24:408–19. doi:<a href="https://doi.org/10.1177/2472630319834057">10.1177/2472630319834057</a>.
+                </div>
+                <div id="ref-Gaudilliere2015" class="csl-entry">
+                6. Gaudillière B, Ganio EA, Tingle M, Lancero HL, Fragiadakis GK, Baca QJ, et al. <span class="nocase">Implementing Mass Cytometry at the Bedside to Study the Immunological Basis of Human Diseases: Distinctive Immune Features in Patients with a History of Term or Preterm Birth</span>. Cytometry Part A. 2015;87:817–29. doi:<a href="https://doi.org/10.1002/cyto.a.22720">10.1002/cyto.a.22720</a>.
+                </div>
+                </div>
+                </div>
+        </div>
+    </div>
+
+
+
+
+ 
+    <div id="impress-toolbar"></div>
+<div id="impress-help"></div>
+
+<script type="text/javascript" src="../../js/impress.js"></script>
+<script>impress().init();</script>
 </body>
 </html>

@@ -32,9 +32,9 @@ body {
     min-height: 740px;
     
     background: #ffffff;
-    background-image: url(../Images/Barcoding_Spotlight-Intro.svg); 
+    background-image: url(../Images/Barcoding_Spotlight-Background.svg); 
     background-size: contain;
-    background-repeat: no-repeat;
+    
     
     color: rgb(102, 102, 102);
 }

@@ -43,7 +43,7 @@ h1{
 
 .step {
     position: relative;
-    width: 900px;
+    width: 1000px;
     height: auto;
     padding: 40px 60px;
     margin: 20px;
@@ -88,7 +88,7 @@ h1{
     border-radius: 25px;
     color: #295D90;
     opacity: 0.9;
-    <!--ackground-image: url("../Images/Orange-front-cover.png.png");-->
+    <!--background-image: url("../Images/Orange-front-cover.png.png");-->
     <!--background-size: 500px;-->
   } 
 

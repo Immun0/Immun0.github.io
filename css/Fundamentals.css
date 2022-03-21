@@ -414,9 +414,9 @@ a {
 }
 
 a.anchor {
-    display: block;
+    display: flex;
     position: relative;
-    top: -250px;
+    
    
 }
 
@@ -513,7 +513,7 @@ td {
 .title h3 {
     margin-top: -285px; 
     padding-top: 285px; 
-    display: inline-block;
+    display: fixed; 
     left: 90px;
     /* slide width is 1800px, so this is like a 5% margin on both sides */
     width: 90%;
@@ -521,7 +521,7 @@ td {
 .title h1 {
     top: 15%;
     text-align: left;
-    padding:auto;
+    
     font-size: 96pt;
 }
 .title h2 {

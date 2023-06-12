@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+
+<!--
+  Impress.js presentation. This one is still very "slide-like" to keep it within a format
+ people will be used to. We could remove the slide borders and jazz up the backgrounds
+    
+-->
+
+<html lang="en">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L0R9PC0Y3Y"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-L0R9PC0Y3Y');
+</script>
+    
+    <meta charset="utf-8" />
+    <title>Sample Preparation for Flow Cytometry | Presented by the OHRI Mass Cytoemtry Service and OHRI FLow Cytometry | by Damian C @Hapten</title>
+    
+    <meta name="description" content="Sample Preparation for Cytometry" />
+    <meta name="author" content="Damian C" />
+    <!--        
+        Impress.js doesn't depend on any external stylesheets. It adds all of the styles it needs for the
+        presentation to work. 
+        
+        However, some of the `extras/` modules do come with their own CSS, and we load
+        them here. You can read about each extras module separately in their directory.
+    -->
+    <link rel="stylesheet" href="../../extras/highlight/styles/github.css">
+    <link rel="stylesheet" href="../../extras/mermaid/mermaid.forest.css">
+
+    <!-- This file contains common styles for example presentations. -->
+    <link href="..\..\css\impress-common.css" rel="stylesheet" />   
+    <!--
+        This file contains styles specific for this example presentation. 
+    -->
+    <link href="css/SamplePrep.css" rel="stylesheet" />
+    
+</head>
+
+<!--
+    
+    Body element is used by impress.js to set some useful class names, that will allow you to detect
+    the support and state of the presentation in CSS or other scripts.
+    
+    First very useful class name is `impress-not-supported`. This class means, that browser doesn't
+    support features required by impress.js, so you should apply some fallback styles in your CSS.
+    It's not necessary to add it manually on this element. If the script detects that browser is not
+    good enough it will add this class, but keeping it in HTML means that users without JavaScript
+    will also get fallback styles.
+    
+    When impress.js script detects that browser supports all required features, this class name will
+    be removed.
+    
+    Another class name on body element also depends on currently active presentation step.    
+-->
+<body class="impress-not-supported">
+<!--
+    This fallback message is only visible when there is `impress-not-supported` class on body.
+-->
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+</div>
+
+<!--
+    This is the core element used by impress.js: the wrapper for your presentation steps. 
+    In this element all the impress.js magic happens.
+    
+    data-transition-duration sets the time in microseconds that is used for the
+    animation when transtitioning between slides.
+    
+    The width, height, scale and perspective options define a target screen size that you should
+    design your CSS against. impress.js will automatically scale all content to different screen
+    sizes. See DOCUMENTATION.md for details. Below, I have targeted full HD screen resolution.
+    
+    data-autoplay can be used to set the time in seconds, after which presentation
+    automatically moves to next slide. It can also be set individually for each
+    slide, but here we just set a common duration for all slides.
+-->
+<div id="impress"
+    data-transition-duration="1000"
+
+    data-width="1920"
+    data-height="1080"
+    data-max-scale="5"
+    data-min-scale="0"
+    data-perspective="1000"
+
+    data-autoplay="30">
+
+    <!--
+        Each step of the presentation should be an element inside the `#impress` with a class name
+        of `step`. These step elements are positioned, rotated and scaled by impress.js, and
+        the 'camera' shows them on each step of the presentation.
+        
+        The `id` attribute of the step element is used to identify it in the URL, but it's optional.
+        If it is not defined, it will get a default value of `step-N` where N is a number of slide.
+        This step is auto-assigned the id "step-1". You can also use `#step-1` in a link, to 
+        point directly to this particular step.
+        
+        Positioning information is passed through data-* attributes.
+        
+        In the example below we only specify x and y position of the step element with `data-x="-1000"`
+        and `data-y="-1500"` attributes. This means that **the center** of the element (yes, the center)
+        will be positioned in point x = -1000px and y = -1500px of the presentation 'canvas'. It will not 
+        be rotated or scaled.
+        
+        The "step" class is what *must* be used for every "slide". In this example we also use the "slide"
+        class, which adds a rectangle with some background and makes this presentation look like a traditional
+        powerpoint slide show. The "slide" class is entirely optional and indeed you wouldn't use it for
+        your cooler impress.js presentations.
+    -->
+    <div id = "Title"    class= "step slide title" data-rel-x="2200 " data-rel-y="600 " data-rotate="-30" >
+        <h1>Sample Preparation for Cytometry <br />
+        </h1>
+        <h2>Preparing Single Cell Suspensions and staining them</h2>
+        <br><br>
+        <h3>Updated September 2021</h3>
+
+
+
+
+     <!-- <div class="notes">
+            Any element with the class="notes" will not be displayed. This can be used for speaker notes. In fact, the impressConsole plugin will show it in the speaker console!
+        </div>  -->
+    </div>
+  
+
+    <div id="TableofContents" class="step slide" data-rel-x="2200 " data-rel-y="600" data-rotate="-30">
+        <h1>Table of Contents</h1>
+        <ul>
+            <column-left>
+                <li><a href="#Title">Title</a></li>
+                <li><a href="#toc">Table of Contents</a></li>
+                <li><a href="#INTRO">Introduction</a></li>
+                <li><a href="#SAMPLEPREP">Buffers </a></li>
+                <li><a href="#FLUORESCENCE">Filtration </a></li>
+            </column-left>
+            <column-right>
+                <li><a href="#FLUOROCHROMES">Lysis</a></li>
+                <li><a href="#CYTOMETER_FUNCTION"> Mechanical Disaggregation</a></li>
+                <li><a href="#SAMPLE_PREP">Enzymatice Disaggregation</a></li>
+                <li><a href="#DATA_ANALYSIS">Removing unwanted events</a></li>
+                <li><a href="#SUMMARY">Conclusion</a></li>
+            </column-right>
+        </ul>
+
+        <!--<div class="notes">
+            <p>Table of Contents, with links to other slides of this same presentation.</p>
+
+            <p>Note that instead of absolute positioning we use relative positioning, with the data-rel-x and data-rel-y attributes. This means the step is positioned relative to the foregoing step. In other words, this is equivalent to data-x="0" data-y="-3000".</p>
+        </div>-->
+    </div>
+
+    <div class="step slide" id = "What_this_is" data-rel-x="2200 " data-rel-y="600 " >
+        <column-left>        <h2>What is Sample Preparation?</h1>
+            
+                <h3>Process converting your sample of interest into a labeled,
+                     single cell suspension required for analysis by cytometers.</h3>
+                
+                     <h4>
+                         <ul>
+                             <li>Multi-Step Process</li>
+                             <ul>
+                                 <li>Single Cell Suspension Preparation</li>
+                                 <li>Sample Labelling/Staining</li>
+                            </ul>
+                         </ul>
+                     </h4>
+
+        </column-left>
+        <column-right>
+            
+        </column-right>
+
+
+               
+            
+                
+
+            <!-- <div class="notes">
+                Emphasise that this is a very basic introduction to all-things flow cytometry. The practical training will focus on the getting the most out of analysis WE can offer specific project or other training separately.
+            </div> -->
+    </div>
+
+
+
+    <!--
+    This element introduces rotation.
+    
+    Notation shouldn't be a surprise. We use `data-rotate="30"` attribute, meaning that this
+    element should be rotated by 30 degrees clockwise.        
+-->
+
+    <div  id = "INTRO" class="step slide" data-rel-x="2200 " data-rel-y="600">
+        <main class="grid">
+            <div class="box">
+                <h2>Definition of Flow Cytometry</h2>
+            </div>
+            <div class="box">
+                <h3>"Cyto"
+                    <h3>
+                        <ul>
+                            <h4>
+                                <li>Greek for hollow/cell (‘kytos’)</li>
+                            </h4>
+                        </ul>
+            </div>
+            <div class="box">
+                <h3>
+                    "Metry"</h3>
+                <ul>
+                    <h4>
+                        <li> Greek for the action or process of measuring ("metria")</li>
+                    </h4>
+                </ul>
+            </div>
+            <div class="box">
+                <blockquote style="text-align:left; font-size: 0.9em;">“Cytometry is a process for measuring the physical and chemical characteristics of biological cells. In flow cytometry the measurements are taken as cells flow through the instrument in a fluid stream.”</blockquote>
+                <div class="credit">
+            <div class = "box ">
+                    <cite style = "font-size:0.8em; text-align: right;"><strong><em>Howard Shapiro</em></strong>, <em>Practical Flow Cytometry 4th ed.</em></cite>
+                </div>
+                </div>
+        </main>
+
+
+    
+
+
+
+    
+
+</div>
+
+    <div class="step slide" id = "FACSvsFlowCytometry" data-rel-x="2200" data-rel-y="600" data-rotate= "30">
+
+        <main class="grid ">
+            <div class="box ">
+                <h2 style="text-align: center; "> A quick note about FACS</h2>
+            </div>
+            <div class="box ">
+                <h3>
+                    <spanstyle= text-align: left;>F - <em>Fluorescence</em></span>
+                        <br>
+                        <span style="text-align: left; ">A - <em>Activated</em></span>
+                        <br>
+                        <span>C - <em>Cell</em></span>
+                        <br> S - <em>Sorting</em>
+                </h3>
+            </div>
+            <div class="box "><img src="image/Fortessa.jpg " border:none; alt="BD Fortessa " style="max-width: 100%; max-height: 100%; "></div>
+            <div class="box ">
+
+                <ul>
+                    <h4>
+                        <li>More properly known as as flow cytometry</li>
+                        <br>
+                        <li> FACS is a brand name and trademark of BectonDickinson</li>
+                    </h4>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+
+
+    <div class="step slide" id = "FlowCytometryPublications" data-rel-x="2200" data-rel-y="600 " data-rotate="30">
+        <h2>Flow Cytometry is core to numerous studies</h2>
+        <ul>
+            <li>Number of publications on PubMed mentioning "flow cytometry "</li>
+        </ul>
+        <div style = "text-align: center; ">
+<img src="image/Rplot02.png " border:none; alt="Flow Cytometry Papers published every year " style = "width: 50%;; height: auto; " >
+</div>            
+<!-- <div class="notes">
+        </div>
+    -->
+    </div>
+
+    <div class="step slide" id = "SortersVersusAnalyzers" data-rel-x="2200 " data-rel-y="600 " data-rotate="30">
+        <main class="grid ">
+            <div class="box "><h2> Sorters vs. Analysers</h2></div>
+            <div class="box "><h3 style = "text-align: center "> Analysers acquire information from cells
+            </h3>
+<img src = "image/OHRI_Fortessa.jpg " >
+            <h3></div>
+            <div class="box "> <h3 style = "text-align: center ">
+                 Sorters can separate specific populations of cells
+            </h3>
+            <img src = "image/OHRI_XDP.jpg "></div>
+            
+
+        </main>
+        
+        <!--<div class="notes ">
+        </div> -->
+    </div>
+
+    <div id = "MICROSCOPY_CYTOMETRY" class="step slide title " data-rel-x="2200 " data-rel-y="600 " data-rotate="180 ">
+
+
+<main class="grid ">
+<div class="box "><h1 class="zoom-in " style="font-size: 100pt; text-align: center; "> Cytometry </h1></div>
+<div class="box" ></div>
+<div class="box"></div>
+<div class="box "><p class="fade-in " style="color:#295D90; font-size: 100pt; text-align:center; padding-top:250px; ">versus</p></div>
+
+<div class="box "><h2 class="fly-in " style="font-size: 100pt; padding-bottom:250px;">Microscopy</h2 style = " "></div>
+
+
+</main>
+       
+        
+       
+
+
+
+<!--  <div class="notes ">
+    It's often useful to compare cytometry to microscopy. Prospective users are often more familiar with and can conceptualize microscopy more easily.
+    They are also much more similar than people think. 
+</div> -->
+
+
+    </div>
+
+
+    <div class="step slide"  id = "MicroscopyVersusCytometryDiagram" data-rel-x="2200 " data-rel-y="600 " data-rotate="30">
+        <main class = "columns">
+                <div class ="column ">
+                    <h2>Microscopy - Overview</h2>
+                </div>
+                <div class="column ">
+                    <h2>Flow Cytometry - Overview</h2>
+                </div>
+                <div class="column " >
+                    <ul>
+                        <li>Light</li><br>
+                        <li>Slide</li><br>
+                        <li>Fluorescence</li>
+                        <li>Filters</li><br>
+                        <li>Observation</li>
+
+
+                </div>
+                <div class="column">
+
+                <img src="image/Fundamentals of Flow Cytometry_Microscopy.svg " height="600px " width="auto " style="justify-content: left "> 
+                </div>
+                
+                <div class=" column ">
+                    <ul>
+                        <li>Laser</li><br>
+                        <li>Fluidics</li><br>
+                        <li>Fluorescence</li>
+                        <li>Filters</li><br>
+                        <li>Electronics</li>
+                        <li>Quantitation</li>
+                    </ul>
+                </div>
+
+                <div class=" column " > <img src="image/Fundamentals of Flow Cytometry_Flow_Cytometry.svg " height=" 600px " width="auto" style="justify-content: left "> 
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+        </main>
+
+        </div>
+
+        <div class="step slide" id = "EveryColourNeedsA-PMT">
+            <main class = "grid">
+
+           <div class = "box"> <h2>Flow Cytometry - A detector for every "colour"</h2></div>
+           <div class = "box"></div>
+           <div class = "box"></div>
+           <div class = "box"> <img src= "image/Fundamentals of Flow Cytometry_Flow_Cytometry_3PMTs.svg" style = "transform: scale(1.85);"></div>
+           <div class = "box" > </div>
+           <div class = "box"></div>
+           <div class = "box"></div>
+           <div class = "box"></div>
+           <div class = "box"></div>
+           <div class = "box"><h3> For each fluorophore we want to visalize we need a separate Photo Multiplier Tube (PMT), filter set and channel to record the data</h3></div>
+       
+           
+        </main>
+            </div>
+                   
+            <div class="step slide" id = "Data-Example">
+                <main class="grid " >
+                    <div class="box ">
+                        <h2>What does flow cytometry data look like?</h2>
+                    </div>
+                    <div class="box "></div>
+                    <div class="box " >
+                    </div>
+                    <div class="box "></div>
+                    <div class="box " ><img src="image/Flow Cytometry Data 1.png "></div>
+                    <div class="box " ><img src="image/Flow Cytometry Data 2.png "></div>
+                    <div class="box " ><img src="image/Flow Cytometry Data 3.png "></div>
+
+
+
+
+        </main>
+        </div>
+
+        <div class="step slide " style="background-color: transparent;" id = "Benefits-of-Flow-Cytometry">
+
+            <br>
+            <h3 style="text-align: left;font-size: 60pt; ">What are the Benefits of Flow Cytometry?</h3>
+            <ul style="text-align: left; font-size:48pt ">
+                <li>Thousands of events analyzed in a short period of time</li>
+                <li>Statistical information obtained very quickly</li>
+                <li>Flexibility of data acquisition</li>
+                <li>Ability to re-analyze</li>
+            </ul>
+        </div>
+
+        <div class="step slide" id = "Primary-uses-of-flow">
+
+            <h3 style="text-align: left; font-size: 60pt; ">Main uses include: </h3>
+            <ul style="text-align: left; font-size:48pt ">
+                <li>Phenotyping</li>
+                <li>Pharmacokinetic and Pharmacodynamic assays</li>
+                <li>DNA Analysis</li>
+                <li>Functional Studies</li>
+                <li>Fluorescent Proteins</li>
+                <li>Cell Sorting</li>
+            </ul>
+        </div>
+
+        <div class="step slide" id = "All-about-fluorescence">
+
+            <h2>Flow Cytometry is all about fluorescence</h2>
+            <column-left>
+                <h3>If it's fluorescent we can see it</h3>
+                <img src="image/See_it.jpg " STYLE="border-radius: 45%; ">
+            </column-left>
+            <column-right>
+                <h3>If we can see it we can sort it!</h3>
+                <img src="image/Sort_it.jpg " style="border-radius:5%; height:150%; ">
+            </column-right>
+
+        </div>
+
+
+        <div class="step slide title " id = "FLUORESCENCE" data-rotate="180">
+            <div class = "fly-in"><h1>Fluorescence</h1></div>
+        </div>
+
+        <div class="step slide" id = "Intrinsic-vs-Extrinsic">
+            <h2>Fluorescence</h2>
+            <h3>Intrinsic Fluroescence</h3>
+            <ul>
+                <li>Autofluorescence</li>
+            </ul>
+            <h3>Extrinsic Fluorescence - Fluorescence YOU add</h3>
+            <h4></h4>
+            <ul>
+                <li>Antibodies</li>
+                <li>Dyes</li>
+                <li>Fluorescent Proteins</li>
+            </ul>
+
+        </div>
+
+        <div class="step slide " id = "EM-Spectrum">
+            <main class="grid" >
+            <div class = "box" >
+            <h2>The Electromagnetic Spectrum</h2>
+        </div>
+        <div class = "box">1</div>
+        <div class = "box">2</div>
+        <div class = "box"></div>
+        <div class = "box"></div>
+        <div class = "box"></div>
+        <div class = "box"></div>
+        <div class = "box"><img src = "image/ElectromagneticSpectrum.png" style = "transform: scale(3); justify-content: center"></div>
+        <div class = "box"></div>
+    </main>
+        </div>
+        
+        
+
+        <div class="step slide " id = "Common-Laser-Wavelengths">
+            <main class="grid">
+            <div class="box"><h2>Laser Wavelengths</h2></div>
+            <div class = "box"></div>
+            <div class = "box"></div>
+            <div class = "box"></div>
+            <div class = "box"></div>
+            <div class = "box"></div>
+            <div class = "box"></div>
+            <div class = "box"><img src = "image/Fundamentals of Flow Cytometry_Laser_Wavelengths.svg" style = "transform: scale(2.25); justify-content: center"></div>
+            <div class = "box"></div>
+            </main>
+        </div>
+
+        <div class="step slide" id = "Fluorescence-Physical-properties">
+             <main class="grid">
+                <div class="box"><h2>Fluorescence - Physical Properties</h2></div>
+                <br>
+                <div class = "box"></div>
+                <div class = "box"></div>
+                <div class = "box"></div>
+                <div class = "box"></div>
+                <div class = "box"></div>
+                <div class = "box"></div>
+                <div class = "box"><img src = "image/Fundamentals of Flow Cytometry_Fluorescence_Physics.svg" style = "transform: scale(2.25); justify-content: center"></div>
+                <div class = "box"></div>
+                </main>
+        </div>
+
+       
+
+        <div class="step slide" id = "Different-types-of-fluorochromes">
+            <h2>Flurorochromes by Application</h2>
+            <column-left>
+                <h3>Fluorochromes for Antibody Labelling</h3>
+                <ul>
+                    <li>FITC</li>
+                    <li>Phycoerithrin (PE)</li>
+                    <li>Allophycocyanin (APC)</li>
+                    </li>PE-Cy5, PE-Cy7</li>
+                    <li>AlexaFLuors</li>
+                    <li>Brilliant dyes (Violet, UV, etc.)</li>
+                </ul>
+            </column-left>
+
+            <column-right>
+                <h3>Functional Probes</h3>
+                <ul>
+                    <li>Indo-1</li>
+                    <li>Fluo-3</li>
+                    <li>Thiazole Orange</li>
+                    <li>Pyronin Y</li>
+                    <li>SNARF</li>
+                    <li>TMRE</li>
+                </ul>
+            </column-right>
+        </div>
+
+        <div class="step slide " id = "Different-types-of-fluorochromes-2">
+            <h2>Flurorochromes by Application</h2>
+            <column-left>
+
+                <h3>Viability and DNA Markers</h3>
+
+                <ul>
+                    <li>Propidium Iodide</li>
+                    <li>DAPI</li>
+                    <li>Hoechst dyes</li>
+                    <li>Acridine Orange</li>
+                    <li>DyeCycle dyes</li>
+                    <li>TOPRO-3</li>
+                    <li>DRAQ dyes</li>
+                    <li>Fixable Live-Dead dyes</li>
+                </ul>
+            </column-left>
+            <column-right>
+                <h3>Fluorescent Proteins</h3>
+                <ul>
+                    <li>Cyan FP</li>
+                    <li>Green FP</li>
+                    <li>Yellow FP</li>
+                    <li>Red FP</li>
+                </ul>
+            </column-right>
+
+
+        </div>
+
+        <div class="step slide " id = "Fluorescent-Properties">
+            <h2>Fluorescent Spectrum</h2>
+            <ul>
+                <li>Absorption vs Emission</li>
+                <li>Excited by one wavelength (dotted line)</li>
+                <li>Emits at another (higher) wavelength (solid line)</li>
+            </ul>
+            <img src="image/FITC_emiss_absorp_laser.png " style="width:1750px; height:auto ">
+        </div>
+
+
+        <div class="step slide" id = "Flow-cytometry-with-one-colour">
+            <h2>Fluorescence (capturing emission)</h2>
+            <h3>With one fluorochrome this is easy </h3>
+            <ul>
+                <li>Collect all fluorescent light above the absorption spectrum knowing it is derived from our fluorophore</li>
+            </ul>
+            <img src="image/FITC_emiss_absorp_laser_biggest_filter.png " style="width:1750px; height:auto ">
+
+        </div>
+
+        <div class="step slide" id = "Adding-another-fluorophore">
+            <h2>Fluorescence - Adding another fluorochrome</h2>
+            <h3>
+                <ul>
+                    <li>How about PE?</li>
+                </ul>
+            </h3>
+            <img src="image/PE_emiss_absorp_laser.png " style="width:1750px; height:auto ">
+        </div>
+
+        <div class="step slide " id = "Adding-another-fluorophore-2">
+            <h2>Fluorescence - Adding another fluorochrome</h2>
+            <h3>With 2 fluorophores we can't collect all of the fluorescence</h3>
+            <ul>
+                <li>How would we tell which photons came from each fluorophore?</li>
+            </ul>
+            <img src="image/PE+FITC_emiss_absorp_laser_biggest_filter.png " style="width:1750px; height:auto ">
+
+        </div>
+
+        <div class="step slide" id = "Adding-another-fluorophore-3">
+            <h2>Fluorescence - Adding another fluorochrome</h2>
+            <h3>
+                <ul>
+                    <li>We can filter the light with optical filters.</li>
+                </ul>
+            </h3>
+            <img src="image/PE+FITC_emiss_absorp_laser_separate_filters.png " style="width:1750px; height:auto ">
+
+        </div>
+
+        <div class="step slide" id = "Adding-another-fluorophore-4">
+            <main class="grid">
+                <div class="box" ><h2>Fluorescence: Adding Another Fluorochrome</h2></div>
+                <div class="box" ><ul>
+                    <li>Even if we are very selective with filters there will always be some light collected from the other/another fluorophore.</li>
+                    
+                    </ul></div>
+                <div class="box" ><img src="image/Fundamentals of Flow Cytometry_Flow_Cytometry_PE_Spillover.svg" style = "transform: scale(1.3)"></div>
+                <div class="box" ><ul>
+                    </ul>
+                
+            </ul></div>
+                
+            </main>
+        </div>
+
+        <div class="step slide" id = "Adding-another-fluorophore-5">
+            <main class="grid">
+                <div class="box"><h2>Fluorescence: Adding Another Fluorochrome</h2></div>
+                <div class="box"><ul>
+                    <li>Spectral overlap like this can be dealt with by controls and compensation
+                        <ul>
+                        <li>Practical training will cover this</li></ul>
+                    
+                    </ul></div>
+                <div class="box"><img src="image/Fundamentals of Flow Cytometry_Fluorescence_PE_Spillover_Compensated.svg" style = "transform: scale(1.3)">)"></div>
+                <div class="box"></ul>
+                
+            </ul></div>
+                
+               
+                        
+            </main>
+        </div>
+
+
+        <div class="step slide" id = "Filter-Types">
+            <h2>Types of Optical Filters</h2>
+            <h3>Filters transit light of specific wavelengths, whilst reflecting others.</h3>
+            <h3>There are 3 main types of optical fitlers</h3>
+            <h3>                <ul>
+                <li>Longpass - LP</li>
+                <li>Shortpass - SP</li>
+                <li>Bandpass - BP</li>
+            </ul>
+</h3>
+
+        </div>
+
+
+
+        <div class="step slide " id = "Filter-Types-Diagram">
+            <main class="grid">
+                <div class="box" ><h2>Types of Optical Filter</h2></div>
+                <div class="box" ></div>
+                <div class="box"></div>
+                <div class="box" ></div>
+                <div class="box"><em>500SP (Short Pass)</em><img src= "image/Fundamentals of Flow Cytometry_Short_Pass_Filter.svg" style = "height:50; width:auto;">
+                 </div>
+
+                <div class="box"><em>500/50 BP (Band Pass)</em><img src= "image/Fundamentals of Flow Cytometry_Band_Pass_Filter.svg"style = "height:50; width:auto;">
+                </div>
+                <div class="box"><em>500LP (Long Pass)</em><img src= "image/Fundamentals of Flow Cytometry_Long_Pass_Filter.svg" style = "height:50; width:auto;"></div>
+
+                
+            
+        </main>
+        </div>
+
+        <div class = "step slide" id = "Stacking-filters-together">
+            <h2>Stacking filters</h2>
+            <h3>
+            <ul>
+                <li> By combining LP and BP filters we can: </li>
+                    <ul><li>Broadly Fractionate the spectrum reaching a PMT with Long Pass or Short Pass Filters </li>
+                        <li> Precisely filter the light in a narrow band with a Band Pass filter</li>
+                    
+                <br><br>
+            
+                    </ul>
+                    <li>This allows us to use multiple PMTs on each laser line</li>
+                    </ul>
+        </h3>
+             </div>
+
+<div class = "step slide" id = "Stacking-filters-diagram">
+            <main class = "grid">
+                <div class = "box"><h2>Stacking Filters</h2></div>
+                <div class = "box"><img src = "image/Fundamentals of Flow Cytometry_Stacked_Filters.svg" style = "height:auto; width:65%;"></div>
+                <div class = "box"> 
+                    <p style = "text-align:left">
+                        <ol>
+                            <li> All light collected from the event is directed to the detectors </li>
+                            <li> BP/LP stack extracts green light for measurment by PMT </li>
+                            <li> BP/LP stack extracts light blue light for PMT assessment</li>
+                            <li> Violet light is diverted for downstream assessment</li>
+                        </ol>
+                    </p>
+                </div>
+            </main>
+
+            </div>
+
+<div class="step slide" id = "Fluorescence-Summary">
+<h2>Fluorescence - Summary</h2>
+    <p>To design ANY fluorescence experiment we need to know:</p>
+        <ul>
+            <li>Excitation Spectrum </li>
+            <ul>
+                <li>Will determine whether we can use the fluorophore</li>
+                <li>Do we have lasers suitable to excite the fluorophore</li>
+            </ul>
+            <li>Emission Spectrum</li>
+            <ul>
+                <li>will tell us which filter to use and whether we can combine the fluorochrome with others. </li>
+            </ul>
+        </ul>
+
+</div>
+
+
+<div class = "step slide title" id="FLUOROCHROMES" data-rel-x="2200 " data-rel-y="600 " data-rotate="180"><h1>Fluorochromes</h1></div>
+        
+<div class="step slide " id = "Fluorochromes-for-antibody-labelling" >
+<h2>Fluorochromes for Antibody Labelling</h2>
+<main class="grid">
+    
+    <div class = "box"><img src="image/Fundamentals of Flow Cytometry_Fluorochrome_History.svg" style = "height:725px; width:auto;"></div>
+    
+</main>            
+</div>
+
+<div class="step slide " id = "Fluorochrome-Structure">
+<main class="grid ">
+    <div class="box ">
+        <h2> Fluorochrome Structure</h2>
+    </div>
+    <div class="box">
+        
+        <ul>
+            <h3>
+                <li>
+                    Cyclic ring compounds
+               </li>
+            <ul>
+        </h3>
+            <ul>
+                <li>FITC, Texas Red, Alexa dyes, <br>Propidium iodide, Hoechst</li>
+            </ul>
+            <br>
+        <h3>
+                <li>Tandem dyes</li>
+        </h3>
+            <ul>
+                <li>PE-Cy5, APC-Cy7</li>
+            </ul>
+    </div>
+    <div class="box ">
+        <ul>
+            <h3>
+                    <li>Fluorescent proteins</li>
+            </h3>
+                <ul>
+                    <li>GFP, YFP, CFP etc</li>
+                </ul>
+            <h3>
+                    <li>Nanocrystal dyes</li>
+            </h3>
+                <ul>
+                   
+                    <li>Q Dots</li>
+                </ul>
+            <h3>
+                <li>Polymer dyes</li>
+            </h3>
+            <ul>
+                <li>Brilliant Violet, Brilliant UV</li>
+            </ul>
+
+        </ul>
+        </div>
+</main>
+<column-right>
+</div>
+
+<div class="step slide" id = "cylic-ring-compunds">
+<main class="grid">
+    <div class="box"><h2>Fluorochromes - Cyclic Ring Compunds</h2></div>
+    <div class="box"> 
+        <ul>
+        <h3>
+            <li>FITC, Texas Red, Alexa 488, Propidium Iodide, Hoechst</li>
+        </h3>
+        <h3>
+            <li>Generally small molecules</li>
+        </h3>
+    </ul>
+    </div>
+    <div class="box"><br></div>
+    <div class="box"><img src = "image/Fundamentals of Flow Cytometry_Cyclic_Rings.png" style = "transform:scale(2)"></div>
+ </main>
+</div>
+
+
+<div class="step slide" id = "Tandem-Dyes">
+<h2>Fluorochromes - Tandem Dyes</h2>
+    <ul>
+        <h3>
+            <li>FRET (Fluorescence Resonance Energy Transfer)</li>
+
+            <li>A combination of a donor and acceptor molecule</li>
+            <li>Emission of donor and excitation of acceptor must overlap</li>
+            <li>Donor transfers energy (not fluorescence) to acceptor</li>
+            <li>Effective between 10-100Å only </li>
+        </h3>
+
+    </ul>
+
+</div>
+
+<div class="step slide " id = "Tandem-Dyes-2">
+<h2>Fluorochromes - Tandem Dyes</h2>
+<ul>
+<main class="grid ">
+    <div class="box ">
+        <ul>
+            <li>Tandem dyes were developed to expand the range of colours when cytometers were less sophisticated.</li>
+            </h3>
+            <h3>
+                <ul>
+                    <li>Use DONOR and ACCEPTOR molecules</h3>
+            </ul>
+    </div>
+
+<div class="box ">
+
+</div>
+<div class="box " >
+
+</div>
+
+<div class="box ">
+    <img src = "image/Fundamentals of Flow Cytometry_Tandem_Schematic.svg">
+</div>
+
+</main>
+
+</div>
+
+
+
+<div class="step slide " id = "Tandem-Dyes-3">
+<main class = "grid">
+<div class="box"> 
+    <h2>Fluorochromes - Tandem Dyes</h2>
+    </div>
+    <div class="box "  >
+</div>
+    <div class="box "  >
+    </div>
+    <div class="box "  ><h3>
+        Will show fluorescence from the donor in addition to the acceptor
+        <ul>
+            <li>This can get "worse" over time</li>
+            <li>Due to oxidation of the tandem</li>
+        </ul>
+    </h3>
+    </div>
+    <div class="box "  >
+        <ul>
+            <li>PE-Cy5</li>
+        </ul>
+    </div>
+
+    <div class="box" >
+            <ul>
+                <li>PE-Cy5.5</li>
+                <li>PerCP-Cy5.5</li>
+                <li>APC-Cy5.5</li>
+            </ul>
+    </div>
+
+    <div class="box" >
+        <ul>
+            <li>PE-Cy7</li>
+            <li>PerCP-Cy7</li>
+            <li>APC-Cy7</li>
+        </ul>
+
+        
+            
+        </div>  
+    </main>
+</div>
+
+<div class="step slide " id = "Tandem-Dyes-4">
+<h2>Fluorochromes - Tandem Dyes</h2>
+    <h3>
+        Storage is critical
+        <ul>
+            <li>Effect of light - Highly photosensitive</li>
+            <li>Effect of fixatives</li>
+        </ul>
+        Lot-to-lot variation is a significant concern.
+        <ul>
+            <li>Each lot will have different spectral properties requiring instrument settings to be adjusted.</li>
+        </ul>
+    </h3>
+</div>
+
+<div class="step slide " id = "Fluorescent-Proteins">
+<main class="grid">
+    <div class="box"> <h2>Fluorochromes - Fluorescent Proteins</h2></div>
+    <div class="box">
+        <h3>Derived in the early 90's
+            <ul>
+                <li>GFP</li>
+                <li>RFP</li>
+            
+            
+                <li>CFP</li>
+                <li>BFP</li>
+            </ul>
+        </h3>
+    </div>
+
+    <div class="box"> 
+        <img src="image/Fundamentals of Flow Cytometry_Fruit_Proteins.png" style = "height:300px; width:100%">
+    </div>
+</main>
+</div>
+
+<div class="step slide" id = "Nanocrystals">
+
+<h2>Fluorochromes - Nanocrystals</h2>
+    <column-left>
+    <h3>
+        <ul>
+            <li>Q Dots (Quantum Dots) – mid to late 1990s</li>
+            <li>Size of crystal determines wavelength emitted</li>
+            <li>Larger the crystal the redder the light</li>
+
+        </ul>
+    </h3>
+</column-left>
+<column-right>
+    <img src="image/Fundamentals of Flow Cytometry_Quantum_Dots.png">
+</column-right>
+</div>
+
+<div class="step slide " id = "Sirigen-Dyes">
+
+<h2>Fluorochromes - Polymer Dyes</h2>
+    <column-left>
+        <h3>
+            <ul>
+                <li>New class of dyes - early 2000s</li>
+                <li>Use ‘molecular antennae’</li>
+                <li>High Quantum efficiency</li>
+                <li>Bright</li>
+                <ul>
+                    <li>Brilliant Violet</li>
+                    <li>Brilliant Ultraviolet</li>
+                    <li>Brilliant Blue</li>
+                    <li>Brilliant YG</li>
+                </ul>
+            </ul>
+        </h3>
+</column-left>
+<column-right><img src="image/Fundamentals of Flow Cytometry_Brilliant_Dye.gif" style = "height:15em;">
+</column-right>
+</div>
+
+<div class= "step slide" id = "Fluorochrome-Properties">
+
+<h2>Fluorochromes - Properties</h2>
+    <h3>To assess a fluorochromes potential in flow cytometry we have to assess its "brightness ", which is dependednt on:
+        <ul>
+            <li>Excitation characteristics</li>
+            <li>Emission characteristics</li>
+            <li>Extinction coefficient – how strongly it absorbs photons</li>
+            <li>Quantum yield – how many photons on average come out</li>
+    </h3>
+</div>
+
+<div class="step slide " id = "Fluorochrome-Properties-2">
+<main class="grid">
+    <div class="box" ><h2>Fluorochromes - Properties</h2></div>
+    <div class = "box" ><h3>
+    So how do we assess fluorochrome brightness?</h3><br><img src="image/Fundamentals of Flow Cytometry_CD4_differences.png"style = "height:6em; width:100%"></div>
+    <div class = "box" >
+        <ul>
+            <h3>
+                    <li>Measure how far positive cells are from negatives (different fluorophores)</li>
+                <ul>
+                    <li>Stain Index</li>
+                    <li>Separation Index</li>
+                </ul>
+            </h3>
+        </ul>
+    </div>
+    <div class="box" >Stain Index = (MFI<sup>pos</sup>- MFI<sup>neg</sup>) / (2*SD)</div>
+</main>
+</div>               
+                                                              
+                               
+
+<div class="step slide " id = "Fluorochrome-Brightness">
+<h2>Fluorochrome Brightness</h2>
+<main class  = "grid">
+    <div class = "box" ></div>
+    <div class = "box">
+        <img src="image/Fundamentals of Flow Cytometry_Fluorochrome_Brightness.png" stle = "height:200%; width:auto;">
+    </div>
+    <div class = "box" >
+        <h4>
+            Fluorochrome brightness can be looked up on BD, Biolegend, Thermo etc sites if you don’t want to measure.
+        </h4>    
+    </div>
+</main>
+    
+</div>
+                           
+
+<div class="step slide " id = "Choosing-a-Fluorophore">
+<h2>Fluorochrome - Classes</h2>
+    <h3>
+        Why do I need to know this?
+        <ul>
+            <li>The choice will influence which application you can use</li>
+            <li>Some fluorochromes require special handling</li>
+            <li>To multiplex, the dye chemistry will be important</li>
+            <li>Think about Fixation</li>
+            <li>Location of antigen</li>
+            <li>Closeness of antigens</li>
+        </ul>
+    </h3>
+</div>
+
+<div class="step slide title" id = "CYTOMETER_FUNCTION" data-rel-x="2200 " data-rel-y="600 " data-rotate="180">
+<h1>How a cytometer works</h1>
+</div>
+
+<div class="step slide" id = "Cytometer-Components">
+<main class="grid">                                        
+    <div class="box" > <h2>How does a cytometer work?</h2> </div>                                   
+    <div class = "box">
+        <h3>
+        <ul>
+            <li>Laser</li>
+            <li>Fluidics</li>
+            <li>Optics</li>
+            <li>Filters</li>
+            <li>Electronics</li>
+            <li>Quantitation</li>
+        </ul>
+        </h3>
+    </div>
+    <div class = "box" )>
+        <img src = "image/Fundamentals of Flow Cytometry_Flow_Cytometry_Cytometer_Working.svg" style = "transform: scale(1.4)">
+    </div>
+</main>
+</div>
+
+<div class="step slide ">
+<h2>Cytometer Components</h2>
+    <ul>
+        <h3>
+            <li>Fluidics:</li>
+        </h3>
+            <ul>
+                <li>
+                <strong>Separation and alignment of particles, sorting, analysis and sorting speed.</strong>
+                </li>
+            </ul>
+        <h3>
+            <li>Optics:</li>
+        </h3>
+            <ul>
+                <li>
+                <strong>Light source(s), detectors, spectral separation (filters, dichroic mirrors). </strong>
+                </li>
+            </ul>
+        <h3>
+                <li>Detectors:</li>
+        </h3>
+            <ul>
+                <li>
+                <strong>Collection and analysis of optical signals; data display; light source(s), detectors and sorting setup and control.</strong>
+                </li>
+    </ul>
+</div>
+
+<div class="step slide"  id = "Cytometer-Components-2">
+<h2> Cytometer Components</h2>
+    <ul>
+        <h3>
+            <li>Data Analysis:</li>
+        </h3>
+            <ul>
+                <li><strong>Data display and analysis; </li>
+                <li> Multivariate analyses;</li>
+                <li> Identification of subpopulations; </li>
+                <li> Quantification</strong></li>
+            </ul>
+    </ul>
+</div>
+
+<div class="step slide" id = "cytometer-pressure-systems">
+<h2>Cytometers: Differential Pressure Systems </h2>
+    <h3>
+        <ul>
+            <li>Differential Pressure machines e.g. LSRII, Fortessa</li>
+            <li>Both the sample and sheath fluids are pressurised</li>
+            <li>Flow rate is set by sheath pressure and is controlled by the difference between sheath and sample pressures</li>
+            <li>Absolute Counts not possible without external addition e.g. Fluorescent Counting Beads</li>
+        </ul>
+    </h3>
+</div>
+
+<div class="step slide" id = "Facs-Flow-Supply-System">
+<main class="grid">
+<div class="box"><h2> Cytometer - Sheath Fluid</h2></div>
+<div class="box">
+<h3>
+    <ul>
+        <li>Sheath fluid (usually FACSFlow) is used to deliver the cells from a tube to the flow cell of the machine.</li>
+        <li>It also aligns the cells to allow them to be individually analysed in the centre of the laser beam in the flow cell</li>
+    </ul>
+</h3>
+</div>
+<div class="box"><img src="image/flow_cart.jpg" style = "height: 90%"></div>
+</div>
+
+<div class="step slide" id = "Laminar-Flow">
+<h2>Cytometer - Laminar Flow</h2>
+<h3>
+    <ul>
+        <li>Viscous drag at walls slows outer layers of liquid</li>
+        <li>Particles are drawn toward centre of channel – hydrodynamic focusing</li>
+        <li>The sheath fluid surrounds the sample in concentric layers.</li>
+        <li>These layers do not mix.</li>
+    </ul>
+</h3>
+<img src="image/Schematic-representation-of-the-laminar--flow-regimes.jpg" style = "width:100%">
+</div>
+
+<div class="step slide" id = "Hydrodynamic-Focusing">
+<h2>Cytometer - Hydrodynamic Focusing</h2>
+    <column-left>
+        <h3>
+            <ul>
+                <li>Aligns the cells so they go
+                    <ul>
+                        <li>one by one</li>
+                        <li>through the centre of the laser beam (where the intensity is greatest)</li>
+                    </ul>
+                    <li>It pulls cells out like a ‘string of pearls’</li>
+            </ul>
+        </h3>
+    </column-left>
+    <column-right>
+        <div> 
+            <img src="image/2D-hydrodynamic-focusing-on-the-planar-microflow-cytometric-system.png" style = "margin-left: auto;
+        margin-right: auto;
+        display: block; width:100%">
+        </div>
+    </column-right>
+</div>
+
+
+
+<div class="step slide" id = "Pressing-Hi">
+<h2>What Happens when you press 'Hi'</h2>
+    <div>
+        <img src = "image/Press-Hi.png" style = "margin-left: auto;
+    margin-right: auto;
+    display: block; width:90%">
+    </div>
+</div>
+
+<div class="step slide " id = "Pressing-Hi2">
+<h2>What Happens when you press 'Hi'</h2>
+
+<column-left>
+    <div><img src = "image/Press-Low.png" style = "margin-left: auto;
+    margin-right: auto;
+    display: block; width:100%;">
+    <h2 style = "text-align: center"> Low</h2>
+    </div>
+</column-left>
+<column-right>
+    <div><img src = "image/Press-Hi-CV.png" style = "margin-left: auto;
+        margin-right: auto;
+    display: block; width:100%"></div>
+    <h2 style = "text-align: center"> High</h2>
+</column-right>
+</div>
+
+<div class="step slide" id = "Cells-enter-the-laser's-path">
+<h2>Cells enter the lasers Path</h2>
+<img src = "image/Cells Enter the Laser's Path.jpg" style = "margin-left: auto;
+margin-right: auto;
+display: block; width:50%">
+</div>
+
+<div class="step slide" id = "Lasers">
+<h2>Light Amplification by Stimulated Emission of Radiation</h2>
+    <h3>
+        <ul>
+            <li>Wavelengths from UV (325nm) to Infrared (780nm).</li>
+            <li>Most cytometers will have more than one.</li>
+            <li>Fortessa has 5</li>
+            <li>Properties of laser light</li>
+            <ul style = "font-size: 0.75em;">
+                <li>Coherent= narrow spectrum ie only emit a single colour of light</li>
+                <li>Divergent = beam doesn’t increase in width away from source</li>
+                <li>Polarised = Light has the same handedness
+                <li> Lasers may be co-linear (measured simultaneously) or separated (measured temporally and spatially separately).</li>
+            </ul>
+        </ul>
+    </h3>
+</div>
+
+<div class="step slide" id = "What-do-we-detect">
+<column-left>
+    <h2>Cytometer - What do we detect?</h2>
+        <h3>
+            <ul>
+                </li>
+                <li>Scattered laser light
+                    <li>Fluorescent emission</li>
+            </ul>
+        </h3>
+</column-left>
+<column-right>
+    <img src="image/laser light.png" >
+</column-right>
+</div>
+
+<div class="step slide " id = "What-do-we-measure?">
+<main class="grid"></main>
+<div class="box" ><h2>Cytometer - what do we measure</h2></div>
+<div class = "box" ></div>
+<div class = "box" ></div>
+                                        <div class="box" >
+<img src = "image/Fundamentals of Flow Cytometry_Flow_Cytometry_CellsBeforeTheLaser.svg" style = "margin-left: auto; margin-right: auto; display:block; height:15em; width: 80%; ">
+</div>
+</main>
+</div>
+
+<div class="step slide" id = "What-do-we-measure?-2">
+
+<main class="grid"></main>
+    <div class="box" ><h2>Cytometer - what do we measure</h2></div>
+    <div class = "box" ></div>
+    <div class = "box" ></div>
+    <div class="box" >
+    <img src = "image/Fundamentals of Flow Cytometry_Flow_Cytometry_CellsAfterTheLaser.svg" style = "margin-left: auto; margin-right: auto; display:block; height:15em; width: 80%; ">
+    </div>
+</main>
+</div>
+
+<div class="step slide" id = "Scatter">
+<h2>Cytometer - Scattered Light</h2>
+        <column-left>
+            <h3>
+                <ul>
+                    <li>Signal influenced by </li>
+                    <ul>
+                        <li>Cell size</li>
+                        <li>Refractive Index</li>
+                        <li>Nuclear : Cytoplasmic ratio </li>
+                        <li>Granularity</li>
+                        <li>Surface topography</li>
+                    </ul>
+                    <br>
+                    <li>Correlates only</li>
+                </ul>
+            </h3>
+        </column-left>
+        <column-right><img src = "image/Scatter_Ball.png" style = "width:100%"></column-right>
+</div>
+
+<div class="step slide" id = "Whole-Blood">
+<h2>Cytometer - Scattered light</h2>
+    <column-left>
+        <h3>
+            <ul>
+                <li>What does whole blood look like?</li>
+            </ul>
+        </h3>
+        
+
+        <h3>
+            <ul>
+                <li>A heterogeneous population</li>
+            </ul>
+        </h3>
+        
+        </column-left>
+        <column-right><img src = "image/Whole_Blood.png" style = "margin-left: auto; margin-right: auto; height:100%; width:100%"></column-right>
+
+
+</div>
+
+<div class="step slide " id = "Cell-Line">
+<h2>Cytometer - Scattered Light</h2>
+    <column-left>
+        <h3>
+            <ul>
+                <li>What does a cell culture look like?</li>
+            </ul>
+        </h3>
+                <h3>
+                    <ul>
+                <li>More homogeneous</li>
+            </ul>
+        </h3>
+    </column-left>
+
+    <column-right>
+        <img src = "image/Cell_Line.png" style = "margin-left: auto; margin-right: auto; height:90%; width:90%;">
+    </column-right>
+</div>
+
+<div class="step slide" id = "fluorescence-detection">
+<h2> Cytometer - Fluorescence Emission Detection</h2>
+    <colum-left>
+        <img src = "image/Fundamentals of Flow Cytometry_Flow_Cytometry_90degrees.svg" style = "height:auto; width:48%">
+    </colum-left>
+    <column-right>
+        <h3>
+            <uL>
+                <li>Fluorescence is emitted in all directions but is collected at 90°</li>
+                <br>
+                <li>Optical elements (filters and dichroic mirrors) separate wavelengths and direct them to different pathways</li>
+            </uL>
+        </h3>
+    </column-right>
+</div>
+
+<div class="step slide" id = "Back-to-the-spectral-viewer">
+
+<h2>Cytometer - Fluorescence detection</h2>
+<h3><ul><li>Remember the spectral viewer</li> 
+    <ul>
+    <li> How does that translate into how the instrument is set up?</li></ul>
+</h3>
+    </ul>
+    <img src = "image/PE+PerCP.png" style = "width:100%">
+
+</div>
+
+<div class="step slide " id = "The-Octagon">
+<h2>Cytometer - Fluorescence detection</h2>
+    <column-left>
+        <img src = "image/Octagon.png" style = "width:85%">
+    </column-left>
+    <column-right>
+        <h3> 
+            <ul>
+                <li>Red light collected first</li>
+                <ul>
+                    <li>lowest energy</li>
+                </ul>
+            </ul>
+        </h3>
+    </column-right>
+</div>
+
+
+
+
+<div class="step slide" id = PMTvsPhoto-diode>
+
+<h2> Cytometer - Detectors</h2>
+        <h3>
+            <ul>
+                <li>Photodiode</li>
+            <ul>
+                <li>Used for bright signal, when saturation of detector is a potential problems e.g. FSC</li>
+                <br>
+            </ul>   
+                <li>Photomultiplier tubes (PMT)</li>
+                <ul>
+                    <li>More sensitive than a photodiode e.g. Fluorescence detector</li>
+                </ul>
+                <br>
+                <li>PMT/PD convert light energy into an electrical signal</li>
+            </ul>
+        </h3>
+     </li>
+</ul>
+</div>
+
+<div class="step slide" id = "PMTs">
+<h2> Cytometer - Detectors - PMT</h2>
+<h3>
+    <ul>
+        <li>PMTs are ‘blind’ – they simply detect photons</li>
+        <ul>
+            <li>We have to optically filter the light</li>
+            <li>Photon energy is converted to a signal that is dependent on:</li>
+            <ul>
+                <li>Number of photons hitting the PMT</li>
+                <li>The voltage we apply to the PMT</li>
+                <li>The measurement is only relative</li>
+            </ul>
+            <br>
+            
+            <h4> Set up of PMT voltage is extremely important</h4>
+            <h4>Controls are extremely important</h4>
+        </ul>
+</h3>
+
+</div>
+
+<div class="step slide" id = "PulseGenerationSchematic">
+    <h2> Cytometer - Electronics System</h2>
+<main class="grid">
+    <div class= "box" ><img src= "image/PulseGeneration.svg" style = "height: 750px; width:auto"> </div>
+</main>
+</div>
+
+
+
+<div class="step slide" id = "PulseGenerationAnimation">
+    <h2> Cytometer - Electronics System</h2>
+<main class="grid">
+    <div class= "box" ><video autoplay loop muted playsinline width="960" height="720"src="image/video.webm"></video> </div>
+</main>
+</div>
+
+<div class="step slide" id = "histograms-and-dotplots">
+<h2>Cytometer - How histograms and dotplots are made</h2>
+    <column-left>
+        <h3>
+            <ul>
+                <li>listmode table of data
+                </li>
+            </ul>
+            <img src="image/listmode.png" style = "width:85%;">
+        </h3>
+    </column-left>
+    <column-right>
+    <h4>
+        <ul>
+            <li>Plotted for every cell</li>
+            <li>Builds up density</li>
+            <li>The histograms and dotplots we refer to are really density plots</li>
+
+        </ul>
+    </h4>
+</column-right>
+</div>
+
+<div class="step slide" id = "Why-do-I-need-to-know-this?">
+<h2> Cytometer - Why do I need to know this?</h2>
+    <h3>
+        <ul>
+            <li>I won’t be designing a flow cytometer anytime soon!</li>
+
+            <li>But YOU WILL need to know how the flow cytometer you use is designed:</li>
+            <ul>
+                <li>To understand how to design experiments </li>
+                <li>To determine which instruments that are available to you will work with the fluorochromes you need to use for specific applications</li>
+            </ul>
+        </ul>
+    </h3>
+</div>
+
+<div class="step slide" id = "Cytometer-Summary">
+<h2>Cytometer - Summary</h2>
+<img src="image/Cytometer_Summary.png" style = "width:100%">
+
+</div>
+
+<div id = "SAMPLE_PREP" class=" step slide title " data-rel-x="2200 " data-rel-y="600 " data-rotate="180">
+<div class = "zoom-in"><h1>Sample Preparation</h1></div>
+
+
+</div>
+
+<div class="step slide" id = "SamplePrepIntro">
+<h2>Sample Preparation</h2>
+<h3>
+    <ul>
+
+        <li>Sample preparation is the single most important factor in running a good experiment</li>
+        <ul>
+            <li>Single Cell suspension is imperative</li>
+            <li>Cells need to be viable (unless fixed)</li>
+            <li>Should be little debris</li>
+            <li>Fluorescence detected should be specific</li>
+            <li>Your experiment is only as good as your sample preparation</li>
+        </ul>
+    </ul>
+</h3>
+
+</div>
+
+<div class="step slide" id = "SuspensionCells">
+<main class="grid">
+    <div class = "box" style = "margin-bottom: 0%;"><h2> Dissociating Cells</h2></div>
+    <div class = "box" >
+        <ul>
+            <h3>
+                <li>Suspension cells e.g. Jurkat cells</li>
+            </h3>
+            <h4>
+                <ul>
+                    <li>Cell lines, blood, bone marrow</li>
+            </h4>
+
+                <ul>
+                    <li>Can use Ficoll or similargradient media</li>
+
+                <ul>
+                    <li>If sticky, EDTA or DNAse in medium may help</li>
+                    <li>If using blood, consider lyse red cells</li>
+                <ul>
+                    
+                    <li>Ammonium chloride or Commercial reagents</li>
+                </ul>
+            </ul>
+        </ul>
+    </div>
+    <div class="box">
+        <img src = "image/Suspension Cells.png" style = "height:75%">
+    </div>
+</main>
+</div>
+
+
+
+<div class="step slide" id = "Sticky-Cells">
+<main class = "grid">
+    <div class = "box"><h2> Dissociating Cells</h2></div>
+    
+    <div class ="box">
+        <ul>
+            <h3><li>Adherent cells </li></h3>
+
+            <h4>
+            
+                <li>Cell lines
+
+                </li>
+            
+            </h4>
+
+        <h5>
+            <ul>
+                <li>Detachment using trypsin, collagenase, EDTA, Accutase</li>
+                <li>Be aware of viability</li>
+                <li>DNAse or EDTA in medium</li>
+                <li>Differential centrifugation</li>
+            </ul>
+        
+        </h5>
+</div>
+<div class="box"> <img src = "image/Adherent Cells.png"style = "height:75%"></div>
+</main>
+</div>
+
+
+<div class="step slide " id = "SolidTissue">
+<main class = "grid">
+    <div class = "box"><h2> Dissociating Cells</h2></div>
+    
+    <div class ="box">
+        <ul>
+            <h3><li>Solid Tissue </li></h3>
+        <ul>
+            
+       
+
+
+        <h4> <ul><li>Biopsy, paraffin section</li>
+        
+            <li>Digestion or mechanical disaggregation</li>
+            <li>Collagenase, trypsin, pronase</li>
+            <li>May depend on antigen</li>
+            <li>Cells v nuclei</li>
+        </h4>
+        </ul>
+    </div>
+    <div class= "box"><img src = "image/Solid Tissue.png"style = "height:90%"></div>
+</main>
+                                </div>
+
+<div class="step slide" id = "Sample=Prep-Summary">
+<h2> Sample Preparation </h2>
+<h3>
+    <ul>
+        <li>Balance between dissociation and viability</li>
+        <li>Doublets, clumps and dead cells can generate misleading data</li>
+        <li>Method will be cell type or tissue dependent</li>
+
+        <li>Practice makes perfect!</li>
+    </ul>
+</h3>
+</div>
+
+<div class="step slide " id = Fixation1>
+<h2>Fixation or Not</h2>
+<h3>
+    <ul>
+        <li>Fixation holds cells in stasis but is this what you want?</li>
+        <br>
+        <li>It will depend on: </li>
+        <ul>
+            <li>Local rules (infection)</li>
+            <li>Time available (storage)</li>
+            <li>Probe/fluorochrome to be used (Beware tandems!)</li>
+            <li>Target of interest (surface vs. internal)</li>
+            <li>Background autofluorescence</li>
+        </ul>
+    </ul>
+</h3>
+
+</div>
+
+
+<div class="step slide " id = "Fixation2">
+<h2> Fixatives </h2>
+    <ul>
+        <column-left>
+            <h3>
+                <li>Alcohol</li>
+            </h3>
+            <ul>
+                <li>Generally ethanol or methanol</li>
+                <li>Dehydrating fixative</li>
+                <li>Coagulates proteins</li>
+                <li>Excellent for DNA</li>
+                <li>Variable with antigens</li>
+            </ul>
+        </column-left>
+
+        <column-right>
+            <h3>
+                <li>Aldehyde</li>
+            </h3>
+            <ul>
+                <li>Generally formaldehyde</li>
+                <li>Cross-linking fixative</li>
+                <li>Good for antigens, GFP and fluorochromes</li>
+                <li>Poor for DNA</li>
+            </ul>
+        </column-right>
+    </ul>
+    </h3>
+</div>
+
+<div id= "Permeabilization1" class="step slide ">
+<main class = "grid">
+    <div class= "box"><h2>Permeabilization</h2></div>
+    <div class = "box">
+        <h3>Where and Why? </h3>
+            <h4>
+                <ul>
+                    <li>DNA</li>
+                    <li>Cytokines</li>
+                    <li>Intracellular proteins e.g. phospho-specific antibody</li>
+                    <li>Signaling pathways</li>
+                    <li>Cyclins</li>
+                </ul>
+            </h4>
+    </div>
+    <div class = "box"><div class="tg ">
+    <table class="tg ">
+        <thead>
+            <tr>
+                <th class="tg-rebb ">Harsh</th>
+                <th class="tg-rlwy ">Gentle</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="tg-jzjz ">Triton-X100</td>
+                <td class="tg-jzjz ">Saponin<br></td>
+            </tr>
+            <tr>
+                <td class="tg-jzjz ">NP40(IGEPAL</td>
+                <td class="tg-jzjz ">Lysolecithin</td>
+            </tr>
+            <tr>
+                <td class="tg-jzjz ">Good for nuclear antigens</td>
+                <td class="tg-jzjz ">Good for cytoplasmic antigens</td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+</main>
+</div>
+
+
+         
+
+<div class="step slide " id = "Viability">
+<h2>Viability</h2>
+<h3>
+    <ul>
+        <li>Dead cells in your sample can cause problems</li>
+        <li>Cells with compromised membranes and loss of function will allow entry and binding of dye</li>
+        <li>These dyes are either fluorescent DNA binding dyes or dyes that bind cellular proteins (amines)</li>
+        <li>Can be used on unfixed or fixed cells</li>
+    </ul>
+</h3>
+
+
+</div>
+
+<div class="step slide ">
+<h2>Doublet Discrimination</h2>
+
+<img src = "image/Doublets.png" style = " margin-left:auto; margin-right:auto; display:block;  height: 80%; width:auto">
+</div>
+
+
+<div class="step slide" id = "Controls">
+<h2>A word on controls</h2>
+    <h3>
+        <ul>
+            <li>Negative cells – to assess autofluorescence</li>
+            <li>Single colour controls – to set compensation</li>
+            <li>Isotype controls – not recommended</li>
+            <li>Fluorescence Minus One controls (FMO) – gating control</li>
+        </ul>
+    </h3>
+</div>
+
+<div class="step slide" id = "DATA_ANALYSIS" >
+<h2>Data Analysis</h2>
+<h3>
+    Several general programs exist:
+    <ul>
+        <li>FlowJo (BectonDickinson)</li>
+        <li>FCS Express (De Novo software)</li>
+        <li>VenturiOne (Applied Cytometry)</li>
+        <li>Kaluza (Beckman Coulter)</li>
+        <li>Cytobank (look for cytobank community for a free but limited option)</li>
+    </ul>
+</h3>
+
+</div>
+
+
+
+<div class="step slide" id = "NormalDistribution">
+<h2>Data Analysis: The Normal Distribution</h2>
+<img src = "image/Normal Distribution.png" style = "margin-left:auto; margin-right:auto; display:block;  height: auto; width:100%">
+</div>
+
+
+<div class="step slide" id = "PlotsandStatistics">
+<h2>Data analysis: Plots and Numbers</h2>
+    <h3>
+        <ul>
+            <li>You are in control of your data</li>
+            <li>Plots are just a VISUALISATION of the data</li>
+            <li>We have to determine which populations in the data file are of interest</li>
+            <li>We need to derive metrics to be able to compare samples</li>
+            <li>Flow cytometry analysis is concerned with DESCRIPTIVE statistics</li>
+            <li>Enumeration of a subset - How MANY </li>
+            <li>Measuring the level of fluorescence – How MUCH</li>
+           
+        </ul>
+    </h3>
+</div>
+
+<div class="step slide " id = "PlotsandGates">
+<h2>Data Analysis: Percentage Positive</h2>
+    <img src = "image/Percentage Positive.png" style = "margin-left:auto; margin-right:auto; display:block;  height: 85%; width:auto;">
+</div>
+
+                                
+<div class="step slide" id = "SUMMARY">
+<h2>Summary</h2>
+    <h3>Flow cytometry is an extremely powerful technique BUT with some pitfalls for the unwary!</h3>
+
+    <h3>There's a lot to think about:</h3>
+        <ul>
+            <li>The cytometer</li>
+            <li>Fluorochromes used</li>
+            <li>The sample preparation and conditions</li>
+            <li>How to analyse the data</li>
+        </ul>
+
+</div>
+
+    
+
+    
+    <!--
+        This element introduces rotation.
+        
+        Notation shouldn't be a surprise. We use `data-rotate="30"` attribute, meaning that this
+        element should be rotated by 30 degrees clockwise.        
+    -->
+    
+    
+    
+
+  
+
+    
+
+    
+   
+   
+    
+    <!-- This last, empty "slide" is set to be very large using the data-scale attribute, 
+         so that it covers all the other slides you just saw. 
+         It's a common way of zooming out at the end, to show the whole presentation.
+         In CSS, we set pointer-events:none to make this slide non-clickable. 
+         It makes a difference at least for SVG content, such as the mermaid diagram. -->
+    <div id="overview" class="step" data-x="4500" data-y="1500" data-scale="10" style="pointer-events: none;">
+    </div>
+</div>
+
+<!--
+    Add navigation-ui controls: back, forward and a select list.
+    Add a progress indicator bar (current step / all steps)
+    Add the help popup plugin
+-->
+<div id="impress-toolbar"></div>
+
+<div class="impress-progressbar"><div></div></div>
+<div class="impress-progress"></div>
+
+<div id="impress-help"></div>
+
+<!-- Extra modules
+     Load highlight.js, mermaid.js, markdown.js and MathJax.js from extras.
+     If you're curious about details, these are initialized in src/plugins/extras/extras.js -->
+<script type="text/javascript" src="../../extras/highlight/highlight.pack.js"></script>
+<script type="text/javascript" src="../../extras/mermaid/mermaid.min.js"></script>
+<script type="text/javascript" src="../../extras/markdown/markdown.js"></script>
+<script type="text/javascript" src="../../extras/mathjax/MathJax.js?config=TeX-AMS_CHTML"></script>
+<!--
+    To make all described above really work, you need to include impress.js in the page.
+    You also need to call a `impress().init()` function to initialize impress.js presentation.
+    And you should do it in the end of your document. 
+-->
+<script type="text/javascript" src="../../js/impress.js"></script>
+<script>impress().init();</script>
+
+</body>
+</html>

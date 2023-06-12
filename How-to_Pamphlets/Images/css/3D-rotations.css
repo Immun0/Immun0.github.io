@@ -1,0 +1,227 @@
+@import url(fonts.css);
+
+
+
+/*  Fallback message */
+
+.fallback-message {
+    font-family: sans-serif;
+    line-height: 1.3;
+
+    width: 780px;
+    padding: 10px 10px 0;
+    margin: 20px auto;
+
+    border: 1px solid #E4C652;
+    border-radius: 10px;
+    background: #EEDC94;
+}
+
+.fallback-message p {
+    margin-bottom: 10px;
+}
+
+.impress-supported .fallback-message {
+    display: none;
+}
+
+
+/* Body & steps */
+body {
+    font-family: 'Montserrat', sans-serif;
+    min-height: 740px;
+    
+    background: #00000f;
+    background-image: url(../Images/Light-blue-background.png);
+    color: rgb(102, 102, 102);
+}
+
+h1{
+    font-family: 'Montserrat Alternates'
+}
+
+.step {
+    position: relative;
+    width: 800px;
+    height: 800px;
+    padding: 40px 60px;
+    margin: 20px;
+   
+    padding: 20px;
+
+    box-sizing:         border-box;
+
+    line-height: 1.5;
+
+    background-color: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
+
+    text-shadow: 0 2px 2px rgba(0, 0, 0, .1);
+
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 20pt;
+    font-weight: bold;
+    letter-spacing: -1px;
+
+}
+
+/* Overview step has no background or border */
+
+.overview {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    pointer-events: none;
+    display: none;
+}
+.overview.active {
+    display: block;
+    pointer-events: auto;
+}
+
+
+#yellow-box {
+    background-color: #FDB933 ;
+    padding: 10px ;
+    border: 8px solid  #002776;
+    border-radius: 25px;
+    color: #295D90;
+    opacity: 0.9;
+    <!--background-image: url("../Images/front cover.png");-->
+    background-size: 500px;
+  } 
+
+#grey-box{
+    background-color: #B0B1A6 ;
+    padding: 10px ;
+    border: 1px solid HEX #707372;
+    border-radius: 25px;
+    color: #295D90;
+    opacity: 0.75;
+    <!--background-image: url("../Images/front cover.png");-->
+    background-size: 500px;
+}
+
+#blue-box{
+    background-color: #002776 ;
+    padding: 10px ;
+    border: 1px solid #002776;
+    border-radius: 25px;
+    color: white;
+    opacity: 0.75;
+    background-image: url("../Images/front cover.png");
+    background-size: 500px;
+}
+
+#light-blue-box{
+    background-color: #70B9C6 ;
+    padding: 10px ;
+    border: 2px solid HEX #707372;
+    border-radius: 25px;
+    color: white;
+    opacity: 0.75;
+    background-image: url("../Images/Light-blue-front-cover.png");
+    background-size: 500px;
+}
+
+/*
+    Make inactive steps a little bit transparent.
+*/
+.impress-enabled .step {
+    margin: 0;
+    opacity: 0.1;
+    transition:         opacity 1s;
+}
+
+.impress-enabled .step.active { opacity: 1 }
+
+
+/* Content */
+
+h1, 
+h2, 
+h3 {
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+    text-align: center;
+}
+
+p {
+    margin: 0.7em;
+}
+
+li {
+    margin: 0.2em;    
+}
+
+/* Highlight.js used for coloring pre > code blocks. */
+pre > code {
+    font-size: 14px;
+    text-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+
+/* Inline code, no Highlight.js */
+code {
+    font-family: "Cutive mono","Courier New", monospace;
+}
+
+
+a {
+    color: inherit;
+    text-decoration: none;
+    padding: 0 0.1em;
+    background: rgba(200,200,200,0.2);
+    text-shadow: -1px 1px 2px rgba(100,100,100,0.9);
+    border-radius: 0.2em;
+    border-bottom: 1px solid rgba(100,100,100,0.2);
+    border-left:   1px solid rgba(100,100,100,0.2);
+
+    transition:         0.5s;
+}
+a:hover,
+a:focus {
+    background: rgba(200,200,200,1);
+    text-shadow: -1px 1px 2px rgba(100,100,100,0.5);
+}
+
+blockquote {
+    font-family: 'PT Serif';
+    font-style: italic;
+    font-weight: 400;    
+}
+
+em {
+    text-shadow: 0 2px 2px rgba(0, 0, 0, .3);    
+}
+
+strong {
+    text-shadow: -1px 1px 2px rgba(100,100,100,0.5);
+}
+
+q {
+    font-family: 'PT Serif';
+    font-style: italic;
+    font-weight: 400;    
+    text-shadow: 0 2px 2px rgba(0, 0, 0, .3);
+}
+
+strike {
+    opacity: 0.7;
+}
+
+small {
+    font-size: 0.4em;
+}
+
+/* Styles specific to each step */
+
+#overview2 {
+    font-size: 20pt;
+    padding-left: 200px;
+    text-align: right;
+}
+img {
+    margin: auto;
+    display: block;
+  }

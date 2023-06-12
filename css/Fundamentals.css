@@ -41,9 +41,8 @@
 
 
 /*
-  The body background is the bacgkround of "everything". Many
-  impress.js tools call it the "surface". It could also be a
-  picture or pattern, but we leave it as light gray.
+  The body background is the bacgkround of "everything". It could also be a
+  picture or pattern, but we leave it as OHRI grey.
 */
 
 body {
@@ -108,7 +107,7 @@ body {
     width: 1850px;
     height: 1000px;
     padding: 40px 60px;
-    background-image: url(../images/background.png);
+    background-image: url(../image/background.png);
     background-color: transparent;
     opacity: 0.2;
     border: 1px color: transparent;
@@ -330,7 +329,7 @@ footer {
 .fill {
     background-size: cover;
     background-position: center;
-    background-image: url('/examples/classic-slides/images/Fundamentals of Flow Cytometry_Flow_Cytometry_3PMTs.svg ');
+    background-image: url('/examples/classic-slides/image/Fundamentals of Flow Cytometry_Flow_Cytometry_3PMTs.svg ');
 }
 .item {
     background-color: #1EAAFC;
@@ -390,6 +389,7 @@ code {
     flex-wrap: wrap;
 }
 a {
+    display: inline-block;
     color: inherit;
     text-decoration: none;
     padding: 0 0.1em;
@@ -412,6 +412,14 @@ a {
     0.2);
     transition: 0.5s;
 }
+
+a.anchor {
+    display: flex;
+    position: relative;
+    
+   
+}
+
 a:hover,
 a:focus {
     background: rgba(200,
@@ -492,7 +500,7 @@ td {
     Specific styles for: .title slides 
 */
 .title {
-    background-image: url(../images/background-title.png);
+    background-image: url(../image/background-title.png);
     background-color: rgba(255,
     255,
     255,
@@ -503,7 +511,9 @@ td {
 .title h1,
 .title h2,
 .title h3 {
-    position: absolute;
+    margin-top: -285px; 
+    padding-top: 285px; 
+    display: fixed; 
     left: 90px;
     /* slide width is 1800px, so this is like a 5% margin on both sides */
     width: 90%;
@@ -511,7 +521,7 @@ td {
 .title h1 {
     top: 15%;
     text-align: left;
-    padding:auto;
+    
     font-size: 96pt;
 }
 .title h2 {

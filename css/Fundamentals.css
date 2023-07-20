@@ -107,7 +107,7 @@ body {
     width: 1850px;
     height: 1000px;
     padding: 40px 60px;
-    background-image: url(../image/background.png);
+    /*background-image: url(../image/background.png);*/
     background-color: transparent;
     opacity: 0.2;
     border: 1px color: transparent;

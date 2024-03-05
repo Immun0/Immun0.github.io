@@ -32,7 +32,7 @@ body {
     min-height: 740px;
     
     background: #00000f;
-    background-image: url(../Images/Orange-background.png);
+    background-image: url("../Orange-background.png");
     color: rgb(102, 102, 102);
 }
 
@@ -88,7 +88,7 @@ h1{
     border-radius: 25px;
     color: #295D90;
     opacity: 0.9;
-    <!--background-image: url("../Images/Orange-front-cover.png.png");-->
+    <!--background-image: url("../Images/Orange-front-cover.png");-->
     <!--background-size: 500px;-->
   } 
 
@@ -129,7 +129,7 @@ h1{
 .impress-enabled .step {
     margin: 0;
     opacity: 0.01;
-    transition:         opacity 1s;
+   
 }
 
 .impress-enabled .step.active { opacity: 1 }

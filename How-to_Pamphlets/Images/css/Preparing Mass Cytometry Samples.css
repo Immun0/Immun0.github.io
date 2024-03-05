@@ -32,7 +32,7 @@ body {
     min-height: 740px;
     
     background: #00000f;
-    background-image: url(../Images/Yellow-background.png);
+    background-image: url(../Yellow-background.png);
     color: rgb(102, 102, 102);
 }
 
@@ -128,7 +128,6 @@ h1{
 .impress-enabled .step {
     margin: 0;
     opacity: 0.01;
-    transition:         opacity 1s;
 }
 
 .impress-enabled .step.active { opacity: 1 }

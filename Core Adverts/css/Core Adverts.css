@@ -29,11 +29,12 @@
 /* Body & steps */
 body {
     font-family: 'Montserrat', sans-serif;
-    min-height: 740px;
+    min-height: 75%;
     
     background: #00000f;
     background-image: url("../images/1.png");
     color: rgb(102, 102, 102);
+    height: 50%;
 }
 
 h1{
@@ -88,7 +89,7 @@ h1{
     border-radius: 25px;
     color: #295D90;
     opacity: 0.9;
-    <!--background-image: url("../Images/Orange-front-cover.png");-->
+    <!--background-image: url("../images/1");-->
     <!--background-size: 500px;-->
   } 
 

@@ -34,7 +34,11 @@ body {
     background: #00000f;
     background-image: url("../images/1.png");
     color: rgb(102, 102, 102);
-    height: 50%;
+    background-size: contain;
+  width: 200px;
+  height: 200px;
+  resize: both;
+  overflow: scroll;
 }
 
 h1{

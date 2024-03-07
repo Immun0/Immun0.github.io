@@ -31,12 +31,11 @@ body {
     font-family: 'Montserrat', sans-serif;
     min-height: 75%;
     
-    background: #00000f;
-    background-image: url("../images/1.png");
-    color: rgb(102, 102, 102);
+    background: #707372;
+    <!-- background-image: url("../images/1.png")-->
     background-size: contain;
-  width: 200px;
-  height: 200px;
+  width: 150px;
+  height: 150px;
   resize: both;
   overflow: scroll;
 }

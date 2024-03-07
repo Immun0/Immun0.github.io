@@ -35,9 +35,9 @@ body {
     background-repeat: no-repeat;
     background-image: url("../images/1.png");
     background-position: center;
-    background-size: contain;
-  width: 150%;
-  height: 150%;
+    background-size:cover
+  max-width: 200%;
+  max-height: 200%;
   resize: both;
   overflow: scroll;
 }

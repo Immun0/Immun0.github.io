@@ -119,7 +119,7 @@
         </h1>
         <h2>An introduction to the theory and practice of flow cytometry</h2>
         <br><br>
-        <h3>Updated March 2022, July 2023</h3>
+        <h3>Updated March 2022, July 2023, April 2024</h3>
 
 
 
@@ -139,11 +139,11 @@
                 <a href="#Title" class="anchor" id="top"><li>Title</li></a>
                 <a href="#toc" class="anchor" id="top"><li>Table of Contents</li></a>
                 <a href="#INTRO" class="anchor" id="top"><li>Introduction</li></a>
-                <a href="#MICROSCOPY_CYTOMETRY" class="anchor" id="top"><li>Cytometry vs Microscopy</li></a>
-                <a href="#FLUORESCENCE" class="anchor" id="top"><li>Fluorescence</li></a>
+                <a href="#MICROSCOPY_CYTOMETRY" class="anchor" id="top"><li>Comparing Cytometry and Microscopy</li></a>
+                <a href="#FLUORESCENCE" class="anchor" id="top"><li>Fluorescence: Physics and Biology</li></a>
             </column-left>
             <column-right>
-                <a href="#FLUOROCHROMES" class="anchor" id="top"><li>Fluorochromes</li></a>
+                <a href="#FLUOROCHROMES" class="anchor" id="top"><li>Fluorochromes: Form and Function</li></a>
                <a href="#CYTOMETER_FUNCTION" class="anchor" id="top"> <li> How a Cytometer Works</li></a></li>
                 <a href="#SAMPLE_PREP" class="anchor" id="top"><li>Sample Preparation</li></a>
                 <a href="#DATA_ANALYSIS" class="anchor" id="top"><li>Data Analysis</li></a>
@@ -274,7 +274,7 @@
             <li>Number of publications on PubMed mentioning "flow cytometry "</li>
         </ul>
         <div style = "text-align: center; ">
-<img src="image/Flow_Cytometry_Publications_1977-2023.png " border:none; alt="Flow Cytometry Papers published every year " style = "width: 50%;; height: auto; " >
+<img src="image/Flow_Cytometry_Publications_1977-2024.png " border:none; alt="Flow Cytometry Papers published every year " style = "width: 50%;; height: auto; " >
 </div>            
 <!-- <div class="notes">
         </div>
@@ -313,19 +313,11 @@
 
 
 </main>
-       
-        
-       
-
-
-
 <!--  <div class="notes ">
     It's often useful to compare cytometry to microscopy. Prospective users are often more familiar with and can conceptualize microscopy more easily.
     They are also much more similar than people think. 
 </div> -->
-
-
-    </div>
+</div>
 
 
     <div class="step slide"  id = "MicroscopyVersusCytometryDiagram" data-rel-x="2200 " data-rel-y="600 " data-rotate="30">
@@ -364,20 +356,32 @@
 
                 <div class=" column " > <img src="image/Fundamentals of Flow Cytometry_Flow_Cytometry.svg " height=" 600px " width="auto" style="justify-content: left "> 
                 </div>
+        </main>  
+    </div>
 
-
-
-
-
-
-
-
-
-
-
-        </main>
-
-        </div>
+    
+    <div class="step slide" id = "Flow-2Paradigms">
+       
+           <div class = "box"> <h2>Flow Cytometry - 2 paradigms for detection</h2></div>
+           <column-left>
+            <h3>Conventional Flow Cytometry</h3>
+            <ul>
+                <li>One channel = One Fluorophore</li><br>
+                 <li> ~18-28 fluorescent parameters</li>
+            </ul>  
+           </column-left>
+            <column-right>
+            <h3>Spectral Flow Cytometry</h3>
+            <ul>
+                <li>Many Detectors = Many Fluorophores</li> 
+                <li>15-40 parameters (and theoretically much more)</li>
+            </ul>
+            </column-right>
+        
+    </div>
+    
+           
+       
 
         <div class="step slide" id = "EveryColourNeedsA-PMT">
             <main class = "grid">
@@ -396,8 +400,47 @@
            
         </main>
             </div>
-                   
-            <div class="step slide" id = "Data-Example">
+              
+            
+        <div class="step slide" id = "OneColour-OneFilter-OneDetector">
+            <main class="grid " >
+                    <div class="box ">
+                        <h2>Conventional Flow Cytometry partitions the spectrum</h2>
+                    </div>
+                    <div class="box "></div>
+                    <div class="box "></div>
+                    <div class="box "> <img src="image/Conventional_Detector_Layout_on_Spectral_Viewer.png" style = "transform: scale(2.1); justify-content: center"></div>
+                    <div class="box"> </div>
+                    <div class = "box"> </div>
+                    <div class = "box"> </div>
+                    <div class = "box"> </div>
+                    <div class = "box"> </div>
+                    
+                    <div class="box " ><h4>Chop up the spectrum into sections and associate the light from each section with a specific fluorophore<h4></div>
+            </main>
+        </div>
+
+
+        <div class="step slide" id = "OneColour-OneFilter-OneDetector">
+            <main class="grid " >
+                    <div class="box ">
+                        <h2>Conventional Flow Cytometry partitions the spectrum</h2>
+                    </div>
+                    <div class="box "></div>
+                    <div class="box "></div>
+                    <div class="box "> <img src="image/Spectra-Detector_Layout_on_Spectral_Viewer.png" style = "transform: scale(2.1); justify-content: center"></div>
+                    <div class="box"> </div>
+                    <div class = "box"> </div>
+                    <div class = "box"> </div>
+                    <div class = "box"> </div>
+                    <div class = "box"> </div>
+                    
+                    <div class="box " ><h4>Look at all of the spectrum all of the time. Identify a fluorophore from the unique fingerprint it has across the entire visual spectrum<h4></div>
+            </main>
+        </div>
+
+
+     <div class="step slide" id = "Data-Example">
                 <main class="grid " >
                     <div class="box ">
                         <h2>What does flow cytometry data look like?</h2>
@@ -526,7 +569,7 @@
        
 
         <div class="step slide" id = "Different-types-of-fluorochromes">
-            <h2>Flurorochromes by Application</h2>
+            <h2>Fluorochromes by Application</h2>
             <column-left>
                 <h3>Fluorochromes for Antibody Labelling</h3>
                 <ul>
@@ -554,7 +597,7 @@
         </div>
 
         <div class="step slide " id = "Different-types-of-fluorochromes-2">
-            <h2>Flurorochromes by Application</h2>
+            <h2>Fluorochromes by Application</h2>
             <column-left>
 
                 <h3>Viability and DNA Markers</h3>

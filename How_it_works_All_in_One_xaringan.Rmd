@@ -291,7 +291,7 @@ Please get in touch if you need assistance with any aspect of your mass cytometr
 |     |     |
 |:---:|:---:|
 |![](Images/icon_email.png)|dcarragher@ohri.ca|
-|![](Images/icon_website.png)|www.ohri.ca/masscytometry/dummy/website|
+|![](Images/icon_website.png)|www.ohri.ca/cytof
 
 <div class="my-footer-png"></div> 
 

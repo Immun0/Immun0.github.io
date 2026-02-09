@@ -5,6 +5,46 @@
     <meta charset="utf-8" />
     <meta name="author" content="Damian Carragher" />
     <script src="libs/header-attrs-2.27/header-attrs.js"></script>
+
+    <!-- START: Engagement Heartbeat Tracker -->
+<script>
+  (function() {
+    var seconds = 0;
+    var pulse = 30;
+    var timer = null;
+  
+    function start() {
+      if (timer) return;
+      timer = setInterval(function() {
+        seconds += pulse;
+        gtag('event', 'engagement_pulse', {
+          'seconds_on_page': seconds,
+          'page_title': document.title
+        });
+      }, pulse * 1000);
+    }
+  
+    function stop() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+  
+    document.addEventListener('visibilitychange', function() {
+      document.hidden ? stop() : start();
+    });
+  
+    window.addEventListener('beforeunload', function() {
+      if (seconds > 0) {
+        gtag('event', 'engagement_total', {
+          'total_seconds': seconds,
+          'page_title': document.title
+        });
+      }
+    });
+  
+    if (!document.hidden) start();
+  })();
+  </script>
+  <!-- END: Engagement Heartbeat Tracker -->
     <link rel="stylesheet" href="OHRI-style.css" type="text/css" />
     <link rel="stylesheet" href="OHRI-style-fonts.css" type="text/css" />
   </head>

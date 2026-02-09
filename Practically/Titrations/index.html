@@ -11,6 +11,46 @@
   gtag('config', 'G-L0R9PC0Y3Y');
 </script>
 
+<!-- START: Engagement Heartbeat Tracker -->
+<script>
+  (function() {
+    var seconds = 0;
+    var pulse = 30;
+    var timer = null;
+  
+    function start() {
+      if (timer) return;
+      timer = setInterval(function() {
+        seconds += pulse;
+        gtag('event', 'engagement_pulse', {
+          'seconds_on_page': seconds,
+          'page_title': document.title
+        });
+      }, pulse * 1000);
+    }
+  
+    function stop() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+  
+    document.addEventListener('visibilitychange', function() {
+      document.hidden ? stop() : start();
+    });
+  
+    window.addEventListener('beforeunload', function() {
+      if (seconds > 0) {
+        gtag('event', 'engagement_total', {
+          'total_seconds': seconds,
+          'page_title': document.title
+        });
+      }
+    });
+  
+    if (!document.hidden) start();
+  })();
+  </script>
+  <!-- END: Engagement Heartbeat Tracker -->
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

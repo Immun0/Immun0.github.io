@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-L0R9PC0Y3Y"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-L0R9PC0Y3Y');
+</script>
+
+<!-- START: Engagement Heartbeat Tracker -->
+<script>
+  (function() {
+    var seconds = 0;
+    var pulse = 30;
+    var timer = null;
+  
+    function start() {
+      if (timer) return;
+      timer = setInterval(function() {
+        seconds += pulse;
+        gtag('event', 'engagement_pulse', {
+          'seconds_on_page': seconds,
+          'page_title': document.title
+        });
+      }, pulse * 1000);
+    }
+  
+    function stop() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+  
+    document.addEventListener('visibilitychange', function() {
+      document.hidden ? stop() : start();
+    });
+  
+    window.addEventListener('beforeunload', function() {
+      if (seconds > 0) {
+        gtag('event', 'engagement_total', {
+          'total_seconds': seconds,
+          'page_title': document.title
+        });
+      }
+    });
+  
+    if (!document.hidden) start();
+  })();
+  </script>
+  <!-- END: Engagement Heartbeat Tracker -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interrogating DNA | Undergraduate Genetics | StemCore, OHRI</title>
+<meta name="description" content="An exploration of DNA Seqeuncing, PCR and SOuthern blot in a historical context revealing how the tools we use every day were develped. From StemCore Laboratories.">
+<meta name="author" content="Damian Carragher">
+<meta property="og:title" content="Interrogating DNA - From Detection to Direct Seqeuncing | From StemCore Laboratories and OHRI Flow Cytometry Core">
+<meta property="og:description" content="Historical examination of DNA Sequencing Technologies from Holley to Sanger to NGS to Nanopore.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://core-principles.com/InterrogatingDNA">
+</head>
+
+<body>
+    
+  <div style="position: relative; width: 100%; height: 0; padding-top: 56.2500%;
+ padding-bottom: 0; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); margin-top: 1.6em; margin-bottom: 0.9em; overflow: hidden;
+ border-radius: 8px; will-change: transform;">
+  <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0;margin: 0;"
+    src="https://www.canva.com/design/DAHECnttpwU/hPufZDTF2F85fM35e80iAw/view?embed" allowfullscreen="allowfullscreen" allow="fullscreen">
+  </iframe>
+</div>
+<a href="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAHECnttpwU&#x2F;hPufZDTF2F85fM35e80iAw&#x2F;view?utm_content=DAHECnttpwU&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link" target="_blank" rel="noopener">Interrogating DNA: From Detection to Direct Sequencing</a> by Damian Carragher
+</body>

@@ -11,7 +11,6 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://core-principles.com/">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
   <link rel="icon" type="image/x-icon" href="/Images/favicon.ico">
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-L0R9PC0Y3Y"></script>
@@ -75,7 +74,7 @@
       flex-shrink: 0;
       object-fit: contain;
     }
-    
+
     .hero-kicker {
       font-family: 'DM Mono', monospace;
       font-size: 0.65rem;
@@ -101,7 +100,7 @@
       max-width: 600px;
     }
 
-    /* ── FIXED NAV ── */
+    /* ── NAV ── */
     .site-nav {
       position: sticky;
       top: 0;
@@ -112,7 +111,6 @@
       align-items: center;
       height: var(--nav-h);
       padding: 0 5rem;
-      gap: 0;
     }
 
     .site-nav a {
@@ -138,10 +136,9 @@
       flex-shrink: 0;
     }
 
-    /* ── SECTION WRAPPER ── */
+    /* ── SECTION ── */
     .section { scroll-margin-top: var(--nav-h); }
 
-    /* ── SECTION HEADER ── */
     .section-header {
       background: white;
       border-top: 1px solid var(--grey-border);
@@ -267,7 +264,6 @@
       margin-top: 0.25rem;
     }
 
-    /* ── SECTION SPACER ── */
     .section-gap { height: 2.5rem; }
 
     /* ── FOOTER ── */
@@ -296,17 +292,17 @@
 </head>
 <body>
 
-<!-- ── HERO ── -->
+<!-- HERO -->
 <header class="hero">
   <img class="hero-logo" src="Images/Core Principles Logo.png" alt="Core Principles">
   <div>
     <p class="hero-kicker">StemCore Laboratories · Ottawa Hospital Research Institute</p>
     <h1>Core Principles</h1>
-    <p class="hero-desc">Free, open-access training in cytometry and genomics — built by the scientists who run the instruments. For researchers at OHRI, uOttawa, and beyond who want to design better experiments and make smarter decisions about their data.</p>
+    <p class="hero-desc">Free, open-access training in cytometry and genomics, built by the scientists who run the instruments. For researchers at OHRI, uOttawa, and beyond who want to design better experiments and make smarter decisions about their data.</p>
   </div>
 </header>
 
-<!-- ── FIXED NAV ── -->
+<!-- NAV -->
 <nav class="site-nav">
   <a href="#flow"><span class="nav-dot" style="background:var(--teal)"></span>Flow Cytometry</a>
   <a href="#genomics"><span class="nav-dot" style="background:var(--blue)"></span>Genomics</a>
@@ -315,46 +311,57 @@
   <a href="#mass"><span class="nav-dot" style="background:var(--olive)"></span>Mass Cytometry</a>
 </nav>
 
-<!-- ══════════════════════════════════════
-     FLOW CYTOMETRY
-══════════════════════════════════════ -->
+<!-- FLOW CYTOMETRY -->
 <div id="flow" class="section">
   <div class="section-header">
     <h2><span class="dot" style="background:var(--teal)"></span>Flow Cytometry</h2>
-    <p>Foundations, practical protocols, and analysis tools. Start with the core theory and work through to data analysis in FlowJo.</p>
+    <p>Foundations, practical protocols, and analysis tools. Structured across four tiers: from first introduction through to applied technique and data analysis.</p>
   </div>
 
-  <!-- Core -->
+  <!-- TIER 0 -->
   <div class="subsection">
-    <p class="subsection-label">Core</p>
+    <p class="subsection-label">Tier 0 · Before the Journey</p>
     <div class="grid">
 
       <div class="card" style="--accent:var(--teal)">
-        <span class="card-label">Introduction</span>
-        <h3><a href="Fundamentals_of_Flow_Cytometry.html">Fundamentals of Flow Cytometry</a></h3>
-        <p>The complete introduction — light scatter, fluorescence detection, instrument design, and how it all translates to your data. 120 slides.</p>
-      </div>
-
-      <div class="card" style="--accent:var(--teal)">
-        <span class="card-label">Introduction</span>
-        <h3><a href="Cytometry - A Guided Journey/index.html">Cytometry — A Guided Journey</a></h3>
-        <p>A narrative walkthrough of core cytometry concepts, built for researchers coming to flow cytometry for the first time.</p>
+        <span class="card-label">Infographic</span>
+        <h3><a href="WhatIsFlowCytometry/index.html">What is Flow Cytometry?</a></h3>
+        <p>A single-page introduction: what the technique measures, how the instrument works, and what the data looks like.</p>
       </div>
 
     </div>
   </div>
 
-  <!-- Practical Guides -->
+  <!-- TIER 1 -->
   <div class="subsection" style="margin-top:1.5rem">
-    <p class="subsection-label">Practically...</p>
+    <p class="subsection-label">Tier 1 · A Guided Journey</p>
+    <div class="grid">
+
+      <div class="card" style="--accent:var(--teal)">
+        <span class="card-label">Seminar</span>
+        <h3><a href="Cytometry - A Guided Journey/index.html">Cytometry: A Guided Journey</a></h3>
+        <p>A narrative walkthrough of core cytometry concepts, built for researchers coming to flow cytometry for the first time.</p>
+      </div>
+
+      <div class="card" style="--accent:var(--teal)">
+        <span class="card-label">Introduction</span>
+        <h3><a href="Fundamentals_of_Flow_Cytometry.html">Fundamentals of Flow Cytometry</a></h3>
+        <p>The complete introduction: light scatter, fluorescence detection, instrument design, and how it all translates to your data. 120 slides.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TIER 2 -->
+  <div class="subsection" style="margin-top:1.5rem">
+    <p class="subsection-label">Tier 2 · Practically...</p>
     <div class="grid">
 
       <div class="card" style="--accent:var(--teal)">
         <span class="card-label">Practically...</span>
         <h3><a href="Practically/SamplePrep/index.html">Practically... Sample Preparation</a></h3>
-        <p>What your cells need before they reach the instrument — tissue dissociation, viability, fixation, and storage.</p>
+        <p>What your cells need before they reach the instrument: tissue dissociation, viability, fixation, and storage.</p>
       </div>
-
 
       <div class="card" style="--accent:var(--teal)">
         <span class="card-label">Practically...</span>
@@ -371,7 +378,7 @@
       <div class="card" style="--accent:var(--teal)">
         <span class="card-label">Practically...</span>
         <h3><a href="Practically/Sorting/index.html">Practically... Sorting</a></h3>
-        <p>Planning and executing a sort — sample preparation, tube setup, post-sort viability, and yield expectations.</p>
+        <p>Planning and executing a sort: sample preparation, tube setup, post-sort viability, and yield expectations.</p>
       </div>
 
       <div class="card" style="--accent:var(--teal)">
@@ -383,13 +390,57 @@
       <div class="card" style="--accent:var(--teal)">
         <span class="card-label">Practically...</span>
         <h3><a href="Practically/Data Presentation/index.html">Practically... Data Presentation</a></h3>
-        <p>How to present flow cytometry data clearly in papers and talks — figure standards and what to avoid.</p>
+        <p>How to present flow cytometry data clearly in papers and talks: figure standards and what to avoid.</p>
       </div>
 
     </div>
   </div>
 
-  <!-- Analysis -->
+  <!-- TIER 3 -->
+  <div class="subsection" style="margin-top:1.5rem">
+    <p class="subsection-label">Tier 3 · Support Library</p>
+    <div class="grid">
+
+      <div class="card" style="--accent:var(--teal)">
+        <span class="card-label">Infographic</span>
+        <h3><a href="FlowControls/index.html">Flow Cytometry Controls</a></h3>
+        <p>Which controls your experiment needs, what each one does, and how to interpret them correctly.</p>
+      </div>
+
+      <div class="card" style="--accent:var(--teal)">
+        <span class="card-label">Infographic</span>
+        <h3><a href="FilterNotation/index.html">Reading Filter Notation</a></h3>
+        <p>How to decode the filter notation on your instrument: bandpass, longpass, and shortpass filters explained.</p>
+      </div>
+
+      <div class="card" style="--accent:var(--teal)">
+        <span class="card-label">Infographic</span>
+        <h3><a href="SamplePrepGuide/index.html">Sample Prep Decision Guide</a></h3>
+        <p>A decision guide for sample preparation: what to do based on your tissue type, fixation needs, and downstream assay.</p>
+      </div>
+
+      <div class="card" style="--accent:var(--teal)">
+        <span class="card-label">Infographic</span>
+        <h3><a href="FixAndPerm/index.html">Fixation and Permeabilisation</a></h3>
+        <p>When and how to fix and permeabilise cells: the chemistry, the options, and the consequences for downstream staining.</p>
+      </div>
+
+      <div class="card" style="--accent:var(--teal)">
+        <span class="card-label">Infographic</span>
+        <h3><a href="FluorochromeReference/index.html">Fluorochrome Brightness Reference</a></h3>
+        <p>Brightness rankings for common fluorochromes on standard lasers: the reference card for building a panel.</p>
+      </div>
+
+      <div class="card" style="--accent:var(--teal)">
+        <span class="card-label">Infographic</span>
+        <h3><a href="DataPlots/index.html">Data Plots and When to Use Them</a></h3>
+        <p>Dot plots, histograms, and contour plots: what each shows and when to choose one over another.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ANALYSIS -->
   <div class="subsection" style="margin-top:1.5rem">
     <p class="subsection-label">Analysis</p>
     <div class="grid">
@@ -397,7 +448,7 @@
       <div class="card" style="--accent:var(--teal)">
         <span class="card-label">FlowJo</span>
         <h3><a href="FlowJoTraining1.html">Introduction to FlowJo</a></h3>
-        <p>Getting started with FlowJo — importing data, building gating hierarchies, and extracting statistics.</p>
+        <p>Getting started with FlowJo: importing data, building gating hierarchies, and extracting statistics.</p>
       </div>
 
       <div class="card" style="--accent:var(--teal)">
@@ -412,62 +463,71 @@
 </div>
 <div class="section-gap"></div>
 
-<!-- ══════════════════════════════════════
-     GENOMICS
-══════════════════════════════════════ -->
+<!-- GENOMICS -->
 <div id="genomics" class="section">
   <div class="section-header">
     <h2><span class="dot" style="background:var(--blue)"></span>Genomics</h2>
-    <p>The Make Smarter Sequencing Decisions seminar series — five talks designed to help researchers understand what goes into a sequencing experiment before they book one. Developed by StemCore, 2025.</p>
+    <p>The Make Smarter Sequencing Decisions seminar series: five talks designed to help researchers understand what goes into a sequencing experiment before they book one. Developed by StemCore, 2025.</p>
   </div>
 
-  <!-- Seminar Series -->
   <div class="subsection">
     <p class="subsection-label">Make Smarter Sequencing Decisions</p>
     <div class="grid">
 
       <div class="card" style="--accent:var(--blue)">
         <span class="card-label">Make Smarter Sequencing Decisions</span>
-        <h3><a href="DNASequencing/index.html">DNA Sequencing — The Short and Long of It</a></h3>
-        <p>Short-read and long-read sequencing compared — how each works, what each is best for, and how to choose for your experiment.</p>
+        <h3><a href="DNASequencing/index.html">DNA Sequencing: The Short and Long of It</a></h3>
+        <p>Short-read and long-read sequencing compared: how each works, what each is best for, and how to choose for your experiment.</p>
       </div>
 
       <div class="card" style="--accent:var(--blue)">
         <span class="card-label">Make Smarter Sequencing Decisions</span>
         <h3><a href="SangerDecoded/index.html">Sanger Decoded</a></h3>
-        <p>The original sequencing method — still the gold standard for validation. When to use it and what its limitations are.</p>
+        <p>The original sequencing method, still the gold standard for validation. When to use it and what its limitations are.</p>
       </div>
 
       <div class="card" style="--accent:var(--blue)">
         <span class="card-label">Make Smarter Sequencing Decisions</span>
         <h3><a href="OmicsByDesign/index.html">Omics by Design</a></h3>
-        <p>Experimental design for genomics — how the choices you make before you sequence determine the quality of what you get back.</p>
+        <p>Experimental design for genomics: how the choices you make before you sequence determine the quality of what you get back.</p>
       </div>
 
       <div class="card" style="--accent:var(--blue)">
         <span class="card-label">Make Smarter Sequencing Decisions</span>
         <h3><a href="ASingularFocus/index.html">A Singular Focus</a></h3>
-        <p>Single-cell sequencing — what it reveals that bulk sequencing can't, and what it takes to do it well.</p>
+        <p>Single-cell sequencing: what it reveals that bulk sequencing can't, and what it takes to do it well.</p>
       </div>
 
       <div class="card" style="--accent:var(--blue)">
         <span class="card-label">Make Smarter Sequencing Decisions</span>
         <h3><a href="LongReads/index.html">Long Reads, Long Insights</a></h3>
-        <p>Long-read sequencing with Oxford Nanopore — the applications it unlocks and how to get the most from it.</p>
+        <p>Long-read sequencing with Oxford Nanopore: the applications it unlocks and how to get the most from it.</p>
       </div>
 
     </div>
   </div>
 
-  <!-- Foundation -->
   <div class="subsection" style="margin-top:1.5rem">
     <p class="subsection-label">Foundation</p>
     <div class="grid">
 
       <div class="card" style="--accent:var(--blue)">
         <span class="card-label">Introduction</span>
-        <h3><a href="InterrogatingDNA/index.html">Interrogating DNA — From Detection to Direct Sequencing</a></h3>
-        <p>A broad introduction to the technologies used to detect, measure, and sequence DNA — from PCR through to nanopore. 43 slides.</p>
+        <h3><a href="InterrogatingDNA/index.html">Interrogating DNA: From Detection to Direct Sequencing</a></h3>
+        <p>A broad introduction to the technologies used to detect, measure, and sequence DNA: from PCR through to nanopore. 43 slides.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="subsection" style="margin-top:1.5rem">
+    <p class="subsection-label">Infographics</p>
+    <div class="grid">
+
+      <div class="card" style="--accent:var(--blue)">
+        <span class="card-label">Infographic</span>
+        <h3><a href="RNAFixation/index.html">RNA Fixation for Sequencing</a></h3>
+        <p>How fixation affects RNA integrity and what that means for your sequencing results: the options, the tradeoffs, and when each applies.</p>
       </div>
 
     </div>
@@ -476,15 +536,11 @@
 </div>
 <div class="section-gap"></div>
 
-
-
-<!-- ══════════════════════════════════════
-     R ANALYSIS
-══════════════════════════════════════ -->
+<!-- R ANALYSIS -->
 <div id="r-analysis" class="section">
   <div class="section-header">
     <h2><span class="dot" style="background:var(--navy)"></span>Cytometry Analysis in R</h2>
-    <p>A practical course covering cytometry data analysis in R — from import and QC through to dimensionality reduction and population identification. In development.</p>
+    <p>A practical course covering cytometry data analysis in R: from import and QC through to dimensionality reduction and population identification. In development.</p>
   </div>
 
   <div class="subsection">
@@ -499,11 +555,9 @@
   </div>
 
 </div>
-
-<!-- ══════════════════════════════════════
-     ABOUT
-══════════════════════════════════════ -->
 <div class="section-gap"></div>
+
+<!-- ABOUT -->
 <div id="about" class="section">
   <div class="section-header">
     <h2><span class="dot" style="background:#CBD5E1"></span>About StemCore</h2>
@@ -515,7 +569,7 @@
 
       <div class="card" style="--accent:#CBD5E1">
         <span class="card-label">Laboratory</span>
-        <h3><a href="StemCore/index.html">StemCore — An Introduction</a></h3>
+        <h3><a href="StemCore/index.html">StemCore: An Introduction</a></h3>
         <p>What StemCore offers, who we work with, and how to access our services.</p>
       </div>
 
@@ -531,10 +585,7 @@
 </div>
 <div class="section-gap"></div>
 
-
-<!-- ══════════════════════════════════════
-     MASS CYTOMETRY
-══════════════════════════════════════ -->
+<!-- MASS CYTOMETRY -->
 <div id="mass" class="section">
   <div class="section-header">
     <h2><span class="dot" style="background:var(--olive)"></span>Mass Cytometry</h2>
@@ -548,19 +599,19 @@
       <div class="card" style="--accent:var(--olive)">
         <span class="card-label">Overview</span>
         <h3><a href="/How To CyToF - The OHRI guide to mass cytometry.html">The OHRI Guide to Mass Cytometry Projects</a></h3>
-        <p>Everything you need to plan and execute a CyTOF project at OHRI — from first contact through to data delivery.</p>
+        <p>Everything you need to plan and execute a CyTOF project at OHRI: from first contact through to data delivery.</p>
       </div>
 
       <div class="card" style="--accent:var(--olive)">
         <span class="card-label">Instrument</span>
         <h3><a href="How_it_works_All_in_One_xaringan.html">How the Helios Works</a></h3>
-        <p>The physics of mass cytometry — metal-tagged antibody detection and what instrument design means for sample quality.</p>
+        <p>The physics of mass cytometry: metal-tagged antibody detection and what instrument design means for sample quality.</p>
       </div>
 
       <div class="card" style="--accent:var(--olive)">
         <span class="card-label">Sample Preparation</span>
         <h3><a href="Sample_Preparation_All_in_One_xaringan.html">Preparing Samples for the Helios</a></h3>
-        <p>CyTOF-specific sample preparation — fixation, barcoding compatibility, and what degrades signal quality.</p>
+        <p>CyTOF-specific sample preparation: fixation, barcoding compatibility, and what degrades signal quality.</p>
       </div>
 
       <div class="card" style="--accent:var(--olive)">
@@ -572,30 +623,30 @@
       <div class="card" style="--accent:var(--olive)">
         <span class="card-label">How-to</span>
         <h3><a href="How-to_Pamphlets/Planning Mass Cytometry Projects.html">Planning Your Project</a></h3>
-        <p>Sample numbers, experimental controls, and timeline — what to decide before you start staining.</p>
+        <p>Sample numbers, experimental controls, and timeline: what to decide before you start staining.</p>
       </div>
 
       <div class="card" style="--accent:var(--olive)">
         <span class="card-label">How-to</span>
         <h3><a href="How-to_Pamphlets/Preparing Mass Cytometry Samples.html">Preparing Your Samples</a></h3>
-        <p>Step-by-step guidance — cell counts, viability, cisplatin staining, and freezing for CyTOF.</p>
+        <p>Step-by-step guidance: cell counts, viability, cisplatin staining, and freezing for CyTOF.</p>
       </div>
 
       <div class="card" style="--accent:var(--olive)">
         <span class="card-label">How-to</span>
         <h3><a href="/How-to_Pamphlets/Spotlight-on-Barcoding.html">Spotlight on Barcoding</a></h3>
-        <p>Why barcoding reduces batch effects and improves data quality — and how to implement it.</p>
+        <p>Why barcoding reduces batch effects and improves data quality, and how to implement it.</p>
       </div>
 
       <div class="card" style="--accent:var(--olive)">
         <span class="card-label">Analysis</span>
         <h3><a href="/How-to_Pamphlets/Gating Mass Cytometry Data.html">Gating Your Data</a></h3>
-        <p>Removing doublets and dead cells — the gating strategy that applies to every CyTOF experiment.</p>
+        <p>Removing doublets and dead cells: the gating strategy that applies to every CyTOF experiment.</p>
       </div>
 
       <div class="card" style="--accent:var(--olive)">
         <span class="card-label">Archive</span>
-        <h3><a href="OHRI Research Day 2021/index.html">Mass Cytometry Service — Research Day 2021</a></h3>
+        <h3><a href="OHRI Research Day 2021/index.html">Mass Cytometry Service: Research Day 2021</a></h3>
         <p>StemCore's CyTOF service overview presented at OHRI Research Day 2021.</p>
       </div>
 
@@ -605,14 +656,13 @@
 </div>
 <div class="section-gap"></div>
 
-<!-- ── FOOTER ── -->
+<!-- FOOTER -->
 <footer>
   <span>Core Principles · <a href="https://stemcore.ca" target="_blank">StemCore Laboratories</a> · Ottawa Hospital Research Institute</span>
   <span>Open access · Free to use</span>
 </footer>
 
 <script>
-  // Highlight active nav item on scroll
   const sections = document.querySelectorAll('.section[id]');
   const navLinks = document.querySelectorAll('.site-nav a');
   const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'));

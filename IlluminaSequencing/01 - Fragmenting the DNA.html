@@ -231,22 +231,22 @@
 
     stepLabel.textContent = ROW_COUNT + " strands of genomic DNA, out of millions in the sample";
     rowIds.forEach(id => renderIntact(document.getElementById(id)));
-    await wait(2000);
+    await wait(5000);
 
     stepLabel.textContent = "Sheared at random points, all at once, across every molecule";
     rowIds.forEach((id, r) => renderCutTight(document.getElementById(id), rowWidths[r]));
-    await wait(900);
+    await wait(4200);
 
     stepLabel.textContent = "Each piece becomes a separate template fragment";
     rowIds.forEach((id, r) => spreadOut(document.getElementById(id), rowWidths[r]));
-    await wait(2200);
+    await wait(5000);
 
     stepLabel.textContent = "Adapters are ligated onto both ends of every fragment";
     rowIds.forEach((id, r) => addAdapters(document.getElementById(id), rowWidths[r]));
-    await wait(2600);
+    await wait(5500);
 
     stepLabel.textContent = "Ready for the flow cell";
-    await wait(1600);
+    await wait(4500);
 
     rowIds.forEach(id => { document.getElementById(id).style.opacity = 0; });
     await wait(650);

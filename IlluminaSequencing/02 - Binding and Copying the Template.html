@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <title>Template Binding and Copying on the Flow Cell</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L0R9PC0Y3Y"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-L0R9PC0Y3Y');
+</script>
 <style>
   :root {
     --bg: #D9D9D9;
@@ -15,7 +22,7 @@
     --tmpl-adapter-start: #E07B39;
     --tmpl-adapter-end: #81A564;
     --copy-insert: #8FA0BC;
-    --copy-adapter-start: #EC9A5E;
+    --copy-adapter-start: #F0B07A;
     --copy-adapter-end: #A6C48C;
   }
   html, body {
@@ -26,14 +33,10 @@
     overflow: hidden;
   }
   .wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    width: 100vw;
-    box-sizing: border-box;
-    padding: 16px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    height: 100vh; width: 100vw;
+    box-sizing: border-box; padding: 16px;
   }
   .brand-badge {
     position: fixed; top: 24px; left: 24px;
@@ -44,233 +47,262 @@
   }
   .brand-logo { width: 123px; height: 123px; }
   h1 {
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0 0 2px 0;
-    letter-spacing: -0.5px;
-    color: #114D90;
+    font-size: 24px; font-weight: 700;
+    margin: 0 0 2px 0; letter-spacing: -0.5px; color: #114D90;
   }
   .subtitle {
-    color: #55606E;
-    font-size: 13px;
-    margin-bottom: 12px;
-    text-align: center;
-    max-width: 700px;
+    color: #55606E; font-size: 13px;
+    margin-bottom: 12px; text-align: center; max-width: 700px;
   }
   .panel {
     background: var(--panel);
-    border-radius: 16px;
-    padding: 16px 34px;
+    border-radius: 16px; padding: 16px 34px;
     box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 60px rgba(0,0,0,0.4);
     overflow: hidden;
+    width: min(90vw, 860px); box-sizing: border-box;
   }
   .stepLabel {
-    text-align: center;
-    font-size: 13px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-bottom: 4px;
-    height: 16px;
+    text-align: center; font-size: 13px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1.5px;
+    margin-bottom: 4px; height: 16px;
   }
   .progressLabel {
-    text-align: center;
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 10px;
-    height: 14px;
+    text-align: center; font-size: 12px; color: var(--muted);
+    margin-bottom: 10px; height: 14px;
     font-family: "SF Mono", Menlo, Consolas, monospace;
   }
-  svg { display: block; }
+  svg { max-width: 100%; max-height: calc(100vh - 200px); width: auto; height: auto; display: block; }
   .surfaceRect { fill: var(--surface); }
-  .primerLine { stroke: var(--strand); stroke-width: 4; stroke-linecap: round; }
   .anchor { fill: var(--strand); }
   .backboneLine { stroke: var(--strand); stroke-width: 2; stroke-linecap: round; }
+  .primerBackbone { stroke: var(--strand); stroke-width: 2; stroke-linecap: round; }
   .baseDot { transition: opacity 0.25s ease, transform 0.25s ease; }
-  .templateGroup { transition: transform 0.9s ease, opacity 0.9s ease; }
+  .templateGroup { transition: transform 1.4s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.5s ease; }
   .legend {
-    display: flex;
-    gap: 28px;
-    margin-top: 10px;
-    font-size: 20px;
-    color: #55606E;
-    justify-content: center;
+    display: flex; gap: 22px; margin-top: 10px;
+    font-size: 13px; color: #55606E;
+    justify-content: center; flex-wrap: wrap;
   }
-  .legend span { display: inline-flex; align-items: center; gap: 10px; }
-  .dot { width: 18px; height: 18px; border-radius: 50%; display: inline-block; }
-
-  /* responsive sizing */
-  .panel { width: min(90vw, 860px); box-sizing: border-box; }
-  svg { max-width: 100%; max-height: calc(100vh - 200px); width: auto; height: auto; display: block; }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
 </style>
 </head>
 <body>
 <div class="brand-badge"><img src="Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
 <div class="wrap">
   <h1>Binding and Copying the Template</h1>
-  <div class="subtitle">A DNA fragment lands on the flow cell and binds a short primer fixed to the surface. Every fragment has known adapter sequences on both ends, which is what lets it bind at all — the middle is the actual DNA being sequenced. Polymerase copies the whole thing. The copy stays bound, the original is washed away. No color here yet — that only comes in once sequencing itself starts.</div>
+  <div class="subtitle">The flow cell surface carries short complementary oligos anchored across its surface. Each DNA fragment in solution has adapter sequences on both ends. One adapter end hybridises to its complementary surface oligo, tethering the fragment. Polymerase then copies from that anchor all the way to the other end. The original template washes away. The copy stays bound.</div>
 
   <div class="panel">
-    <div class="stepLabel" id="stepLabel">Template approaches</div>
+    <div class="stepLabel" id="stepLabel">Complementary oligos anchored to the flow cell surface</div>
     <div class="progressLabel" id="progressLabel">&nbsp;</div>
-    <svg id="svgRoot" viewBox="0 0 640 700">
-      <rect class="surfaceRect" x="0" y="660" width="640" height="40" rx="6"></rect>
-      <g id="col0" transform="translate(120,0)"></g>
-      <g id="col1" transform="translate(320,0)"></g>
-      <g id="col2" transform="translate(520,0)"></g>
+    <svg id="svgRoot" viewBox="0 0 640 600">
+      <rect class="surfaceRect" x="0" y="550" width="640" height="50" rx="6"></rect>
+      <g id="bgSites"></g>
+      <g id="col0" transform="translate(46,0)"></g>
+      <g id="col1" transform="translate(136,0)"></g>
+      <g id="col2" transform="translate(226,0)"></g>
+      <g id="col3" transform="translate(316,0)"></g>
+      <g id="col4" transform="translate(406,0)"></g>
+      <g id="col5" transform="translate(496,0)"></g>
+      <g id="col6" transform="translate(586,0)"></g>
     </svg>
   </div>
 
   <div class="legend">
-    <span><span class="dot" style="background:var(--tmpl-adapter-start)"></span>Adapter (surface end)</span>
-    <span><span class="dot" style="background:var(--tmpl-insert)"></span>Insert (the DNA being sequenced)</span>
+    <span><span class="dot" style="background:var(--tmpl-adapter-start)"></span>Surface-bound adapter / template surface-end adapter</span>
+    <span><span class="dot" style="background:var(--tmpl-insert)"></span>Insert</span>
     <span><span class="dot" style="background:var(--tmpl-adapter-end)"></span>Adapter (free end)</span>
+    <span><span class="dot" style="background:var(--copy-insert)"></span>Copy</span>
   </div>
 </div>
 
 <script>
-  const stepLabel = document.getElementById("stepLabel");
+  const stepLabel     = document.getElementById("stepLabel");
   const progressLabel = document.getElementById("progressLabel");
-  const colIds = ["col0", "col1", "col2"];
-  const SURFACE_Y = 660;
-  const SPACING = 6.5;
-  const START_LIFT = -1200;
-  const BATCH_SIZE = 2;
-  const TICK_MS = 220;
-  const ADAPTER_LEN = 8;
+  const colIds        = ["col0","col1","col2","col3","col4","col5","col6"];
+  const ns            = "http://www.w3.org/2000/svg";
 
-  // returns an array of "adapterStart" / "insert" / "adapterEnd" tags describing the structure
-  function buildStructure(totalLen) {
+  const SURFACE_Y   = 550;  // top of surface rect
+  const ADAPTER_LEN = 8;    // bases per adapter
+  const SPACING     = 5.5;  // px per base — radius 2.3px gives 0.9px gap between beads
+  const PRIMER_STUB = ADAPTER_LEN * SPACING;  // 44px — same height as template orange adapter
+  const PRIMER_TIP  = SURFACE_Y - PRIMER_STUB;  // 422 — where template adapter docks
+  // Bottom template bead (adapterStart, index 0) sits at PRIMER_TIP - SPACING at rest.
+  // START_LIFT positions it at y = 0 so the full fragment descends visibly through solution.
+  const START_LIFT  = -(SURFACE_Y - SPACING);   // -460.5 — bead 0 enters at y=0
+  const BATCH_SIZE  = 2;
+  const TICK_MS     = 200;
+
+  // Background matrix: neutral dots showing the surface is covered in complementary oligos
+  (function drawBgMatrix() {
+    const g = document.getElementById("bgSites");
+    const cols = 18, rows = 2, xStep = 640 / cols;
+    const ys = [564, 582];
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const dot = document.createElementNS(ns, "circle");
+        dot.setAttribute("cx", Math.round(xStep * 0.5 + c * xStep));
+        dot.setAttribute("cy", ys[r]);
+        dot.setAttribute("r", "3");
+        dot.setAttribute("fill", "var(--strand)");
+        dot.setAttribute("opacity", "0.45");
+        g.appendChild(dot);
+      }
+    }
+  })();
+
+  // Columns 2 and 5 carry the green/olive surface oligo — fragment binds the other way
+  const COL_TYPES = ["orange","orange","green","orange","orange","green","orange"];
+
+  // Orange columns: adapterStart (orange) at bottom hybridises to surface, adapterEnd (olive) free at top
+  // Green columns: adapterEnd (olive) at bottom hybridises to surface, adapterStart (orange) free at top
+  function buildStructure(totalLen, colType) {
     const insertLen = Math.max(totalLen - ADAPTER_LEN * 2, 10);
-    const structure = [];
-    for (let i = 0; i < ADAPTER_LEN; i++) structure.push("adapterStart");
-    for (let i = 0; i < insertLen; i++) structure.push("insert");
-    for (let i = 0; i < ADAPTER_LEN; i++) structure.push("adapterEnd");
-    return structure;
+    const s = [];
+    if (colType === "green") {
+      for (let i = 0; i < ADAPTER_LEN; i++) s.push("adapterEnd");   // olive at bottom (hybridises)
+      for (let i = 0; i < insertLen; i++)   s.push("insert");
+      for (let i = 0; i < ADAPTER_LEN; i++) s.push("adapterStart"); // orange at top (free end)
+    } else {
+      for (let i = 0; i < ADAPTER_LEN; i++) s.push("adapterStart"); // orange at bottom (hybridises)
+      for (let i = 0; i < insertLen; i++)   s.push("insert");
+      for (let i = 0; i < ADAPTER_LEN; i++) s.push("adapterEnd");   // olive at top (free end)
+    }
+    return s;
+  }
+
+  function svgEl(tag, attrs) {
+    const e = document.createElementNS(ns, tag);
+    Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v));
+    return e;
   }
 
   let templateLen = 60;
-  const colState = colIds.map(() => ({ structure: [] }));
+  const colState = colIds.map(() => ({ structure: [], colType: "orange" }));
 
-  function buildStatic(g) {
+  function buildStatic(g, colType) {
     g.innerHTML = "";
 
-    const primer = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    primer.setAttribute("x1", -9);
-    primer.setAttribute("y1", SURFACE_Y);
-    primer.setAttribute("x2", -9);
-    primer.setAttribute("y2", SURFACE_Y - 12);
-    primer.setAttribute("class", "primerLine");
-    g.appendChild(primer);
+    const stubColor = colType === "green"
+      ? "var(--tmpl-adapter-end)"
+      : "var(--tmpl-adapter-start)";
 
-    const anchor = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    anchor.setAttribute("cx", -9);
-    anchor.setAttribute("cy", SURFACE_Y);
-    anchor.setAttribute("r", 5);
-    anchor.setAttribute("class", "anchor");
-    g.appendChild(anchor);
+    // Anchor point at the surface (left strand, x=-9)
+    g.appendChild(svgEl("circle", { cx: -9, cy: SURFACE_Y, r: 5, class: "anchor" }));
 
-    const copyLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    copyLine.setAttribute("id", g.id + "_copyline");
-    copyLine.setAttribute("x1", -9);
-    copyLine.setAttribute("y1", SURFACE_Y);
-    copyLine.setAttribute("x2", -9);
-    copyLine.setAttribute("y2", SURFACE_Y);
-    copyLine.setAttribute("class", "backboneLine");
-    g.appendChild(copyLine);
+    // Surface adapter stub — colour matches the column type
+    g.appendChild(svgEl("line", {
+      x1: -9, y1: SURFACE_Y, x2: -9, y2: PRIMER_TIP,
+      stroke: stubColor, "stroke-width": 2, "stroke-linecap": "round"
+    }));
+    for (let i = 0; i < ADAPTER_LEN; i++) {
+      g.appendChild(svgEl("circle", {
+        cx: -9, cy: SURFACE_Y - (i + 1) * SPACING,
+        r: 2.3, fill: stubColor
+      }));
+    }
 
-    const copyBeads = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    copyBeads.setAttribute("id", g.id + "_copybeads");
-    g.appendChild(copyBeads);
+    // Copy backbone — starts at PRIMER_TIP, grows upward during synthesis
+    g.appendChild(svgEl("line", {
+      id: g.id + "_copyline",
+      x1: -9, y1: PRIMER_TIP, x2: -9, y2: PRIMER_TIP,
+      class: "backboneLine"
+    }));
 
-    const templateGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    templateGroup.setAttribute("id", g.id + "_template");
-    templateGroup.setAttribute("class", "templateGroup");
-    templateGroup.style.transform = "translateY(" + START_LIFT + "px)";
-    templateGroup.style.opacity = 0;
+    // Copy beads container
+    g.appendChild(svgEl("g", { id: g.id + "_copybeads" }));
 
-    const templateBackbone = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    templateBackbone.setAttribute("x1", 9);
-    templateBackbone.setAttribute("y1", SURFACE_Y);
-    templateBackbone.setAttribute("x2", 9);
-    templateBackbone.setAttribute("y2", SURFACE_Y - templateLen * SPACING);
-    templateBackbone.setAttribute("class", "backboneLine");
-    templateGroup.appendChild(templateBackbone);
+    // Template group — full fragment, descends from above
+    const tg = document.createElementNS(ns, "g");
+    tg.setAttribute("id", g.id + "_template");
+    tg.setAttribute("class", "templateGroup");
+    tg.style.transform = "translateY(" + START_LIFT + "px)";
+    tg.style.opacity = 1;
 
     const state = colState[colIds.indexOf(g.id)];
+    const tmplLen = state.structure.length;
+
+    // Backbone
+    tg.appendChild(svgEl("line", {
+      x1: 9, y1: SURFACE_Y - SPACING,
+      x2: 9, y2: SURFACE_Y - SPACING - (tmplLen - 1) * SPACING,
+      class: "backboneLine"
+    }));
+
+    // Beads — bottom section matches surface stub colour, top section is the free-end adapter
     state.structure.forEach((type, i) => {
-      const y = SURFACE_Y - (i + 1) * SPACING;
-      const tb = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      tb.setAttribute("cx", 9);
-      tb.setAttribute("cy", y);
-      tb.setAttribute("r", 3.4);
-      let fillColor = "var(--tmpl-insert)";
-      if (type === "adapterStart") fillColor = "var(--tmpl-adapter-start)";
-      else if (type === "adapterEnd") fillColor = "var(--tmpl-adapter-end)";
-      tb.setAttribute("fill", fillColor);
-      templateGroup.appendChild(tb);
+      let fill = "var(--tmpl-insert)";
+      if (type === "adapterStart") fill = "var(--tmpl-adapter-start)";
+      else if (type === "adapterEnd") fill = "var(--tmpl-adapter-end)";
+      tg.appendChild(svgEl("circle", {
+        cx: 9, cy: SURFACE_Y - (i + 1) * SPACING,
+        r: 2.3, fill
+      }));
     });
 
-    g.appendChild(templateGroup);
+    g.appendChild(tg);
   }
 
-  function addCopyBead(g, index, type) {
-    const y = SURFACE_Y - (index + 1) * SPACING;
+  function addCopyBead(g, index, type, colType) {
+    // Skip the surface adapter — polymerase only copies insert + free-end adapter
+    const surfaceType = colType === "green" ? "adapterEnd" : "adapterStart";
+    if (type === surfaceType) return;
+
+    // Reindex: copy bead 0 is the first insert base, starting at PRIMER_TIP
+    const copyIndex = index - ADAPTER_LEN;
+    const y = PRIMER_TIP - (copyIndex + 1) * SPACING;
     const beadsGroup = document.getElementById(g.id + "_copybeads");
-    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    c.setAttribute("cx", -9);
-    c.setAttribute("cy", y);
-    c.setAttribute("r", 3.4);
-    let fillColor = "var(--copy-insert)";
-    if (type === "adapterStart") fillColor = "var(--copy-adapter-start)";
-    else if (type === "adapterEnd") fillColor = "var(--copy-adapter-end)";
-    c.setAttribute("fill", fillColor);
-    c.setAttribute("class", "baseDot");
+
+    let fill = "var(--copy-insert)";
+    if (type === "adapterEnd")   fill = "var(--copy-adapter-end)";
+    if (type === "adapterStart") fill = "var(--copy-adapter-start)";
+
+    const c = svgEl("circle", { cx: -9, cy: y, r: 2.3, fill, class: "baseDot" });
     c.style.opacity = 0;
     c.style.transform = "scale(0.3)";
-    c.style.transformOrigin = "center " + y + "px";
+    c.style.transformOrigin = "-9px " + y + "px";
     beadsGroup.appendChild(c);
-    requestAnimationFrame(() => {
-      c.style.opacity = 1;
-      c.style.transform = "scale(1)";
-    });
+    requestAnimationFrame(() => { c.style.opacity = 1; c.style.transform = "scale(1)"; });
 
-    const line = document.getElementById(g.id + "_copyline");
-    line.setAttribute("y2", y);
+    document.getElementById(g.id + "_copyline").setAttribute("y2", y);
   }
 
-  async function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+  function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 
   async function cycle() {
-    templateLen = 50 + Math.floor(Math.random() * 41); // 50 to 90 bases total
+    templateLen = 80 + Math.floor(Math.random() * 16); // 80-95 bases
 
     colIds.forEach((id, i) => {
-      colState[i].structure = buildStructure(templateLen);
-      buildStatic(document.getElementById(id));
+      const ct = COL_TYPES[i];
+      colState[i].colType = ct;
+      colState[i].structure = buildStructure(templateLen, ct);
+      buildStatic(document.getElementById(id), ct);
     });
-    progressLabel.textContent = "\u00A0";
-    await wait(50);
+    progressLabel.textContent = " ";
+    await wait(800);
 
-    stepLabel.textContent = "A template fragment approaches the flow cell";
-    colIds.forEach((id) => {
-      const tg = document.getElementById(id + "_template");
+    // Phase 1: fragment drifts down through solution
+    stepLabel.textContent = "Fragment drifts toward the surface through solution";
+    colIds.forEach(id => {
       requestAnimationFrame(() => {
-        tg.style.transform = "translateY(0px)";
-        tg.style.opacity = 1;
+        document.getElementById(id + "_template").style.transform = "translateY(0px)";
       });
     });
-    await wait(1000);
+    await wait(1600);
 
-    stepLabel.textContent = "Its adapter binds a matching primer on the surface";
-    await wait(600);
+    // Phase 2: surface-end adapter hybridises to the complementary surface oligo
+    stepLabel.textContent = "Surface-end adapter hybridises to the complementary oligo";
+    await wait(700);
 
-    stepLabel.textContent = "Polymerase copies the whole fragment, end to end";
-    const structure = colState[0].structure; // shared length/structure across columns
+    // Phase 3: polymerase copies from surface oligo through insert to free-end adapter
+    stepLabel.textContent = "Polymerase copies from the surface anchor to the free end";
+    const structure = colState[0].structure;
     for (let i = 0; i < structure.length; i += BATCH_SIZE) {
       const end = Math.min(i + BATCH_SIZE, structure.length);
       for (let j = i; j < end; j++) {
         colIds.forEach((id, ci) => {
-          addCopyBead(document.getElementById(id), j, colState[ci].structure[j]);
+          addCopyBead(document.getElementById(id), j, colState[ci].structure[j], colState[ci].colType);
         });
       }
       progressLabel.textContent = "base " + end + " of " + structure.length + " copied";
@@ -278,22 +310,23 @@
     }
     await wait(500);
 
-    stepLabel.textContent = "Original template washes away — the copy stays bound";
+    // Phase 4: template washes, copy stays
+    stepLabel.textContent = "Template washes away. The copy stays bound to the surface.";
     progressLabel.textContent = structure.length + " bases copied";
-    colIds.forEach((id) => {
+    colIds.forEach(id => {
       const tg = document.getElementById(id + "_template");
-      tg.style.transform = "translateY(" + START_LIFT + "px)";
       tg.style.opacity = 0;
+      tg.style.transform = "translateY(" + START_LIFT + "px)";
     });
-    await wait(1200);
+    await wait(1300);
 
-    stepLabel.textContent = "Ready for a new template";
+    stepLabel.textContent = "Ready for the next fragment";
     await wait(900);
 
     cycle();
   }
 
-  colIds.forEach((id) => buildStatic(document.getElementById(id)));
+  colIds.forEach((id, i) => buildStatic(document.getElementById(id), COL_TYPES[i]));
   cycle();
 </script>
 </body>

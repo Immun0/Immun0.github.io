@@ -98,6 +98,10 @@
   }
   .legend span { display: inline-flex; align-items: center; gap: 10px; }
   .dot { width: 18px; height: 18px; border-radius: 50%; display: inline-block; }
+
+  /* responsive sizing */
+  .panel { width: min(90vw, 860px); box-sizing: border-box; }
+  svg { max-width: 100%; max-height: calc(100vh - 200px); width: auto; height: auto; display: block; }
 </style>
 </head>
 <body>
@@ -109,7 +113,7 @@
   <div class="panel">
     <div class="stepLabel" id="stepLabel">Template approaches</div>
     <div class="progressLabel" id="progressLabel">&nbsp;</div>
-    <svg id="svgRoot" width="640" height="700" viewBox="0 0 640 700">
+    <svg id="svgRoot" viewBox="0 0 640 700">
       <rect class="surfaceRect" x="0" y="660" width="640" height="40" rx="6"></rect>
       <g id="col0" transform="translate(120,0)"></g>
       <g id="col1" transform="translate(320,0)"></g>

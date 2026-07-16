@@ -88,6 +88,10 @@
   }
   .legend span { display: inline-flex; align-items: center; gap: 12px; }
   .dot { width: 26px; height: 26px; border-radius: 50%; display: inline-block; }
+
+  /* responsive sizing */
+  .panel { width: min(90vw, 860px); box-sizing: border-box; }
+  svg { max-width: 100%; max-height: calc(100vh - 200px); width: auto; height: auto; display: block; }
 </style>
 </head>
 <body>
@@ -98,7 +102,7 @@
 
   <div class="panel">
     <div class="stepLabel" id="stepLabel">Extension</div>
-    <svg width="640" height="320" viewBox="0 0 640 320">
+    <svg viewBox="0 0 640 320">
       <rect class="surfaceRect" x="0" y="280" width="640" height="40" rx="6"></rect>
       <g id="strand0" transform="translate(120,0)"></g>
       <g id="strand1" transform="translate(320,0)"></g>

@@ -106,6 +106,10 @@
   }
   .legend span { display: inline-flex; align-items: center; gap: 10px; }
   .dot { width: 18px; height: 18px; border-radius: 50%; display: inline-block; }
+
+  /* responsive sizing */
+  .panel { width: min(90vw, 860px); box-sizing: border-box; }
+  svg { max-width: 100%; max-height: calc(100vh - 200px); width: auto; height: auto; display: block; }
 </style>
 </head>
 <body>
@@ -117,7 +121,7 @@
   <div class="panel">
     <div class="stepLabel" id="stepLabel">One long strand, anchored to the surface</div>
     <div class="countLabel" id="countLabel">&nbsp;</div>
-    <svg id="svgRoot" width="620" height="360" viewBox="0 0 620 360">
+    <svg id="svgRoot" viewBox="0 0 620 360">
       <rect class="surfaceRect" x="0" y="320" width="620" height="40" rx="6"></rect>
       <g id="forest" transform="translate(310,0)"></g>
     </svg>

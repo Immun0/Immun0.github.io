@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Sequencing by Synthesis — Base Incorporation</title>
+<title>Sequencing by Synthesis:Base Incorporation</title>
 <style>
   :root {
     --bg: #D9D9D9;
@@ -98,7 +98,7 @@
 <div class="brand-badge"><img src="Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
 <div class="wrap">
   <h1>Reading a Base</h1>
-  <div class="subtitle">Each strand is anchored to the flow cell and built on a fixed template. Every cycle, one labelled base is added on top of the last, imaged in place, then the label is cleared before the next base is added — the strand itself keeps growing.</div>
+  <div class="subtitle">Each strand is anchored to the flow cell and built on a fixed template. Every cycle, one labelled base is added on top of the last, imaged in place, then the label is cleared before the next base is added, and the strand itself keeps growing.</div>
 
   <div class="panel">
     <div class="stepLabel" id="stepLabel">Extension</div>
@@ -207,7 +207,7 @@
   async function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 
   async function cycle() {
-    stepLabel.textContent = "Extension — next base binds on top";
+    stepLabel.textContent = "Extension: next base binds on top";
     const chosen = [];
     strandIds.forEach((id, i) => {
       const g = document.getElementById(id);
@@ -223,7 +223,7 @@
     });
     await wait(900);
 
-    stepLabel.textContent = "Imaging — camera reads the newest base";
+    stepLabel.textContent = "Imaging: camera reads the newest base";
     strandIds.forEach((id, i) => {
       const g = document.getElementById(id);
       const topIndex = strandState[i].bases.length - 1;
@@ -238,7 +238,7 @@
     });
     await wait(400);
 
-    stepLabel.textContent = "Label cleared — base dims, only the newest stays bright";
+    stepLabel.textContent = "Label cleared: base dims, only the newest stays bright";
     strandIds.forEach((id, i) => {
       const topIndex = strandState[i].bases.length - 1;
       const dot = document.getElementById(id + "_base_" + topIndex);
@@ -247,7 +247,7 @@
     await wait(700);
 
     if (strandState[0].bases.length >= MAX_BASES) {
-      stepLabel.textContent = "Strand complete — resetting";
+      stepLabel.textContent = "Strand complete: resetting";
       await wait(1400);
       strandIds.forEach((id, i) => {
         strandState[i].bases = [];

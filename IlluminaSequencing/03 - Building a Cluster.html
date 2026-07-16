@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Bridge Amplification — Building a Cluster</title>
+<title>Bridge Amplification: Building a Cluster</title>
 <style>
   :root {
     --bg: #D9D9D9;
@@ -116,7 +116,7 @@
 <div class="brand-badge"><img src="Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
 <div class="wrap">
   <h1>Building a Cluster</h1>
-  <div class="subtitle">One long, anchored strand folds in half — its adapter reaches over and binds a matching primer nearby. That adapter-to-primer contact is the bridge. Polymerase extends along it, copying the whole fragment, and the bridge separates back into two straight, independent copies. Every one of those folds over again. Doubling each round, this is what turns one fragment into a dense, detectable cluster.</div>
+  <div class="subtitle">One long, anchored strand folds in half: its adapter reaches over and binds a matching primer nearby. That adapter-to-primer contact is the bridge. Polymerase extends along it, copying the whole fragment, and the bridge separates back into two straight, independent copies. Every one of those folds over again. Doubling each round, this is what turns one fragment into a dense, detectable cluster.</div>
 
   <div class="panel">
     <div class="stepLabel" id="stepLabel">One long strand, anchored to the surface</div>
@@ -150,6 +150,14 @@
     const topY = SURFACE_Y - STRAND_HEIGHT;
     const midY = (SURFACE_Y + topY) / 2;
     return "M " + x + " " + SURFACE_Y + " Q " + x + " " + midY + " " + x + " " + topY;
+  }
+
+  function archingPath(x, newX) {
+    // Intermediate step: free end has swept across but is still elevated, not yet docked
+    const topY = SURFACE_Y - STRAND_HEIGHT;
+    const peakY = topY - 40;
+    const midX = (x + newX) / 2;
+    return "M " + x + " " + SURFACE_Y + " Q " + midX + " " + peakY + " " + newX + " " + topY;
   }
 
   function foldedPath(x, newX) {
@@ -234,15 +242,23 @@
     for (let g = 0; g < GENERATIONS; g++) {
       const offset = OFFSETS[g];
 
-      stepLabel.textContent = "Its adapter folds over and binds a neighbouring primer";
+      stepLabel.textContent = "Its free adapter sweeps over toward a neighbouring primer";
       const newXs = [];
       nodes.forEach((node, i) => {
         const dir = (i % 2 === 0) ? 1 : -1;
         const newX = node.x + dir * offset;
         newXs.push(newX);
-        setStrandPath(node, foldedPath(node.x, newX));
+        // Phase 1: arc over, free end elevated
+        setStrandPath(node, archingPath(node.x, newX));
       });
-      await wait(2000);
+      await wait(1900);
+
+      stepLabel.textContent = "Adapter end comes down and docks to the surface primer";
+      nodes.forEach((node, i) => {
+        // Phase 2: free end docks to the surface
+        setStrandPath(node, foldedPath(node.x, newXs[i]));
+      });
+      await wait(1400);
 
       stepLabel.textContent = "Polymerase extends along the fold, copying the whole fragment";
       const extendArcs = nodes.map((node, i) => createExtendArc(node.x, newXs[i], g + "_" + i));
@@ -266,7 +282,7 @@
     }
 
     stepLabel.textContent = "One fragment is now a dense clonal cluster";
-    countLabel.textContent = nodes.length + " copies shown — real clusters reach roughly 1,000";
+    countLabel.textContent = nodes.length + " copies shown (real clusters reach roughly 1,000)";
     await wait(4000);
 
     stepLabel.textContent = "Ready for sequencing";

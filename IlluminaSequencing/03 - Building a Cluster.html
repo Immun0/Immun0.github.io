@@ -84,7 +84,7 @@
     stroke-width: 2.8;
     stroke-linecap: butt;
     fill: none;
-    transition: d 1.8s ease;
+    /* no CSS transition on d — handled by rAF interpolation for Safari compatibility */
   }
   .segInsert { stroke: var(--insert); }
   .segAdapterStart { stroke: var(--adapter-start); }
@@ -94,7 +94,8 @@
     stroke-width: 2.2;
     stroke-linecap: round;
     fill: none;
-    transition: opacity 0.8s ease, stroke-dashoffset 1.8s linear;
+    transition: opacity 0.8s ease;
+    /* stroke-dashoffset also handled by rAF for Safari compatibility */
   }
   .legend {
     display: flex;
@@ -145,6 +146,52 @@
 
   let nextId = 0;
   async function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  // Parse "M x0 y0 Q cx cy x1 y1" into 6 numbers
+  function parsePath(d) {
+    return d.match(/-?[\d.]+/g).map(Number);
+  }
+  function buildPath(n) {
+    return "M " + n[0] + " " + n[1] + " Q " + n[2] + " " + n[3] + " " + n[4] + " " + n[5];
+  }
+  function easeInOut(t) {
+    return t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t;
+  }
+
+  // Animate an array of strand node objects from their current path to targetDs[]
+  function animateStrands(nodes, targetDs, duration) {
+    return new Promise(resolve => {
+      const fromNums = nodes.map(n => parsePath(n.segs[0].getAttribute("d")));
+      const toNums   = targetDs.map(parsePath);
+      const start    = performance.now();
+      function frame(now) {
+        const t = Math.min((now - start) / duration, 1);
+        const e = easeInOut(t);
+        nodes.forEach((node, i) => {
+          const interp = fromNums[i].map((from, j) => from + (toNums[i][j] - from) * e);
+          const d = buildPath(interp);
+          node.segs.forEach(seg => seg.setAttribute("d", d));
+        });
+        if (t < 1) requestAnimationFrame(frame);
+        else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  // Animate stroke-dashoffset from 100 to 0 across an array of arc elements
+  function animateArcs(arcs, duration) {
+    return new Promise(resolve => {
+      const start = performance.now();
+      function frame(now) {
+        const t = Math.min((now - start) / duration, 1);
+        arcs.forEach(a => { a.style.strokeDashoffset = (100 * (1 - t)).toFixed(2); });
+        if (t < 1) requestAnimationFrame(frame);
+        else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+  }
 
   function straightPath(x) {
     const topY = SURFACE_Y - STRAND_HEIGHT;
@@ -208,10 +255,6 @@
     return { x, id, g, segs: [segStart, segInsert, segEnd], flipped: !!flipped };
   }
 
-  function setStrandPath(node, d) {
-    node.segs.forEach(seg => seg.setAttribute("d", d));
-  }
-
   function createExtendArc(x, newX, tag) {
     const topY = SURFACE_Y - STRAND_HEIGHT + 9;
     const peakY = topY - 40;
@@ -246,37 +289,27 @@
       const newXs = [];
       nodes.forEach((node, i) => {
         const dir = (i % 2 === 0) ? 1 : -1;
-        const newX = node.x + dir * offset;
-        newXs.push(newX);
-        // Phase 1: arc over, free end elevated
-        setStrandPath(node, archingPath(node.x, newX));
+        newXs.push(node.x + dir * offset);
       });
-      await wait(1900);
+      await animateStrands(nodes, nodes.map((n, i) => archingPath(n.x, newXs[i])), 1800);
 
       stepLabel.textContent = "Adapter end comes down and docks to the surface primer";
-      nodes.forEach((node, i) => {
-        // Phase 2: free end docks to the surface
-        setStrandPath(node, foldedPath(node.x, newXs[i]));
-      });
-      await wait(1400);
+      await animateStrands(nodes, nodes.map((n, i) => foldedPath(n.x, newXs[i])), 1200);
+      await wait(300);
 
       stepLabel.textContent = "Polymerase extends along the fold, copying the whole fragment";
       const extendArcs = nodes.map((node, i) => createExtendArc(node.x, newXs[i], g + "_" + i));
-      await wait(30);
-      extendArcs.forEach(a => { a.style.strokeDashoffset = "0"; });
-      await wait(1900);
+      await animateArcs(extendArcs, 1800);
 
       stepLabel.textContent = "The bridge separates into two straight, independent copies";
       extendArcs.forEach(a => { a.style.opacity = 0; });
       const newNodes = newXs.map((x, i) => createStrand(x, foldedPath(x, nodes[i].x), !nodes[i].flipped));
-      await wait(30);
-      nodes.forEach(node => { setStrandPath(node, straightPath(node.x)); });
-      newNodes.forEach(node => { setStrandPath(node, straightPath(node.x)); });
-      await wait(1800);
+      const allNodes = nodes.concat(newNodes);
+      await animateStrands(allNodes, allNodes.map(n => straightPath(n.x)), 1800);
 
       extendArcs.forEach(a => a.remove());
 
-      nodes = nodes.concat(newNodes);
+      nodes = allNodes;
       countLabel.textContent = "~" + nodes.length + " copies";
       await wait(800);
     }

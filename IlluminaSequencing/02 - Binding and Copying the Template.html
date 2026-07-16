@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Template Binding and Copying on the Flow Cell</title>
+<style>
+  :root {
+    --bg: #D9D9D9;
+    --panel: #14243D;
+    --text: #EAF0F7;
+    --muted: #8AA0BE;
+    --strand: #5A6B88;
+    --surface: #223452;
+    --tmpl-insert: #6C7C99;
+    --tmpl-adapter-start: #E07B39;
+    --tmpl-adapter-end: #81A564;
+    --copy-insert: #8FA0BC;
+    --copy-adapter-start: #EC9A5E;
+    --copy-adapter-end: #A6C48C;
+  }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    overflow: hidden;
+  }
+  .wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    box-sizing: border-box;
+    padding: 16px;
+  }
+  .brand-badge {
+    position: fixed; top: 24px; left: 24px;
+    width: 150px; height: 150px;
+    background: #ffffff; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  .brand-logo { width: 123px; height: 123px; }
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 2px 0;
+    letter-spacing: -0.5px;
+    color: #114D90;
+  }
+  .subtitle {
+    color: #55606E;
+    font-size: 13px;
+    margin-bottom: 12px;
+    text-align: center;
+    max-width: 700px;
+  }
+  .panel {
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 16px 34px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 60px rgba(0,0,0,0.4);
+    overflow: hidden;
+  }
+  .stepLabel {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+    height: 16px;
+  }
+  .progressLabel {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    height: 14px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+  svg { display: block; }
+  .surfaceRect { fill: var(--surface); }
+  .primerLine { stroke: var(--strand); stroke-width: 4; stroke-linecap: round; }
+  .anchor { fill: var(--strand); }
+  .backboneLine { stroke: var(--strand); stroke-width: 2; stroke-linecap: round; }
+  .baseDot { transition: opacity 0.25s ease, transform 0.25s ease; }
+  .templateGroup { transition: transform 0.9s ease, opacity 0.9s ease; }
+  .legend {
+    display: flex;
+    gap: 28px;
+    margin-top: 10px;
+    font-size: 20px;
+    color: #55606E;
+    justify-content: center;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 10px; }
+  .dot { width: 18px; height: 18px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="brand-badge"><img src="Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
+<div class="wrap">
+  <h1>Binding and Copying the Template</h1>
+  <div class="subtitle">A DNA fragment lands on the flow cell and binds a short primer fixed to the surface. Every fragment has known adapter sequences on both ends, which is what lets it bind at all — the middle is the actual DNA being sequenced. Polymerase copies the whole thing. The copy stays bound, the original is washed away. No color here yet — that only comes in once sequencing itself starts.</div>
+
+  <div class="panel">
+    <div class="stepLabel" id="stepLabel">Template approaches</div>
+    <div class="progressLabel" id="progressLabel">&nbsp;</div>
+    <svg id="svgRoot" width="640" height="700" viewBox="0 0 640 700">
+      <rect class="surfaceRect" x="0" y="660" width="640" height="40" rx="6"></rect>
+      <g id="col0" transform="translate(120,0)"></g>
+      <g id="col1" transform="translate(320,0)"></g>
+      <g id="col2" transform="translate(520,0)"></g>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--tmpl-adapter-start)"></span>Adapter (surface end)</span>
+    <span><span class="dot" style="background:var(--tmpl-insert)"></span>Insert (the DNA being sequenced)</span>
+    <span><span class="dot" style="background:var(--tmpl-adapter-end)"></span>Adapter (free end)</span>
+  </div>
+</div>
+
+<script>
+  const stepLabel = document.getElementById("stepLabel");
+  const progressLabel = document.getElementById("progressLabel");
+  const colIds = ["col0", "col1", "col2"];
+  const SURFACE_Y = 660;
+  const SPACING = 6.5;
+  const START_LIFT = -1200;
+  const BATCH_SIZE = 2;
+  const TICK_MS = 220;
+  const ADAPTER_LEN = 8;
+
+  // returns an array of "adapterStart" / "insert" / "adapterEnd" tags describing the structure
+  function buildStructure(totalLen) {
+    const insertLen = Math.max(totalLen - ADAPTER_LEN * 2, 10);
+    const structure = [];
+    for (let i = 0; i < ADAPTER_LEN; i++) structure.push("adapterStart");
+    for (let i = 0; i < insertLen; i++) structure.push("insert");
+    for (let i = 0; i < ADAPTER_LEN; i++) structure.push("adapterEnd");
+    return structure;
+  }
+
+  let templateLen = 60;
+  const colState = colIds.map(() => ({ structure: [] }));
+
+  function buildStatic(g) {
+    g.innerHTML = "";
+
+    const primer = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    primer.setAttribute("x1", -9);
+    primer.setAttribute("y1", SURFACE_Y);
+    primer.setAttribute("x2", -9);
+    primer.setAttribute("y2", SURFACE_Y - 12);
+    primer.setAttribute("class", "primerLine");
+    g.appendChild(primer);
+
+    const anchor = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    anchor.setAttribute("cx", -9);
+    anchor.setAttribute("cy", SURFACE_Y);
+    anchor.setAttribute("r", 5);
+    anchor.setAttribute("class", "anchor");
+    g.appendChild(anchor);
+
+    const copyLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    copyLine.setAttribute("id", g.id + "_copyline");
+    copyLine.setAttribute("x1", -9);
+    copyLine.setAttribute("y1", SURFACE_Y);
+    copyLine.setAttribute("x2", -9);
+    copyLine.setAttribute("y2", SURFACE_Y);
+    copyLine.setAttribute("class", "backboneLine");
+    g.appendChild(copyLine);
+
+    const copyBeads = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    copyBeads.setAttribute("id", g.id + "_copybeads");
+    g.appendChild(copyBeads);
+
+    const templateGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    templateGroup.setAttribute("id", g.id + "_template");
+    templateGroup.setAttribute("class", "templateGroup");
+    templateGroup.style.transform = "translateY(" + START_LIFT + "px)";
+    templateGroup.style.opacity = 0;
+
+    const templateBackbone = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    templateBackbone.setAttribute("x1", 9);
+    templateBackbone.setAttribute("y1", SURFACE_Y);
+    templateBackbone.setAttribute("x2", 9);
+    templateBackbone.setAttribute("y2", SURFACE_Y - templateLen * SPACING);
+    templateBackbone.setAttribute("class", "backboneLine");
+    templateGroup.appendChild(templateBackbone);
+
+    const state = colState[colIds.indexOf(g.id)];
+    state.structure.forEach((type, i) => {
+      const y = SURFACE_Y - (i + 1) * SPACING;
+      const tb = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      tb.setAttribute("cx", 9);
+      tb.setAttribute("cy", y);
+      tb.setAttribute("r", 3.4);
+      let fillColor = "var(--tmpl-insert)";
+      if (type === "adapterStart") fillColor = "var(--tmpl-adapter-start)";
+      else if (type === "adapterEnd") fillColor = "var(--tmpl-adapter-end)";
+      tb.setAttribute("fill", fillColor);
+      templateGroup.appendChild(tb);
+    });
+
+    g.appendChild(templateGroup);
+  }
+
+  function addCopyBead(g, index, type) {
+    const y = SURFACE_Y - (index + 1) * SPACING;
+    const beadsGroup = document.getElementById(g.id + "_copybeads");
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    c.setAttribute("cx", -9);
+    c.setAttribute("cy", y);
+    c.setAttribute("r", 3.4);
+    let fillColor = "var(--copy-insert)";
+    if (type === "adapterStart") fillColor = "var(--copy-adapter-start)";
+    else if (type === "adapterEnd") fillColor = "var(--copy-adapter-end)";
+    c.setAttribute("fill", fillColor);
+    c.setAttribute("class", "baseDot");
+    c.style.opacity = 0;
+    c.style.transform = "scale(0.3)";
+    c.style.transformOrigin = "center " + y + "px";
+    beadsGroup.appendChild(c);
+    requestAnimationFrame(() => {
+      c.style.opacity = 1;
+      c.style.transform = "scale(1)";
+    });
+
+    const line = document.getElementById(g.id + "_copyline");
+    line.setAttribute("y2", y);
+  }
+
+  async function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  async function cycle() {
+    templateLen = 50 + Math.floor(Math.random() * 41); // 50 to 90 bases total
+
+    colIds.forEach((id, i) => {
+      colState[i].structure = buildStructure(templateLen);
+      buildStatic(document.getElementById(id));
+    });
+    progressLabel.textContent = "\u00A0";
+    await wait(50);
+
+    stepLabel.textContent = "A template fragment approaches the flow cell";
+    colIds.forEach((id) => {
+      const tg = document.getElementById(id + "_template");
+      requestAnimationFrame(() => {
+        tg.style.transform = "translateY(0px)";
+        tg.style.opacity = 1;
+      });
+    });
+    await wait(1000);
+
+    stepLabel.textContent = "Its adapter binds a matching primer on the surface";
+    await wait(600);
+
+    stepLabel.textContent = "Polymerase copies the whole fragment, end to end";
+    const structure = colState[0].structure; // shared length/structure across columns
+    for (let i = 0; i < structure.length; i += BATCH_SIZE) {
+      const end = Math.min(i + BATCH_SIZE, structure.length);
+      for (let j = i; j < end; j++) {
+        colIds.forEach((id, ci) => {
+          addCopyBead(document.getElementById(id), j, colState[ci].structure[j]);
+        });
+      }
+      progressLabel.textContent = "base " + end + " of " + structure.length + " copied";
+      await wait(TICK_MS);
+    }
+    await wait(500);
+
+    stepLabel.textContent = "Original template washes away — the copy stays bound";
+    progressLabel.textContent = structure.length + " bases copied";
+    colIds.forEach((id) => {
+      const tg = document.getElementById(id + "_template");
+      tg.style.transform = "translateY(" + START_LIFT + "px)";
+      tg.style.opacity = 0;
+    });
+    await wait(1200);
+
+    stepLabel.textContent = "Ready for a new template";
+    await wait(900);
+
+    cycle();
+  }
+
+  colIds.forEach((id) => buildStatic(document.getElementById(id)));
+  cycle();
+</script>
+</body>
+</html>

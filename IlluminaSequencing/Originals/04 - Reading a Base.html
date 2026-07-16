@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sequencing by Synthesis — Base Incorporation</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #121b2e;
+    --text: #e8edf5;
+    --muted: #7c8aa5;
+    --strand: #445372;
+    --surface: #1c2740;
+    --A: #2ecc71;
+    --C: #e74c3c;
+    --G: #f1c40f;
+    --T: #3498db;
+  }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    overflow: hidden;
+  }
+  .wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    box-sizing: border-box;
+    padding: 30px;
+  }
+  h1 {
+    font-size: 30px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+    max-width: 660px;
+  }
+  .panel {
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 30px 40px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .stepLabel {
+    text-align: center;
+    font-size: 14px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 22px;
+    height: 18px;
+  }
+  svg { display: block; }
+  .surfaceRect { fill: var(--surface); }
+  .templateBackboneLine { stroke: #2c3854; stroke-width: 3; stroke-linecap: round; }
+  .templateBead { fill: #3a4a70; stroke: #55688f; stroke-width: 1.5; }
+  .backbone { stroke: var(--strand); stroke-width: 4; stroke-linecap: round; }
+  .anchor { fill: var(--strand); }
+  .baseDot { transition: opacity 0.35s ease, transform 0.35s ease; }
+  .flash { opacity: 0; transition: opacity 0.25s ease; }
+  .legend {
+    display: flex;
+    gap: 18px;
+    margin-top: 22px;
+    font-size: 13px;
+    color: var(--muted);
+    justify-content: center;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Reading a Base</h1>
+  <div class="subtitle">Each strand is anchored to the flow cell and built on a fixed template. Every cycle, one labelled base is added on top of the last, imaged in place, then the label is cleared before the next base is added — the strand itself keeps growing.</div>
+
+  <div class="panel">
+    <div class="stepLabel" id="stepLabel">Extension</div>
+    <svg width="640" height="320" viewBox="0 0 640 320">
+      <rect class="surfaceRect" x="0" y="280" width="640" height="40" rx="6"></rect>
+      <g id="strand0" transform="translate(120,0)"></g>
+      <g id="strand1" transform="translate(320,0)"></g>
+      <g id="strand2" transform="translate(520,0)"></g>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:#2ecc71"></span>A</span>
+    <span><span class="dot" style="background:#e74c3c"></span>C</span>
+    <span><span class="dot" style="background:#f1c40f"></span>G</span>
+    <span><span class="dot" style="background:#3498db"></span>T</span>
+  </div>
+</div>
+
+<script>
+  const bases = ["A", "C", "G", "T"];
+  const colors = { A: "#2ecc71", C: "#e74c3c", G: "#f1c40f", T: "#3498db" };
+  const stepLabel = document.getElementById("stepLabel");
+  const strandIds = ["strand0", "strand1", "strand2"];
+  const SURFACE_Y = 280;
+  const SPACING = 24;
+  const MAX_BASES = 7;
+
+  const strandState = strandIds.map(() => ({ bases: [] }));
+
+  function renderStrand(g, basesArr) {
+    g.innerHTML = "";
+
+    // template backbone, thin line strung behind the template beads
+    const templateBackbone = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    templateBackbone.setAttribute("x1", 12);
+    templateBackbone.setAttribute("y1", SURFACE_Y);
+    templateBackbone.setAttribute("x2", 12);
+    templateBackbone.setAttribute("y2", SURFACE_Y - (MAX_BASES + 1) * SPACING);
+    templateBackbone.setAttribute("class", "templateBackboneLine");
+    g.appendChild(templateBackbone);
+
+    // template strand drawn as a chain of beads, static, aligned level with each paired base
+    for (let i = 0; i <= MAX_BASES; i++) {
+      const y = SURFACE_Y - i * SPACING;
+      const tb = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      tb.setAttribute("cx", 12);
+      tb.setAttribute("cy", y);
+      tb.setAttribute("r", 7);
+      tb.setAttribute("class", "templateBead");
+      g.appendChild(tb);
+    }
+
+    const anchor = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    anchor.setAttribute("cx", -12);
+    anchor.setAttribute("cy", SURFACE_Y);
+    anchor.setAttribute("r", 6);
+    anchor.setAttribute("class", "anchor");
+    g.appendChild(anchor);
+
+    const topY = SURFACE_Y - basesArr.length * SPACING;
+
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", -12);
+    line.setAttribute("y1", SURFACE_Y);
+    line.setAttribute("x2", -12);
+    line.setAttribute("y2", topY);
+    line.setAttribute("class", "backbone");
+    g.appendChild(line);
+
+    basesArr.forEach((base, i) => {
+      const y = SURFACE_Y - (i + 1) * SPACING;
+      const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      c.setAttribute("cx", -12);
+      c.setAttribute("cy", y);
+      c.setAttribute("r", 8);
+      c.setAttribute("fill", colors[base]);
+      c.setAttribute("class", "baseDot");
+      c.setAttribute("id", g.id + "_base_" + i);
+      if (i === basesArr.length - 1) {
+        c.style.opacity = 0;
+        c.style.transform = "scale(0.3)";
+        c.style.transformOrigin = "center " + y + "px";
+      } else {
+        c.style.opacity = 0.3;
+      }
+      g.appendChild(c);
+    });
+
+    return topY;
+  }
+
+  function flashGlow(g, y, base, id) {
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    c.setAttribute("cx", -12);
+    c.setAttribute("cy", y);
+    c.setAttribute("r", 20);
+    c.setAttribute("fill", colors[base]);
+    c.setAttribute("opacity", 0);
+    c.setAttribute("class", "flash");
+    c.setAttribute("id", id);
+    g.appendChild(c);
+    return c;
+  }
+
+  async function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  async function cycle() {
+    stepLabel.textContent = "Extension — next base binds on top";
+    const chosen = [];
+    strandIds.forEach((id, i) => {
+      const g = document.getElementById(id);
+      const base = bases[Math.floor(Math.random() * 4)];
+      strandState[i].bases.push(base);
+      chosen.push(base);
+      renderStrand(g, strandState[i].bases);
+      const newDot = document.getElementById(id + "_base_" + (strandState[i].bases.length - 1));
+      requestAnimationFrame(() => {
+        newDot.style.opacity = 1;
+        newDot.style.transform = "scale(1)";
+      });
+    });
+    await wait(900);
+
+    stepLabel.textContent = "Imaging — camera reads the newest base";
+    strandIds.forEach((id, i) => {
+      const g = document.getElementById(id);
+      const topIndex = strandState[i].bases.length - 1;
+      const y = SURFACE_Y - (topIndex + 1) * SPACING;
+      const flash = flashGlow(g, y, chosen[i], id + "_flash");
+      requestAnimationFrame(() => { flash.style.opacity = 0.65; });
+    });
+    await wait(500);
+    strandIds.forEach((id) => {
+      const flash = document.getElementById(id + "_flash");
+      if (flash) flash.style.opacity = 0;
+    });
+    await wait(400);
+
+    stepLabel.textContent = "Label cleared — base dims, only the newest stays bright";
+    strandIds.forEach((id, i) => {
+      const topIndex = strandState[i].bases.length - 1;
+      const dot = document.getElementById(id + "_base_" + topIndex);
+      if (dot) dot.style.opacity = 0.3;
+    });
+    await wait(700);
+
+    if (strandState[0].bases.length >= MAX_BASES) {
+      stepLabel.textContent = "Strand complete — resetting";
+      await wait(1400);
+      strandIds.forEach((id, i) => {
+        strandState[i].bases = [];
+        renderStrand(document.getElementById(id), []);
+      });
+      await wait(600);
+    }
+
+    cycle();
+  }
+
+  strandIds.forEach((id, i) => renderStrand(document.getElementById(id), strandState[i].bases));
+  cycle();
+</script>
+</body>
+</html>

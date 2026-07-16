@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bridge Amplification — Building a Cluster</title>
+<style>
+  :root {
+    --bg: #D9D9D9;
+    --panel: #14243D;
+    --text: #EAF0F7;
+    --muted: #8AA0BE;
+    --insert: #6C7C99;
+    --adapter-start: #E07B39;
+    --adapter-end: #81A564;
+    --extend-arc: #8FB6E0;
+    --surface: #223452;
+  }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    overflow: hidden;
+  }
+  .wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    box-sizing: border-box;
+    padding: 20px;
+  }
+  .brand-badge {
+    position: fixed; top: 24px; left: 24px;
+    width: 150px; height: 150px;
+    background: #ffffff; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  .brand-logo { width: 123px; height: 123px; }
+  h1 {
+    font-size: 25px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.5px;
+    color: #114D90;
+  }
+  .subtitle {
+    color: #55606E;
+    font-size: 13px;
+    margin-bottom: 12px;
+    text-align: center;
+    max-width: 700px;
+  }
+  .panel {
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 20px 30px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 60px rgba(0,0,0,0.4);
+    overflow: hidden;
+  }
+  .stepLabel {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+    height: 16px;
+  }
+  .countLabel {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    height: 14px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+  svg { display: block; }
+  .surfaceRect { fill: var(--surface); }
+  .strandSeg {
+    stroke-width: 2.8;
+    stroke-linecap: butt;
+    fill: none;
+    transition: d 1.8s ease;
+  }
+  .segInsert { stroke: var(--insert); }
+  .segAdapterStart { stroke: var(--adapter-start); }
+  .segAdapterEnd { stroke: var(--adapter-end); }
+  .extendArc {
+    stroke: var(--extend-arc);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    fill: none;
+    transition: opacity 0.8s ease, stroke-dashoffset 1.8s linear;
+  }
+  .legend {
+    display: flex;
+    gap: 28px;
+    margin-top: 12px;
+    font-size: 20px;
+    color: var(--muted);
+    justify-content: center;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 10px; }
+  .dot { width: 18px; height: 18px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="brand-badge"><img src="Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
+<div class="wrap">
+  <h1>Building a Cluster</h1>
+  <div class="subtitle">One long, anchored strand folds in half — its adapter reaches over and binds a matching primer nearby. That adapter-to-primer contact is the bridge. Polymerase extends along it, copying the whole fragment, and the bridge separates back into two straight, independent copies. Every one of those folds over again. Doubling each round, this is what turns one fragment into a dense, detectable cluster.</div>
+
+  <div class="panel">
+    <div class="stepLabel" id="stepLabel">One long strand, anchored to the surface</div>
+    <div class="countLabel" id="countLabel">&nbsp;</div>
+    <svg id="svgRoot" width="620" height="360" viewBox="0 0 620 360">
+      <rect class="surfaceRect" x="0" y="320" width="620" height="40" rx="6"></rect>
+      <g id="forest" transform="translate(310,0)"></g>
+    </svg>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--adapter-start)"></span>Adapter (surface end)</span>
+      <span><span class="dot" style="background:var(--insert)"></span>Insert</span>
+      <span><span class="dot" style="background:var(--adapter-end)"></span>Adapter (free end)</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const stepLabel = document.getElementById("stepLabel");
+  const countLabel = document.getElementById("countLabel");
+  const forest = document.getElementById("forest");
+  const SURFACE_Y = 320;
+  const STRAND_HEIGHT = 230;
+  const GENERATIONS = 5;
+  const OFFSETS = [110, 66, 40, 24, 14];
+  const ADAPTER_LEN = 15; // percent of path length, via pathLength normalization
+
+  let nextId = 0;
+  async function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  function straightPath(x) {
+    const topY = SURFACE_Y - STRAND_HEIGHT;
+    const midY = (SURFACE_Y + topY) / 2;
+    return "M " + x + " " + SURFACE_Y + " Q " + x + " " + midY + " " + x + " " + topY;
+  }
+
+  function foldedPath(x, newX) {
+    const topY = SURFACE_Y - STRAND_HEIGHT;
+    const peakY = topY - 45;
+    const midX = (x + newX) / 2;
+    return "M " + x + " " + SURFACE_Y + " Q " + midX + " " + peakY + " " + newX + " " + SURFACE_Y;
+  }
+
+  function makeSegPath(cls, dashArray, dashOffset) {
+    const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    p.setAttribute("class", "strandSeg " + cls);
+    p.setAttribute("pathLength", "100");
+    p.setAttribute("stroke-dasharray", dashArray);
+    p.setAttribute("stroke-dashoffset", dashOffset);
+    return p;
+  }
+
+  function createStrand(x, initialD, flipped) {
+    const id = "strand_" + (nextId++);
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    g.setAttribute("id", id);
+
+    const insertLen = 100 - ADAPTER_LEN * 2;
+    // a copy is antiparallel to its template — whichever adapter was at the
+    // surface-anchored end on the template ends up at the free end on the copy
+    const startCls = flipped ? "segAdapterEnd" : "segAdapterStart";
+    const endCls = flipped ? "segAdapterStart" : "segAdapterEnd";
+    const segStart = makeSegPath(startCls, ADAPTER_LEN + " " + (100 - ADAPTER_LEN), 0);
+    const segInsert = makeSegPath("segInsert", insertLen + " " + (100 - insertLen), -ADAPTER_LEN);
+    const segEnd = makeSegPath(endCls, ADAPTER_LEN + " " + (100 - ADAPTER_LEN), -(100 - ADAPTER_LEN));
+
+    const d = initialD || straightPath(x);
+    [segStart, segInsert, segEnd].forEach(seg => {
+      seg.setAttribute("d", d);
+      g.appendChild(seg);
+    });
+
+    forest.appendChild(g);
+
+    if (initialD) {
+      g.style.opacity = 1;
+    } else {
+      g.style.opacity = 0;
+      g.style.transition = "opacity 1s ease";
+      requestAnimationFrame(() => { g.style.opacity = 1; });
+    }
+    return { x, id, g, segs: [segStart, segInsert, segEnd], flipped: !!flipped };
+  }
+
+  function setStrandPath(node, d) {
+    node.segs.forEach(seg => seg.setAttribute("d", d));
+  }
+
+  function createExtendArc(x, newX, tag) {
+    const topY = SURFACE_Y - STRAND_HEIGHT + 9;
+    const peakY = topY - 40;
+    const midX = (x + newX) / 2;
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("class", "extendArc");
+    path.setAttribute("id", "extend_" + tag);
+    path.setAttribute("pathLength", "100");
+    // starts at the new primer (newX) and grows back toward the original anchor (x) —
+    // this matches the real direction polymerase extension runs
+    path.setAttribute("d", "M " + newX + " " + (SURFACE_Y - 6) + " Q " + midX + " " + peakY + " " + x + " " + (SURFACE_Y - 6));
+    path.setAttribute("stroke-dasharray", "100 100");
+    path.style.strokeDashoffset = "100";
+    path.style.opacity = 1;
+    forest.appendChild(path);
+    return path;
+  }
+
+  async function cycle() {
+    forest.innerHTML = "";
+    nextId = 0;
+    countLabel.textContent = "\u00A0";
+
+    stepLabel.textContent = "One long strand, anchored to the surface";
+    let nodes = [createStrand(0, null, false)];
+    await wait(2400);
+
+    for (let g = 0; g < GENERATIONS; g++) {
+      const offset = OFFSETS[g];
+
+      stepLabel.textContent = "Its adapter folds over and binds a neighbouring primer";
+      const newXs = [];
+      nodes.forEach((node, i) => {
+        const dir = (i % 2 === 0) ? 1 : -1;
+        const newX = node.x + dir * offset;
+        newXs.push(newX);
+        setStrandPath(node, foldedPath(node.x, newX));
+      });
+      await wait(2000);
+
+      stepLabel.textContent = "Polymerase extends along the fold, copying the whole fragment";
+      const extendArcs = nodes.map((node, i) => createExtendArc(node.x, newXs[i], g + "_" + i));
+      await wait(30);
+      extendArcs.forEach(a => { a.style.strokeDashoffset = "0"; });
+      await wait(1900);
+
+      stepLabel.textContent = "The bridge separates into two straight, independent copies";
+      extendArcs.forEach(a => { a.style.opacity = 0; });
+      const newNodes = newXs.map((x, i) => createStrand(x, foldedPath(x, nodes[i].x), !nodes[i].flipped));
+      await wait(30);
+      nodes.forEach(node => { setStrandPath(node, straightPath(node.x)); });
+      newNodes.forEach(node => { setStrandPath(node, straightPath(node.x)); });
+      await wait(1800);
+
+      extendArcs.forEach(a => a.remove());
+
+      nodes = nodes.concat(newNodes);
+      countLabel.textContent = "~" + nodes.length + " copies";
+      await wait(800);
+    }
+
+    stepLabel.textContent = "One fragment is now a dense clonal cluster";
+    countLabel.textContent = nodes.length + " copies shown — real clusters reach roughly 1,000";
+    await wait(4000);
+
+    stepLabel.textContent = "Ready for sequencing";
+    await wait(2600);
+
+    forest.style.transition = "opacity 1.2s ease";
+    forest.style.opacity = 0;
+    await wait(1300);
+    forest.style.opacity = 1;
+
+    cycle();
+  }
+
+  cycle();
+</script>
+</body>
+</html>

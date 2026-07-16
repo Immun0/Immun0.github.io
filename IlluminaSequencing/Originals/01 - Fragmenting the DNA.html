@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fragmenting Genomic DNA</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #121b2e;
+    --text: #e8edf5;
+    --muted: #7c8aa5;
+    --strand: #48566e;
+    --strand-light: #8291ac;
+    --cut-flash: #e6bb63;
+  }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    overflow: hidden;
+  }
+  .wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    box-sizing: border-box;
+    padding: 20px;
+  }
+  h1 {
+    font-size: 26px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 16px;
+    text-align: center;
+    max-width: 660px;
+  }
+  .panel {
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 24px 40px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 60px rgba(0,0,0,0.4);
+    overflow: hidden;
+  }
+  .stepLabel {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 14px;
+    height: 16px;
+  }
+  svg { display: block; }
+  .segmentGroup { transition: transform 1.8s cubic-bezier(0.22, 0.61, 0.36, 1); }
+  .railLine { stroke-width: 2.6; stroke-linecap: round; }
+  .railTop { stroke: var(--strand); }
+  .railBottom { stroke: var(--strand-light); }
+  .rowGroup { transition: opacity 0.6s ease; }
+  .scaleNote {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 14px;
+    text-align: center;
+    max-width: 620px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Fragmenting the DNA</h1>
+  <div class="subtitle">Genomic DNA is far longer than any single read. Before it goes anywhere near the flow cell, every molecule in the sample is sheared into short pieces at random points, all at once — this is happening across millions of molecules in parallel, not one at a time.</div>
+
+  <div class="panel">
+    <div class="stepLabel" id="stepLabel">Intact genomic DNA</div>
+    <svg id="svgRoot" width="600" height="280" viewBox="0 0 600 280"></svg>
+  </div>
+
+  <div class="scaleNote">A fragment here is roughly 200–300 base pairs. The smallest human chromosome is around 46 million base pairs — so a single fragment is a sliver, on the order of 1/150,000th of one chromosome.</div>
+</div>
+
+<script>
+  const stepLabel = document.getElementById("stepLabel");
+  const svgRoot = document.getElementById("svgRoot");
+  const ROW_COUNT = 14;
+  const BAR_HEIGHT = 10;
+  const ROW_SPACING = 19;
+  const TOTAL_WIDTH = 560;
+  const GAP = 16;
+  const MARGIN_X = 20;
+  const MARGIN_Y = 14;
+
+  const rowIds = [];
+  for (let r = 0; r < ROW_COUNT; r++) {
+    const id = "row" + r;
+    rowIds.push(id);
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    g.setAttribute("id", id);
+    g.setAttribute("class", "rowGroup");
+    g.setAttribute("transform", "translate(" + MARGIN_X + "," + (MARGIN_Y + r * ROW_SPACING) + ")");
+    svgRoot.appendChild(g);
+  }
+
+  function randomSegments() {
+    const cutCount = 3 + Math.floor(Math.random() * 4); // 3 to 6 cuts -> 4 to 7 fragments
+    const segCount = cutCount + 1;
+    const tightWidth = TOTAL_WIDTH - cutCount * GAP;
+    const weights = Array.from({ length: segCount }, () => 0.4 + Math.random());
+    const weightSum = weights.reduce((a, b) => a + b, 0);
+    const widths = weights.map(w => Math.max(18, Math.round((w / weightSum) * tightWidth)));
+    return widths;
+  }
+
+  function renderIntact(rowEl) {
+    rowEl.innerHTML = "";
+    [
+      { y: 1, cls: "railTop" },
+      { y: BAR_HEIGHT - 1, cls: "railBottom" }
+    ].forEach(({ y, cls }) => {
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", 0);
+      line.setAttribute("y1", y);
+      line.setAttribute("x2", TOTAL_WIDTH);
+      line.setAttribute("y2", y);
+      line.setAttribute("class", "railLine " + cls);
+      rowEl.appendChild(line);
+    });
+  }
+
+  function renderCutTight(rowEl, widths) {
+    rowEl.innerHTML = "";
+    let x = 0;
+    widths.forEach((w, i) => {
+      const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      g.setAttribute("class", "segmentGroup");
+      g.setAttribute("id", rowEl.id + "_seg" + i);
+      g.style.transform = "translateX(" + x + "px)";
+
+      [
+        { y: 1, cls: "railTop" },
+        { y: BAR_HEIGHT - 1, cls: "railBottom" }
+      ].forEach(({ y, cls }) => {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", 0);
+        line.setAttribute("y1", y);
+        line.setAttribute("x2", w);
+        line.setAttribute("y2", y);
+        line.setAttribute("class", "railLine " + cls);
+        g.appendChild(line);
+      });
+
+      rowEl.appendChild(g);
+      x += w;
+    });
+  }
+
+  function spreadOut(rowEl, widths) {
+    let x = 0;
+    widths.forEach((w, i) => {
+      const g = document.getElementById(rowEl.id + "_seg" + i);
+      g.style.transform = "translateX(" + (x + i * GAP) + "px)";
+      x += w;
+    });
+  }
+
+  async function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  async function cycle() {
+    const rowWidths = rowIds.map(() => randomSegments());
+
+    stepLabel.textContent = ROW_COUNT + " strands of genomic DNA, out of millions in the sample";
+    rowIds.forEach(id => renderIntact(document.getElementById(id)));
+    await wait(2000);
+
+    stepLabel.textContent = "Sheared at random points, all at once, across every molecule";
+    rowIds.forEach((id, r) => renderCutTight(document.getElementById(id), rowWidths[r]));
+    await wait(900);
+
+    stepLabel.textContent = "Each piece becomes a separate template fragment";
+    rowIds.forEach((id, r) => spreadOut(document.getElementById(id), rowWidths[r]));
+    await wait(2400);
+
+    stepLabel.textContent = "Ready for adapters and binding";
+    await wait(1600);
+
+    rowIds.forEach(id => { document.getElementById(id).style.opacity = 0; });
+    await wait(650);
+    rowIds.forEach(id => { document.getElementById(id).style.opacity = 1; });
+
+    cycle();
+  }
+
+  rowIds.forEach(id => renderIntact(document.getElementById(id)));
+  cycle();
+</script>
+</body>
+</html>

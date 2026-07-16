@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>How the NovaSeq Reads DNA</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #121b2e;
+    --text: #e8edf5;
+    --muted: #7c8aa5;
+    --A: #2ecc71; /* green */
+    --C: #e74c3c; /* red */
+    --G: #f1c40f; /* yellow */
+    --T: #3498db; /* blue */
+  }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    overflow: hidden;
+  }
+  .wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    box-sizing: border-box;
+    padding: 40px;
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 16px;
+    margin-bottom: 36px;
+  }
+  .stage {
+    display: flex;
+    gap: 60px;
+    align-items: center;
+  }
+  .flowcell {
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .flowcell-label {
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 16px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 14px;
+  }
+  .cluster {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #2a3550;
+    transition: background-color 0.35s ease, box-shadow 0.35s ease;
+  }
+  .readout {
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 28px 32px;
+    min-width: 260px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .readout-label {
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+  }
+  .cycle-count {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+  .sequence {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 26px;
+    line-height: 1.7;
+    letter-spacing: 4px;
+    word-break: break-all;
+    min-height: 190px;
+  }
+  .base { display: inline-block; }
+  .base.A { color: var(--A); }
+  .base.C { color: var(--C); }
+  .base.G { color: var(--G); }
+  .base.T { color: var(--T); }
+  .legend {
+    display: flex;
+    gap: 18px;
+    margin-top: 28px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>How the NovaSeq Reads DNA</h1>
+  <div class="subtitle">Every cluster on the flow cell adds one base, at the same time, every cycle</div>
+
+  <div class="stage">
+    <div class="flowcell">
+      <div class="flowcell-label">Flow cell surface</div>
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <div class="readout">
+      <div class="readout-label">Sequence being read</div>
+      <div class="cycle-count" id="cycleCount">Cycle 0</div>
+      <div class="sequence" id="sequence"></div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--A)"></span>A</span>
+    <span><span class="dot" style="background:var(--C)"></span>C</span>
+    <span><span class="dot" style="background:var(--G)"></span>G</span>
+    <span><span class="dot" style="background:var(--T)"></span>T</span>
+  </div>
+</div>
+
+<script>
+  const bases = ["A", "C", "G", "T"];
+  const colors = { A: "var(--A)", C: "var(--C)", G: "var(--G)", T: "var(--T)" };
+
+  const grid = document.getElementById("grid");
+  const NUM_CLUSTERS = 63;
+  const clusters = [];
+  for (let i = 0; i < NUM_CLUSTERS; i++) {
+    const d = document.createElement("div");
+    d.className = "cluster";
+    grid.appendChild(d);
+    clusters.push(d);
+  }
+
+  const sequenceEl = document.getElementById("sequence");
+  const cycleCountEl = document.getElementById("cycleCount");
+  let cycle = 0;
+  const MAX_CYCLES = 20;
+  let sequence = [];
+
+  function runCycle() {
+    if (cycle >= MAX_CYCLES) {
+      setTimeout(() => {
+        cycle = 0;
+        sequence = [];
+        sequenceEl.innerHTML = "";
+        runCycle();
+      }, 1400);
+      return;
+    }
+
+    cycle++;
+    cycleCountEl.textContent = "Cycle " + cycle;
+
+    const base = bases[Math.floor(Math.random() * 4)];
+    sequence.push(base);
+
+    clusters.forEach(c => {
+      const b = bases[Math.floor(Math.random() * 4)];
+      c.style.background = colors[b];
+      c.style.boxShadow = "0 0 10px " + colors[b];
+    });
+
+    const span = document.createElement("span");
+    span.className = "base " + base;
+    span.textContent = base;
+    sequenceEl.appendChild(span);
+
+    setTimeout(() => {
+      clusters.forEach(c => {
+        c.style.background = "#2a3550";
+        c.style.boxShadow = "none";
+      });
+    }, 700);
+
+    setTimeout(runCycle, 1300);
+  }
+
+  runCycle();
+</script>
+</body>
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Capillary Separation: Sanger Sequencing</title>
+<style>
+  :root {
+    --bg: #D9D9D9;
+    --panel: #14243D;
+    --text: #EAF0F7;
+    --muted: #8AA0BE;
+    --insert: #6C7C99;
+    --A: #81A564;
+    --C: #E07B39;
+    --G: #FFDE59;
+    --T: #5C93D4;
+  }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    overflow: hidden;
+  }
+  .brand-badge {
+    position: fixed; top: 24px; left: 24px;
+    width: 150px; height: 150px;
+    background: #ffffff; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  .brand-logo { width: 123px; height: 123px; }
+  .wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    box-sizing: border-box;
+    padding: 20px;
+  }
+  h1 {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.5px;
+    color: #114D90;
+  }
+  .subtitle {
+    color: #55606E;
+    font-size: 13px;
+    margin-bottom: 18px;
+    text-align: center;
+    max-width: 700px;
+  }
+  .stageTop {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .panel {
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 20px 26px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 60px rgba(0,0,0,0.4);
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  .capillaryPanel { width: min(62vw, 620px); }
+  .readoutPanel { width: min(26vw, 260px); align-self: flex-start; }
+  .chromatogramPanel { width: min(90vw, 860px); box-sizing: border-box; }
+  .baseline { stroke: #223452; stroke-width: 2; }
+  .peakPath { fill: none; stroke-width: 2.2; transition: opacity 0.3s ease; }
+  .baseLetter { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 12px; font-weight: 700; text-anchor: middle; transition: opacity 0.3s ease; }
+  .panelLabel {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+  }
+  .countLabel {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+  svg { max-width: 100%; height: auto; display: block; }
+  .capillaryTrack { stroke: #223452; stroke-width: 26; stroke-linecap: round; fill: none; }
+  .detectorLine { stroke: #8FB6E0; stroke-width: 2; stroke-dasharray: 4 4; opacity: 0.7; }
+  .detectorFlash { fill: #EAF0F7; opacity: 0; transition: opacity 0.25s ease; }
+  .fragDot { transition: opacity 0.4s ease; }
+  .sequence {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 20px;
+    line-height: 1.7;
+    letter-spacing: 3px;
+    word-break: break-all;
+    min-height: 300px;
+  }
+  .base { display: inline-block; }
+  .legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #55606E;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="brand-badge"><img src="Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
+<div class="wrap">
+  <h1>Capillary Separation</h1>
+  <div class="subtitle">All 25 terminated fragments enter the capillary together, still unsorted by size. Under the same electric field, shorter fragments migrate faster than longer ones, so the mixture spreads out as it travels. A detector near the far end reads each fragment's colour the instant it passes: that single event both adds a letter to the sequence and plots a peak on the trace below, shortest to longest.</div>
+
+  <div class="stageTop">
+    <div class="panel capillaryPanel">
+      <div class="panelLabel" id="stepLabel">The terminated fragments from the reaction</div>
+      <svg id="capillarySvg" viewBox="0 0 640 300"></svg>
+    </div>
+
+    <div class="panel readoutPanel">
+      <div class="panelLabel">Sequence read</div>
+      <div class="countLabel" id="countLabel">0 of 25</div>
+      <div class="sequence" id="sequence"></div>
+    </div>
+  </div>
+
+  <div class="panel chromatogramPanel">
+    <div class="panelLabel">Same signal, plotted as a trace</div>
+    <svg id="traceSvg" viewBox="0 0 640 200"></svg>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--A)"></span>A</span>
+    <span><span class="dot" style="background:var(--C)"></span>C</span>
+    <span><span class="dot" style="background:var(--G)"></span>G</span>
+    <span><span class="dot" style="background:var(--T)"></span>T</span>
+  </div>
+</div>
+
+<script>
+  const stepLabel = document.getElementById("stepLabel");
+  const countLabel = document.getElementById("countLabel");
+  const sequenceEl = document.getElementById("sequence");
+  const svg = document.getElementById("capillarySvg");
+  const traceSvg = document.getElementById("traceSvg");
+  const bases = ["A", "C", "G", "T"];
+  const colors = { A: "#81A564", C: "#E07B39", G: "#FFDE59", T: "#5C93D4" };
+
+  const NUM_FRAGMENTS = 25;
+  const INJECT_X = 30;
+  const DETECT_X = 590;
+  const TRACK_Y = 270;
+  const STRAND_SCALE = 9;
+  const BASE_TIME = 700;
+  const PER_UNIT_TIME = 480;
+
+  const PEAK_MARGIN_X = 20;
+  const PEAK_USABLE_WIDTH = 600;
+  const PEAK_SPACING = PEAK_USABLE_WIDTH / (NUM_FRAGMENTS - 1);
+  const PEAK_BASELINE_Y = 165;
+  const PEAK_LETTER_Y = 190;
+  const PEAK_HALF_WIDTH = PEAK_SPACING * 0.85;
+
+  function shuffledLengths(n) {
+    const arr = Array.from({ length: n }, (_, i) => i + 1);
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  async function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  function buildTrack() {
+    svg.innerHTML = "";
+    const track = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    track.setAttribute("x1", INJECT_X);
+    track.setAttribute("y1", TRACK_Y);
+    track.setAttribute("x2", DETECT_X + 20);
+    track.setAttribute("y2", TRACK_Y);
+    track.setAttribute("class", "capillaryTrack");
+    svg.appendChild(track);
+
+    const detector = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    detector.setAttribute("x1", DETECT_X);
+    detector.setAttribute("y1", TRACK_Y - 50);
+    detector.setAttribute("x2", DETECT_X);
+    detector.setAttribute("y2", TRACK_Y + 50);
+    detector.setAttribute("class", "detectorLine");
+    svg.appendChild(detector);
+
+    const flash = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    flash.setAttribute("id", "detectorFlash");
+    flash.setAttribute("cx", DETECT_X);
+    flash.setAttribute("cy", TRACK_Y);
+    flash.setAttribute("r", 16);
+    flash.setAttribute("class", "detectorFlash");
+    svg.appendChild(flash);
+  }
+
+  function xForStrand(i) {
+    const margin = 30;
+    const usable = 580;
+    return margin + (usable / (NUM_FRAGMENTS - 1)) * i;
+  }
+
+  function easeInOut(t) {
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  }
+
+  function buildStrandDisplay(fragments) {
+    return fragments.map((f, i) => {
+      const spreadX = xForStrand(i);
+      const height = Math.min(f.length * STRAND_SCALE, TRACK_Y - 20);
+
+      const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      g.setAttribute("transform", "translate(" + spreadX + ",0)");
+
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", 0);
+      line.setAttribute("y1", TRACK_Y);
+      line.setAttribute("x2", 0);
+      line.setAttribute("y2", TRACK_Y - height);
+      line.setAttribute("stroke", "#6C7C99");
+      line.setAttribute("stroke-width", 3);
+      line.setAttribute("stroke-linecap", "round");
+      g.appendChild(line);
+
+      const cap = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      cap.setAttribute("cx", 0);
+      cap.setAttribute("cy", TRACK_Y - height);
+      cap.setAttribute("r", 6);
+      cap.setAttribute("fill", colors[f.base]);
+      g.appendChild(cap);
+
+      svg.appendChild(g);
+      return { f, g, line, cap, spreadX, height };
+    });
+  }
+
+  function collapseAndGather(strandEls, duration) {
+    return new Promise(resolve => {
+      const start = performance.now();
+      function frame(now) {
+        const t = Math.min((now - start) / duration, 1);
+        const e = easeInOut(t);
+        strandEls.forEach(s => {
+          const x = s.spreadX + (INJECT_X - s.spreadX) * e;
+          const topY = TRACK_Y - s.height * (1 - e);
+          s.g.setAttribute("transform", "translate(" + x + ",0)");
+          s.line.setAttribute("y2", topY);
+          s.line.style.opacity = 1 - e;
+          s.cap.setAttribute("cy", topY);
+        });
+        if (t < 1) requestAnimationFrame(frame);
+        else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  function createDot(x, y, base, id) {
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    c.setAttribute("id", id);
+    c.setAttribute("cx", x);
+    c.setAttribute("cy", y);
+    c.setAttribute("r", 6);
+    c.setAttribute("fill", colors[base]);
+    c.setAttribute("class", "fragDot");
+    svg.appendChild(c);
+    return c;
+  }
+
+  function flashDetector() {
+    const flash = document.getElementById("detectorFlash");
+    if (!flash) return;
+    flash.style.opacity = 0.55;
+    setTimeout(() => { flash.style.opacity = 0; }, 220);
+  }
+
+  function buildBaseline() {
+    traceSvg.innerHTML = "";
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", PEAK_MARGIN_X - 10);
+    line.setAttribute("y1", PEAK_BASELINE_Y);
+    line.setAttribute("x2", PEAK_MARGIN_X + PEAK_USABLE_WIDTH + 10);
+    line.setAttribute("y2", PEAK_BASELINE_Y);
+    line.setAttribute("class", "baseline");
+    traceSvg.appendChild(line);
+  }
+
+  function drawPeak(order, base) {
+    const x = PEAK_MARGIN_X + PEAK_SPACING * order;
+    const height = 60 + Math.random() * 45;
+    const peakY = PEAK_BASELINE_Y - height;
+    const leftX = x - PEAK_HALF_WIDTH;
+    const rightX = x + PEAK_HALF_WIDTH;
+
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    const d = "M " + leftX + " " + PEAK_BASELINE_Y +
+              " Q " + (leftX + (x - leftX) * 0.55) + " " + PEAK_BASELINE_Y +
+              " " + x + " " + peakY +
+              " Q " + (rightX - (rightX - x) * 0.55) + " " + PEAK_BASELINE_Y +
+              " " + rightX + " " + PEAK_BASELINE_Y;
+    path.setAttribute("d", d);
+    path.setAttribute("class", "peakPath");
+    path.setAttribute("stroke", colors[base]);
+    path.style.opacity = 0;
+    traceSvg.appendChild(path);
+
+    const letter = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    letter.setAttribute("x", x);
+    letter.setAttribute("y", PEAK_LETTER_Y);
+    letter.setAttribute("class", "baseLetter");
+    letter.setAttribute("fill", colors[base]);
+    letter.textContent = base;
+    letter.style.opacity = 0;
+    traceSvg.appendChild(letter);
+
+    requestAnimationFrame(() => {
+      path.style.opacity = 1;
+      letter.style.opacity = 1;
+    });
+  }
+
+  async function cycle() {
+    buildTrack();
+    buildBaseline();
+    sequenceEl.innerHTML = "";
+    countLabel.textContent = "0 of " + NUM_FRAGMENTS;
+
+    const lengths = shuffledLengths(NUM_FRAGMENTS);
+    const fragments = lengths.map((length, i) => {
+      const base = bases[Math.floor(Math.random() * 4)];
+      const yJitter = TRACK_Y + (Math.random() * 30 - 15);
+      const travelTime = BASE_TIME + length * PER_UNIT_TIME;
+      return { length, base, yJitter, travelTime, id: "frag" + i };
+    });
+
+    stepLabel.textContent = "The terminated fragments from the reaction";
+    const strandEls = buildStrandDisplay(fragments);
+    await wait(1600);
+
+    stepLabel.textContent = "Loaded into the capillary as a single mixture";
+    await collapseAndGather(strandEls, 1500);
+    strandEls.forEach(s => s.g.remove());
+
+    fragments.forEach(f => createDot(INJECT_X, f.yJitter, f.base, f.id));
+    await wait(500);
+
+    stepLabel.textContent = "Voltage applied: shorter fragments outrun longer ones";
+    const raceStart = performance.now();
+    function raceFrame(now) {
+      let allDone = true;
+      fragments.forEach(f => {
+        const el = document.getElementById(f.id);
+        if (!el) return;
+        const t = Math.min((now - raceStart) / f.travelTime, 1);
+        if (t < 1) allDone = false;
+        const x = INJECT_X + (DETECT_X - INJECT_X) * t;
+        el.setAttribute("cx", x);
+      });
+      if (!allDone) requestAnimationFrame(raceFrame);
+    }
+    requestAnimationFrame(raceFrame);
+
+    const byArrival = [...fragments].sort((a, b) => a.travelTime - b.travelTime);
+    let detected = 0;
+    const detectionPromises = byArrival.map(f => {
+      return wait(f.travelTime).then(() => {
+        flashDetector();
+        const el = document.getElementById(f.id);
+        if (el) el.style.opacity = 0;
+        const span = document.createElement("span");
+        span.className = "base";
+        span.style.color = colors[f.base];
+        span.textContent = f.base;
+        sequenceEl.appendChild(span);
+        drawPeak(detected, f.base);
+        detected += 1;
+        countLabel.textContent = detected + " of " + NUM_FRAGMENTS;
+        if (detected === NUM_FRAGMENTS) {
+          stepLabel.textContent = "Full sequence read, shortest to longest";
+        }
+      });
+    });
+
+    await Promise.all(detectionPromises);
+    await wait(3200);
+
+    stepLabel.textContent = "Ready for the next sample";
+    await wait(1800);
+
+    svg.style.transition = "opacity 0.8s ease";
+    svg.style.opacity = 0;
+    sequenceEl.style.transition = "opacity 0.8s ease";
+    sequenceEl.style.opacity = 0;
+    traceSvg.style.transition = "opacity 0.8s ease";
+    traceSvg.style.opacity = 0;
+    await wait(800);
+    svg.style.opacity = 1;
+    sequenceEl.style.opacity = 1;
+    traceSvg.style.opacity = 1;
+
+    cycle();
+  }
+
+  cycle();
+</script>
+</body>
+</html>

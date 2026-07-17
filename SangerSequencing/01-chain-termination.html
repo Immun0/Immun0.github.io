@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chain Termination: Sanger Sequencing</title>
+<style>
+  :root {
+    --bg: #D9D9D9;
+    --panel: #14243D;
+    --text: #EAF0F7;
+    --muted: #8AA0BE;
+    --insert: #6C7C99;
+    --primer: #5A6B88;
+    --surface: #223452;
+    --A: #81A564;
+    --C: #E07B39;
+    --G: #FFDE59;
+    --T: #5C93D4;
+  }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    overflow: hidden;
+  }
+  .brand-badge {
+    position: fixed; top: 24px; left: 24px;
+    width: 150px; height: 150px;
+    background: #ffffff; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  .brand-logo { width: 123px; height: 123px; }
+  .wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    box-sizing: border-box;
+    padding: 20px;
+  }
+  h1 {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.5px;
+    color: #114D90;
+  }
+  .subtitle {
+    color: #55606E;
+    font-size: 13px;
+    margin-bottom: 16px;
+    text-align: center;
+    max-width: 700px;
+  }
+  .panel {
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 20px 30px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 60px rgba(0,0,0,0.4);
+    overflow: hidden;
+    width: min(90vw, 860px);
+    box-sizing: border-box;
+  }
+  .stepLabel {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+    height: 16px;
+  }
+  .countLabel {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    height: 14px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+  svg { max-width: 100%; max-height: calc(100vh - 260px); width: auto; height: auto; display: block; }
+  .primerMark { fill: var(--primer); }
+  .baseDot { transition: opacity 0.3s ease, transform 0.3s ease; }
+  .legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+    font-size: 13px;
+    color: #55606E;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="brand-badge"><img src="Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
+<div class="wrap">
+  <h1>Chain Termination</h1>
+  <div class="subtitle">Many copies of the same primed template extend at once. Almost every time, a normal base gets added and the strand keeps growing. At a random position in each copy, a fluorescently labelled terminator base gets incorporated instead: it blocks any further extension. In a real reaction, millions of copies guarantee every possible length gets covered; here, 25 copies are shown terminating at every length from 1 to 25, once each, so nothing is missing once they're sorted by size.</div>
+
+  <div class="panel">
+    <div class="stepLabel" id="stepLabel">Every copy starts extending from the same primer</div>
+    <div class="countLabel" id="countLabel">&nbsp;</div>
+    <svg id="svgRoot" viewBox="0 0 600 440"></svg>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--primer)"></span>Primer</span>
+    <span><span class="dot" style="background:var(--insert)"></span>Normal base</span>
+    <span><span class="dot" style="background:var(--A)"></span>Terminator: A</span>
+    <span><span class="dot" style="background:var(--C)"></span>Terminator: C</span>
+    <span><span class="dot" style="background:var(--G)"></span>Terminator: G</span>
+    <span><span class="dot" style="background:var(--T)"></span>Terminator: T</span>
+  </div>
+</div>
+
+<script>
+  const stepLabel = document.getElementById("stepLabel");
+  const countLabel = document.getElementById("countLabel");
+  const svgRoot = document.getElementById("svgRoot");
+  const bases = ["A", "C", "G", "T"];
+  const colors = { A: "#81A564", C: "#E07B39", G: "#FFDE59", T: "#5C93D4" };
+  const NORMAL_BASE_COLOR = "#6C7C99";
+
+  const NUM_STRANDS = 25;
+  const BASELINE_Y = 400;
+  const SPACING = 14;
+  const MAX_TICKS = NUM_STRANDS;
+  const MARGIN_X = 24;
+  const USABLE_WIDTH = 552;
+
+  async function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  function shuffledLengths(n) {
+    const arr = Array.from({ length: n }, (_, i) => i + 1);
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function xForStrand(i) {
+    return MARGIN_X + (USABLE_WIDTH / (NUM_STRANDS - 1)) * i;
+  }
+
+  function buildStrand(i, targetLength) {
+    const x = xForStrand(i);
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    g.setAttribute("id", "strand" + i);
+
+    const primer = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    primer.setAttribute("cx", x);
+    primer.setAttribute("cy", BASELINE_Y);
+    primer.setAttribute("r", 5);
+    primer.setAttribute("class", "primerMark");
+    g.appendChild(primer);
+
+    svgRoot.appendChild(g);
+    return { x, i, g, length: 0, terminated: false, targetLength };
+  }
+
+  function addBead(strand, isTerminator, base) {
+    const y = BASELINE_Y - (strand.length + 1) * SPACING;
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    c.setAttribute("cx", strand.x);
+    c.setAttribute("cy", y);
+    c.setAttribute("r", isTerminator ? 6.5 : 5);
+    c.setAttribute("fill", isTerminator ? colors[base] : NORMAL_BASE_COLOR);
+    c.setAttribute("class", "baseDot");
+    c.style.opacity = 0;
+    c.style.transform = "scale(0.3)";
+    c.style.transformOrigin = strand.x + "px " + y + "px";
+    strand.g.appendChild(c);
+    requestAnimationFrame(() => {
+      c.style.opacity = 1;
+      c.style.transform = "scale(1)";
+    });
+    strand.length += 1;
+  }
+
+  async function cycle() {
+    svgRoot.innerHTML = "";
+    countLabel.textContent = " ";
+
+    stepLabel.textContent = "Every copy starts extending from the same primer";
+    const targetLengths = shuffledLengths(NUM_STRANDS);
+    let strands = [];
+    for (let i = 0; i < NUM_STRANDS; i++) strands.push(buildStrand(i, targetLengths[i]));
+    await wait(1200);
+
+    stepLabel.textContent = "Normal bases keep extending most of the strands";
+
+    for (let tick = 1; tick <= MAX_TICKS; tick++) {
+      const active = strands.filter(s => !s.terminated);
+      if (active.length === 0) break;
+
+      active.forEach(strand => {
+        if (strand.targetLength === tick) {
+          const base = bases[Math.floor(Math.random() * 4)];
+          addBead(strand, true, base);
+          strand.terminated = true;
+        } else {
+          addBead(strand, false, null);
+        }
+      });
+
+      const stillGoing = strands.filter(s => !s.terminated).length;
+      countLabel.textContent = stillGoing + " of " + NUM_STRANDS + " still extending";
+
+      if (strands.some(s => s.terminated) && stillGoing < NUM_STRANDS) {
+        stepLabel.textContent = "Some have already hit a terminator and stopped";
+      }
+
+      await wait(480);
+    }
+
+    stepLabel.textContent = "Every length from 1 to " + NUM_STRANDS + " is now represented, once each";
+    countLabel.textContent = "a complete ladder, still in random order";
+    await wait(3200);
+
+    stepLabel.textContent = "Next: sorted by size to read the sequence";
+    await wait(2200);
+
+    svgRoot.style.transition = "opacity 1s ease";
+    svgRoot.style.opacity = 0;
+    await wait(1000);
+    svgRoot.style.opacity = 1;
+
+    cycle();
+  }
+
+  cycle();
+</script>
+</body>
+</html>

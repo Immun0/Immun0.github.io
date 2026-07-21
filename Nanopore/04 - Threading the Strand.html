@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Threading the Strand</title>
+<style>
+  :root {
+    --bg: #D9D9D9;
+    --panel: #14243D;
+    --muted: #8AA0BE;
+    --membrane: #4A5A78;
+    --pore: #70B9C6;
+    --ion: #FFDE59;
+    --strand: #5C93D4;
+    --strand-light: #8FB6E0;
+    --adapter: #9B7FC7;
+    --motor: #B0B1A6;
+  }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg);
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
+  }
+  .brand-badge {
+    position: fixed; top: 24px; left: 24px;
+    width: 150px; height: 150px;
+    background: #ffffff; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  .brand-logo { width: 123px; height: 123px; }
+  .wrap {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    height: 100vh; width: 100vw;
+    box-sizing: border-box; padding: 16px;
+  }
+  h1 {
+    font-size: 27px; font-weight: 700; margin: 0 0 3px 0;
+    letter-spacing: -0.5px; color: #114D90;
+  }
+  .subtitle {
+    color: #55606E; font-size: 13px; margin-bottom: 12px;
+    text-align: center; max-width: 740px; line-height: 1.4;
+  }
+  .caveat { color: #6C7A88; font-size: 11px; font-style: italic; }
+  .panel {
+    background: var(--panel); border-radius: 16px;
+    padding: 16px 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  .stepLabel {
+    text-align: center; font-size: 13px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1.5px;
+    margin-bottom: 8px; height: 16px;
+  }
+  svg { display: block; }
+  .molecule { transition: transform 1.5s cubic-bezier(0.3,0.7,0.3,1), opacity 0.6s ease; }
+  .fade { transition: opacity 0.8s ease; }
+  .ion { animation: ionFlow 2.1s linear infinite; }
+  @keyframes ionFlow {
+    0%   { transform: translateY(-74px); opacity: 0; }
+    15%  { opacity: 1; }
+    85%  { opacity: 1; }
+    100% { transform: translateY(92px); opacity: 0; }
+  }
+  .traceLabel { fill: var(--muted); font-size: 11.5px; font-style: italic; font-family: Arial, sans-serif; }
+  .lvlLabel { fill: var(--muted); font-size: 12px; font-weight: bold; font-family: Arial, sans-serif; }
+  .callLetter { fill: #FFDE59; font-size: 10px; font-weight: bold; font-family: "Courier New", monospace; text-anchor: middle; }
+  .readout { fill: #FFDE59; font-size: 15px; font-weight: bold; font-family: "Courier New", monospace; letter-spacing: 2.5px; }
+  .gridline { stroke: #2C3E5C; stroke-width: 1; stroke-dasharray: 3 4; }
+  .legend {
+    display: flex; gap: 22px; margin-top: 12px;
+    font-size: 17px; color: #55606E; justify-content: center; flex-wrap: wrap;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .dot { width: 16px; height: 16px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="brand-badge"><img src="../Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
+<div class="wrap">
+  <h1>Threading the Strand</h1>
+  <div class="subtitle">A prepared molecule docks on a pore. The motor unwinds the duplex and ratchets one strand through, base by base, while the displaced strand loops above. Each base resists the ion flow differently, so the current settles at one of four levels.
+  <br><span class="caveat">Schematic: in reality a short stretch of bases sits in the sensing region at once, so the signal reflects several bases, not one.</span></div>
+
+  <div class="panel">
+    <div class="stepLabel" id="stepLabel">A prepared molecule reaches an open pore</div>
+    <svg id="svgRoot" width="820" height="350" viewBox="0 0 820 350">
+      <g id="ions"></g>
+      <g id="molecule" class="molecule"></g>
+      <g id="loop" class="fade" style="opacity:0"></g>
+      <g id="chain"></g>
+      <g id="membrane"></g>
+      <g id="pores"></g>
+      <g id="motorFixed" class="fade" style="opacity:0"></g>
+
+      <g id="trace">
+        <text class="traceLabel" x="576" y="74">current through this pore</text>
+        <text class="traceLabel" id="inPore" x="576" y="92">in the pore: &mdash;</text>
+        <line x1="576" y1="104" x2="576" y2="296" stroke="#8AA0BE" stroke-width="1.5"/>
+        <line x1="576" y1="296" x2="816" y2="296" stroke="#8AA0BE" stroke-width="1.5"/>
+        <g id="grid"></g>
+        <g id="traceLine"></g>
+        <g id="calls"></g>
+        <text class="traceLabel" id="traceCaption" x="578" y="310">open pore: steady baseline</text>
+        <text class="readout" id="readout" x="578" y="334"></text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:#5C93D4"></span>DNA</span>
+    <span><span class="dot" style="background:#9B7FC7"></span>Adapter</span>
+    <span><span class="dot" style="background:#B0B1A6"></span>Motor</span>
+    <span><span class="dot" style="background:#70B9C6"></span>Pore</span>
+    <span><span class="dot" style="background:#FFDE59"></span>Ions</span>
+  </div>
+</div>
+
+<script>
+  const NS = "http://www.w3.org/2000/svg";
+  const stepLabel  = document.getElementById("stepLabel");
+  const ionsEl     = document.getElementById("ions");
+  const moleculeEl = document.getElementById("molecule");
+  const loopEl     = document.getElementById("loop");
+  const chainEl    = document.getElementById("chain");
+  const membraneEl = document.getElementById("membrane");
+  const poresEl    = document.getElementById("pores");
+  const motorFixed = document.getElementById("motorFixed");
+  const gridEl     = document.getElementById("grid");
+  const traceLine  = document.getElementById("traceLine");
+  const traceCap   = document.getElementById("traceCaption");
+  const inPoreEl   = document.getElementById("inPore");
+  const callsEl    = document.getElementById("calls");
+  const readoutEl  = document.getElementById("readout");
+
+  const MEM_X0 = 50, MEM_X1 = 520, MEM_TOP = 186, MEM_BOT = 218;
+  const PORE_X = 280, CH = 8;
+  const MOTOR_Y = MEM_TOP - 14;
+  const SPACING = 11, BEAD_R = 4.4, N_BEADS = 70;
+  const TOP_CULL = 16, BOT_CULL = 340;
+
+  // four resistance levels, one per base, colour-keyed to match the Illumina set
+  const BASES = [
+    { k: "A", y: 168, c: "#81A564" },
+    { k: "C", y: 200, c: "#E07B39" },
+    { k: "G", y: 232, c: "#FFDE59" },
+    { k: "T", y: 264, c: "#5C93D4" }
+  ];
+  const BASE_Y = 132;          // open pore
+  const BASELINE_C = "#8AA0BE";
+
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  function circle(cx, cy, r, fill) {
+    const c = document.createElementNS(NS, "circle");
+    c.setAttribute("cx", cx); c.setAttribute("cy", cy);
+    c.setAttribute("r", r); c.setAttribute("fill", fill);
+    return c;
+  }
+  function vline(x, y1, y2, stroke, w) {
+    const l = document.createElementNS(NS, "line");
+    l.setAttribute("x1", x); l.setAttribute("y1", y1);
+    l.setAttribute("x2", x); l.setAttribute("y2", y2);
+    l.setAttribute("stroke", stroke);
+    l.setAttribute("stroke-width", w || 3.4);
+    l.setAttribute("stroke-linecap", "round");
+    return l;
+  }
+
+  function rect(x, y, w, h, fill, rx) {
+    const r = document.createElementNS(NS, "rect");
+    r.setAttribute("x", x); r.setAttribute("y", y);
+    r.setAttribute("width", w); r.setAttribute("height", h);
+    if (rx) r.setAttribute("rx", rx);
+    r.setAttribute("fill", fill);
+    return r;
+  }
+
+  function drawGrid() {
+    gridEl.innerHTML = "";
+    // open-pore baseline
+    const b = document.createElementNS(NS, "line");
+    b.setAttribute("x1", 582); b.setAttribute("y1", BASE_Y);
+    b.setAttribute("x2", 812); b.setAttribute("y2", BASE_Y);
+    b.setAttribute("class", "gridline");
+    gridEl.appendChild(b);
+    const bl = document.createElementNS(NS, "text");
+    bl.setAttribute("x", 570); bl.setAttribute("y", BASE_Y + 4);
+    bl.setAttribute("text-anchor", "end");
+    bl.setAttribute("class", "lvlLabel");
+    bl.textContent = "open";
+    gridEl.appendChild(bl);
+
+    BASES.forEach(bs => {
+      const l = document.createElementNS(NS, "line");
+      l.setAttribute("x1", 582); l.setAttribute("y1", bs.y);
+      l.setAttribute("x2", 812); l.setAttribute("y2", bs.y);
+      l.setAttribute("class", "gridline");
+      l.setAttribute("stroke", bs.c);
+      l.setAttribute("opacity", 0.45);
+      gridEl.appendChild(l);
+      const t = document.createElementNS(NS, "text");
+      t.setAttribute("x", 570); t.setAttribute("y", bs.y + 4);
+      t.setAttribute("text-anchor", "end");
+      t.setAttribute("class", "lvlLabel");
+      t.setAttribute("fill", bs.c);
+      t.textContent = bs.k;
+      gridEl.appendChild(t);
+    });
+  }
+
+  function drawMembrane() {
+    membraneEl.innerHTML = "";
+    membraneEl.appendChild(rect(MEM_X0, MEM_TOP, (PORE_X - CH) - MEM_X0, MEM_BOT - MEM_TOP, "var(--membrane)", 2));
+    membraneEl.appendChild(rect(PORE_X + CH, MEM_TOP, MEM_X1 - (PORE_X + CH), MEM_BOT - MEM_TOP, "var(--membrane)", 2));
+    poresEl.innerHTML = "";
+    poresEl.appendChild(rect(PORE_X - CH - 10, MEM_TOP - 8, 10, (MEM_BOT - MEM_TOP) + 16, "var(--pore)", 3));
+    poresEl.appendChild(rect(PORE_X + CH, MEM_TOP - 8, 10, (MEM_BOT - MEM_TOP) + 16, "var(--pore)", 3));
+  }
+
+  function drawIons(on) {
+    ionsEl.innerHTML = "";
+    if (!on) return;
+    for (let i = 0; i < 5; i++) {
+      const c = circle(PORE_X, MEM_TOP, 3.2, "var(--ion)");
+      c.setAttribute("class", "ion");
+      c.style.animationDelay = (i * 0.42) + "s";
+      ionsEl.appendChild(c);
+    }
+  }
+
+  function drawMolecule() {
+    moleculeEl.innerHTML = "";
+    moleculeEl.style.opacity = 1;
+    const xA = PORE_X - 7, xB = PORE_X + 7;
+    const bottom = MOTOR_Y - 8;
+    const top = bottom - 14 * SPACING;
+    // strand that will be read: pearls, because every base of it gets called
+    for (let i = 0; i < 15; i++) {
+      const y = bottom - i * SPACING;
+      moleculeEl.appendChild(circle(xA, y, BEAD_R, i < 2 ? "var(--adapter)" : "var(--strand)"));
+    }
+    // complement: drawn as a line from the outset, so it stays a line when it loops
+    moleculeEl.appendChild(vline(xB, bottom - SPACING, top, "var(--strand-light)"));
+    moleculeEl.appendChild(vline(xB, bottom, bottom - SPACING, "var(--adapter)"));
+    moleculeEl.appendChild(circle(xA, bottom + 14, 11, "var(--motor)"));
+    moleculeEl.style.transform = "translateY(-150px)";
+  }
+
+  function drawFixedMotor() {
+    motorFixed.innerHTML = "";
+    motorFixed.appendChild(circle(PORE_X, MOTOR_Y, 12, "var(--motor)"));
+  }
+
+  // the displaced complement is not read, it just accumulates: the loop grows
+  // in step with how much strand has been pulled through the pore. t runs 0 to 1.
+  function drawLoop(t) {
+    loopEl.innerHTML = "";
+    const reach = 34 + t * 150;
+    const rise  = 22 + t * 112;
+    const p = document.createElementNS(NS, "path");
+    p.setAttribute("d",
+      "M " + (PORE_X + 5) + " " + (MOTOR_Y - 5) +
+      " C " + (PORE_X + reach * 0.5) + " " + (MOTOR_Y - rise) + ", " +
+              (PORE_X + reach) + " " + (MOTOR_Y - rise * 0.3) + ", " +
+              (PORE_X + 20) + " " + (MOTOR_Y - 14));
+    p.setAttribute("fill", "none");
+    p.setAttribute("stroke", "var(--strand-light)");
+    p.setAttribute("stroke-width", 3.4);
+    p.setAttribute("stroke-linecap", "round");
+    loopEl.appendChild(p);
+  }
+
+  const beads = Array.from({ length: N_BEADS }, () => BASES[Math.floor(Math.random() * 4)]);
+
+  function drawChain(step) {
+    chainEl.innerHTML = "";
+    let inPore = null;
+    for (let i = 0; i < N_BEADS; i++) {
+      const y = (MOTOR_Y + 6) - i * SPACING + step * SPACING;
+      if (y < TOP_CULL || y > BOT_CULL) continue;
+      const inChannel = y > MEM_TOP - 2 && y < MEM_BOT + 2;
+      if (inChannel) inPore = beads[i];
+      const c = circle(PORE_X, y, inChannel ? BEAD_R + 1.6 : BEAD_R, "var(--strand)");
+      if (inChannel) { c.setAttribute("stroke", beads[i].c); c.setAttribute("stroke-width", 2.6); }
+      chainEl.appendChild(c);
+    }
+    return inPore;
+  }
+
+  const X_START = 582, X_END = 812, STEP_X = 9;
+  const MAX_PTS = Math.floor((X_END - X_START) / STEP_X);
+  let pts = [];       // { y, b, lbl } where b is the base object, or null for baseline
+  let called = [];    // the growing sequence read off the trace
+
+  // roughly gaussian sampling noise: visible, but never enough to cross a level
+  function jitter() {
+    return (Math.random() + Math.random() + Math.random() - 1.5) * 5.2;
+  }
+
+  function pushLevel(y, b, lbl) {
+    pts.push({ y: y, b: b || null, lbl: !!lbl });
+    if (pts.length > MAX_PTS) pts.shift();
+
+    // trace drawn sample to sample so each segment carries its base colour
+    traceLine.innerHTML = "";
+    for (let i = 1; i < pts.length; i++) {
+      const seg = document.createElementNS(NS, "line");
+      seg.setAttribute("x1", X_START + (i - 1) * STEP_X);
+      seg.setAttribute("y1", pts[i - 1].y);
+      seg.setAttribute("x2", X_START + i * STEP_X);
+      seg.setAttribute("y2", pts[i].y);
+      seg.setAttribute("stroke", pts[i].b ? pts[i].b.c : BASELINE_C);
+      seg.setAttribute("stroke-width", 2.2);
+      seg.setAttribute("stroke-linecap", "round");
+      traceLine.appendChild(seg);
+    }
+
+    // one letter per base, above the sample where that base first appeared
+    callsEl.innerHTML = "";
+    pts.forEach((p, i) => {
+      if (!p.b || !p.lbl) return;
+      const t = document.createElementNS(NS, "text");
+      t.setAttribute("x", X_START + i * STEP_X);
+      t.setAttribute("y", p.y - 10);
+      t.setAttribute("class", "callLetter");
+      t.setAttribute("fill", p.b.c);
+      t.textContent = p.b.k;
+      callsEl.appendChild(t);
+    });
+
+    if (b && lbl) {
+      called.push(b);
+      if (called.length > 22) called.shift();
+      readoutEl.innerHTML = "";
+      called.forEach(c => {
+        const s = document.createElementNS(NS, "tspan");
+        s.setAttribute("fill", c.c);
+        s.textContent = c.k;
+        readoutEl.appendChild(s);
+      });
+    }
+  }
+
+  async function runBaseline(ticks) {
+    for (let i = 0; i < ticks; i++) {
+      pushLevel(BASE_Y + jitter() * 0.55, null, false);
+      await wait(85);
+    }
+  }
+
+  async function cycle() {
+    pts = [];
+    called = [];
+    readoutEl.innerHTML = "";
+    callsEl.innerHTML = "";
+    traceLine.innerHTML = "";
+    chainEl.innerHTML = "";
+    loopEl.style.opacity = 0;
+    motorFixed.style.opacity = 0;
+    inPoreEl.textContent = "in the pore: —";
+    inPoreEl.setAttribute("fill", "#8AA0BE");
+    drawGrid();
+    drawMembrane();
+    drawFixedMotor();
+    drawLoop(0);
+    drawIons(true);
+    drawMolecule();
+    traceCap.textContent = "open pore: steady baseline";
+
+    stepLabel.textContent = "A prepared molecule reaches an open pore";
+    runBaseline(26);
+    await wait(2300);
+
+    stepLabel.textContent = "The motor docks on top of the pore";
+    moleculeEl.style.transform = "translateY(0px)";
+    await runBaseline(16);
+    await wait(300);
+
+    stepLabel.textContent = "The duplex unwinds: one strand enters, the other loops above";
+    moleculeEl.style.opacity = 0;
+    motorFixed.style.opacity = 1;
+    loopEl.style.opacity = 1;
+    drawIons(false);
+    drawChain(0);
+    traceCap.textContent = "strand in the pore: current sits at one of four levels";
+    await wait(1700);
+
+    stepLabel.textContent = "The strand ratchets through, base by base";
+    for (let s = 1; s <= 40; s++) {
+      const b = drawChain(s);
+      drawLoop(s / 40);
+      inPoreEl.textContent = "in the pore: " + (b ? b.k : "—");
+      inPoreEl.setAttribute("fill", b ? b.c : "#8AA0BE");
+      if (s === 12) stepLabel.textContent = "Each base holds the current at its own level";
+      if (s === 26) stepLabel.textContent = "Read the levels in order and you have the sequence";
+
+      // variable dwell: some bases sit in the pore longer than others
+      const dwell = 1 + Math.floor(Math.random() * 3);
+      for (let d = 0; d < dwell; d++) {
+        pushLevel((b ? b.y : BASE_Y) + jitter(), b, d === 0);
+        await wait(118);
+      }
+    }
+    await wait(1200);
+
+    chainEl.innerHTML = "";
+    loopEl.style.opacity = 0;
+    motorFixed.style.opacity = 0;
+    await wait(700);
+    cycle();
+  }
+
+  cycle();
+</script>
+</body>
+</html>

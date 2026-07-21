@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Pore Array</title>
+<style>
+  :root {
+    --bg: #D9D9D9;
+    --panel: #14243D;
+    --muted: #8AA0BE;
+    --membrane: #4A5A78;
+    --pore: #70B9C6;
+    --ion: #FFDE59;
+  }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg);
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
+  }
+  .brand-badge {
+    position: fixed; top: 24px; left: 24px;
+    width: 150px; height: 150px;
+    background: #ffffff; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  .brand-logo { width: 123px; height: 123px; }
+  .wrap {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    height: 100vh; width: 100vw;
+    box-sizing: border-box; padding: 24px;
+  }
+  h1 {
+    font-size: 28px; font-weight: 700; margin: 0 0 4px 0;
+    letter-spacing: -0.5px; color: #114D90;
+  }
+  .subtitle {
+    color: #55606E; font-size: 13.5px; margin-bottom: 16px;
+    text-align: center; max-width: 720px; line-height: 1.45;
+  }
+  .panel {
+    background: var(--panel); border-radius: 16px;
+    padding: 20px 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  .stepLabel {
+    text-align: center; font-size: 13px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1.5px;
+    margin-bottom: 12px; height: 16px;
+  }
+  svg { display: block; }
+  .fade { opacity: 0; transition: opacity 0.9s ease; }
+  .ion { animation: ionFlow 2.2s linear infinite; }
+  @keyframes ionFlow {
+    0%   { transform: translateY(-72px); opacity: 0; }
+    15%  { opacity: 1; }
+    85%  { opacity: 1; }
+    100% { transform: translateY(96px); opacity: 0; }
+  }
+  .poreBody { transition: opacity 0.4s ease; }
+  .sideLabel { fill: var(--muted); font-size: 12px; font-family: Arial, sans-serif; }
+  .traceLabel { fill: var(--muted); font-size: 11.5px; font-style: italic; font-family: Arial, sans-serif; }
+  .legend {
+    display: flex; gap: 28px; margin-top: 18px;
+    font-size: 20px; color: #55606E; justify-content: center;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 10px; }
+  .dot { width: 18px; height: 18px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="brand-badge"><img src="../Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
+<div class="wrap">
+  <h1>The Pore Array</h1>
+  <div class="subtitle">The flow cell is a membrane with protein pores set into it. A voltage is applied across that membrane, and ions flow through every open pore. The steady current that results is the baseline, and it is the only thing the instrument actually measures.</div>
+
+  <div class="panel">
+    <div class="stepLabel" id="stepLabel">A membrane with protein pores set into it</div>
+    <svg id="svgRoot" width="780" height="300" viewBox="0 0 780 300">
+      <!-- voltage arrows -->
+      <g id="volts" class="fade">
+        <text class="sideLabel" x="30" y="86" text-anchor="middle">voltage</text>
+        <g stroke="#8AA0BE" stroke-width="2.5" stroke-linecap="round">
+          <line x1="30" y1="100" x2="30" y2="215"/>
+          <line x1="30" y1="215" x2="24" y2="203"/>
+          <line x1="30" y1="215" x2="36" y2="203"/>
+        </g>
+      </g>
+
+      <g id="membrane"></g>
+      <g id="pores"></g>
+      <g id="ions" class="fade"></g>
+
+      <!-- current trace -->
+      <g id="trace" class="fade">
+        <text class="traceLabel" x="600" y="112">current through one pore</text>
+        <line x1="600" y1="128" x2="600" y2="200" stroke="#8AA0BE" stroke-width="1.5"/>
+        <line x1="600" y1="200" x2="756" y2="200" stroke="#8AA0BE" stroke-width="1.5"/>
+        <path id="baseline" d="M604,150 L620,151 L636,149 L652,150 L668,151 L684,149 L700,150 L716,151 L732,149 L752,150"
+              fill="none" stroke="#FFDE59" stroke-width="2.5" stroke-linecap="round"/>
+        <text class="traceLabel" x="604" y="222">steady baseline</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:#4A5A78"></span>Membrane</span>
+    <span><span class="dot" style="background:#70B9C6"></span>Pore</span>
+    <span><span class="dot" style="background:#FFDE59"></span>Ions (the current)</span>
+  </div>
+</div>
+
+<script>
+  const NS = "http://www.w3.org/2000/svg";
+  const stepLabel = document.getElementById("stepLabel");
+  const membraneEl = document.getElementById("membrane");
+  const poresEl = document.getElementById("pores");
+  const ionsEl = document.getElementById("ions");
+  const voltsEl = document.getElementById("volts");
+  const traceEl = document.getElementById("trace");
+
+  const MEM_X0 = 70, MEM_X1 = 540, MEM_TOP = 142, MEM_BOT = 174;
+  const PORES = [130, 205, 280, 355, 430];
+  const CHANNEL_HALF = 6;
+
+  function rect(x, y, w, h, fill, rx) {
+    const r = document.createElementNS(NS, "rect");
+    r.setAttribute("x", x); r.setAttribute("y", y);
+    r.setAttribute("width", w); r.setAttribute("height", h);
+    if (rx) r.setAttribute("rx", rx);
+    r.setAttribute("fill", fill);
+    return r;
+  }
+
+  function drawMembrane() {
+    membraneEl.innerHTML = "";
+    // membrane drawn as segments so the pore channels are genuine gaps
+    let x = MEM_X0;
+    PORES.forEach(cx => {
+      const w = (cx - CHANNEL_HALF) - x;
+      if (w > 0) membraneEl.appendChild(rect(x, MEM_TOP, w, MEM_BOT - MEM_TOP, "var(--membrane)", 2));
+      x = cx + CHANNEL_HALF;
+    });
+    if (MEM_X1 > x) membraneEl.appendChild(rect(x, MEM_TOP, MEM_X1 - x, MEM_BOT - MEM_TOP, "var(--membrane)", 2));
+  }
+
+  function drawPores() {
+    poresEl.innerHTML = "";
+    PORES.forEach(cx => {
+      const g = document.createElementNS(NS, "g");
+      g.setAttribute("class", "poreBody");
+      // pore protein flanking the channel, standing slightly proud of the membrane
+      g.appendChild(rect(cx - CHANNEL_HALF - 9, MEM_TOP - 7, 9, (MEM_BOT - MEM_TOP) + 14, "var(--pore)", 3));
+      g.appendChild(rect(cx + CHANNEL_HALF, MEM_TOP - 7, 9, (MEM_BOT - MEM_TOP) + 14, "var(--pore)", 3));
+      poresEl.appendChild(g);
+    });
+  }
+
+  function drawIons() {
+    ionsEl.innerHTML = "";
+    PORES.forEach((cx, pi) => {
+      for (let i = 0; i < 4; i++) {
+        const c = document.createElementNS(NS, "circle");
+        c.setAttribute("cx", cx);
+        c.setAttribute("cy", MEM_TOP);
+        c.setAttribute("r", 3.2);
+        c.setAttribute("fill", "var(--ion)");
+        c.setAttribute("class", "ion");
+        c.style.animationDelay = ((i * 0.55) + (pi * 0.13)) + "s";
+        ionsEl.appendChild(c);
+      }
+    });
+  }
+
+  async function pulsePores() {
+    const bodies = Array.from(poresEl.children);
+    for (let i = 0; i < 2; i++) {
+      bodies.forEach(b => { b.style.opacity = 0.45; });
+      await wait(380);
+      bodies.forEach(b => { b.style.opacity = 1; });
+      await wait(380);
+    }
+  }
+
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  async function cycle() {
+    voltsEl.style.opacity = 0;
+    ionsEl.style.opacity = 0;
+    traceEl.style.opacity = 0;
+    drawMembrane();
+    drawPores();
+    drawIons();
+
+    stepLabel.textContent = "A membrane with protein pores set into it";
+    await wait(2400);
+
+    stepLabel.textContent = "A voltage is applied across the membrane";
+    voltsEl.style.opacity = 1;
+    await wait(2200);
+
+    stepLabel.textContent = "Ions flow through every open pore";
+    ionsEl.style.opacity = 1;
+    await wait(1600);
+    traceEl.style.opacity = 1;
+    await wait(2000);
+
+    stepLabel.textContent = "Each pore is its own sensor, reading independently and in parallel";
+    await pulsePores();
+    await wait(1400);
+
+    stepLabel.textContent = "That steady baseline is what a passing strand will disturb";
+    await wait(3200);
+
+    cycle();
+  }
+
+  cycle();
+</script>
+</body>
+</html>

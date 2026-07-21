@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Adapters and Motor</title>
+<style>
+  :root {
+    --bg: #D9D9D9;
+    --panel: #14243D;
+    --muted: #8AA0BE;
+    --strand: #5C93D4;
+    --strand-light: #8FB6E0;
+    --adapter: #9B7FC7;
+    --motor: #B0B1A6;
+  }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg);
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
+  }
+  .brand-badge {
+    position: fixed; top: 24px; left: 24px;
+    width: 150px; height: 150px;
+    background: #ffffff; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  .brand-logo { width: 123px; height: 123px; }
+  .wrap {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    height: 100vh; width: 100vw;
+    box-sizing: border-box; padding: 24px;
+  }
+  h1 {
+    font-size: 28px; font-weight: 700; margin: 0 0 4px 0;
+    letter-spacing: -0.5px; color: #114D90;
+  }
+  .subtitle {
+    color: #55606E; font-size: 13.5px; margin-bottom: 16px;
+    text-align: center; max-width: 700px; line-height: 1.45;
+  }
+  .panel {
+    background: var(--panel); border-radius: 16px;
+    padding: 20px 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  .stepLabel {
+    text-align: center; font-size: 13px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1.5px;
+    margin-bottom: 12px; height: 16px;
+  }
+  svg { display: block; }
+  .rail { stroke-width: 2.8; stroke-linecap: round; }
+  .railTop { stroke: var(--strand); }
+  .railBot { stroke: var(--strand-light); }
+  .adapterRail { stroke: var(--adapter); stroke-width: 2.8; stroke-linecap: round; }
+  .fade { transition: opacity 0.8s ease; opacity: 0; }
+  .motor { transition: opacity 0.8s ease, transform 0.5s ease; opacity: 0; }
+  .legend {
+    display: flex; gap: 28px; margin-top: 18px;
+    font-size: 20px; color: #55606E; justify-content: center;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 10px; }
+  .dot { width: 18px; height: 18px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="brand-badge"><img src="../Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
+<div class="wrap">
+  <h1>Adapters and Motor</h1>
+  <div class="subtitle">Before it can be sequenced, every molecule has sequencing adapters ligated onto both ends. Each adapter carries a motor protein, and that motor is what will feed the strand through the pore at a speed the instrument can read.</div>
+
+  <div class="panel">
+    <div class="stepLabel" id="stepLabel">One long molecule, carried over from the last step</div>
+    <svg id="svgRoot" width="760" height="230" viewBox="0 0 760 230">
+      <g id="strand"></g>
+      <g id="adapters"></g>
+      <g id="motors"></g>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:#5C93D4"></span>DNA molecule</span>
+    <span><span class="dot" style="background:#9B7FC7"></span>Sequencing adapter</span>
+    <span><span class="dot" style="background:#B0B1A6"></span>Motor protein</span>
+  </div>
+</div>
+
+<script>
+  const NS = "http://www.w3.org/2000/svg";
+  const stepLabel = document.getElementById("stepLabel");
+  const strandEl = document.getElementById("strand");
+  const adaptersEl = document.getElementById("adapters");
+  const motorsEl = document.getElementById("motors");
+
+  const Y_TOP = 110, Y_BOT = 120;
+  const DNA_X0 = 210, DNA_X1 = 550;   // the molecule itself
+  const ADAPT_W = 48;                  // adapters ligated beyond each end
+
+  function rail(x1, x2, y, cls) {
+    const l = document.createElementNS(NS, "line");
+    l.setAttribute("x1", x1); l.setAttribute("y1", y);
+    l.setAttribute("x2", x2); l.setAttribute("y2", y);
+    l.setAttribute("class", cls);
+    return l;
+  }
+
+  function drawStrand() {
+    strandEl.innerHTML = "";
+    strandEl.appendChild(rail(DNA_X0, DNA_X1, Y_TOP, "rail railTop"));
+    strandEl.appendChild(rail(DNA_X0, DNA_X1, Y_BOT, "rail railBot"));
+  }
+
+  function drawAdapters() {
+    adaptersEl.innerHTML = "";
+    const g = document.createElementNS(NS, "g");
+    g.setAttribute("class", "fade");
+    // left adapter, ligated onto the end so the molecule gets longer
+    g.appendChild(rail(DNA_X0 - ADAPT_W, DNA_X0, Y_TOP, "adapterRail"));
+    g.appendChild(rail(DNA_X0 - ADAPT_W, DNA_X0, Y_BOT, "adapterRail"));
+    // right adapter
+    g.appendChild(rail(DNA_X1, DNA_X1 + ADAPT_W, Y_TOP, "adapterRail"));
+    g.appendChild(rail(DNA_X1, DNA_X1 + ADAPT_W, Y_BOT, "adapterRail"));
+    adaptersEl.appendChild(g);
+    requestAnimationFrame(() => { g.style.opacity = 1; });
+    return g;
+  }
+
+  function drawMotors() {
+    motorsEl.innerHTML = "";
+    // one motor per strand: the duplex is antiparallel, so the adapter at each end
+    // engages a different strand. Neither motor clamps both.
+    const spec = [
+      { cx: DNA_X0 - 18, cy: Y_TOP - 4 },   // motor riding the top strand
+      { cx: DNA_X1 + 18, cy: Y_BOT + 4 }    // motor riding the bottom strand
+    ];
+    const made = spec.map(s => {
+      const c = document.createElementNS(NS, "circle");
+      c.setAttribute("cx", s.cx);
+      c.setAttribute("cy", s.cy);
+      c.setAttribute("r", 11);
+      c.setAttribute("fill", "var(--motor)");
+      c.setAttribute("class", "motor");
+      c.style.transformOrigin = s.cx + "px " + s.cy + "px";
+      motorsEl.appendChild(c);
+      return c;
+    });
+    requestAnimationFrame(() => { made.forEach(c => { c.style.opacity = 1; }); });
+    return made;
+  }
+
+  async function pulse(nodes) {
+    for (let i = 0; i < 2; i++) {
+      nodes.forEach(n => { n.style.transform = "scale(1.35)"; });
+      await wait(500);
+      nodes.forEach(n => { n.style.transform = "scale(1)"; });
+      await wait(500);
+    }
+  }
+
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  async function cycle() {
+    adaptersEl.innerHTML = "";
+    motorsEl.innerHTML = "";
+    drawStrand();
+    stepLabel.textContent = "One long molecule, carried over from the last step";
+    await wait(2200);
+
+    stepLabel.textContent = "Sequencing adapters are ligated onto both ends";
+    drawAdapters();
+    await wait(2400);
+
+    stepLabel.textContent = "Each adapter carries a motor protein";
+    const motors = drawMotors();
+    await wait(2200);
+
+    stepLabel.textContent = "The motor unwinds the duplex and feeds one strand through the pore";
+    await pulse(motors);
+    await wait(1400);
+
+    stepLabel.textContent = "Ready for the flow cell";
+    await wait(2400);
+
+    [strandEl, adaptersEl, motorsEl].forEach(el => {
+      el.style.transition = "opacity 0.7s ease";
+      el.style.opacity = 0;
+    });
+    await wait(800);
+    [strandEl, adaptersEl, motorsEl].forEach(el => { el.style.opacity = 1; });
+
+    cycle();
+  }
+
+  cycle();
+</script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Keeping Molecules Long</title>
+<style>
+  :root {
+    --bg: #D9D9D9;
+    --panel: #14243D;
+    --text: #EAF0F7;
+    --muted: #8AA0BE;
+    --strand: #5C93D4;
+    --strand-light: #8FB6E0;
+    --shear: #E07B39;
+    --read-good: #A6C48C;
+    --read-poor: #7E8CA6;
+  }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg);
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
+  }
+  .brand-badge {
+    position: fixed; top: 24px; left: 24px;
+    width: 150px; height: 150px;
+    background: #ffffff; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  .brand-logo { width: 123px; height: 123px; }
+  .wrap {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    height: 100vh; width: 100vw;
+    box-sizing: border-box; padding: 24px;
+  }
+  h1 {
+    font-size: 28px; font-weight: 700; margin: 0 0 4px 0;
+    letter-spacing: -0.5px; color: #114D90;
+  }
+  .subtitle {
+    color: #55606E; font-size: 13.5px; margin-bottom: 16px;
+    text-align: center; max-width: 700px; line-height: 1.45;
+  }
+  .panel {
+    background: var(--panel); border-radius: 16px;
+    padding: 20px 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  .stepLabel {
+    text-align: center; font-size: 13px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1.5px;
+    margin-bottom: 12px; height: 16px;
+  }
+  svg { display: block; }
+  .segGroup { transition: transform 1.4s cubic-bezier(0.22,0.61,0.36,1); }
+  .rail { stroke-width: 2.8; stroke-linecap: round; }
+  .railTop { stroke: var(--strand); }
+  .railBot { stroke: var(--strand-light); }
+  .shearMark { transition: opacity 0.4s ease; }
+  .readBar { transition: opacity 0.7s ease; }
+  .laneLabel { fill: var(--muted); font-size: 12.5px; font-family: Arial, sans-serif; }
+  .readLabel { fill: var(--muted); font-size: 11px; font-style: italic; font-family: Arial, sans-serif; }
+</style>
+</head>
+<body>
+<div class="brand-badge"><img src="../Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
+<div class="wrap">
+  <h1>Keeping Molecules Long</h1>
+  <div class="subtitle">Long-read sequencing reads whole molecules, so your read length is your molecule length. Nothing downstream recovers length that was already destroyed at the bench.</div>
+
+  <div class="panel">
+    <div class="stepLabel" id="stepLabel">The same genomic DNA, split between two tubes</div>
+    <svg id="svgRoot" width="760" height="270" viewBox="0 0 760 270">
+      <text class="laneLabel" x="150" y="78" text-anchor="end">Handled roughly</text>
+      <text class="readLabel" x="150" y="112" text-anchor="end">reads</text>
+      <text class="laneLabel" x="150" y="196" text-anchor="end">Handled gently</text>
+      <text class="readLabel" x="150" y="230" text-anchor="end">reads</text>
+      <g id="laneA"></g>
+      <g id="readsA"></g>
+      <g id="laneB"></g>
+      <g id="readsB"></g>
+      <g id="marks"></g>
+    </svg>
+  </div>
+</div>
+
+<script>
+  const NS = "http://www.w3.org/2000/svg";
+  const stepLabel = document.getElementById("stepLabel");
+  const laneAEl = document.getElementById("laneA");
+  const laneBEl = document.getElementById("laneB");
+  const readsAEl = document.getElementById("readsA");
+  const readsBEl = document.getElementById("readsB");
+  const marksEl = document.getElementById("marks");
+
+  const X0 = 170, TOTAL_W = 560, GAP = 10;
+  const A = { top: 70, bot: 78, readY: 105 };
+  const B = { top: 188, bot: 196, readY: 223 };
+
+  function rail(x1, x2, y, cls) {
+    const l = document.createElementNS(NS, "line");
+    l.setAttribute("x1", x1); l.setAttribute("y1", y);
+    l.setAttribute("x2", x2); l.setAttribute("y2", y);
+    l.setAttribute("class", "rail " + cls);
+    return l;
+  }
+
+  function drawStrand(parent, widths, lane) {
+    parent.innerHTML = "";
+    let x = 0;
+    widths.forEach((w, i) => {
+      const g = document.createElementNS(NS, "g");
+      g.setAttribute("class", "segGroup");
+      g.setAttribute("id", parent.id + "_seg" + i);
+      g.style.transform = "translateX(" + x + "px)";
+      g.appendChild(rail(X0, X0 + w, lane.top, "railTop"));
+      g.appendChild(rail(X0, X0 + w, lane.bot, "railBot"));
+      parent.appendChild(g);
+      x += w;
+    });
+  }
+
+  function spread(parent, widths) {
+    let x = 0;
+    widths.forEach((w, i) => {
+      const g = document.getElementById(parent.id + "_seg" + i);
+      g.style.transform = "translateX(" + (x + i * GAP) + "px)";
+      x += w;
+    });
+  }
+
+  function shearMarks(widths, lane) {
+    marksEl.innerHTML = "";
+    let x = 0;
+    widths.slice(0, -1).forEach(w => {
+      x += w;
+      const m = document.createElementNS(NS, "line");
+      m.setAttribute("x1", X0 + x); m.setAttribute("y1", lane.top - 10);
+      m.setAttribute("x2", X0 + x); m.setAttribute("y2", lane.bot + 10);
+      m.setAttribute("stroke", "#E07B39");
+      m.setAttribute("stroke-width", 3);
+      m.setAttribute("stroke-linecap", "round");
+      m.setAttribute("class", "shearMark");
+      m.style.opacity = 0;
+      marksEl.appendChild(m);
+      requestAnimationFrame(() => { m.style.opacity = 1; });
+    });
+  }
+
+  function drawReads(parent, widths, lane, colour) {
+    parent.innerHTML = "";
+    let x = 0;
+    widths.forEach((w, i) => {
+      const r = document.createElementNS(NS, "rect");
+      r.setAttribute("x", X0 + x + i * GAP);
+      r.setAttribute("y", lane.readY);
+      r.setAttribute("width", w);
+      r.setAttribute("height", 9);
+      r.setAttribute("rx", 3);
+      r.setAttribute("fill", colour);
+      r.setAttribute("class", "readBar");
+      r.style.opacity = 0;
+      parent.appendChild(r);
+      x += w;
+      requestAnimationFrame(() => { r.style.opacity = 1; });
+    });
+  }
+
+  function randomBreaks() {
+    const n = 5 + Math.floor(Math.random() * 3); // 5 to 7 pieces
+    const tight = TOTAL_W - (n - 1) * GAP;
+    const weights = Array.from({ length: n }, () => 0.5 + Math.random());
+    const sum = weights.reduce((a, b) => a + b, 0);
+    return weights.map(w => Math.max(30, Math.round((w / sum) * tight)));
+  }
+
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  async function cycle() {
+    const broken = randomBreaks();
+    const whole = [TOTAL_W];
+
+    marksEl.innerHTML = "";
+    readsAEl.innerHTML = "";
+    readsBEl.innerHTML = "";
+    drawStrand(laneAEl, [TOTAL_W], A);
+    drawStrand(laneBEl, whole, B);
+    stepLabel.textContent = "The same genomic DNA, split between two tubes";
+    await wait(2200);
+
+    stepLabel.textContent = "One tube is vortexed and pipetted hard, the other is handled gently";
+    await wait(2200);
+
+    stepLabel.textContent = "Shearing snaps the rough tube into pieces";
+    drawStrand(laneAEl, broken, A);
+    shearMarks(broken, A);
+    await wait(900);
+    spread(laneAEl, broken);
+    await wait(1800);
+
+    Array.from(marksEl.children).forEach(m => { m.style.opacity = 0; });
+    stepLabel.textContent = "What you can actually read from each tube";
+    drawReads(readsAEl, broken, A, "#7E8CA6");
+    drawReads(readsBEl, whole, B, "#A6C48C");
+    await wait(2600);
+
+    stepLabel.textContent = "Read length is molecule length: protect it before you start";
+    await wait(3000);
+
+    [laneAEl, laneBEl, readsAEl, readsBEl, marksEl].forEach(el => {
+      el.style.transition = "opacity 0.7s ease";
+      el.style.opacity = 0;
+    });
+    await wait(800);
+    [laneAEl, laneBEl, readsAEl, readsBEl, marksEl].forEach(el => { el.style.opacity = 1; });
+
+    cycle();
+  }
+
+  cycle();
+</script>
+</body>
+</html>

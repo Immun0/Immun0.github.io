@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hydrodynamic Focusing</title>
+<style>
+  :root {
+    --bg: #D9D9D9;
+    --panel: #14243D;
+    --muted: #9DB2CE;
+    --wall: #AAB8C6;
+    --wall-edge: #CBD6E1;
+    --needle: #232323;
+    --core: #70B9C6;
+    --cell: #EDF3F5;
+    --cell-edge: #2C6EA6;
+    --nucleus: #33465C;
+  }
+  html, body { margin:0; padding:0; height:100%; background:var(--bg); font-family:Arial, Helvetica, sans-serif; overflow:hidden; }
+  .brand-badge { position: fixed; top: 24px; left: 24px; width: 150px; height: 150px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 10px rgba(0,0,0,0.15); }
+  .brand-logo { width: 123px; height: 123px; }
+  .wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; width:100vw; box-sizing:border-box; padding:24px; }
+  h1 { font-size: 28px; font-weight: 700; margin: 0 0 4px 0; letter-spacing: -0.5px; color: #114D90; }
+  .subtitle { color:#55606E; font-size:13.5px; margin-bottom:16px; text-align:center; max-width:800px; line-height:1.45; }
+  .panel { background: var(--panel); border-radius: 16px; padding: 20px 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+  .stepLabel { text-align:center; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; height:16px; }
+  svg { display: block; }
+  .lbl { fill: var(--muted); font-size: 12px; font-family: Arial, sans-serif; }
+  .legend { display:flex; gap:20px; margin-top:18px; font-size:15px; color:#55606E; justify-content:center; flex-wrap:wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .dot { width: 15px; height: 15px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="brand-badge"><img src="../Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
+<div class="wrap">
+  <h1>Hydrodynamic Focusing</h1>
+  <div class="subtitle">The needle feeds sample into the cone, where cells arrive spread across the stream and clumped. The physical cone narrows the whole fluid column, which speeds the cells up and squeezes them to a fine point, single file. Focusing is only this geometric act: it does not order the flow, so past the nozzle the stream can still turn turbulent. Keeping it smooth is a separate matter, laminar flow, step 2.</div>
+
+  <div class="panel">
+    <div class="stepLabel" id="stepLabel">Sample fills the cone, spread out and clumped</div>
+    <svg id="svgRoot" width="840" height="360" viewBox="0 0 840 360">
+      <g id="scene"></g>
+      <g id="eddies"></g>
+      <g id="cells"></g>
+      <g id="labels"></g>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:#AAB8C6"></span>Cone (nozzle)</span>
+    <span><span class="dot" style="background:#232323"></span>Needle</span>
+    <span><span class="dot" style="background:#7FCAD6"></span>Sample fluid</span>
+    <span><span class="dot" style="background:#EDF3F5;border:1px solid #2C6EA6"></span>Cell</span>
+  </div>
+</div>
+
+<script>
+  const NS = "http://www.w3.org/2000/svg";
+  const stepLabel = document.getElementById("stepLabel");
+  const sceneEl = document.getElementById("scene");
+  const eddiesEl = document.getElementById("eddies");
+  const cellsEl = document.getElementById("cells");
+  const labelsEl = document.getElementById("labels");
+
+  const CY = 185;
+  const X_IN = 158, H_IN = 72;
+  const X_OR = 445, H_OR = 9;
+  const X_BORE = 560;
+  const X_END = 832;
+
+  function el(t, a) { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); return e; }
+  function circle(cx, cy, r, fill, stroke, sw) { const c = el("circle", { cx, cy, r, fill }); if (stroke) { c.setAttribute("stroke", stroke); c.setAttribute("stroke-width", sw || 1); } return c; }
+  function ellipse(cx, cy, rx, ry, fill, stroke, sw) { const e = el("ellipse", { cx, cy, rx, ry, fill }); if (stroke) { e.setAttribute("stroke", stroke); e.setAttribute("stroke-width", sw || 1); } return e; }
+  function txt(x, y, s, anchor) { const t = el("text", { x, y, class: "lbl" }); if (anchor) t.setAttribute("text-anchor", anchor); t.textContent = s; return t; }
+
+  // channel half-width through the physical nozzle; the sample fills it and the cone squeezes it
+  function chanHalf(x) {
+    if (x <= X_IN) return H_IN;
+    if (x >= X_OR && x <= X_BORE) return H_OR;
+    if (x < X_OR) return H_IN + (H_OR - H_IN) * (x - X_IN) / (X_OR - X_IN);
+    return H_OR;
+  }
+  // continuity: the cells speed up as the flow narrows
+  function vAt(x) { return 0.7 * Math.min(H_IN / chanHalf(Math.min(x, X_BORE)), 6); }
+  // free jet past the bore, roughly bore width with a little spread
+  function jetHalf(x) { return H_OR + (24 - H_OR) * Math.min((x - X_BORE) / (X_END - X_BORE), 1); }
+
+  function drawScene() {
+    sceneEl.innerHTML = "";
+    // sample fluid filling the whole cone, narrowing with it
+    let top = [], bot = [];
+    for (let k = 0; k <= 18; k++) {
+      const x = X_IN + (X_BORE - X_IN) * k / 18;
+      top.push(x.toFixed(1) + "," + (CY - chanHalf(x)).toFixed(1));
+      bot.push(x.toFixed(1) + "," + (CY + chanHalf(x)).toFixed(1));
+    }
+    sceneEl.appendChild(el("polygon", { points: top.concat(bot.reverse()).join(" "), fill: "var(--core)", opacity: 0.82 }));
+    // the free jet past the bore
+    sceneEl.appendChild(el("polygon", { points: X_BORE + "," + (CY - H_OR) + " " + X_END + "," + (CY - jetHalf(X_END)) + " " + X_END + "," + (CY + jetHalf(X_END)) + " " + X_BORE + "," + (CY + H_OR), fill: "var(--core)", opacity: 0.34 }));
+
+    // physical cone walls (solid structure), light so they read against the dark panel
+    const topWall = X_IN + ",46 " + X_BORE + ",46 " + X_BORE + "," + (CY - H_OR) + " " + X_OR + "," + (CY - H_OR) + " " + X_IN + "," + (CY - H_IN);
+    const botWall = X_IN + ",324 " + X_BORE + ",324 " + X_BORE + "," + (CY + H_OR) + " " + X_OR + "," + (CY + H_OR) + " " + X_IN + "," + (CY + H_IN);
+    sceneEl.appendChild(el("polygon", { points: topWall, fill: "var(--wall)", stroke: "var(--wall-edge)", "stroke-width": 1 }));
+    sceneEl.appendChild(el("polygon", { points: botWall, fill: "var(--wall)", stroke: "var(--wall-edge)", "stroke-width": 1 }));
+
+    // injection needle feeding sample into the cone: a flat-ended tube, dark walls with a sample-filled bore
+    sceneEl.appendChild(el("rect", { x: 0, y: CY - 42, width: X_IN, height: 84, rx: 4, fill: "var(--needle)" }));
+    sceneEl.appendChild(el("rect", { x: 0, y: CY - 36, width: X_IN, height: 72, fill: "var(--core)", opacity: 0.82 }));
+  }
+
+  function drawLabels() {
+    labelsEl.innerHTML = "";
+    labelsEl.appendChild(txt((X_IN + X_BORE) / 2, 30, "Cone narrows the flow and speeds the cells up", "middle"));
+    labelsEl.appendChild(txt(74, CY - 50, "needle", "middle"));
+    labelsEl.appendChild(txt((X_OR + X_BORE) / 2, 348, "squeezed to single file", "middle"));
+    labelsEl.appendChild(txt(704, 348, "the flow can still turn turbulent", "middle"));
+  }
+
+  // cells sit within the needle bore, then fan into the core width past the mouth: they emerge from the needle
+  function laneHalf(x) {
+    const bore = 30;
+    if (x < X_IN) return bore;
+    if (x <= X_BORE) { const full = Math.max(0, chanHalf(x) - 6); return bore + (full - bore) * Math.min(1, (x - X_IN) / 40); }
+    return jetHalf(x) - 6;
+  }
+  let cells = [], frame = 0;
+  function spawn() {
+    const spindle = Math.random() < 0.5;
+    cells.push({ x: 12, lf: Math.random() * 2 - 1, oy: 0, ty: 0, spindle, ang0: (30 + Math.random() * 55) * (Math.random() < 0.5 ? 1 : -1) });
+  }
+  function yCore(c) { return CY + c.lf * Math.max(0, chanHalf(c.x) - 6); }
+
+  function step() {
+    frame += 1;
+    if (frame % 11 === 0) spawn();
+    if (frame % 37 === 0) spawn();
+
+    cells.forEach(c => { c.x += vAt(c.x); c.oyTarget = 0; });
+    // de-clumping only where the core is coherent (before the bore exit)
+    const order = cells.filter(c => c.x < X_BORE).sort((a, b) => a.x - b.x);
+    for (let i = 0; i < order.length; i++) {
+      for (let j = i + 1; j < order.length && (order[j].x - order[i].x) < 13; j++) {
+        if (Math.abs(yCore(order[i]) - yCore(order[j])) < 11) { order[i].oyTarget = -5; order[j].oyTarget = 5; }
+      }
+    }
+    cells.forEach(c => { c.oy = c.oy + (c.oyTarget - c.oy) * 0.18; });
+
+    cells.forEach(c => {
+      // past the bore the stream is a free jet, roughly bore width, with a modest turbulent wobble
+      if (c.x > X_BORE) {
+        const amp = Math.min((c.x - X_BORE) / 130, 1);
+        c.ty += (Math.random() * 2 - 1) * 2.2 * amp;
+        c.ty = Math.max(-16 * amp, Math.min(16 * amp, c.ty));
+      }
+    });
+    cells = cells.filter(c => c.x < X_END + 8);
+
+    cellsEl.innerHTML = "";
+    cells.forEach(c => {
+      const half = laneHalf(c.x);
+      const off = Math.max(-half, Math.min(half, c.lf * half + c.oy));
+      const y = CY + off + c.ty;
+      const g = el("g", {});
+      const align = Math.min(1, Math.max(0, (c.x - X_IN) / (X_OR - X_IN)));
+      const ang = c.spindle ? c.ang0 * (1 - align) : 0;
+      g.setAttribute("transform", "translate(" + c.x.toFixed(1) + "," + y.toFixed(1) + ") rotate(" + ang.toFixed(1) + ")");
+      if (c.spindle) {
+        g.appendChild(ellipse(0, 0, 9.5, 4.6, "var(--cell)", "var(--cell-edge)", 1));
+        g.appendChild(ellipse(1.5, 0, 3.4, 2.2, "var(--nucleus)"));
+      } else {
+        g.appendChild(circle(0, 0, 6, "var(--cell)", "var(--cell-edge)", 1));
+        g.appendChild(circle(0, 0, 2.7, "var(--nucleus)"));
+      }
+      cellsEl.appendChild(g);
+    });
+
+    // modest unsteady streaks in the jet, kept near the centre line so the stream stays bore-width
+    eddiesEl.innerHTML = "";
+    const seeds = [[600, 176, 0], [648, 196, 2.1], [700, 172, 4.0], [744, 198, 1.2], [688, 186, 3.3], [786, 180, 5.1]];
+    seeds.forEach(s => {
+      const yy = s[1] + Math.sin(frame * 0.11 + s[2]) * 9;
+      const x0 = s[0], x1 = s[0] + 30;
+      const cxm = (x0 + x1) / 2, cym = yy + Math.cos(frame * 0.11 + s[2]) * 7;
+      eddiesEl.appendChild(el("path", { d: "M" + x0 + "," + yy + " Q" + cxm + "," + cym + " " + x1 + "," + yy, fill: "none", stroke: "var(--core)", "stroke-width": 1.8, "stroke-linecap": "round", opacity: 0.5 }));
+    });
+
+    requestAnimationFrame(step);
+  }
+
+  async function narrate() {
+    const lines = [
+      "Sample fills the cone, cells spread out and clumped",
+      "The cone narrows the whole fluid column",
+      "The narrowing speeds the cells up",
+      "Cells are squeezed to a fine point, single file",
+      "Focusing is done, but the flow can still turn turbulent"
+    ];
+    let i = 0;
+    while (true) { stepLabel.textContent = lines[i % lines.length]; i++; await new Promise(r => setTimeout(r, 3200)); }
+  }
+
+  drawScene();
+  drawLabels();
+  step();
+  narrate();
+</script>
+</body>
+</html>

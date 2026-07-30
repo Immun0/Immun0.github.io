@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Keeping Events in the Sweet Spot</title>
+<style>
+  :root {
+    --bg: #D9D9D9;
+    --panel: #14243D;
+    --muted: #8AA0BE;
+    --sheath: #2E5A86;
+    --sheath-line: #6FA0D0;
+    --core: #70B9C6;
+    --injector: #3F7C89;
+    --cell: #EDF3F5;
+    --cell-edge: #2C6EA6;
+    --nucleus: #33465C;
+    --laser: #E5352A;
+    --flash: #FF9B84;
+  }
+  html, body { margin:0; padding:0; height:100%; background:var(--bg); font-family:Arial, Helvetica, sans-serif; overflow:hidden; }
+  .brand-badge { position: fixed; top: 24px; left: 24px; width: 150px; height: 150px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 10px rgba(0,0,0,0.15); }
+  .brand-logo { width: 123px; height: 123px; }
+  .wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; width:100vw; box-sizing:border-box; padding:24px; }
+  h1 { font-size: 28px; font-weight: 700; margin: 0 0 4px 0; letter-spacing: -0.5px; color: #114D90; }
+  .subtitle { color:#55606E; font-size:13.5px; margin-bottom:16px; text-align:center; max-width:772px; line-height:1.45; }
+  .panel { background: var(--panel); border-radius: 16px; padding: 20px 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+  .stepLabel { text-align:center; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; height:16px; }
+  svg { display: block; }
+  .lbl { fill: var(--muted); font-size: 12px; font-family: Arial, sans-serif; }
+  .legend { display:flex; gap:22px; margin-top:18px; font-size:16px; color:#55606E; justify-content:center; flex-wrap:wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 9px; }
+  .dot { width: 16px; height: 16px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="brand-badge"><img src="../Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
+<div class="wrap">
+  <h1>Keeping Events in the Sweet Spot</h1>
+  <div class="subtitle">Focusing and laminar flow together: the sample runs as a central core inside a fast sheath that flows in parallel layers, fastest at the centre and slowest at the walls, and never mixes. As the channel narrows the core is squeezed until it is one cell wide, so cells line up single file, and elongated cells rotate until their long axis points along the flow. Single file and aligned, each cell meets the focused laser sweet spot the same way.</div>
+
+  <div class="panel">
+    <div class="stepLabel" id="stepLabel">A central sample core inside a layered sheath</div>
+    <svg id="svgRoot" width="820" height="360" viewBox="0 0 820 360">
+      <g id="scene"></g>
+      <g id="streams"></g>
+      <g id="cells"></g>
+      <g id="laser"></g>
+      <g id="labels"></g>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:#2E5A86"></span>Sheath fluid</span>
+    <span><span class="dot" style="background:#70B9C6"></span>Sample core</span>
+    <span><span class="dot" style="background:#EDF3F5;border:1px solid #2C6EA6"></span>Cell (with nucleus)</span>
+    <span><span class="dot" style="background:#E5352A"></span>Laser sweet spot</span>
+  </div>
+</div>
+
+<script>
+  const NS = "http://www.w3.org/2000/svg";
+  const stepLabel = document.getElementById("stepLabel");
+  const sceneEl = document.getElementById("scene");
+  const streamsEl = document.getElementById("streams");
+  const cellsEl = document.getElementById("cells");
+  const laserEl = document.getElementById("laser");
+  const labelsEl = document.getElementById("labels");
+
+  const CY = 175;
+  const X0 = 60, X_NOZZLE = 150, X_NECK = 470, X_END = 786, LX = 636;
+  const HW_WIDE = 18, HW_THIN = 6.5;
+
+  function el(t, a) { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); return e; }
+  function circle(cx, cy, r, fill, stroke, sw) { const c = el("circle", { cx, cy, r, fill }); if (stroke) { c.setAttribute("stroke", stroke); c.setAttribute("stroke-width", sw || 1); } return c; }
+  function ellipse(cx, cy, rx, ry, fill, stroke, sw) { const e = el("ellipse", { cx, cy, rx, ry, fill }); if (stroke) { e.setAttribute("stroke", stroke); e.setAttribute("stroke-width", sw || 1); } return e; }
+  function txt(x, y, s, anchor) { const t = el("text", { x, y, class: "lbl" }); if (anchor) t.setAttribute("text-anchor", anchor); t.textContent = s; return t; }
+
+  function coreHW(x) {
+    if (x <= X_NOZZLE) return HW_WIDE;
+    if (x >= X_NECK) return HW_THIN;
+    return HW_WIDE + (HW_THIN - HW_WIDE) * (x - X_NOZZLE) / (X_NECK - X_NOZZLE);
+  }
+  function chanHalf(x) {
+    const H0 = 83, H1 = 25;
+    if (x <= X0) return H0;
+    if (x >= X_NECK) return H1;
+    return H0 + (H1 - H0) * (x - X0) / (X_NECK - X0);
+  }
+  function vAt(x, yoff) {
+    const f = yoff / chanHalf(x);
+    const accel = Math.min(3.4, 83 / chanHalf(x));
+    return 0.9 * Math.max(0, 1 - f * f) * accel;
+  }
+
+  function drawScene() {
+    sceneEl.innerHTML = "";
+    sceneEl.appendChild(el("polygon", { points: "60,92 470,150 786,150 786,200 470,200 60,258", fill: "var(--sheath)" }));
+    sceneEl.appendChild(el("polygon", {
+      points: X_NOZZLE + "," + (CY - HW_WIDE) + " " + X_NECK + "," + (CY - HW_THIN) + " " + X_END + "," + (CY - HW_THIN) + " " +
+        X_END + "," + (CY + HW_THIN) + " " + X_NECK + "," + (CY + HW_THIN) + " " + X_NOZZLE + "," + (CY + HW_WIDE),
+      fill: "var(--core)", opacity: 0.9
+    }));
+    sceneEl.appendChild(el("polygon", { points: "24,166 " + X_NOZZLE + "," + (CY - HW_WIDE) + " " + X_NOZZLE + "," + (CY + HW_WIDE) + " 24,184", fill: "var(--injector)" }));
+    const ix = 150, iy = 314;
+    sceneEl.appendChild(circle(ix, iy, 26, "var(--sheath)", "#5E8DBC", 1.5));
+    sceneEl.appendChild(circle(ix, iy, 8, "var(--core)"));
+    sceneEl.appendChild(circle(ix, iy, 3.6, "var(--cell)", "var(--cell-edge)", 1));
+  }
+
+  const LAMINAE = [-0.85, -0.58, -0.32, 0.32, 0.58, 0.85];
+  const streams = LAMINAE.map(fr => {
+    const xs = [];
+    for (let n = 0; n < 8; n++) xs.push(X0 + 14 + n * ((X_END - X0 - 28) / 8));
+    return { fr, xs };
+  });
+  function renderStreams() {
+    streamsEl.innerHTML = "";
+    streams.forEach(s => {
+      for (let i = 0; i < s.xs.length; i++) {
+        let x = s.xs[i];
+        const y = CY + s.fr * chanHalf(x);
+        x += vAt(x, s.fr * chanHalf(x));
+        if (x > X_END - 8) x -= (X_END - X0 - 28);
+        s.xs[i] = x;
+        streamsEl.appendChild(el("line", { x1: x, y1: y, x2: x + 10, y2: y, stroke: "var(--sheath-line)", "stroke-width": 1.6, "stroke-linecap": "round", opacity: 0.55 }));
+      }
+    });
+  }
+
+  function drawLaser() {
+    laserEl.innerHTML = "";
+    laserEl.appendChild(el("polygon", { points: (LX - 48) + ",94 " + (LX + 48) + ",94 " + (LX + 6) + "," + (CY - 6) + " " + (LX - 6) + "," + (CY - 6), fill: "var(--laser)", opacity: 0.2 }));
+    laserEl.appendChild(el("polygon", { points: (LX - 48) + ",266 " + (LX + 48) + ",266 " + (LX + 6) + "," + (CY + 6) + " " + (LX - 6) + "," + (CY + 6), fill: "var(--laser)", opacity: 0.2 }));
+    [[-48, 94, -6], [48, 94, 6]].forEach(p => laserEl.appendChild(el("line", { x1: LX + p[0], y1: p[1], x2: LX + p[2], y2: CY - 6, stroke: "var(--laser)", "stroke-width": 1.4, opacity: 0.55 })));
+    [[-48, 266, -6], [48, 266, 6]].forEach(p => laserEl.appendChild(el("line", { x1: LX + p[0], y1: p[1], x2: LX + p[2], y2: CY + 6, stroke: "var(--laser)", "stroke-width": 1.4, opacity: 0.55 })));
+    laserEl.appendChild(el("ellipse", { cx: LX, cy: CY, rx: 6.5, ry: 9, fill: "var(--laser)", opacity: 0.95 }));
+  }
+
+  function drawLabels() {
+    labelsEl.innerHTML = "";
+    labelsEl.appendChild(txt(26, 158, "sample in"));
+    labelsEl.appendChild(txt(118, 84, "sheath: fast centre, slow walls"));
+    labelsEl.appendChild(txt(LX, 88, "laser sweet spot", "middle"));
+    labelsEl.appendChild(txt(300, 148, "squeezed into single file", "middle"));
+    labelsEl.appendChild(txt(150, 356, "tube within a tube", "middle"));
+  }
+
+  let cells = [], frame = 0;
+  function spawn() {
+    const spindle = Math.random() < 0.5;
+    cells.push({
+      x: X_NOZZLE, lf: Math.random() * 2 - 1, flash: 0, done: false,
+      spindle, ang0: (30 + Math.random() * 55) * (Math.random() < 0.5 ? 1 : -1)
+    });
+  }
+  function yPhys(c) { return CY + c.lf * Math.max(0, coreHW(c.x) - 6); }
+  function step() {
+    frame += 1;
+    if (frame % 20 === 0) spawn();
+    if (frame % 61 === 0) spawn();
+
+    cells.forEach(c => {
+      c.prevx = c.x;
+      c.x += vAt(c.x, c.lf * Math.max(0, coreHW(c.x) - 6));
+      if (!c.done && c.prevx < LX && c.x >= LX) { c.flash = 9; c.done = true; }
+      if (c.flash > 0) c.flash--;
+      c.oyTarget = 0;
+    });
+    const order = cells.slice().sort((a, b) => a.x - b.x);
+    for (let i = 0; i < order.length; i++) {
+      for (let j = i + 1; j < order.length && (order[j].x - order[i].x) < 13; j++) {
+        if (Math.abs(yPhys(order[i]) - yPhys(order[j])) < 11) { order[i].oyTarget = -5; order[j].oyTarget = 5; }
+      }
+    }
+    cells.forEach(c => { c.oy = (c.oy || 0) + (c.oyTarget - (c.oy || 0)) * 0.18; });
+    cells = cells.filter(c => c.x < X_END + 8);
+
+    renderStreams();
+    cellsEl.innerHTML = "";
+    cells.forEach(c => {
+      const maxOff = Math.max(0, coreHW(c.x) - 6);
+      const off = Math.max(-maxOff, Math.min(maxOff, (c.lf * maxOff) + (c.oy || 0)));
+      const y = CY + off;
+      if (c.flash > 0) cellsEl.appendChild(circle(LX, CY, 11, "var(--flash)", null, 0));
+      const g = el("g", {});
+      const align = Math.min(1, Math.max(0, (c.x - X_NOZZLE) / (X_NECK - X_NOZZLE)));
+      const ang = c.spindle ? c.ang0 * (1 - align) : 0;
+      g.setAttribute("transform", "translate(" + c.x.toFixed(1) + "," + y.toFixed(1) + ") rotate(" + ang.toFixed(1) + ")");
+      if (c.spindle) {
+        g.appendChild(ellipse(0, 0, 9.5, 4.6, "var(--cell)", "var(--cell-edge)", 1));
+        g.appendChild(ellipse(1.5, 0, 3.4, 2.2, "var(--nucleus)"));
+      } else {
+        g.appendChild(circle(0, 0, 6, "var(--cell)", "var(--cell-edge)", 1));
+        g.appendChild(circle(0, 0, 2.7, "var(--nucleus)"));
+      }
+      cellsEl.appendChild(g);
+    });
+    requestAnimationFrame(step);
+  }
+
+  async function narrate() {
+    const lines = [
+      "A central sample core inside a layered sheath",
+      "The sheath flows fastest at the centre, slowest at the walls, and never mixes",
+      "The narrowing core squeezes cells into single file",
+      "Elongated cells rotate to line up with the flow",
+      "Single file and aligned, each meets the focused laser sweet spot the same way"
+    ];
+    let i = 0;
+    while (true) { stepLabel.textContent = lines[i % lines.length]; i++; await new Promise(r => setTimeout(r, 3000)); }
+  }
+
+  drawScene();
+  drawLaser();
+  drawLabels();
+  step();
+  narrate();
+</script>
+</body>
+</html>

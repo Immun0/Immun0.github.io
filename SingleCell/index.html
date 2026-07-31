@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Single-Cell RNA-Seq Works | Core Principles</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L0R9PC0Y3Y"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-L0R9PC0Y3Y');
+</script>
+<style>
+  html, body { margin:0; padding:0; height:100%; background:#D9D9D9; font-family:Arial, sans-serif; }
+  .app { display:flex; flex-direction:column; height:100vh; }
+  header {
+    display:flex; align-items:center; gap:16px;
+    padding:10px 18px; background:#ffffff;
+    box-shadow:0 2px 10px rgba(0,0,0,0.10); z-index:2;
+    flex-wrap:wrap;
+  }
+  .logo { width:52px; height:52px; flex:none; }
+  .title { color:#114D90; font-size:19px; font-weight:800; margin:0; flex:none; }
+  .steps { display:flex; gap:8px; align-items:center; margin-left:auto; flex-wrap:wrap; }
+  .arrow {
+    border:none; background:#114D90; color:#fff; width:38px; height:38px;
+    border-radius:50%; font-size:20px; cursor:pointer; line-height:1;
+  }
+  .arrow:disabled { background:#B0B1A6; cursor:default; }
+  .chip {
+    display:flex; align-items:center; gap:8px;
+    border:1.5px solid #B0B1A6; background:#fff; color:#3D3D3D;
+    border-radius:22px; padding:6px 13px 6px 7px; cursor:pointer;
+    font-size:13px; font-weight:600;
+  }
+  .chip .num {
+    width:22px; height:22px; border-radius:50%;
+    background:#B0B1A6; color:#fff; font-weight:800;
+    display:flex; align-items:center; justify-content:center; font-size:12px; flex:none;
+  }
+  .chip.active { background:#114D90; color:#fff; border-color:#114D90; }
+  .chip.active .num { background:#81A564; color:#fff; }
+  .stage { flex:1; min-height:0; }
+  iframe { width:100%; height:100%; border:none; display:block; background:#D9D9D9; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <img src="../Core Principles Logo.png" alt="Core Principles" class="logo">
+    <p class="title">How Single-Cell RNA-Seq Works</p>
+    <div class="steps">
+      <button class="arrow" id="prev" aria-label="Previous">&#8249;</button>
+      <div id="chips" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+      <button class="arrow" id="next" aria-label="Next">&#8250;</button>
+    </div>
+  </header>
+  <div class="stage">
+    <iframe id="frame" title="Animation"></iframe>
+  </div>
+</div>
+
+<script>
+  const steps = [
+    { file: "01 - One Cell, One Droplet.html",              label: "One Cell, One Droplet" },
+    { file: "02 - The Barcoded Bead.html",                  label: "The Barcoded Bead" },
+    { file: "03 - Capture and Reverse Transcription.html",  label: "Capture and Reverse Transcription" },
+    { file: "04 - Pool and Trace Back.html",                label: "Pool and Trace Back" }
+  ];
+
+  const frame = document.getElementById("frame");
+  const chipsEl = document.getElementById("chips");
+  const prevBtn = document.getElementById("prev");
+  const nextBtn = document.getElementById("next");
+  let idx = 0;
+
+  steps.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.className = "chip";
+    b.innerHTML = '<span class="num">' + (i + 1) + '</span>' + s.label;
+    b.addEventListener("click", () => load(i));
+    chipsEl.appendChild(b);
+  });
+
+  function load(i) {
+    idx = Math.max(0, Math.min(steps.length - 1, i));
+    frame.src = encodeURI(steps[idx].file);
+    Array.from(chipsEl.children).forEach((c, j) => c.classList.toggle("active", j === idx));
+    prevBtn.disabled = idx === 0;
+    nextBtn.disabled = idx === steps.length - 1;
+  }
+
+  prevBtn.addEventListener("click", () => load(idx - 1));
+  nextBtn.addEventListener("click", () => load(idx + 1));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight") load(idx + 1);
+    if (e.key === "ArrowLeft") load(idx - 1);
+  });
+
+  load(0);
+</script>
+</body>
+</html>

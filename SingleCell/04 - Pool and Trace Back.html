@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pool and Trace Back</title>
+<style>
+  :root {
+    --bg: #D9D9D9;
+    --panel: #14243D;
+    --muted: #8AA0BE;
+    --cdna: #2E9B8F;
+    --droplet: #9CC3E6;
+    --droplet-edge: #2C6EA6;
+    --tube: #223452;
+    --ink: #EAF0F7;
+  }
+  html, body { margin:0; padding:0; height:100%; background:var(--bg); font-family:Arial, Helvetica, sans-serif; overflow:hidden; }
+  .brand-badge { position: fixed; top: 24px; left: 24px; width: 150px; height: 150px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 10px rgba(0,0,0,0.15); }
+  .brand-logo { width: 123px; height: 123px; }
+  .wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; width:100vw; box-sizing:border-box; padding:24px; }
+  h1 { font-size: 28px; font-weight: 700; margin: 0 0 4px 0; letter-spacing: -0.5px; color: #114D90; }
+  .subtitle { color:#55606E; font-size:13.5px; margin-bottom:16px; text-align:center; max-width:760px; line-height:1.45; }
+  .panel { background: var(--panel); border-radius: 16px; padding: 20px 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+  .stepLabel { text-align:center; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; height:16px; }
+  svg { display: block; width: 100%; height: auto; }
+  .lbl { fill: var(--muted); font-size: 12px; font-family: Arial, sans-serif; text-anchor: middle; }
+  .fade { transition: opacity 0.55s ease; }
+  .mol { }
+  .legend { display:flex; gap:22px; margin-top:18px; font-size:15px; color:#55606E; justify-content:center; flex-wrap:wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .dot { width: 15px; height: 15px; border-radius: 3px; display: inline-block; }
+  .bcKey { background: linear-gradient(90deg,#E5322F 0 33%,#1E6FD0 33% 66%,#F2B400 66%); }
+  /* Responsive: identical block on every animation */
+  html, body { overflow-x: hidden; }
+  .wrap { min-height: 100vh; height: auto; width: 100%; box-sizing: border-box; }
+  .panel { width: 100%; max-width: 900px; box-sizing: border-box; }
+  svg { width: 100%; height: auto; max-width: 100%; }
+  @media (max-width: 640px) {
+    .brand-badge { width: 60px; height: 60px; top: 10px; left: 10px; }
+    .brand-logo { width: 48px; height: 48px; }
+    .wrap { padding: 12px; }
+    h1 { font-size: 20px; }
+    .subtitle { font-size: 12px; margin-bottom: 12px; }
+    .legend { font-size: 12.5px; gap: 12px; }
+    .panel { padding: 12px 14px; }
+  }
+  /* Badge scales fluidly at every width and clears content on small screens */
+  .brand-badge { width: clamp(48px, 11vw, 150px) !important; height: clamp(48px, 11vw, 150px) !important; top: clamp(8px, 2.5vw, 24px) !important; left: clamp(8px, 2.5vw, 24px) !important; }
+  .brand-logo { width: 80% !important; height: 80% !important; }
+  @media (max-width: 640px) { .wrap { padding-top: 64px !important; } }
+</style>
+</head>
+<body>
+<div class="brand-badge"><img src="../Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
+<div class="wrap">
+  <h1>Pool and Trace Back</h1>
+  <div class="subtitle">Every droplet now holds one cell's cDNA, tagged with that cell's barcode. Break the emulsion and it all pours into one tube, jumbled together, then sequenced in bulk. Nothing is lost, because software reads each molecule's barcode and sorts every read back to the cell it came from. One tube in, per-cell data out: the whole point of the barcode.</div>
+
+  <div class="panel">
+    <div class="stepLabel" id="stepLabel">Each droplet holds one cell's barcoded cDNA</div>
+    <svg id="svgRoot" width="820" height="340" viewBox="0 0 820 340">
+      <g id="drops" class="fade"></g>
+      <g id="pool" class="fade" style="opacity:0"></g>
+      <g id="sortLabels" class="fade" style="opacity:0"></g>
+      <g id="mols"></g>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot bcKey"></span>Barcode (colour pattern = its cell)</span>
+    <span><span class="dot" style="background:#2E9B8F"></span>cDNA</span>
+    <span><span class="dot" style="background:#9CC3E6;border:1px solid #2C6EA6"></span>Droplet</span>
+  </div>
+</div>
+
+<script>
+  const NS = "http://www.w3.org/2000/svg";
+  const stepLabel = document.getElementById("stepLabel");
+  const dropsEl = document.getElementById("drops");
+  const poolEl = document.getElementById("pool");
+  const sortLabelsEl = document.getElementById("sortLabels");
+  const molsEl = document.getElementById("mols");
+
+  const P = { r: "#E5322F", b: "#1E6FD0", y: "#F2B400", g: "#2FA043" };
+  const PATTERNS = [[P.r, P.b, P.y], [P.b, P.g, P.r], [P.y, P.g, P.b]];  // three cells
+  const UMI_COLS = ["#8E5FD3", "#2FA9BC", "#D14E9A", "#A9743F"];
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  function el(t, a) { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); return e; }
+  function circle(cx, cy, r, fill, stroke, sw) { const c = el("circle", { cx, cy, r, fill }); if (stroke) { c.setAttribute("stroke", stroke); c.setAttribute("stroke-width", sw || 1); } return c; }
+  function rect(x, y, w, h, fill, rx) { const r = el("rect", { x, y, width: w, height: h, fill }); if (rx) r.setAttribute("rx", rx); return r; }
+
+  const dropX = [150, 410, 670], dropY = 92, dropR = 60;
+  const sortX = [120, 384, 648];
+  const NCELL = 3, PER = 9;
+
+  // one barcoded cDNA molecule: 3-stripe barcode + UMI + cDNA tail (compact)
+  function molecule(p, umiCol) {
+    const g = el("g", { class: "mol" });
+    PATTERNS[p].forEach((c, i) => g.appendChild(rect(i * 5, 0, 5, 7, c, 0)));
+    g.appendChild(rect(16, 0, 6, 7, umiCol, 0));
+    g.appendChild(rect(23, 0, 18, 7, "var(--cdna)", 1));
+    return g;
+  }
+
+  // build all molecules, remember a fixed random spot in the pooled tube for each
+  const mols = [];
+  for (let p = 0; p < NCELL; p++) {
+    for (let k = 0; k < PER; k++) {
+      const g = molecule(p, UMI_COLS[k % UMI_COLS.length]);
+      molsEl.appendChild(g);
+      mols.push({ g, p, k, x: 0, y: 0, tx: 0, ty: 0, ease: 0.045 + Math.random() * 0.035,
+        poolX: 334 + Math.random() * 108, poolY: 98 + Math.random() * 92 });
+    }
+  }
+  let poolMode = false;
+  function toDroplets() { mols.forEach(m => { m.tx = dropX[m.p] - 20; m.ty = dropY - 40 + m.k * 9; }); }
+  function toPool() { mols.forEach(m => { m.tx = m.poolX; m.ty = m.poolY; }); }
+  function toSorted() { mols.forEach(m => { m.tx = sortX[m.p]; m.ty = 110 + m.k * 12; }); }
+
+  // continuous easing loop: molecules glide toward their targets every frame
+  function animate() {
+    mols.forEach(m => {
+      if (poolMode) {
+        m.tx = Math.max(332, Math.min(444, m.tx + (Math.random() - 0.5) * 0.9));
+        m.ty = Math.max(96, Math.min(190, m.ty + (Math.random() - 0.5) * 0.9));
+      }
+      m.x += (m.tx - m.x) * m.ease;
+      m.y += (m.ty - m.y) * m.ease;
+      m.g.setAttribute("transform", "translate(" + m.x.toFixed(1) + "," + m.y.toFixed(1) + ")");
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  function drawDroplets() {
+    dropsEl.innerHTML = "";
+    dropX.forEach(x => dropsEl.appendChild(circle(x, dropY, dropR, "var(--droplet)", "var(--droplet-edge)", 2.5)));
+  }
+  function drawPool() {
+    poolEl.innerHTML = "";
+    poolEl.appendChild(rect(322, 54, 176, 18, "#6E7E92", 5));                                   // cap
+    poolEl.appendChild(rect(344, 70, 132, 9, "#54617A", 2));                                    // neck
+    poolEl.appendChild(el("path", { d: "M328,80 L492,80 L492,214 Q492,272 410,292 Q328,272 328,214 Z", fill: "rgba(46,155,143,0.14)", stroke: "#8AA0BE", "stroke-width": 2 }));  // glass tube holding the library
+    poolEl.appendChild(el("text", { x: 410, y: 46, class: "lbl" })).textContent = "one tube: the pooled library";
+  }
+  function drawSortLabels() {
+    sortLabelsEl.innerHTML = "";
+    ["cell 1", "cell 2", "cell 3"].forEach((s, i) => {
+      sortLabelsEl.appendChild(el("text", { x: sortX[i] + 20, y: 100, class: "lbl" })).textContent = s;
+    });
+  }
+
+  async function cycle() {
+    // hard-reset container opacities with NO fade, so nothing from the last loop lingers
+    [dropsEl, poolEl, sortLabelsEl].forEach(g => g.style.transition = "none");
+    dropsEl.style.opacity = 1; poolEl.style.opacity = 0; sortLabelsEl.style.opacity = 0;
+    drawDroplets(); drawPool(); drawSortLabels();
+    poolMode = false;
+    toDroplets(); mols.forEach(m => { m.x = m.tx; m.y = m.ty; });
+    dropsEl.getBoundingClientRect();                       // force reflow before re-enabling fades
+    [dropsEl, poolEl, sortLabelsEl].forEach(g => g.style.transition = "");
+    stepLabel.textContent = "Each droplet holds one cell's barcoded cDNA";
+    await wait(2800);
+
+    // break the emulsion: droplets burst out fast and first, then the tube fills
+    stepLabel.textContent = "Break the emulsion: every droplet empties into one tube";
+    dropsEl.style.transition = "opacity 0.4s ease";
+    dropsEl.style.opacity = 0;
+    await wait(300);
+    poolEl.style.opacity = 1;
+    toPool();
+    await wait(1200);
+    poolMode = true;                     // gentle drift so the pool looks alive
+    await wait(1300);
+
+    // sequence in bulk
+    stepLabel.textContent = "Amplify and sequence the whole pool together, reads come back jumbled";
+    await wait(2400);
+
+    // trace back: sort by barcode. fade the tube out at once so it never ghosts behind the columns
+    stepLabel.textContent = "Read each barcode and sort every read back to its cell";
+    poolMode = false;
+    poolEl.style.opacity = 0;
+    sortLabelsEl.style.opacity = 1;
+    toSorted();
+    await wait(3200);
+
+    stepLabel.textContent = "One tube in, per-cell data out: the barcode made it possible";
+    await wait(3400);
+
+    await wait(400);
+    cycle();
+  }
+
+  cycle();
+</script>
+</body>
+</html>

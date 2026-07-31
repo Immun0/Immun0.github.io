@@ -10,8 +10,8 @@
     --text: #EAF0F7;
     --muted: #8AA0BE;
     --insert: #6C7C99;
-    --adapter-start: #E07B39;
-    --adapter-end: #81A564;
+    --adapter-start: #9B7FC7;
+    --adapter-end: #70B9C6;
     --extend-arc: #8FB6E0;
     --surface: #223452;
   }
@@ -78,7 +78,7 @@
     height: 14px;
     font-family: "SF Mono", Menlo, Consolas, monospace;
   }
-  svg { display: block; }
+  svg { display: block; width: 100%; height: auto; }
   .surfaceRect { fill: var(--surface); }
   .strandSeg {
     stroke-width: 2.8;
@@ -111,6 +111,10 @@
   /* responsive sizing */
   .panel { width: min(90vw, 860px); box-sizing: border-box; }
   svg { max-width: 100%; max-height: calc(100vh - 200px); width: auto; height: auto; display: block; }
+  /* Badge scales fluidly at every width and clears content on small screens */
+  .brand-badge { width: clamp(48px, 11vw, 150px) !important; height: clamp(48px, 11vw, 150px) !important; top: clamp(8px, 2.5vw, 24px) !important; left: clamp(8px, 2.5vw, 24px) !important; }
+  .brand-logo { width: 80% !important; height: 80% !important; }
+  @media (max-width: 640px) { .wrap { padding-top: 64px !important; } }
 </style>
 </head>
 <body>

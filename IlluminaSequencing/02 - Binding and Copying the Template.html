@@ -19,11 +19,11 @@
     --strand: #5A6B88;
     --surface: #223452;
     --tmpl-insert: #6C7C99;
-    --tmpl-adapter-start: #E07B39;
-    --tmpl-adapter-end: #81A564;
+    --tmpl-adapter-start: #9B7FC7;
+    --tmpl-adapter-end: #70B9C6;
     --copy-insert: #8FA0BC;
-    --copy-adapter-start: #F0B07A;
-    --copy-adapter-end: #A6C48C;
+    --copy-adapter-start: #C0AEDC;
+    --copy-adapter-end: #A5D3DB;
   }
   html, body {
     margin: 0; padding: 0; height: 100%;
@@ -85,6 +85,10 @@
   }
   .legend span { display: inline-flex; align-items: center; gap: 7px; }
   .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+  /* Badge scales fluidly at every width and clears content on small screens */
+  .brand-badge { width: clamp(48px, 11vw, 150px) !important; height: clamp(48px, 11vw, 150px) !important; top: clamp(8px, 2.5vw, 24px) !important; left: clamp(8px, 2.5vw, 24px) !important; }
+  .brand-logo { width: 80% !important; height: 80% !important; }
+  @media (max-width: 640px) { .wrap { padding-top: 64px !important; } }
 </style>
 </head>
 <body>

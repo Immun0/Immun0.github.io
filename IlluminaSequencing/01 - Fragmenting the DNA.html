@@ -68,7 +68,7 @@
     margin-bottom: 14px;
     height: 16px;
   }
-  svg { display: block; }
+  svg { display: block; width: 100%; height: auto; }
   .segmentGroup { transition: transform 1.8s cubic-bezier(0.22, 0.61, 0.36, 1); }
   .adapterCap { transition: opacity 0.6s ease; }
   .railLine { stroke-width: 2.6; stroke-linecap: round; }
@@ -87,6 +87,10 @@
   /* responsive sizing */
   .panel { width: min(90vw, 860px); box-sizing: border-box; }
   svg { max-width: 100%; max-height: calc(100vh - 200px); width: auto; height: auto; display: block; }
+  /* Badge scales fluidly at every width and clears content on small screens */
+  .brand-badge { width: clamp(48px, 11vw, 150px) !important; height: clamp(48px, 11vw, 150px) !important; top: clamp(8px, 2.5vw, 24px) !important; left: clamp(8px, 2.5vw, 24px) !important; }
+  .brand-logo { width: 80% !important; height: 80% !important; }
+  @media (max-width: 640px) { .wrap { padding-top: 64px !important; } }
 </style>
 </head>
 <body>
@@ -216,10 +220,10 @@
       });
       // adapters keep the double-rail shape, just coloured
       const caps = [
-        makeRailSeg(0, capW, yTop, "#E07B39"),          // surface-end adapter, top rail
-        makeRailSeg(0, capW, yBot, "#E07B39"),          // surface-end adapter, bottom rail
-        makeRailSeg(w - capW, w, yTop, "#A6C48C"),      // free-end adapter, top rail
-        makeRailSeg(w - capW, w, yBot, "#A6C48C")       // free-end adapter, bottom rail
+        makeRailSeg(0, capW, yTop, "#9B7FC7"),          // surface-end adapter, top rail
+        makeRailSeg(0, capW, yBot, "#9B7FC7"),          // surface-end adapter, bottom rail
+        makeRailSeg(w - capW, w, yTop, "#70B9C6"),      // free-end adapter, top rail
+        makeRailSeg(w - capW, w, yBot, "#70B9C6")       // free-end adapter, bottom rail
       ];
       caps.forEach(c => g.appendChild(c));
       requestAnimationFrame(() => { caps.forEach(c => { c.style.opacity = 1; }); });

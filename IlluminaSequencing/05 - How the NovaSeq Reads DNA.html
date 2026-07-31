@@ -131,6 +131,40 @@
   }
   .legend span { display: inline-flex; align-items: center; gap: 12px; }
   .dot { width: 26px; height: 26px; border-radius: 50%; display: inline-block; }
+  /* Responsive: identical block on every animation */
+  html, body { overflow-x: hidden; }
+  .wrap { min-height: 100vh; height: auto; width: 100%; box-sizing: border-box; }
+  .panel { width: 100%; max-width: 900px; box-sizing: border-box; }
+  svg { width: 100%; height: auto; max-width: 100%; }
+  @media (max-width: 640px) {
+    .brand-badge { width: 60px; height: 60px; top: 10px; left: 10px; }
+    .brand-logo { width: 48px; height: 48px; }
+    .wrap { padding: 12px; }
+    h1 { font-size: 20px; }
+    .subtitle { font-size: 12px; margin-bottom: 12px; }
+    .legend { font-size: 12.5px; gap: 12px; }
+    .panel { padding: 12px 14px; }
+  }
+  /* Badge scales fluidly at every width and clears content on small screens */
+  .brand-badge { width: clamp(48px, 11vw, 150px) !important; height: clamp(48px, 11vw, 150px) !important; top: clamp(8px, 2.5vw, 24px) !important; left: clamp(8px, 2.5vw, 24px) !important; }
+  .brand-logo { width: 80% !important; height: 80% !important; }
+  @media (max-width: 640px) { .wrap { padding-top: 64px !important; } }
+  /* Div layout (this animation is HTML/CSS, not SVG): stack and shrink on small screens */
+  @media (max-width: 780px) {
+    .stage { flex-direction: column; gap: 24px; }
+    .readout { min-width: 0; width: 100%; box-sizing: border-box; }
+    .flowcell { box-sizing: border-box; }
+  }
+  @media (max-width: 640px) {
+    .subtitle { margin-bottom: 16px; }
+    .grid { gap: 8px; }
+    .cluster { width: 16px; height: 16px; }
+    .flowcell { padding: 16px; }
+    .readout { padding: 16px 18px; }
+    .sequence { font-size: 18px; letter-spacing: 2px; min-height: 120px; }
+    .legend { font-size: 18px !important; gap: 16px !important; }
+    .dot { width: 16px !important; height: 16px !important; }
+  }
 </style>
 </head>
 <body>

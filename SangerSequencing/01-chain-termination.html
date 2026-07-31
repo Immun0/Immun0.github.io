@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Chain Termination: Sanger Sequencing</title>
+<title>Chain Termination — Sanger Sequencing</title>
 <style>
   :root {
     --bg: #D9D9D9;
@@ -96,6 +96,20 @@
   }
   .legend span { display: inline-flex; align-items: center; gap: 7px; }
   .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+  /* Responsive standard: identical on every animation */
+  html, body { overflow-x: hidden; }
+  .wrap { min-height: 100vh; height: auto; width: 100%; box-sizing: border-box; }
+  .panel { width: 100%; max-width: 900px; box-sizing: border-box; }
+  svg { width: 100%; height: auto; max-width: 100%; }
+  .brand-badge { width: clamp(48px, 11vw, 150px) !important; height: clamp(48px, 11vw, 150px) !important; top: clamp(8px, 2.5vw, 24px) !important; left: clamp(8px, 2.5vw, 24px) !important; }
+  .brand-logo { width: 80% !important; height: 80% !important; }
+  @media (max-width: 640px) {
+    .wrap { padding: 12px; padding-top: 64px; }
+    h1 { font-size: 20px; }
+    .subtitle { font-size: 12px; margin-bottom: 12px; }
+    .legend { font-size: 12.5px; gap: 12px; }
+    .panel { padding: 12px 14px; }
+  }
 </style>
 </head>
 <body>
@@ -187,7 +201,7 @@
 
   async function cycle() {
     svgRoot.innerHTML = "";
-    countLabel.textContent = " ";
+    countLabel.textContent = "\u00A0";
 
     stepLabel.textContent = "Every copy starts extending from the same primer";
     const targetLengths = shuffledLengths(NUM_STRANDS);

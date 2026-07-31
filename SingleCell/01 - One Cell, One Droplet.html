@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>One Cell, One Droplet</title>
+<style>
+  :root {
+    --bg: #D9D9D9;
+    --panel: #14243D;
+    --muted: #8AA0BE;
+    --water: #2F6FA6;
+    --oil: #EBD494;
+    --oil-streak: #C29A3C;
+    --droplet: #9CC3E6;
+    --droplet-edge: #2C6EA6;
+  }
+  html, body { margin:0; padding:0; height:100%; background:var(--bg); font-family:Arial, Helvetica, sans-serif; overflow:hidden; }
+  .brand-badge {
+    position: fixed; top: 24px; left: 24px; width: 150px; height: 150px;
+    background: #ffffff; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  .brand-logo { width: 123px; height: 123px; }
+  .wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; width:100vw; box-sizing:border-box; padding:24px; }
+  h1 { font-size: 28px; font-weight: 700; margin: 0 0 4px 0; letter-spacing: -0.5px; color: #114D90; }
+  .subtitle { color:#55606E; font-size:13.5px; margin-bottom:16px; text-align:center; max-width:740px; line-height:1.45; }
+  .panel { background: var(--panel); border-radius: 16px; padding: 20px 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+  .stepLabel { text-align:center; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; height:16px; }
+  svg { display: block; width: 100%; height: auto; }
+  .lbl { fill: var(--muted); font-size: 12px; font-family: Arial, sans-serif; }
+  .tally { fill: var(--muted); font-size: 12px; font-family: Arial, sans-serif; }
+  .tallyNum { font-weight: bold; font-size: 15px; }
+  .legend { display:flex; gap:26px; margin-top:18px; font-size:18px; color:#55606E; justify-content:center; flex-wrap:wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 9px; }
+  .dot { width: 17px; height: 17px; border-radius: 50%; display: inline-block; }
+  .dot.edged { border: 1px solid #2C6EA6; }
+  .cellKey { background: radial-gradient(circle, #33465C 0 40%, #FFFFFF 40%); border: 1.3px solid #2C6EA6; }
+  .beadKey { background: repeating-linear-gradient(90deg,#E5322F 0 2px,#98A6B1 2px 4px,#1E6FD0 4px 6px,#98A6B1 6px 8px,#F2B400 8px 10px,#98A6B1 10px 12px); }
+  /* Responsive: identical block on every animation */
+  html, body { overflow-x: hidden; }
+  .wrap { min-height: 100vh; height: auto; width: 100%; box-sizing: border-box; }
+  .panel { width: 100%; max-width: 900px; box-sizing: border-box; }
+  svg { width: 100%; height: auto; max-width: 100%; }
+  @media (max-width: 640px) {
+    .brand-badge { width: 60px; height: 60px; top: 10px; left: 10px; }
+    .brand-logo { width: 48px; height: 48px; }
+    .wrap { padding: 12px; }
+    h1 { font-size: 20px; }
+    .subtitle { font-size: 12px; margin-bottom: 12px; }
+    .legend { font-size: 12.5px; gap: 12px; }
+    .panel { padding: 12px 14px; }
+  }
+  /* Badge scales fluidly at every width and clears content on small screens */
+  .brand-badge { width: clamp(48px, 11vw, 150px) !important; height: clamp(48px, 11vw, 150px) !important; top: clamp(8px, 2.5vw, 24px) !important; left: clamp(8px, 2.5vw, 24px) !important; }
+  .brand-logo { width: 80% !important; height: 80% !important; }
+  @media (max-width: 640px) { .wrap { padding-top: 64px !important; } }
+</style>
+</head>
+<body>
+<div class="brand-badge"><img src="../Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
+<div class="wrap">
+  <h1>One Cell, One Droplet</h1>
+  <div class="subtitle">Oil flows straight through the main channel. Cells drop in from above and barcoded gel beads rise from below, meeting the oil at the junction where it shears them into sealed droplets. Each gel bead carries its own barcode, shown here as its own stripe pattern. Cells are loaded sparse, so most droplets are empty and few hold two: the deliberate price of never mixing two cells in one droplet.</div>
+
+  <div class="panel">
+    <div class="stepLabel" id="stepLabel">Oil flows through; cells and beads meet it at the junction</div>
+    <svg id="svgRoot" width="820" height="330" viewBox="0 0 820 330">
+      <g id="channels"></g>
+      <g id="oilflow"></g>
+      <g id="flow"></g>
+      <g id="droplets"></g>
+      <g id="tally">
+        <text class="tally" x="60" y="250">Droplets made so far</text>
+        <text class="tally" x="60" y="276"><tspan class="tallyNum" id="nEmpty" fill="#8AA0BE">0</tspan> empty</text>
+        <text class="tally" x="60" y="298"><tspan class="tallyNum" id="nOne" fill="#FFFFFF">0</tspan> with one cell</text>
+        <text class="tally" x="60" y="320"><tspan class="tallyNum" id="nTwo" fill="#E07B39">0</tspan> with two (wasted)</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot cellKey"></span>Cell (membrane + nucleus)</span>
+    <span><span class="dot beadKey"></span>Gel bead (stripes = its barcode)</span>
+    <span><span class="dot" style="background:#EBD494"></span>Oil</span>
+    <span><span class="dot edged" style="background:#9CC3E6"></span>Sealed droplet</span>
+  </div>
+</div>
+
+<script>
+  const NS = "http://www.w3.org/2000/svg";
+  const stepLabel = document.getElementById("stepLabel");
+  const channelsEl = document.getElementById("channels");
+  const oilflowEl = document.getElementById("oilflow");
+  const flowEl = document.getElementById("flow");
+  const dropletsEl = document.getElementById("droplets");
+  const nEmptyEl = document.getElementById("nEmpty");
+  const nOneEl = document.getElementById("nOne");
+  const nTwoEl = document.getElementById("nTwo");
+
+  const MID = 165, JX = 372;
+  const OUT_H = 17, IN_H = 11, ARM_H = 12, HUB = 22;
+  const MAIN_X0 = 44, OUT_END = 772;
+  const TOP_Y = 40, BOT_Y = 290;              // arm entry points (symmetric, 125px from MID)
+  const ARM_LEN = MID - TOP_Y;
+  const SPEED = 1.4, DROP_R = 15;
+  const BATCH_FRAMES = 54;
+  const STRIPE = ["#E5322F", "#1E6FD0", "#F2B400", "#2FA043"];
+
+  function el(tag, attrs) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; }
+  function circle(cx, cy, r, fill, stroke, sw) {
+    const c = el("circle", { cx, cy, r, fill });
+    if (stroke) { c.setAttribute("stroke", stroke); c.setAttribute("stroke-width", sw || 1); }
+    return c;
+  }
+
+  function makeBarcode() {
+    const xs = [-4, -2, 0, 2, 4], bars = [];
+    xs.forEach(dx => { if (Math.random() < 0.6) bars.push({ dx, w: Math.random() < 0.5 ? 1.4 : 2.2, c: STRIPE[Math.floor(Math.random() * STRIPE.length)] }); });
+    if (bars.length < 2) { bars.length = 0; bars.push({ dx: -3, w: 1.6, c: STRIPE[0] }, { dx: 0, w: 1.4, c: STRIPE[1] }, { dx: 3, w: 2, c: STRIPE[2] }); }
+    return bars;
+  }
+  function drawBead(cx, cy, r, bars) {
+    const g = el("g", {});
+    g.appendChild(circle(cx, cy, r, "#98A6B1"));
+    bars.forEach(b => {
+      const dx = b.dx * (r / 7);
+      const h = Math.sqrt(Math.max(0, r * r - dx * dx)) * 0.86;
+      g.appendChild(el("line", { x1: cx + dx, y1: cy - h, x2: cx + dx, y2: cy + h, stroke: b.c, "stroke-width": b.w * (r / 7), "stroke-linecap": "round" }));
+    });
+    return g;
+  }
+  function drawCell(cx, cy, r) {
+    const g = el("g", {});
+    g.appendChild(circle(cx, cy, r, "#FFFFFF", "#2C6EA6", 1.3));  // white body + membrane ring
+    g.appendChild(circle(cx, cy, r * 0.5, "#33465C"));            // nucleus
+    return g;
+  }
+
+  function drawChannels() {
+    channelsEl.innerHTML = "";
+    // OIL IN: a narrow feeder from the left
+    channelsEl.appendChild(el("rect", { x: MAIN_X0, y: MID - IN_H, width: (JX - HUB) - MAIN_X0, height: IN_H * 2, fill: "var(--oil)", rx: 5 }));
+    // DROPLETS OUT: a wider outlet to the right
+    channelsEl.appendChild(el("rect", { x: JX + HUB, y: MID - OUT_H, width: OUT_END - (JX + HUB), height: OUT_H * 2, fill: "var(--oil)", rx: 5 }));
+    // WATER arms: cells from the top, beads from the bottom
+    channelsEl.appendChild(el("rect", { x: JX - ARM_H, y: 34, width: ARM_H * 2, height: (MID - HUB) - 34, fill: "var(--water)", rx: 4 }));
+    channelsEl.appendChild(el("rect", { x: JX - ARM_H, y: MID + HUB, width: ARM_H * 2, height: 300 - (MID + HUB), fill: "var(--water)", rx: 4 }));
+    // the junction: a hub where all four channels meet (a 4-way stop, not a highway)
+    channelsEl.appendChild(el("rect", { x: JX - HUB, y: MID - HUB, width: HUB * 2, height: HUB * 2, fill: "var(--oil)", rx: 8 }));
+
+    channelsEl.appendChild(el("text", { x: MAIN_X0 + 2, y: MID - IN_H - 8, class: "lbl" })).textContent = "oil in";
+    channelsEl.appendChild(el("text", { x: OUT_END - 82, y: MID - OUT_H - 8, class: "lbl" })).textContent = "droplets out";
+    channelsEl.appendChild(el("text", { x: JX + ARM_H + 8, y: 54, class: "lbl" })).textContent = "cells";
+    channelsEl.appendChild(el("text", { x: JX + ARM_H + 8, y: 292, class: "lbl" })).textContent = "gel beads";
+  }
+
+  // oil streaks along the whole main channel, flowing left to right
+  const streaks = [];
+  function initStreaks() {
+    streaks.length = 0;
+    // oil feeder (left of the junction)
+    for (let x = MAIN_X0 + 6; x < JX - HUB; x += 18)
+      for (const dy of [-6, 1, 8])
+        streaks.push({ x: x + Math.random() * 6, y: MID + dy, xMin: MAIN_X0 + 6, xMax: JX - HUB });
+    // outlet (right of the junction)
+    for (let x = JX + HUB + 6; x < OUT_END; x += 20)
+      for (const dy of [-11, -3, 5, 12])
+        streaks.push({ x: x + Math.random() * 8, y: MID + dy, xMin: JX + HUB + 6, xMax: OUT_END });
+  }
+  function renderStreaks() {
+    oilflowEl.innerHTML = "";
+    streaks.forEach(s => {
+      s.x += 0.8; if (s.x > s.xMax - 4) s.x = s.xMin;
+      oilflowEl.appendChild(el("line", { x1: s.x, y1: s.y, x2: s.x + 9, y2: s.y, stroke: "var(--oil-streak)", "stroke-width": 2, "stroke-linecap": "round", opacity: 0.5 }));
+    });
+  }
+
+  let batches = [], counts = { 0: 0, 1: 0, 2: 0 };
+  let frame = 0, made = 0;
+
+  function sampleLoad() { const r = Math.random(); return r < 0.62 ? 0 : (r < 0.93 ? 1 : 2); }
+
+  function newBatch() {
+    const cellN = sampleLoad();
+    const bead = Math.random() < 0.85 ? { bars: makeBarcode() } : null;
+    batches.push({ p: 0, cellN, bead, phase: "travel", dropX: JX });
+  }
+
+  function step() {
+    frame++;
+    if (frame % BATCH_FRAMES === 0) newBatch();
+
+    batches.forEach(b => {
+      if (b.phase === "travel") {
+        b.p += SPEED / ARM_LEN;
+        if (b.p >= 1) { b.phase = "drop"; b.dropX = JX; }
+      } else {
+        b.dropX += SPEED;
+      }
+    });
+    batches.filter(b => b.phase === "drop" && b.dropX > OUT_END).forEach(b => {
+      counts[Math.min(2, b.cellN)]++;
+      nEmptyEl.textContent = counts[0]; nOneEl.textContent = counts[1]; nTwoEl.textContent = counts[2];
+      made++;
+    });
+    batches = batches.filter(b => !(b.phase === "drop" && b.dropX > OUT_END));
+
+    renderStreaks();
+    render();
+
+    if (made === 4) stepLabel.textContent = "Most droplets carry no cell at all";
+    if (made === 12) stepLabel.textContent = "A useful droplet holds one cell and one bead";
+    if (made === 22) stepLabel.textContent = "Sparse loading is the cost of one cell per droplet";
+    if (made >= 30) {
+      batches = []; counts = { 0: 0, 1: 0, 2: 0 }; made = 0; frame = 0;
+      nEmptyEl.textContent = "0"; nOneEl.textContent = "0"; nTwoEl.textContent = "0";
+      stepLabel.textContent = "Oil flows through; cells and beads meet it at the junction";
+    }
+    requestAnimationFrame(step);
+  }
+
+  function render() {
+    flowEl.innerHTML = "";
+    dropletsEl.innerHTML = "";
+    batches.forEach(b => {
+      if (b.phase === "travel") {
+        // cells descending the top arm
+        for (let i = 0; i < b.cellN; i++) {
+          const y = TOP_Y + b.p * ARM_LEN - i * 15;
+          if (y > 30 && y < MID) flowEl.appendChild(drawCell(JX, y, 6.5));
+        }
+        // bead rising the bottom arm
+        if (b.bead) {
+          const y = BOT_Y - b.p * ARM_LEN;
+          if (y > MID && y < 302) flowEl.appendChild(drawBead(JX, y, 7.5, b.bead.bars));
+        }
+      } else {
+        // sealed droplet travelling out in the oil, cell above bead, both inside
+        dropletsEl.appendChild(circle(b.dropX, MID, DROP_R, "var(--droplet)", "var(--droplet-edge)", 2));
+        if (b.bead) dropletsEl.appendChild(drawBead(b.dropX, MID + (b.cellN ? 6 : 0), 7, b.bead.bars));
+        for (let i = 0; i < b.cellN; i++) {
+          const slot = b.bead ? -6 - i * 6 : (i - (b.cellN - 1) / 2) * 7;
+          dropletsEl.appendChild(drawCell(b.dropX, MID + slot, 6));
+        }
+      }
+    });
+  }
+
+  drawChannels();
+  initStreaks();
+  stepLabel.textContent = "Oil flows through; cells and beads meet it at the junction";
+  requestAnimationFrame(step);
+</script>
+</body>
+</html>

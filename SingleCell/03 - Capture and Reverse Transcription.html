@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Capture and Reverse Transcription</title>
+<style>
+  :root {
+    --bg: #D9D9D9;
+    --panel: #14243D;
+    --muted: #8AA0BE;
+    --bead: #98A6B1;
+    --adapter: #5A6B88;
+    --polyt: #E0684A;
+    --mrna: #C77DBB;
+    --cdna: #2E9B8F;
+    --droplet: #9CC3E6;
+    --droplet-edge: #2C6EA6;
+    --ink: #EAF0F7;
+  }
+  html, body { margin:0; padding:0; height:100%; background:var(--bg); font-family:Arial, Helvetica, sans-serif; overflow:hidden; }
+  .brand-badge { position: fixed; top: 24px; left: 24px; width: 150px; height: 150px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 10px rgba(0,0,0,0.15); }
+  .brand-logo { width: 123px; height: 123px; }
+  .wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; width:100vw; box-sizing:border-box; padding:24px; }
+  h1 { font-size: 28px; font-weight: 700; margin: 0 0 4px 0; letter-spacing: -0.5px; color: #114D90; }
+  .subtitle { color:#55606E; font-size:13.5px; margin-bottom:16px; text-align:center; max-width:760px; line-height:1.45; }
+  .panel { background: var(--panel); border-radius: 16px; padding: 20px 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+  .stepLabel { text-align:center; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; height:16px; }
+  svg { display: block; width: 100%; height: auto; }
+  .seglbl { fill: var(--muted); font-size: 11px; font-family: Arial, sans-serif; text-anchor: middle; }
+  .note { fill: var(--ink); font-size: 12.5px; font-family: Arial, sans-serif; }
+  .fade { transition: opacity 0.7s ease; }
+  .legend { display:flex; gap:20px; margin-top:18px; font-size:15px; color:#55606E; justify-content:center; flex-wrap:wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .dot { width: 15px; height: 15px; border-radius: 3px; display: inline-block; }
+  .bcKey { background: linear-gradient(90deg,#E5322F 0 33%,#1E6FD0 33% 66%,#F2B400 66%); }
+  /* Responsive: identical block on every animation */
+  html, body { overflow-x: hidden; }
+  .wrap { min-height: 100vh; height: auto; width: 100%; box-sizing: border-box; }
+  .panel { width: 100%; max-width: 900px; box-sizing: border-box; }
+  svg { width: 100%; height: auto; max-width: 100%; }
+  @media (max-width: 640px) {
+    .brand-badge { width: 60px; height: 60px; top: 10px; left: 10px; }
+    .brand-logo { width: 48px; height: 48px; }
+    .wrap { padding: 12px; }
+    h1 { font-size: 20px; }
+    .subtitle { font-size: 12px; margin-bottom: 12px; }
+    .legend { font-size: 12.5px; gap: 12px; }
+    .panel { padding: 12px 14px; }
+  }
+  /* Badge scales fluidly at every width and clears content on small screens */
+  .brand-badge { width: clamp(48px, 11vw, 150px) !important; height: clamp(48px, 11vw, 150px) !important; top: clamp(8px, 2.5vw, 24px) !important; left: clamp(8px, 2.5vw, 24px) !important; }
+  .brand-logo { width: 80% !important; height: 80% !important; }
+  @media (max-width: 640px) { .wrap { padding-top: 64px !important; } }
+</style>
+</head>
+<body>
+<div class="brand-badge"><img src="../Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
+<div class="wrap">
+  <h1>Capture and Reverse Transcription</h1>
+  <div class="subtitle">Inside the sealed droplet, the gel bead dissolves and releases its barcoded oligos, and the cell lyses and spills its mRNA. Each mRNA's poly(A) tail pairs with an oligo's poly(dT), and reverse transcription copies the mRNA into cDNA. That cDNA now carries the cell barcode and a UMI, so every molecule from this cell walks away tagged with the same barcode.</div>
+
+  <div class="panel">
+    <div class="stepLabel" id="stepLabel">Inside one sealed droplet: a cell and its barcoded bead</div>
+    <svg id="svgRoot" width="820" height="340" viewBox="0 0 820 340">
+      <g id="sceneDrop" class="fade"></g>
+      <g id="sceneClose" class="fade" style="opacity:0"></g>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:#EDF3F5;border:1px solid #2C6EA6"></span>Cell</span>
+    <span><span class="dot" style="background:#98A6B1"></span>Gel bead</span>
+    <span><span class="dot bcKey"></span>Barcoded oligo</span>
+    <span><span class="dot" style="background:#C77DBB"></span>mRNA</span>
+    <span><span class="dot" style="background:#2E9B8F"></span>cDNA</span>
+    <span><span class="dot" style="background:#C98A2B;border-radius:50%"></span>RT enzyme</span>
+  </div>
+</div>
+
+<script>
+  const NS = "http://www.w3.org/2000/svg";
+  const stepLabel = document.getElementById("stepLabel");
+  const sceneDrop = document.getElementById("sceneDrop");
+  const sceneClose = document.getElementById("sceneClose");
+
+  const P = { r: "#E5322F", b: "#1E6FD0", y: "#F2B400" };
+  const HERO = [P.r, P.b, P.y];                       // this bead/cell's barcode
+  const UMI_COLS = ["#8E5FD3", "#2FA9BC", "#D14E9A", "#A9743F"];
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  function el(t, a) { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); return e; }
+  function circle(cx, cy, r, fill, stroke, sw) { const c = el("circle", { cx, cy, r, fill }); if (stroke) { c.setAttribute("stroke", stroke); c.setAttribute("stroke-width", sw || 1); } return c; }
+  function rect(x, y, w, h, fill, rx) { const r = el("rect", { x, y, width: w, height: h, fill }); if (rx) r.setAttribute("rx", rx); return r; }
+  function txt(x, y, s, cls) { const t = el("text", { x, y, class: cls || "seglbl" }); t.textContent = s; return t; }
+
+  function bead(cx, cy, r, pattern) {
+    const g = el("g", {});
+    g.appendChild(circle(cx, cy, r, "var(--bead)"));
+    pattern.forEach((c, i) => {
+      const dx = (i - 1) * r * 0.34, h = Math.sqrt(r * r - dx * dx) * 0.88;
+      g.appendChild(el("line", { x1: cx + dx, y1: cy - h, x2: cx + dx, y2: cy + h, stroke: c, "stroke-width": r * 0.17, "stroke-linecap": "round" }));
+    });
+    return g;
+  }
+  function cell(cx, cy, r) {
+    const g = el("g", {});
+    g.appendChild(circle(cx, cy, r, "#EDF3F5", "#2C6EA6", 1.4));
+    g.appendChild(circle(cx, cy, r * 0.46, "#33465C"));
+    return g;
+  }
+  // a small free capture oligo: barcode (3 stripes) + UMI + poly(dT) ticks
+  function miniOligo(x, y, umiCol) {
+    const g = el("g", {});
+    let cx = x;
+    HERO.forEach((c, i) => g.appendChild(rect(cx + i * 5, y, 5, 8, c, 0)));
+    cx += 16;
+    g.appendChild(rect(cx, y, 8, 8, umiCol, 1)); cx += 9;
+    g.appendChild(rect(cx, y, 16, 8, "var(--polyt)", 1));
+    for (let i = 0; i < 4; i++) g.appendChild(el("line", { x1: cx + 3 + i * 4, y1: y, x2: cx + 3 + i * 4, y2: y + 8, stroke: "#8A2E1E", "stroke-width": 0.8 }));
+    return g;
+  }
+  // a short mRNA: wavy body + poly(A) tail
+  function miniMRNA(x, y) {
+    const g = el("g", {});
+    g.appendChild(el("path", { d: "M" + x + "," + y + " q 8,-7 16,0 t 16,0 t 16,0", fill: "none", stroke: "var(--mrna)", "stroke-width": 3, "stroke-linecap": "round" }));
+    g.appendChild(el("line", { x1: x + 48, y1: y, x2: x + 70, y2: y, stroke: "var(--mrna)", "stroke-width": 3, "stroke-linecap": "round" }));
+    g.appendChild(txt(x + 59, y - 5, "AAAA"));
+    return g;
+  }
+
+  async function cycle() {
+    sceneClose.style.opacity = 0; sceneClose.innerHTML = "";
+    sceneDrop.innerHTML = ""; sceneDrop.style.opacity = 1;
+
+    // SCENE 1: the droplet
+    const DX = 300, DY = 170, DR = 138;
+    sceneDrop.appendChild(circle(DX, DY, DR, "var(--droplet)", "var(--droplet-edge)", 2.5));
+    const beadG = bead(250, 145, 44, HERO); beadG.setAttribute("class", "fade"); sceneDrop.appendChild(beadG);
+    const cellG = cell(360, 205, 30); cellG.setAttribute("class", "fade"); sceneDrop.appendChild(cellG);
+
+    // labels to the right of the droplet
+    sceneDrop.appendChild(txt(560, 150, "one droplet from step 1", "note"));
+    stepLabel.textContent = "Inside one sealed droplet: a cell and its barcoded bead";
+    await wait(2600);
+
+    // bead dissolves -> oligos released
+    stepLabel.textContent = "The gel bead dissolves, releasing its barcoded oligos";
+    beadG.style.opacity = 0;
+    const oligoG = el("g", { class: "fade", opacity: 0 }); sceneDrop.appendChild(oligoG);
+    const spots = [[210, 120], [255, 110], [235, 165], [285, 150], [205, 185], [270, 195], [300, 120], [240, 210]];
+    spots.forEach((s, i) => oligoG.appendChild(miniOligo(s[0], s[1], UMI_COLS[i % 4])));
+    requestAnimationFrame(() => oligoG.style.opacity = 1);
+    await wait(2600);
+
+    // cell lyses -> mRNA released
+    stepLabel.textContent = "The cell lyses, spilling its mRNA";
+    cellG.style.opacity = 0;
+    const mrnaG = el("g", { class: "fade", opacity: 0 }); sceneDrop.appendChild(mrnaG);
+    [[330, 210], [370, 175], [345, 245], [390, 225]].forEach(s => mrnaG.appendChild(miniMRNA(s[0], s[1])));
+    requestAnimationFrame(() => mrnaG.style.opacity = 1);
+    await wait(2600);
+
+    // SCENE 2: molecular close-up
+    sceneDrop.style.opacity = 0;
+    await wait(600);
+    sceneClose.innerHTML = ""; sceneClose.style.opacity = 1;
+
+    // three oligo+mRNA pairs, captured and reverse-transcribed together
+    const H = 15;
+    const bcX = 120, umiX = bcX + 48, ptX = umiX + 24, ptW = 54, cd0 = ptX + ptW;
+    const rowsY = [58, 146, 234];
+
+    // --- PHASE D: capture. only poly(dT) pairs with poly(A); barcode + UMI are an overhang ---
+    stepLabel.textContent = "Only the poly(dT) pairs with the mRNA's poly(A); the barcode and UMI hang off as an overhang";
+    const gPairs = el("g", {}); sceneClose.appendChild(gPairs);
+    rowsY.forEach((yT, r) => {
+      const yB = yT + 26, labels = (r === 0);
+      HERO.forEach((c, i) => gPairs.appendChild(rect(bcX + i * 16, yT, 16, H, c, 0)));
+      gPairs.appendChild(rect(umiX, yT, 22, H, UMI_COLS[r], 2));
+      gPairs.appendChild(rect(ptX, yT, ptW, H, "var(--polyt)", 2));
+      for (let i = 0; i < 6; i++) gPairs.appendChild(el("line", { x1: ptX + 5 + i * 8, y1: yT, x2: ptX + 5 + i * 8, y2: yT + H, stroke: "#8A2E1E", "stroke-width": 1 }));
+      gPairs.appendChild(rect(ptX, yB, ptW, H, "var(--mrna)", 2));
+      for (let i = 0; i < 6; i++) gPairs.appendChild(el("line", { x1: ptX + 5 + i * 8, y1: yB, x2: ptX + 5 + i * 8, y2: yB + H, stroke: "#7A3E6E", "stroke-width": 1 }));
+      gPairs.appendChild(el("path", { d: "M" + cd0 + "," + (yB + H / 2) + " q 14,10 28,0 t 28,0 t 28,0 t 28,0 t 28,0", fill: "none", stroke: "var(--mrna)", "stroke-width": 3.5, "stroke-linecap": "round" }));
+      for (let i = 0; i < 6; i++) gPairs.appendChild(el("line", { x1: ptX + 5 + i * 8, y1: yT + H, x2: ptX + 5 + i * 8, y2: yB, stroke: "var(--muted)", "stroke-width": 1, opacity: 0.5 }));
+      if (labels) {
+        gPairs.appendChild(txt(bcX + 24, yT - 8, "barcode"));
+        gPairs.appendChild(txt(umiX + 11, yT - 8, "UMI"));
+        gPairs.appendChild(txt(ptX + ptW / 2, yT - 8, "poly(dT)"));
+        gPairs.appendChild(txt(ptX + ptW / 2, yB + H + 13, "poly(A)"));
+        gPairs.appendChild(txt(cd0 + 78, yB + H + 13, "mRNA template"));
+      }
+    });
+    await wait(3600);
+
+    // --- PHASE E: RT extends all three oligos into cDNA at the same time ---
+    stepLabel.textContent = "Reverse transcription copies all the captured mRNAs at once: each oligo extends into its own cDNA";
+    const gCD = el("g", {}); sceneClose.appendChild(gCD);
+    const bars = [], polys = [];
+    rowsY.forEach(yT => {
+      bars.push(gCD.appendChild(rect(cd0, yT, 4, H, "var(--cdna)", 2)));
+      polys.push(gCD.appendChild(circle(cd0, yT + H / 2, 8, "#C98A2B")));
+    });
+    const cdMax = 150;
+    for (let w = 4; w <= cdMax; w += 6) {
+      bars.forEach(b => b.setAttribute("width", w));
+      polys.forEach(p => p.setAttribute("cx", cd0 + w));
+      await wait(42);
+    }
+    gCD.appendChild(txt(cd0 + cdMax / 2, rowsY[0] - 8, "cDNA (new strand)"));
+    gCD.appendChild(txt(cd0 + cdMax + 34, rowsY[1] + H / 2 + 4, "RT enzyme"));
+    await wait(2600);
+
+    // --- PHASE F: products. one oligo, one cDNA. same barcode, different UMI ---
+    stepLabel.textContent = "One oligo primes one mRNA: every cDNA carries the bead's barcode and its own UMI";
+    sceneClose.innerHTML = "";
+    const gR = el("g", {}); sceneClose.appendChild(gR);
+    const rx = 240;
+    for (let r = 0; r < 3; r++) {
+      const y = 108 + r * 46; let cx = rx;
+      HERO.forEach((c, i) => gR.appendChild(rect(cx + i * 16, y, 16, H, c, 0)));
+      cx += 48;
+      gR.appendChild(rect(cx, y, 22, H, UMI_COLS[r], 2)); cx += 23;
+      gR.appendChild(rect(cx, y, 150, H, "var(--cdna)", 2));
+    }
+    gR.appendChild(txt(rx + 24, 98, "barcode"));
+    gR.appendChild(txt(rx + 82, 98, "UMI"));
+    gR.appendChild(txt(rx + 148, 98, "cDNA"));
+    gR.appendChild(el("rect", { x: rx - 2, y: 102, width: 50, height: 3 * 46 - 12, fill: "none", stroke: "#EAF0F7", "stroke-width": 2, rx: 3 }));
+    gR.appendChild(txt(rx + 23, 250, "same barcode"));
+    gR.appendChild(el("rect", { x: rx + 45, y: 102, width: 24, height: 3 * 46 - 12, fill: "none", stroke: "#F2B400", "stroke-width": 2, rx: 3 }));
+    gR.appendChild(txt(rx + 57, 250, "UMI varies"));
+    await wait(4400);
+
+    await wait(400);
+    cycle();
+  }
+
+  cycle();
+</script>
+</body>
+</html>

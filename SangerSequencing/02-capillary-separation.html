@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Capillary Separation: Sanger Sequencing</title>
+<title>Capillary Separation — Sanger Sequencing</title>
 <style>
   :root {
     --bg: #D9D9D9;
@@ -116,13 +116,27 @@
   }
   .legend span { display: inline-flex; align-items: center; gap: 7px; }
   .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+  /* Responsive: badge and frame uniform; multi-panel layout stacks on mobile */
+  html, body { overflow-x: hidden; }
+  .wrap { min-height: 100vh; height: auto; width: 100%; box-sizing: border-box; }
+  .brand-badge { width: clamp(48px, 11vw, 150px) !important; height: clamp(48px, 11vw, 150px) !important; top: clamp(8px, 2.5vw, 24px) !important; left: clamp(8px, 2.5vw, 24px) !important; }
+  .brand-logo { width: 80% !important; height: 80% !important; }
+  @media (max-width: 640px) {
+    .wrap { padding: 12px; padding-top: 64px; }
+    h1 { font-size: 20px; }
+    .subtitle { font-size: 12px; margin-bottom: 12px; }
+    .stageTop { gap: 14px; }
+    .capillaryPanel, .readoutPanel, .chromatogramPanel { width: 100% !important; }
+    .legend { font-size: 12.5px; gap: 12px; }
+    .panel { padding: 14px 16px; }
+  }
 </style>
 </head>
 <body>
 <div class="brand-badge"><img src="Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
 <div class="wrap">
   <h1>Capillary Separation</h1>
-  <div class="subtitle">All 25 terminated fragments enter the capillary together, still unsorted by size. Under the same electric field, shorter fragments migrate faster than longer ones, so the mixture spreads out as it travels. A detector near the far end reads each fragment's colour the instant it passes: that single event both adds a letter to the sequence and plots a peak on the trace below, shortest to longest.</div>
+  <div class="subtitle">All 25 terminated fragments enter the capillary together, still unsorted by size. Under the same electric field, shorter fragments migrate faster than longer ones, so the mixture spreads out as it travels. A detector near the far end reads each fragment's colour the instant it passes — that single event both adds a letter to the sequence and plots a peak on the trace below, shortest to longest.</div>
 
   <div class="stageTop">
     <div class="panel capillaryPanel">
@@ -163,9 +177,9 @@
   const INJECT_X = 30;
   const DETECT_X = 590;
   const TRACK_Y = 270;
-  const STRAND_SCALE = 9;
-  const BASE_TIME = 700;
-  const PER_UNIT_TIME = 480;
+  const STRAND_SCALE = 9; // px per unit length, for the initial strand display
+  const BASE_TIME = 700;   // ms — travel time for the shortest fragment
+  const PER_UNIT_TIME = 480; // ms added per unit of length
 
   const PEAK_MARGIN_X = 20;
   const PEAK_USABLE_WIDTH = 600;
@@ -222,6 +236,8 @@
     return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
   }
 
+  // Build the initial tall strand for each fragment: a neutral body line capped
+  // with its terminator colour, echoing the chain-termination diagram directly.
   function buildStrandDisplay(fragments) {
     return fragments.map((f, i) => {
       const spreadX = xForStrand(i);
@@ -252,6 +268,9 @@
     });
   }
 
+  // Manual rAF interpolation (not CSS transitions) for cross-browser
+  // reliability on animated SVG attributes — same approach used for the
+  // fold/extend animation in "Building a Cluster".
   function collapseAndGather(strandEls, duration) {
     return new Promise(resolve => {
       const start = performance.now();
@@ -272,6 +291,7 @@
       requestAnimationFrame(frame);
     });
   }
+
 
   function createDot(x, y, base, id) {
     const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -303,6 +323,9 @@
     traceSvg.appendChild(line);
   }
 
+  // Draws the next peak at position `order` (arrival order, 0-indexed) —
+  // this is the same detection event that appends a letter to the readout,
+  // just rendered as an amplitude peak instead of text.
   function drawPeak(order, base) {
     const x = PEAK_MARGIN_X + PEAK_SPACING * order;
     const height = 60 + Math.random() * 45;
@@ -362,7 +385,7 @@
     fragments.forEach(f => createDot(INJECT_X, f.yJitter, f.base, f.id));
     await wait(500);
 
-    stepLabel.textContent = "Voltage applied: shorter fragments outrun longer ones";
+    stepLabel.textContent = "Voltage applied — shorter fragments outrun longer ones";
     const raceStart = performance.now();
     function raceFrame(now) {
       let allDone = true;
@@ -378,6 +401,7 @@
     }
     requestAnimationFrame(raceFrame);
 
+    // schedule detection in true arrival order (guaranteed ascending by length)
     const byArrival = [...fragments].sort((a, b) => a.travelTime - b.travelTime);
     let detected = 0;
     const detectionPromises = byArrival.map(f => {
@@ -390,7 +414,7 @@
         span.style.color = colors[f.base];
         span.textContent = f.base;
         sequenceEl.appendChild(span);
-        drawPeak(detected, f.base);
+        drawPeak(detected, f.base); // same event, same base — arrival order sets x-position
         detected += 1;
         countLabel.textContent = detected + " of " + NUM_FRAGMENTS;
         if (detected === NUM_FRAGMENTS) {

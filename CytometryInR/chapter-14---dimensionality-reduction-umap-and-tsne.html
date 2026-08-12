@@ -146,22 +146,22 @@
 <div class="sourceCode" id="cb239"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
 <span><span class="va">EDU_umap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://jlmelville.github.io/uwot/reference/umap.html">umap</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span><span class="op">[</span>, <span class="va">marker_cols</span><span class="op">]</span>, n_neighbors <span class="op">=</span> <span class="fl">15</span>, metric <span class="op">=</span> <span class="st">"cosine"</span>, min_dist <span class="op">=</span> <span class="fl">0.001</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 20:19:19 UMAP embedding parameters a = 1.929 b = 0.7915</span></span>
-<span><span class="co">#&gt; 20:19:19 Converting dataframe to numerical matrix</span></span>
-<span><span class="co">#&gt; 20:19:19 Read 25000 rows and found 37 numeric columns</span></span>
-<span><span class="co">#&gt; 20:19:19 Using Annoy for neighbor search, n_neighbors = 15</span></span>
-<span><span class="co">#&gt; 20:19:20 Building Annoy index with metric = cosine, n_trees = 50</span></span>
+<span><span class="co">#&gt; 18:42:53 UMAP embedding parameters a = 1.929 b = 0.7915</span></span>
+<span><span class="co">#&gt; 18:42:53 Converting dataframe to numerical matrix</span></span>
+<span><span class="co">#&gt; 18:42:53 Read 25000 rows and found 37 numeric columns</span></span>
+<span><span class="co">#&gt; 18:42:53 Using Annoy for neighbor search, n_neighbors = 15</span></span>
+<span><span class="co">#&gt; 18:42:53 Building Annoy index with metric = cosine, n_trees = 50</span></span>
 <span><span class="co">#&gt; 0%   10   20   30   40   50   60   70   80   90   100%</span></span>
 <span><span class="co">#&gt; [----|----|----|----|----|----|----|----|----|----|</span></span>
 <span><span class="co">#&gt; **************************************************|</span></span>
-<span><span class="co">#&gt; 20:19:21 Writing NN index file to temp file /var/folders/b9/5sf7xbjx7dvf_sp2yq0ctcnc0000gq/T//RtmpyxfOe7/file103f5664ef377</span></span>
-<span><span class="co">#&gt; 20:19:21 Searching Annoy index using 6 threads, search_k = 1500</span></span>
-<span><span class="co">#&gt; 20:19:21 Annoy recall = 100%</span></span>
-<span><span class="co">#&gt; 20:19:21 Commencing smooth kNN distance calibration using 6 threads with target n_neighbors = 15</span></span>
-<span><span class="co">#&gt; 20:19:22 Initializing from normalized Laplacian + noise (using RSpectra)</span></span>
-<span><span class="co">#&gt; 20:19:22 Commencing optimization for 200 epochs, with 536332 positive edges</span></span>
-<span><span class="co">#&gt; 20:19:22 Using rng type: pcg</span></span>
-<span><span class="co">#&gt; 20:19:27 Optimization finished</span></span>
+<span><span class="co">#&gt; 18:42:54 Writing NN index file to temp file /var/folders/b9/5sf7xbjx7dvf_sp2yq0ctcnc0000gq/T//Rtmp7eebUq/filea38050167d16</span></span>
+<span><span class="co">#&gt; 18:42:54 Searching Annoy index using 6 threads, search_k = 1500</span></span>
+<span><span class="co">#&gt; 18:42:55 Annoy recall = 100%</span></span>
+<span><span class="co">#&gt; 18:42:55 Commencing smooth kNN distance calibration using 6 threads with target n_neighbors = 15</span></span>
+<span><span class="co">#&gt; 18:42:55 Initializing from normalized Laplacian + noise (using RSpectra)</span></span>
+<span><span class="co">#&gt; 18:42:55 Commencing optimization for 200 epochs, with 536332 positive edges</span></span>
+<span><span class="co">#&gt; 18:42:55 Using rng type: pcg</span></span>
+<span><span class="co">#&gt; 18:43:01 Optimization finished</span></span>
 <span><span class="va">EDU_umap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">EDU_umap</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">EDU_umap</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"UMAP1"</span>, <span class="st">"UMAP2"</span><span class="op">)</span></span>
 <span></span>
@@ -227,29 +227,29 @@
 <span><span class="co">#&gt; Building tree...</span></span>
 <span><span class="co">#&gt;  - point 10000 of 25000</span></span>
 <span><span class="co">#&gt;  - point 20000 of 25000</span></span>
-<span><span class="co">#&gt; Done in 4.35 seconds (sparsity = 0.005214)!</span></span>
+<span><span class="co">#&gt; Done in 4.33 seconds (sparsity = 0.005214)!</span></span>
 <span><span class="co">#&gt; Learning embedding...</span></span>
-<span><span class="co">#&gt; Iteration 50: error is 107.617945 (50 iterations in 1.69 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 100: error is 107.494785 (50 iterations in 1.77 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 150: error is 91.439048 (50 iterations in 1.53 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 200: error is 87.592434 (50 iterations in 1.56 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 250: error is 85.915933 (50 iterations in 1.64 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 300: error is 3.724382 (50 iterations in 1.52 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 50: error is 107.617945 (50 iterations in 1.67 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 100: error is 107.494785 (50 iterations in 1.74 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 150: error is 91.439048 (50 iterations in 1.54 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 200: error is 87.592434 (50 iterations in 1.58 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 250: error is 85.915933 (50 iterations in 1.67 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 300: error is 3.724382 (50 iterations in 1.53 seconds)</span></span>
 <span><span class="co">#&gt; Iteration 350: error is 3.355635 (50 iterations in 1.46 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 400: error is 3.122446 (50 iterations in 1.47 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 450: error is 2.957886 (50 iterations in 1.45 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 500: error is 2.833609 (50 iterations in 1.44 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 550: error is 2.735669 (50 iterations in 1.48 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 600: error is 2.656206 (50 iterations in 1.46 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 650: error is 2.590256 (50 iterations in 1.45 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 700: error is 2.534433 (50 iterations in 1.45 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 750: error is 2.486316 (50 iterations in 1.46 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 800: error is 2.444342 (50 iterations in 1.47 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 850: error is 2.407324 (50 iterations in 1.44 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 900: error is 2.374716 (50 iterations in 1.45 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 950: error is 2.345861 (50 iterations in 1.54 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 1000: error is 2.320109 (50 iterations in 1.52 seconds)</span></span>
-<span><span class="co">#&gt; Fitting performed in 30.23 seconds.</span></span>
+<span><span class="co">#&gt; Iteration 400: error is 3.122446 (50 iterations in 1.46 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 450: error is 2.957886 (50 iterations in 1.46 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 500: error is 2.833609 (50 iterations in 1.45 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 550: error is 2.735669 (50 iterations in 1.45 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 600: error is 2.656206 (50 iterations in 1.45 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 650: error is 2.590256 (50 iterations in 1.46 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 700: error is 2.534433 (50 iterations in 1.46 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 750: error is 2.486316 (50 iterations in 1.45 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 800: error is 2.444342 (50 iterations in 1.46 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 850: error is 2.407324 (50 iterations in 1.46 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 900: error is 2.374716 (50 iterations in 1.47 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 950: error is 2.345861 (50 iterations in 1.45 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 1000: error is 2.320109 (50 iterations in 1.46 seconds)</span></span>
+<span><span class="co">#&gt; Fitting performed in 30.12 seconds.</span></span>
 <span></span>
 <span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span>, tsne1 <span class="op">=</span> <span class="va">tsne_out</span><span class="op">$</span><span class="va">Y</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, tsne2 <span class="op">=</span> <span class="va">tsne_out</span><span class="op">$</span><span class="va">Y</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
@@ -295,22 +295,22 @@
 <div class="sourceCode" id="cb248"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
 <span><span class="va">EDU_umap_lineage</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://jlmelville.github.io/uwot/reference/umap.html">umap</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span><span class="op">[</span>, <span class="va">lineage_markers</span><span class="op">]</span>, n_neighbors <span class="op">=</span> <span class="fl">15</span>, metric <span class="op">=</span> <span class="st">"cosine"</span>, min_dist <span class="op">=</span> <span class="fl">0.001</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 20:20:06 UMAP embedding parameters a = 1.929 b = 0.7915</span></span>
-<span><span class="co">#&gt; 20:20:07 Converting dataframe to numerical matrix</span></span>
-<span><span class="co">#&gt; 20:20:07 Read 25000 rows and found 32 numeric columns</span></span>
-<span><span class="co">#&gt; 20:20:07 Using Annoy for neighbor search, n_neighbors = 15</span></span>
-<span><span class="co">#&gt; 20:20:07 Building Annoy index with metric = cosine, n_trees = 50</span></span>
+<span><span class="co">#&gt; 18:43:40 UMAP embedding parameters a = 1.929 b = 0.7915</span></span>
+<span><span class="co">#&gt; 18:43:40 Converting dataframe to numerical matrix</span></span>
+<span><span class="co">#&gt; 18:43:40 Read 25000 rows and found 32 numeric columns</span></span>
+<span><span class="co">#&gt; 18:43:40 Using Annoy for neighbor search, n_neighbors = 15</span></span>
+<span><span class="co">#&gt; 18:43:40 Building Annoy index with metric = cosine, n_trees = 50</span></span>
 <span><span class="co">#&gt; 0%   10   20   30   40   50   60   70   80   90   100%</span></span>
 <span><span class="co">#&gt; [----|----|----|----|----|----|----|----|----|----|</span></span>
 <span><span class="co">#&gt; **************************************************|</span></span>
-<span><span class="co">#&gt; 20:20:08 Writing NN index file to temp file /var/folders/b9/5sf7xbjx7dvf_sp2yq0ctcnc0000gq/T//RtmpyxfOe7/file103f5333bfe3d</span></span>
-<span><span class="co">#&gt; 20:20:08 Searching Annoy index using 6 threads, search_k = 1500</span></span>
-<span><span class="co">#&gt; 20:20:08 Annoy recall = 100%</span></span>
-<span><span class="co">#&gt; 20:20:08 Commencing smooth kNN distance calibration using 6 threads with target n_neighbors = 15</span></span>
-<span><span class="co">#&gt; 20:20:09 Initializing from normalized Laplacian + noise (using RSpectra)</span></span>
-<span><span class="co">#&gt; 20:20:09 Commencing optimization for 200 epochs, with 539940 positive edges</span></span>
-<span><span class="co">#&gt; 20:20:09 Using rng type: pcg</span></span>
-<span><span class="co">#&gt; 20:20:14 Optimization finished</span></span>
+<span><span class="co">#&gt; 18:43:41 Writing NN index file to temp file /var/folders/b9/5sf7xbjx7dvf_sp2yq0ctcnc0000gq/T//Rtmp7eebUq/filea3803511c71a</span></span>
+<span><span class="co">#&gt; 18:43:41 Searching Annoy index using 6 threads, search_k = 1500</span></span>
+<span><span class="co">#&gt; 18:43:41 Annoy recall = 100%</span></span>
+<span><span class="co">#&gt; 18:43:41 Commencing smooth kNN distance calibration using 6 threads with target n_neighbors = 15</span></span>
+<span><span class="co">#&gt; 18:43:41 Initializing from normalized Laplacian + noise (using RSpectra)</span></span>
+<span><span class="co">#&gt; 18:43:42 Commencing optimization for 200 epochs, with 539940 positive edges</span></span>
+<span><span class="co">#&gt; 18:43:42 Using rng type: pcg</span></span>
+<span><span class="co">#&gt; 18:43:47 Optimization finished</span></span>
 <span><span class="va">EDU_umap_lineage</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">EDU_umap_lineage</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">EDU_umap_lineage</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"UMAP1_lineage"</span>, <span class="st">"UMAP2_lineage"</span><span class="op">)</span></span>
 <span></span>
@@ -351,29 +351,29 @@
 <span><span class="co">#&gt; Building tree...</span></span>
 <span><span class="co">#&gt;  - point 10000 of 25000</span></span>
 <span><span class="co">#&gt;  - point 20000 of 25000</span></span>
-<span><span class="co">#&gt; Done in 3.20 seconds (sparsity = 0.005216)!</span></span>
+<span><span class="co">#&gt; Done in 3.25 seconds (sparsity = 0.005216)!</span></span>
 <span><span class="co">#&gt; Learning embedding...</span></span>
-<span><span class="co">#&gt; Iteration 50: error is 107.615936 (50 iterations in 1.55 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 50: error is 107.615936 (50 iterations in 1.56 seconds)</span></span>
 <span><span class="co">#&gt; Iteration 100: error is 107.490985 (50 iterations in 1.81 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 150: error is 91.375371 (50 iterations in 1.52 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 200: error is 87.218854 (50 iterations in 1.52 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 250: error is 85.611740 (50 iterations in 1.51 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 300: error is 3.720626 (50 iterations in 1.49 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 350: error is 3.358805 (50 iterations in 1.45 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 400: error is 3.136466 (50 iterations in 1.46 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 450: error is 2.979606 (50 iterations in 1.46 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 500: error is 2.861771 (50 iterations in 1.41 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 150: error is 91.375371 (50 iterations in 1.55 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 200: error is 87.218854 (50 iterations in 1.51 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 250: error is 85.611740 (50 iterations in 1.53 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 300: error is 3.720626 (50 iterations in 1.47 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 350: error is 3.358805 (50 iterations in 1.46 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 400: error is 3.136466 (50 iterations in 1.45 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 450: error is 2.979606 (50 iterations in 1.44 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 500: error is 2.861771 (50 iterations in 1.44 seconds)</span></span>
 <span><span class="co">#&gt; Iteration 550: error is 2.769302 (50 iterations in 1.44 seconds)</span></span>
 <span><span class="co">#&gt; Iteration 600: error is 2.693772 (50 iterations in 1.45 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 650: error is 2.630995 (50 iterations in 1.40 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 700: error is 2.577232 (50 iterations in 1.43 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 750: error is 2.531071 (50 iterations in 1.48 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 800: error is 2.490709 (50 iterations in 1.42 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 850: error is 2.455517 (50 iterations in 1.42 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 650: error is 2.630995 (50 iterations in 1.44 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 700: error is 2.577232 (50 iterations in 1.44 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 750: error is 2.531071 (50 iterations in 1.45 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 800: error is 2.490709 (50 iterations in 1.44 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 850: error is 2.455517 (50 iterations in 1.44 seconds)</span></span>
 <span><span class="co">#&gt; Iteration 900: error is 2.424385 (50 iterations in 1.44 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 950: error is 2.396727 (50 iterations in 1.43 seconds)</span></span>
-<span><span class="co">#&gt; Iteration 1000: error is 2.372034 (50 iterations in 1.43 seconds)</span></span>
-<span><span class="co">#&gt; Fitting performed in 29.51 seconds.</span></span>
+<span><span class="co">#&gt; Iteration 950: error is 2.396727 (50 iterations in 1.44 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 1000: error is 2.372034 (50 iterations in 1.44 seconds)</span></span>
+<span><span class="co">#&gt; Fitting performed in 29.62 seconds.</span></span>
 <span></span>
 <span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE_LINEAGE</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_LINEAGE</span>, tsne1_lineage <span class="op">=</span> <span class="va">tsne_out_lineage</span><span class="op">$</span><span class="va">Y</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, tsne2_lineage <span class="op">=</span> <span class="va">tsne_out_lineage</span><span class="op">$</span><span class="va">Y</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
@@ -974,7 +974,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-11.</p>
+    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-12.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -120,23 +120,28 @@ Most plotting and statistics want one row per cell per marker, not one row per c
 
 
 ``` r
+# Exclude the three columns that are not antigens: Time and Event_length come from the
+# instrument, and Original_ID was added by PeacoQC in Chapter 9 to track event indices.
+# Left in, they become "antigen" values and appear as facet panels in Chapter 13.
 EXPRESSION_DATA_SAMPLE_ID_MELTED <- tidyr::pivot_longer(EXPRESSION_DATA_SAMPLE_ID,
-  -sample_id, names_to = "antigen", values_to = "expression")
+  -c(sample_id, Time, Event_length, Original_ID),
+  names_to = "antigen", values_to = "expression")
 
 mm <- match(EXPRESSION_DATA_SAMPLE_ID_MELTED$sample_id, metadata$sample_id)
 EXPRESSION_DATA_SAMPLE_ID_MELTED$condition <- metadata$condition[mm]
 
 saveRDS(EXPRESSION_DATA_SAMPLE_ID_MELTED, here("Data", "RDS", "EXPRESSION_DATA_SAMPLE_ID_MELTED.rds"))
 head(EXPRESSION_DATA_SAMPLE_ID_MELTED)
-#> # A tibble: 6 × 4
-#>   sample_id        antigen          expression condition
-#>   <chr>            <chr>                 <dbl> <chr>    
-#> 1 2%PFA - NAS PERM Time                 9.20   2%PFA+NAS
-#> 2 2%PFA - NAS PERM Event_length         2.46   2%PFA+NAS
-#> 3 2%PFA - NAS PERM Y89Di_CD41..         0      2%PFA+NAS
-#> 4 2%PFA - NAS PERM I127Di_IdU           0.0191 2%PFA+NAS
-#> 5 2%PFA - NAS PERM Pr141Di_CD235ab      0      2%PFA+NAS
-#> 6 2%PFA - NAS PERM Nd142Di_EMP.MAEA     1.11   2%PFA+NAS
+#> # A tibble: 6 × 7
+#>   sample_id         Time Event_length Original_ID antigen   
+#>   <chr>            <dbl>        <dbl>       <dbl> <chr>     
+#> 1 2%PFA - NAS PERM  9.20         2.46        6.01 Y89Di_CD4…
+#> 2 2%PFA - NAS PERM  9.20         2.46        6.01 I127Di_IdU
+#> 3 2%PFA - NAS PERM  9.20         2.46        6.01 Pr141Di_C…
+#> 4 2%PFA - NAS PERM  9.20         2.46        6.01 Nd142Di_E…
+#> 5 2%PFA - NAS PERM  9.20         2.46        6.01 Nd143Di_C…
+#> 6 2%PFA - NAS PERM  9.20         2.46        6.01 Nd144Di_H…
+#> # ℹ 2 more variables: expression <dbl>, condition <chr>
 ```
 
 `match()` looks up each cell's `sample_id` against the metadata sheet and pulls back the matching `condition`, this is the same join logic as `VLOOKUP` in Excel.

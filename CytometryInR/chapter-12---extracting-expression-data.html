@@ -183,23 +183,28 @@
 </h3>
 <p>Most plotting and statistics want one row per cell per marker, not one row per cell with a column per marker. <code><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer()</a></code> reshapes it, and we attach each row’s experimental condition from the metadata sheet at the same time:</p>
 <div class="sourceCode" id="cb218"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">EXPRESSION_DATA_SAMPLE_ID_MELTED</span> <span class="op">&lt;-</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span>,</span>
-<span>  <span class="op">-</span><span class="va">sample_id</span>, names_to <span class="op">=</span> <span class="st">"antigen"</span>, values_to <span class="op">=</span> <span class="st">"expression"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Exclude the three columns that are not antigens: Time and Event_length come from the</span></span>
+<span><span class="co"># instrument, and Original_ID was added by PeacoQC in Chapter 9 to track event indices.</span></span>
+<span><span class="co"># Left in, they become "antigen" values and appear as facet panels in Chapter 13.</span></span>
+<span><span class="va">EXPRESSION_DATA_SAMPLE_ID_MELTED</span> <span class="op">&lt;-</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span>,</span>
+<span>  <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">sample_id</span>, <span class="va">Time</span>, <span class="va">Event_length</span>, <span class="va">Original_ID</span><span class="op">)</span>,</span>
+<span>  names_to <span class="op">=</span> <span class="st">"antigen"</span>, values_to <span class="op">=</span> <span class="st">"expression"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_MELTED</span><span class="op">$</span><span class="va">sample_id</span>, <span class="va">metadata</span><span class="op">$</span><span class="va">sample_id</span><span class="op">)</span></span>
 <span><span class="va">EXPRESSION_DATA_SAMPLE_ID_MELTED</span><span class="op">$</span><span class="va">condition</span> <span class="op">&lt;-</span> <span class="va">metadata</span><span class="op">$</span><span class="va">condition</span><span class="op">[</span><span class="va">mm</span><span class="op">]</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_MELTED</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"EXPRESSION_DATA_SAMPLE_ID_MELTED.rds"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_MELTED</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 6 × 4</span></span>
-<span><span class="co">#&gt;   sample_id        antigen          expression condition</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;            &lt;chr&gt;                 &lt;dbl&gt; &lt;chr&gt;    </span></span>
-<span><span class="co">#&gt; 1 2%PFA - NAS PERM Time                 9.20   2%PFA+NAS</span></span>
-<span><span class="co">#&gt; 2 2%PFA - NAS PERM Event_length         2.46   2%PFA+NAS</span></span>
-<span><span class="co">#&gt; 3 2%PFA - NAS PERM Y89Di_CD41..         0      2%PFA+NAS</span></span>
-<span><span class="co">#&gt; 4 2%PFA - NAS PERM I127Di_IdU           0.0191 2%PFA+NAS</span></span>
-<span><span class="co">#&gt; 5 2%PFA - NAS PERM Pr141Di_CD235ab      0      2%PFA+NAS</span></span>
-<span><span class="co">#&gt; 6 2%PFA - NAS PERM Nd142Di_EMP.MAEA     1.11   2%PFA+NAS</span></span></code></pre></div>
+<span><span class="co">#&gt; # A tibble: 6 × 7</span></span>
+<span><span class="co">#&gt;   sample_id         Time Event_length Original_ID antigen   </span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;            &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;     </span></span>
+<span><span class="co">#&gt; 1 2%PFA - NAS PERM  9.20         2.46        6.01 Y89Di_CD4…</span></span>
+<span><span class="co">#&gt; 2 2%PFA - NAS PERM  9.20         2.46        6.01 I127Di_IdU</span></span>
+<span><span class="co">#&gt; 3 2%PFA - NAS PERM  9.20         2.46        6.01 Pr141Di_C…</span></span>
+<span><span class="co">#&gt; 4 2%PFA - NAS PERM  9.20         2.46        6.01 Nd142Di_E…</span></span>
+<span><span class="co">#&gt; 5 2%PFA - NAS PERM  9.20         2.46        6.01 Nd143Di_C…</span></span>
+<span><span class="co">#&gt; 6 2%PFA - NAS PERM  9.20         2.46        6.01 Nd144Di_H…</span></span>
+<span><span class="co">#&gt; # ℹ 2 more variables: expression &lt;dbl&gt;, condition &lt;chr&gt;</span></span></code></pre></div>
 <p><code><a href="https://rdrr.io/r/base/match.html">match()</a></code> looks up each cell’s <code>sample_id</code> against the metadata sheet and pulls back the matching <code>condition</code>, this is the same join logic as <code>VLOOKUP</code> in Excel.</p>
 </div>
 </div>
@@ -317,7 +322,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-11.</p>
+    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-12.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

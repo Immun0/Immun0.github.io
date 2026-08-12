@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 8 Chapter 7 - Gating Data | Analysing Cytometry Data with R</title>
+<meta name="author" content="Damian Carragher">
+<meta name="author" content="StemCore Laboratories and Flow Cytometry Core">
+<meta name="author" content="Ottawa Hospital Research Institute">
+<meta name="author" content="First edition by Damian Carragher">
+<meta name="description" content="8.1 The Essentials Gate your files to exclude debris, doublets and dead cells with a software package like FlowJo, Cytobank or FCSExpress Export new fcs files that only include the Live, Single...">
+<meta name="generator" content="bookdown 0.47 with bs4_book()">
+<meta property="og:title" content="Chapter 8 Chapter 7 - Gating Data | Analysing Cytometry Data with R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="8.1 The Essentials Gate your files to exclude debris, doublets and dead cells with a software package like FlowJo, Cytobank or FCSExpress Export new fcs files that only include the Live, Single...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 8 Chapter 7 - Gating Data | Analysing Cytometry Data with R">
+<meta name="twitter:description" content="8.1 The Essentials Gate your files to exclude debris, doublets and dead cells with a software package like FlowJo, Cytobank or FCSExpress Export new fcs files that only include the Live, Single...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.12.0/transition.js"></script><script src="libs/bs3compat-0.12.0/tabs.js"></script><script src="libs/bs3compat-0.12.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Analysing Cytometry Data with R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> Preface and Notes</a></li>
+<li><a class="" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">2</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
+<li><a class="" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">3</span> Chapter 2 - Setting up an R environment</a></li>
+<li><a class="" href="chapter-3---packages.html"><span class="header-section-number">4</span> Chapter 3 - Packages</a></li>
+<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">5</span> Chapter 4 - File Management and Data Access</a></li>
+<li><a class="" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">6</span> Chapter 5 - Loading Cytometry Data</a></li>
+<li><a class="" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data</a></li>
+<li><a class="active" href="chapter-7---gating-data.html"><span class="header-section-number">8</span> Chapter 7 - Gating Data</a></li>
+<li><a class="" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
+<li><a class="" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
+<li><a class="" href="chapter-10---downsampling.html"><span class="header-section-number">11</span> Chapter 10 - Downsampling</a></li>
+<li><a class="" href="chapter-11---data-transformation.html"><span class="header-section-number">12</span> Chapter 11 - Data Transformation</a></li>
+<li><a class="" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">13</span> Chapter 12 - Extracting Expression Data</a></li>
+<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">14</span> Chapter 13 - Full Visualisation</a></li>
+<li><a class="" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">15</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
+<li><a class="" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery</a></li>
+<li><a class="" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">17</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="chapter-7---gating-data" class="section level1" number="8">
+<h1>
+<span class="header-section-number">8</span> Chapter 7 - Gating Data<a class="anchor" aria-label="anchor" href="#chapter-7---gating-data"><i class="fas fa-link"></i></a>
+</h1>
+<div id="the-essentials-5" class="section level2 essentials" number="8.1">
+<h2>
+<span class="header-section-number">8.1</span> The Essentials<a class="anchor" aria-label="anchor" href="#the-essentials-5"><i class="fas fa-link"></i></a>
+</h2>
+<ol style="list-style-type: decimal">
+<li>Gate your files to exclude debris, doublets and dead cells with a software package like FlowJo, Cytobank or FCSExpress</li>
+<li>Export new fcs files that only include the <code>Live</code>, <code>Single</code> events into a new folder called ‘Live Singlets’. Export a new file for every original file - we don’t want a concatenated file (yet!). The ungated version of this course’s 5 samples, to practice on, is a separate download from the main dataset: <a href="https://github.com/Immun0/Analysing-Cytometry-Data-With-R-2026/releases/download/Data/ACDwR-ungated-data-v1.zip"><strong>ACDwR-ungated-data-v1.zip</strong></a> (82 MB). Extract it at your project root and it lands in <code>Data/ungated/</code>. If you’d rather skip gating them yourself, the already-gated result is the same data already sitting in <code>Data/fcs/</code>, the main dataset every other chapter uses.</li>
+</ol>
+<p><span class="warning">For data analysis, it’s essential to remove any confounding or extraneous events. In cytometry we want to get rid of dead cells and doublets. For high parameter analysis this is doubly important. The analysis is computationally taxing. Removing irrelevant data helps speed up the analysis as well as improving its quality. </span></p>
+<p><span class="warning">It is much simpler to manual gate in a graphical user interface like FlowJo or Cytobank than to gate with the R command line. </span></p>
+</div>
+<div id="a-deeper-dive-5" class="section level2 deeper-dive" number="8.2">
+<h2>
+<span class="header-section-number">8.2</span> A Deeper Dive<a class="anchor" aria-label="anchor" href="#a-deeper-dive-5"><i class="fas fa-link"></i></a>
+</h2>
+<p>Cleaning data is a one of the most important (and time consuming parts) of any data analysis. For flow cytometry data we do this in multiple ways, and often with multiple packages or software. In this analysis we will need to clean the data in 3 different ways
+- <code>Gating</code> - Removing dead cells, debris and doublets
+- Removes confounding events
+- Makes files smaller
+- ensures we are spending computational power on useful events
+- <code>Channel Administration</code> - Cleaning channel names and removing extraneous channels
+- Channel name parity so that our code runs smoothly
+- Removing extraneous channels that are not being used so that the analysis focuses on interesting differences between events rather than confounding ones
+- <code>Outlier and Acquisition Artefact Removal</code>
+- Removing outliers protects our analysis from the effects of extreme values
+- Removing channel data recorded during blockages or other acquisition abberations improves data clarity and homogeneity</p>
+<p>For the rest of this chapter we will gate out extraneous events using R, completing step 1 of our Data Cleaning strategy.</p>
+<p><span class="warning"> <strong>I highly recommend you learn to gate and export selected events in FlowJo, Cytobank or FCSExpress</strong> </span>. What follows here is a demonstration of what is possible with R rather than a recommendation of how handle your own data.</p>
+<p>First let’s load the packages we’ll need.</p>
+<div class="sourceCode" id="cb122"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># I expect you have these installed by now but if not you can install them with the following code;</span></span>
+<span><span class="co"># install.packages("here") etc. remember, for install.packages() we have to "quote" the package name</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RGLab/ggcyto/issues">ggcyto</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowWorkspace</span><span class="op">)</span></span></code></pre></div>
+<p>Next we can load up the data that we require. In the last chapter we imported the FCS files into a FLOWSET.</p>
+<div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Now that we have some data to manipulate we can start to gate them the R way. Remember, this will be a little laborious compared to using a graphical user interface software specially designed for the task, like FlowJo or Cytobank.</p>
+<p>First we’ll set up a Gating Set. This is a collection of gates that we can apply to our data. First we need to give the Gating Set a name and then we can start to add gates to it.</p>
+<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Gates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/GatingSet-class.html">GatingSet</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">)</span> <span class="co"># A GatingSet is a collection of gates</span></span></code></pre></div>
+<p>Okay, now we have a Gating Set calles <code>Gates</code>, lets look at the structure of the default Gating Set</p>
+<div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span> <span class="co"># returns the gates in a GatingSet i.e. it tells you which gates are a part of the GatingSet</span></span>
+<span><span class="co">#&gt; [1] "root"</span></span></code></pre></div>
+<p>As you can see, without setting any gates we only have the default gate called “root”. Note, you cannot change the name of root without causing an error. Several of the commnds in the flowWorkspace package are expecting a “root” gate at the top of the gating tree or hierarchy. If you change the name of the root gate you will get an error.</p>
+<p><strong>Note:</strong> these chunks are safe to actually run yourself, unlike most <code>eval=FALSE</code> examples in this book, that’s exactly the point of this section, seeing the real error. They use a disposable <code>Demo_Gates</code> object instead of the real <code>Gates</code>, so running them won’t break anything you need later in this chapter. The last line below is supposed to error, that’s not a mistake, keep reading after it for why.</p>
+<div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Demo_Gates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/GatingSet-class.html">GatingSet</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">)</span> <span class="co"># a disposable copy, just for this demonstration, so the real Gates object is never touched</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_set_name.html">gs_pop_set_name</a></span><span class="op">(</span><span class="va">Demo_Gates</span>, <span class="st">"root"</span>, <span class="st">"ungated"</span><span class="op">)</span> <span class="co"># We'll change the name of the root node to ungated</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Demo_Gates</span><span class="op">)</span> <span class="co"># Check the outcome is as expected</span></span></code></pre></div>
+<p>Everything looks good. But if we try to use the <code>Gating Set</code> with the <code>root</code> renamed to <code>ungated</code>, lets see what happens. Let’s try to add a gate to the hierarchy and then get counts of events in each gate:</p>
+<div class="sourceCode" id="cb127"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">R_demo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/rectangleGate-class.html">rectangleGate</a></span><span class="op">(</span>filterId <span class="op">=</span> <span class="st">"demo_gate"</span>, <span class="st">"Ir191Di"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">10000</span><span class="op">)</span>, <span class="st">"Ce140Di"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="co"># a throwaway gate, just for this demonstration</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_add.html">gs_pop_add</a></span><span class="op">(</span><span class="va">Demo_Gates</span>, <span class="va">R_demo</span>, parent <span class="op">=</span> <span class="st">"ungated"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Demo_Gates</span><span class="op">)</span> <span class="co"># Check the outcome is as expected</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_get_count_fast.html">gs_pop_get_count_fast</a></span><span class="op">(</span><span class="va">Demo_Gates</span><span class="op">)</span> <span class="co"># This line is the one that actually errors: flowWorkspace expects a node literally named "root" to exist somewhere in the tree, and renaming it broke that</span></span></code></pre></div>
+<p>Now let’s continue on gating the data for real, with <code>root</code> left exactly as it was.</p>
+<p>Lets look at the data to understand what we’re dealing with. Remember, this is mass cytometry data so we’re dealing with a lot of parameters. To get down to single live events we’ll need to go through a gating sequence which you’re not familiar with so I’ll outline it here.
+- First, we’ll remove the QC beads and debris from the files.
+- Then we’ll remove doublets
+- Finally we’ll remove dead cells.</p>
+<p>It’s a very similar process to conventional or spectral flow cytometry but using slightly different parameters, mainly because we don’t have scatter parameters to work with.</p>
+<p>First we’ll plot the data using autoplot from the <code>ggcyto</code> package. I’m going to purposefully make a few mistakes here to demonstrate why the final plotting script has 3 lines of code and multiple options rather than just using the default autoplot function.</p>
+<div class="sourceCode" id="cb128"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ce140Di"</span><span class="op">)</span> <span class="co"># We'll use autoplot() from the ggcyto package to visualise the data. The DNA intercalator Iridium 191 and the QC bead marker Cesium 140 are the parameters we'll use to gate out the QC beads and debris</span></span></code></pre></div>
+<p><img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/Plotting%20start%20state-1.png" alt="" width="672">
+If we just use autoplot, you can see that the data looks all “squished up on the axes. We haven’t yet transformed the data using arcsinh, biexponential or similar so the data is compressed onto the axes and it’s difficult to see what’s going on. We’ll deal with transformations in an upcoming chapter so here, I’ll use a little hack to transform the visualisation. By adding the <code>scale_x-flowCore-fasinh()</code> and <code>scale_y-flowCore-fasinh()</code> functions we can transform the axes to make the data more visible (and more like we’re used to).</p>
+<div class="sourceCode" id="cb129"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ce140Di"</span><span class="op">)</span> <span class="op">+</span> <span class="co"># We'll use autoplot from the ggcyto package to visualise the data</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="co"># We'll use the flowCore package to transform the visualisation with hyperbolic arcsin for y</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span><span class="co"># We'll use the flowCore package to transform the visualisation with hyperbolic arcsin for x</span></span></code></pre></div>
+<div class="inline-figure">
+<img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/Plotting%20start%20state%20with%20arcsinh-1.png" alt="" width="672">
+That’s better, but the data looks “hexagonal”. This is because autoplot bins the data into only 16 or 32 bins by default. All flow data is typically binned but to the amount of channels on the instrument. For 16 and 18bit machines we use today this will be over 250, 000 bins. It can be a useful visualisation to help understand the distribution of the data but it’s very different to how we’re used to seeing cytoemtry data. We can change this to 128 bins to make the data look more like we’re used to.</div>
+<div class="sourceCode" id="cb130"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ce140Di"</span>, bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span> <span class="op">+</span> <span class="co"># We'll use autoplot from the ggcyto package to visualise the data</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure">
+<img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/Plotting%20start%20state%20with%20arcsinh%20and%20bins128-1.png" alt="" width="672">
+This now looks like a cytometry plot. We have ~4 populations evident in each quadrant of the graph. Upper left is the QC beads identified by 140Ce expression. The upper right is bead-cell doublets that express the bead exclusive marker and the DNA marker 191Ir. The lower left is debris and the lower right is the cells expressing the DNA markers but not the bead marker. Now that we’ve seen the data and understand the gate required lets get back to our Gating Set and start to remove the confounding datapoints.</div>
+<div class="sourceCode" id="cb131"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># We'll set up a gate to filter out the QC Beads and debris from the cell populations</span></span>
+<span><span class="co"># The QC beads are 140Ce positive and the cells are Ir191 and Ir193 Positive</span></span>
+<span><span class="co"># First we create a rectangular gate, give it a name, choose the parameters and set the co-ordinates of the 4 corners of the gate</span></span>
+<span></span>
+<span><span class="va">R1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/rectangleGate-class.html">rectangleGate</a></span><span class="op">(</span>filterId<span class="op">=</span><span class="st">"Non-Beads,Non-debris"</span>,</span>
+<span><span class="st">"Ir191Di"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">10000</span><span class="op">)</span>, <span class="st">"Ce140Di"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Next we set the hierarchy of the gate by choosing the parent gate</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="st">"/Non-Beads,Non-debris"</span> <span class="op"><a href="https://rdrr.io/pkg/flowCore/man/filter-in-methods.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_add.html">gs_pop_remove</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"Non-Beads,Non-debris"</span><span class="op">)</span> <span class="co"># remove any leftover gate from a previous run of this chunk before re-adding</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_add.html">gs_pop_add</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="va">R1</span>, parent <span class="op">=</span> <span class="st">"root"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 2</span></span>
+<span><span class="co"># Next we recompute the gates to make sure the new gate is included in the analysis</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_get_count_fast.html">gs_pop_get_count_fast</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                        name            Population Parent</span></span>
+<span><span class="co">#&gt;                      &lt;char&gt;                &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1:      2PFANASPermLIVE.fcs /Non-Beads,Non-debris   root</span></span>
+<span><span class="co">#&gt; 2: 4PFA1GLUTNASPermLIVE.fcs /Non-Beads,Non-debris   root</span></span>
+<span><span class="co">#&gt; 3:      4PFANASPermLIVE.fcs /Non-Beads,Non-debris   root</span></span>
+<span><span class="co">#&gt; 4:       4PFANoPermLIVE.fcs /Non-Beads,Non-debris   root</span></span>
+<span><span class="co">#&gt; 5:      8PFANASPermLIVE.fcs /Non-Beads,Non-debris   root</span></span>
+<span><span class="co">#&gt;    Count ParentCount</span></span>
+<span><span class="co">#&gt;    &lt;int&gt;       &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:     0       30825</span></span>
+<span><span class="co">#&gt; 2:     0       14171</span></span>
+<span><span class="co">#&gt; 3:     0       15158</span></span>
+<span><span class="co">#&gt; 4:     0       57521</span></span>
+<span><span class="co">#&gt; 5:     0       23790</span></span>
+<span></span>
+<span><span class="co"># After that we can get the stats for the gate we've just set up; in this case we'll check the percentages of the cells that are not beads or debris</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_get_stats.html">gs_pop_get_stats</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"Non-Beads,Non-debris"</span>, type <span class="op">=</span> <span class="st">"percent"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                      sample                  pop percent</span></span>
+<span><span class="co">#&gt;                      &lt;char&gt;               &lt;char&gt;   &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:      2PFANASPermLIVE.fcs Non-Beads,Non-debris      NA</span></span>
+<span><span class="co">#&gt; 2: 4PFA1GLUTNASPermLIVE.fcs Non-Beads,Non-debris      NA</span></span>
+<span><span class="co">#&gt; 3:      4PFANASPermLIVE.fcs Non-Beads,Non-debris      NA</span></span>
+<span><span class="co">#&gt; 4:       4PFANoPermLIVE.fcs Non-Beads,Non-debris      NA</span></span>
+<span><span class="co">#&gt; 5:      8PFANASPermLIVE.fcs Non-Beads,Non-debris      NA</span></span>
+<span></span>
+<span><span class="co"># Finally we can check the hierarchy of the gates, recompute them to make sure the hierarchy is up to data....</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "root"                  "/Non-Beads,Non-debris"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/recompute.html">recompute</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt; done!</span></span>
+<span></span>
+<span><span class="co"># ... before visualising them</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ce140Di"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/Setting%20up%20our%20first%20gate-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb132"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"Non-Beads,Non-debris"</span>, bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span> <span class="op">+</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure">
+<img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/Setting%20up%20our%20first%20gate-2.png" alt="" width="672">
+As you can see, our gate is placed almost correctly but doesn’t encapsulate the lower right population in totality for each sample in our group.</div>
+<div class="sourceCode" id="cb133"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="st">"/Non-Beads,Non-debris"</span> <span class="op"><a href="https://rdrr.io/pkg/flowCore/man/filter-in-methods.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_add.html">gs_pop_remove</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"Non-Beads,Non-debris"</span><span class="op">)</span> <span class="co"># remove any leftover gate from a previous run of this chunk before re-adding</span></span>
+<span><span class="va">R1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/rectangleGate-class.html">rectangleGate</a></span><span class="op">(</span>filterId<span class="op">=</span><span class="st">"Non-Beads,Non-debris"</span>, <span class="co"># Add back the gate with the new parameters</span></span>
+<span><span class="st">"Ir191Di"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">20000</span><span class="op">)</span>, <span class="st">"Ce140Di"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="co"># Ce140Di reverted to 10 (the original, never-flagged-as-broken upper bound); real data only goes up to ~13.3, so 100 was excluding nothing</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_add.html">gs_pop_add</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="va">R1</span>, parent <span class="op">=</span> <span class="st">"root"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 2</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_get_count_fast.html">gs_pop_get_count_fast</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                        name            Population Parent</span></span>
+<span><span class="co">#&gt;                      &lt;char&gt;                &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1:      2PFANASPermLIVE.fcs /Non-Beads,Non-debris   root</span></span>
+<span><span class="co">#&gt; 2: 4PFA1GLUTNASPermLIVE.fcs /Non-Beads,Non-debris   root</span></span>
+<span><span class="co">#&gt; 3:      4PFANASPermLIVE.fcs /Non-Beads,Non-debris   root</span></span>
+<span><span class="co">#&gt; 4:       4PFANoPermLIVE.fcs /Non-Beads,Non-debris   root</span></span>
+<span><span class="co">#&gt; 5:      8PFANASPermLIVE.fcs /Non-Beads,Non-debris   root</span></span>
+<span><span class="co">#&gt;    Count ParentCount</span></span>
+<span><span class="co">#&gt;    &lt;int&gt;       &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:     0       30825</span></span>
+<span><span class="co">#&gt; 2:     0       14171</span></span>
+<span><span class="co">#&gt; 3:     0       15158</span></span>
+<span><span class="co">#&gt; 4:     0       57521</span></span>
+<span><span class="co">#&gt; 5:     0       23790</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "root"                  "/Non-Beads,Non-debris"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/recompute.html">recompute</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt; done!</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"Non-Beads,Non-debris"</span><span class="op">)</span> <span class="op">+</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/Adjust%20our%20gates-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb134"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Once we're happy, we can create a new flowset with just this data in it</span></span>
+<span><span class="va">NonDebris_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/convert.html">cytoset_to_flowSet</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gh_pop_get_data.html">gs_pop_get_data</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"Non-Beads,Non-debris"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Lets look at each of the samples in the new flowset for how many events are in each</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_get_count_fast.html">gs_pop_get_count_fast</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                        name            Population Parent</span></span>
+<span><span class="co">#&gt;                      &lt;char&gt;                &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1:      2PFANASPermLIVE.fcs /Non-Beads,Non-debris   root</span></span>
+<span><span class="co">#&gt; 2: 4PFA1GLUTNASPermLIVE.fcs /Non-Beads,Non-debris   root</span></span>
+<span><span class="co">#&gt; 3:      4PFANASPermLIVE.fcs /Non-Beads,Non-debris   root</span></span>
+<span><span class="co">#&gt; 4:       4PFANoPermLIVE.fcs /Non-Beads,Non-debris   root</span></span>
+<span><span class="co">#&gt; 5:      8PFANASPermLIVE.fcs /Non-Beads,Non-debris   root</span></span>
+<span><span class="co">#&gt;    Count ParentCount</span></span>
+<span><span class="co">#&gt;    &lt;int&gt;       &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1: 30546       30825</span></span>
+<span><span class="co">#&gt; 2: 13352       14171</span></span>
+<span><span class="co">#&gt; 3: 14700       15158</span></span>
+<span><span class="co">#&gt; 4: 57313       57521</span></span>
+<span><span class="co">#&gt; 5: 23201       23790</span></span></code></pre></div>
+<div id="event-length-a-standard-first-singlet-check" class="section level3" number="8.2.1">
+<h3>
+<span class="header-section-number">8.2.1</span> Event Length: A Standard First Singlet Check<a class="anchor" aria-label="anchor" href="#event-length-a-standard-first-singlet-check"><i class="fas fa-link"></i></a>
+</h3>
+<p>Before we get to the Gaussian parameters (Width and Residual), there’s a more standard first check in mass cytometry: <code>Event_length</code> (sometimes called <code>Cell_length</code>) against DNA. A single, intact cell passing through the instrument produces a signal of a fairly consistent duration, doublets and debris tend to fall outside that range, too short for debris and fragments, too long for two or more cells stuck together. Plotting it against <code>Ir191Di</code> lets us see and gate that population directly.</p>
+<p>This is also a good place to properly introduce <code><a href="https://rdrr.io/pkg/flowCore/man/ellipsoidGate-class.html">ellipsoidGate()</a></code>, since polygon gates (corner points you can read off a plot) and ellipse gates (a <code>mean</code> and a covariance matrix) work quite differently. An ellipse needs two things: a <code>mean</code>, the centre point of the ellipse, one value per axis, and a <code>.gate</code> matrix, the covariance matrix that controls the ellipse’s size, shape, and tilt. The diagonal values control how wide the ellipse is along each axis, the off-diagonal values control how tilted it is. There’s no way to read these off a plot the way you’d read a polygon’s corners by eye.</p>
+<p>For this first ellipse, we’ll set <code>mean</code> and <code>.gate</code> from the data’s own real minimum and maximum, one shared ellipse sized generously against the combined data, not a precise statistical fit. It won’t necessarily reach every sample’s population, some real samples’ populations sit in a genuinely different place than the rest, and no single ellipse can cover both without becoming impractically large, that’s a real limitation of gating this way, and it should be stated rather than hidden. We’re also plotting this one on a plain linear scale rather than the transformed scale used elsewhere in this chapter: <code><a href="https://rdrr.io/pkg/flowCore/man/ellipsoidGate-class.html">ellipsoidGate()</a></code> defines a true ellipse in raw units, but viewed through a strongly nonlinear transform it stops looking like one, it warps into whatever shape that transform maps it to. On a linear scale, what you see is what the gate actually is. This gate’s job is still a rough first trim, not the final singlet/doublet call, that happens properly later in this chapter using the standard Gaussian parameters (<code>Width</code>/<code>Residual</code>). Later on, the <code>singlets2</code> ellipse shows the other option, fitting <code>mean</code> and <code>.gate</code> statistically with <code>flowClust</code>, which works well when the two parameters you’re gating on genuinely separate into distinct clusters. Event_length and DNA don’t do that for this data, there’s no clean two-population split to find on these two axes, so a statistical fit here would be solving a problem that doesn’t actually exist rather than helping.</p>
+<div class="sourceCode" id="cb135"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">NonDebris_FLOWSET</span>, x <span class="op">=</span> <span class="st">"Event_length"</span>, y <span class="op">=</span> <span class="st">"Ir191Di"</span>, bins <span class="op">=</span> <span class="fl">48</span><span class="op">)</span> <span class="co"># Event_length only takes 48 distinct values in this data, 256 bins spread that thin and looked faded</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/event-length-ellipse-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb136"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Damian's exact bounds (2026-08-05), Event_length centre nudged right 10 units per Damian's request.</span></span>
+<span></span>
+<span><span class="va">mean_length</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Event_length"</span> <span class="op">=</span> <span class="fl">32</span>, <span class="st">"Ir191Di"</span> <span class="op">=</span> <span class="fl">1225</span><span class="op">)</span> <span class="co"># Event_length centre shifted right so xmin stays fixed at 7 while xmax rises</span></span>
+<span></span>
+<span><span class="va">shape_length</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">625</span>, <span class="fl">0</span>,</span>
+<span>                         <span class="fl">0</span>, <span class="fl">1755625</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span>, dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Event_length"</span>, <span class="st">"Ir191Di"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Event_length"</span>, <span class="st">"Ir191Di"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="co"># Event_length semi-axis 20 -&gt; 25 (25^2 = 625), xmin unchanged at 7, xmax raised 47 -&gt; 57</span></span>
+<span></span>
+<span><span class="va">R_length</span> <span class="op">&lt;-</span> <span class="fu">flowCore</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/ellipsoidGate-class.html">ellipsoidGate</a></span><span class="op">(</span>filterId <span class="op">=</span> <span class="st">"event_length_singlets"</span>, .gate <span class="op">=</span> <span class="va">shape_length</span>, mean <span class="op">=</span> <span class="va">mean_length</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="st">"/Non-Beads,Non-debris/event_length_singlets"</span> <span class="op"><a href="https://rdrr.io/pkg/flowCore/man/filter-in-methods.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_add.html">gs_pop_remove</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"event_length_singlets"</span><span class="op">)</span> <span class="co"># remove any leftover gate from a previous run of this chunk before re-adding</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_add.html">gs_pop_add</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="va">R_length</span>, parent <span class="op">=</span> <span class="st">"Non-Beads,Non-debris"</span>, name <span class="op">=</span> <span class="st">"event_length_singlets"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 3</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "root"                                       </span></span>
+<span><span class="co">#&gt; [2] "/Non-Beads,Non-debris"                      </span></span>
+<span><span class="co">#&gt; [3] "/Non-Beads,Non-debris/event_length_singlets"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/recompute.html">recompute</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt; done!</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_get_count_fast.html">gs_pop_get_count_fast</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                         name</span></span>
+<span><span class="co">#&gt;                       &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  2:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  3: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  4: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  5:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  6:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  7:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  8:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  9:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 10:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;                                      Population</span></span>
+<span><span class="co">#&gt;                                          &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:                       /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  2: /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  3:                       /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  4: /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  5:                       /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  6: /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  7:                       /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  8: /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  9:                       /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 10: /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;                    Parent Count ParentCount</span></span>
+<span><span class="co">#&gt;                    &lt;char&gt; &lt;int&gt;       &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1:                  root 30546       30825</span></span>
+<span><span class="co">#&gt;  2: /Non-Beads,Non-debris 28068       30546</span></span>
+<span><span class="co">#&gt;  3:                  root 13352       14171</span></span>
+<span><span class="co">#&gt;  4: /Non-Beads,Non-debris 13222       13352</span></span>
+<span><span class="co">#&gt;  5:                  root 14700       15158</span></span>
+<span><span class="co">#&gt;  6: /Non-Beads,Non-debris  7909       14700</span></span>
+<span><span class="co">#&gt;  7:                  root 57313       57521</span></span>
+<span><span class="co">#&gt;  8: /Non-Beads,Non-debris 52918       57313</span></span>
+<span><span class="co">#&gt;  9:                  root 23201       23790</span></span>
+<span><span class="co">#&gt; 10: /Non-Beads,Non-debris 11815       23201</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Event_length"</span>, y <span class="op">=</span> <span class="st">"Ir191Di"</span><span class="op">)</span>, subset <span class="op">=</span> <span class="st">"Non-Beads,Non-debris"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">48</span><span class="op">)</span> <span class="op">+</span> <span class="co"># matches Event_length's real 48 distinct values, 256 spread the same data too thin</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/geom_gate.html">geom_gate</a></span><span class="op">(</span><span class="st">"event_length_singlets"</span>, col <span class="op">=</span> <span class="st">"blue"</span>, fill <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/geom_stats.html">geom_stats</a></span><span class="op">(</span>adjust <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">1.5</span><span class="op">)</span>, abs <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">75</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">6000</span><span class="op">)</span><span class="op">)</span> <span class="co"># zoomed out to comfortably show the full population and the full ellipse on a plain linear scale, nothing clipped, no transform distortion</span></span>
+<span><span class="co">#&gt; Warning in geom_label(data = stats, label.padding =</span></span>
+<span><span class="co">#&gt; structure(0.05, unit = 3L, class = c("simpleUnit", :</span></span>
+<span><span class="co">#&gt; Ignoring unknown parameters: `abs`</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/event-length-ellipse-2.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">EventLengthSinglets_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/convert.html">cytoset_to_flowSet</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gh_pop_get_data.html">gs_pop_get_data</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"event_length_singlets"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Before moving on, here’s a preview of <code>Width</code> and <code>Residual</code>, the parameters the next gate needs, on the real population the <code>event_length_singlets</code> gate leaves behind.</p>
+<p>Now that we have the first gate set up we can move on to the next gate. This will be a polygon gate to remove the doublets. We’ll use the same parameters as the first gate but we’ll make the gate a little smaller to remove the doublets.</p>
+<div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Preview Width and Residual, the parameters the next gate (doublet removal) will actually use, on the real</span></span>
+<span><span class="co"># population that gate starts from (it's built with parent = event_length_singlets). The event_length_singlets</span></span>
+<span><span class="co"># gate's own before/after is already shown above, not repeated here.</span></span>
+<span><span class="va">A1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span>, x <span class="op">=</span> <span class="st">"Width"</span>, y <span class="op">=</span> <span class="st">"Residual"</span>, bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span> <span class="op">+</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">A2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">EventLengthSinglets_FLOWSET</span>, x <span class="op">=</span> <span class="st">"Width"</span>, y <span class="op">=</span> <span class="st">"Residual"</span>, bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span> <span class="op">+</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'cowplot'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:lubridate':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     stamp</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">A1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">A2</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/Compare%20gated%20to%20ungated-1.png" alt="" width="672"></div>
+<p>The removal of debris and beads helps to clean up the populations. Lets continue by removing some of the doublets.</p>
+<div class="sourceCode" id="cb139"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#Our next gate will be a polygon gate to remove the doublets. We'll use Width and REsidual, the so-called Gaussian parameters to create</span></span>
+<span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">100</span>,<span class="fl">270</span>,<span class="fl">1000</span>,<span class="fl">1100</span>,<span class="fl">120</span>,</span>
+<span>                <span class="fl">100</span>,<span class="fl">920</span>,<span class="fl">520</span>,<span class="fl">170</span>,<span class="fl">45</span><span class="op">)</span></span>
+<span>, nrow <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Rename the new matrix with the correct parameter naems for the gate</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Width"</span>, <span class="st">"Residual"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Create the gate</span></span>
+<span><span class="va">R2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/polygonGate-class.html">polygonGate</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="st">"/Non-Beads,Non-debris/event_length_singlets/singlets1"</span> <span class="op"><a href="https://rdrr.io/pkg/flowCore/man/filter-in-methods.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_add.html">gs_pop_remove</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"singlets1"</span><span class="op">)</span> <span class="co"># remove any leftover gate from a previous run before re-adding</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_add.html">gs_pop_add</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="va">R2</span>, parent <span class="op">=</span> <span class="st">"event_length_singlets"</span>, name <span class="op">=</span> <span class="st">"singlets1"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 4</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "root"                                                 </span></span>
+<span><span class="co">#&gt; [2] "/Non-Beads,Non-debris"                                </span></span>
+<span><span class="co">#&gt; [3] "/Non-Beads,Non-debris/event_length_singlets"          </span></span>
+<span><span class="co">#&gt; [4] "/Non-Beads,Non-debris/event_length_singlets/singlets1"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/recompute.html">recompute</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt; done!</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_get_count_fast.html">gs_pop_get_count_fast</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                         name</span></span>
+<span><span class="co">#&gt;                       &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  2:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  3:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  4: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  5: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  6: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  7:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  8:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  9:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 10:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 11:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 12:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 13:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 14:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 15:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;                                                Population</span></span>
+<span><span class="co">#&gt;                                                    &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:                                 /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  2:           /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  3: /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt;  4:                                 /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  5:           /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  6: /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt;  7:                                 /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  8:           /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  9: /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt; 10:                                 /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 11:           /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt; 12: /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt; 13:                                 /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 14:           /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt; 15: /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt;                                          Parent Count</span></span>
+<span><span class="co">#&gt;                                          &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1:                                        root 30546</span></span>
+<span><span class="co">#&gt;  2:                       /Non-Beads,Non-debris 28068</span></span>
+<span><span class="co">#&gt;  3: /Non-Beads,Non-debris/event_length_singlets  9675</span></span>
+<span><span class="co">#&gt;  4:                                        root 13352</span></span>
+<span><span class="co">#&gt;  5:                       /Non-Beads,Non-debris 13222</span></span>
+<span><span class="co">#&gt;  6: /Non-Beads,Non-debris/event_length_singlets  2819</span></span>
+<span><span class="co">#&gt;  7:                                        root 14700</span></span>
+<span><span class="co">#&gt;  8:                       /Non-Beads,Non-debris  7909</span></span>
+<span><span class="co">#&gt;  9: /Non-Beads,Non-debris/event_length_singlets  2975</span></span>
+<span><span class="co">#&gt; 10:                                        root 57313</span></span>
+<span><span class="co">#&gt; 11:                       /Non-Beads,Non-debris 52918</span></span>
+<span><span class="co">#&gt; 12: /Non-Beads,Non-debris/event_length_singlets 20259</span></span>
+<span><span class="co">#&gt; 13:                                        root 23201</span></span>
+<span><span class="co">#&gt; 14:                       /Non-Beads,Non-debris 11815</span></span>
+<span><span class="co">#&gt; 15: /Non-Beads,Non-debris/event_length_singlets  4221</span></span>
+<span><span class="co">#&gt;     ParentCount</span></span>
+<span><span class="co">#&gt;           &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1:       30825</span></span>
+<span><span class="co">#&gt;  2:       30546</span></span>
+<span><span class="co">#&gt;  3:       28068</span></span>
+<span><span class="co">#&gt;  4:       14171</span></span>
+<span><span class="co">#&gt;  5:       13352</span></span>
+<span><span class="co">#&gt;  6:       13222</span></span>
+<span><span class="co">#&gt;  7:       15158</span></span>
+<span><span class="co">#&gt;  8:       14700</span></span>
+<span><span class="co">#&gt;  9:        7909</span></span>
+<span><span class="co">#&gt; 10:       57521</span></span>
+<span><span class="co">#&gt; 11:       57313</span></span>
+<span><span class="co">#&gt; 12:       52918</span></span>
+<span><span class="co">#&gt; 13:       23790</span></span>
+<span><span class="co">#&gt; 14:       23201</span></span>
+<span><span class="co">#&gt; 15:       11815</span></span>
+<span><span class="co"># If you are ever unsure of your gating hierarchy you can always "plot()" the gating set to get a diagram</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/plot%20polygon%20gate-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Lets visualise the gat</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"singlets1"</span>, x <span class="op">=</span> <span class="st">"Width"</span>, y <span class="op">=</span> <span class="st">"Residual"</span>, bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/plot%20polygon%20gate-2.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Gate not quite the right shape so lets try again</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_add.html">gs_pop_remove</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">'singlets1'</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Create matrix of co-ords to sketch in the gate</span></span>
+<span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">20</span>,<span class="fl">250</span>,<span class="fl">1000</span>,<span class="fl">1000</span>,<span class="fl">100</span>,</span>
+<span>                <span class="fl">20</span>,<span class="fl">900</span>,<span class="fl">500</span>,<span class="fl">150</span>,<span class="fl">25</span><span class="op">)</span></span>
+<span>, nrow <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Width"</span>, <span class="st">"Residual"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">R2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/polygonGate-class.html">polygonGate</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="st">"/Non-Beads,Non-debris/event_length_singlets/singlets1"</span> <span class="op"><a href="https://rdrr.io/pkg/flowCore/man/filter-in-methods.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_add.html">gs_pop_remove</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"singlets1"</span><span class="op">)</span> <span class="co"># remove any leftover gate from a previous run before re-adding</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_add.html">gs_pop_add</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="va">R2</span>, parent <span class="op">=</span> <span class="st">"event_length_singlets"</span>, name <span class="op">=</span> <span class="st">"singlets1"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 4</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "root"                                                 </span></span>
+<span><span class="co">#&gt; [2] "/Non-Beads,Non-debris"                                </span></span>
+<span><span class="co">#&gt; [3] "/Non-Beads,Non-debris/event_length_singlets"          </span></span>
+<span><span class="co">#&gt; [4] "/Non-Beads,Non-debris/event_length_singlets/singlets1"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/recompute.html">recompute</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt; done!</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_get_count_fast.html">gs_pop_get_count_fast</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                         name</span></span>
+<span><span class="co">#&gt;                       &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  2:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  3:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  4: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  5: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  6: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  7:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  8:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  9:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 10:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 11:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 12:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 13:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 14:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 15:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;                                                Population</span></span>
+<span><span class="co">#&gt;                                                    &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:                                 /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  2:           /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  3: /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt;  4:                                 /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  5:           /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  6: /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt;  7:                                 /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  8:           /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  9: /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt; 10:                                 /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 11:           /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt; 12: /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt; 13:                                 /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 14:           /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt; 15: /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt;                                          Parent Count</span></span>
+<span><span class="co">#&gt;                                          &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1:                                        root 30546</span></span>
+<span><span class="co">#&gt;  2:                       /Non-Beads,Non-debris 28068</span></span>
+<span><span class="co">#&gt;  3: /Non-Beads,Non-debris/event_length_singlets 27873</span></span>
+<span><span class="co">#&gt;  4:                                        root 13352</span></span>
+<span><span class="co">#&gt;  5:                       /Non-Beads,Non-debris 13222</span></span>
+<span><span class="co">#&gt;  6: /Non-Beads,Non-debris/event_length_singlets 12921</span></span>
+<span><span class="co">#&gt;  7:                                        root 14700</span></span>
+<span><span class="co">#&gt;  8:                       /Non-Beads,Non-debris  7909</span></span>
+<span><span class="co">#&gt;  9: /Non-Beads,Non-debris/event_length_singlets  7895</span></span>
+<span><span class="co">#&gt; 10:                                        root 57313</span></span>
+<span><span class="co">#&gt; 11:                       /Non-Beads,Non-debris 52918</span></span>
+<span><span class="co">#&gt; 12: /Non-Beads,Non-debris/event_length_singlets 52800</span></span>
+<span><span class="co">#&gt; 13:                                        root 23201</span></span>
+<span><span class="co">#&gt; 14:                       /Non-Beads,Non-debris 11815</span></span>
+<span><span class="co">#&gt; 15: /Non-Beads,Non-debris/event_length_singlets 11810</span></span>
+<span><span class="co">#&gt;     ParentCount</span></span>
+<span><span class="co">#&gt;           &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1:       30825</span></span>
+<span><span class="co">#&gt;  2:       30546</span></span>
+<span><span class="co">#&gt;  3:       28068</span></span>
+<span><span class="co">#&gt;  4:       14171</span></span>
+<span><span class="co">#&gt;  5:       13352</span></span>
+<span><span class="co">#&gt;  6:       13222</span></span>
+<span><span class="co">#&gt;  7:       15158</span></span>
+<span><span class="co">#&gt;  8:       14700</span></span>
+<span><span class="co">#&gt;  9:        7909</span></span>
+<span><span class="co">#&gt; 10:       57521</span></span>
+<span><span class="co">#&gt; 11:       57313</span></span>
+<span><span class="co">#&gt; 12:       52918</span></span>
+<span><span class="co">#&gt; 13:       23790</span></span>
+<span><span class="co">#&gt; 14:       23201</span></span>
+<span><span class="co">#&gt; 15:       11815</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/plot%20polygon%20gate-3.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"singlets1"</span>, x <span class="op">=</span> <span class="st">"Width"</span>, y <span class="op">=</span> <span class="st">"Residual"</span>, bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span><span class="op">+</span></span>
+<span>   <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/plot%20polygon%20gate-4.png" alt="" width="672"></div>
+</div>
+<div id="oval-ellipse-gates" class="section level3" number="8.2.2">
+<h3>
+<span class="header-section-number">8.2.2</span> Oval (Ellipse) Gates<a class="anchor" aria-label="anchor" href="#oval-ellipse-gates"><i class="fas fa-link"></i></a>
+</h3>
+<p>Polygon gates, like the ones above, are defined by a list of corner points, straightforward to read off a plot. Ellipse gates work differently, and it’s not obvious at first what the numbers actually mean.</p>
+<p>An <code><a href="https://rdrr.io/pkg/flowCore/man/ellipsoidGate-class.html">ellipsoidGate()</a></code> needs two things: a <code>mean</code>, the centre point of the ellipse (one value per axis), and a <code>.gate</code> matrix, the ellipse’s covariance matrix, which controls its size, shape, and tilt. A covariance matrix isn’t something you can read off a plot the way you’d read a polygon’s corners, the diagonal values control how wide the ellipse is along each axis, and the off-diagonal values control how tilted it is. There’s no shortcut to picking these by eye, in practice this usually means trial and error: draw the gate, plot it over your data, adjust the numbers, repeat.</p>
+<div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RGLab/ggcyto/issues">ggcyto</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Next singlet gate</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">NonDebris_FLOWSET</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span>, bins <span class="op">=</span> <span class="fl">256</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/plotting%20an%20ellipse%20gate-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">shape</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2045156</span>,  <span class="fl">3265186</span>,</span>
+<span><span class="fl">3265186</span>,    <span class="fl">5815469</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span>, dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Ir191Di"</span>, <span class="st">"Ir193Di"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Ir191Di"</span>, <span class="st">"Ir193Di"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="co"># whole original matrix scaled by 0.25 (each semi-axis halved: variance x0.25, covariance x0.25) so the shape and rotation are identical to before, just smaller, centre unchanged</span></span>
+<span><span class="va">mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Ir191Di"</span><span class="op">=</span> <span class="fl">1570</span>, <span class="st">"Ir193Di"</span><span class="op">=</span><span class="fl">2500</span><span class="op">)</span> <span class="co"># Ir191Di reverted back to 1570, Ir193Di down 500 (3000 -&gt; 2500) per Damian, shape untouched</span></span>
+<span></span>
+<span><span class="va">R3</span> <span class="op">&lt;-</span> <span class="fu">flowCore</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/ellipsoidGate-class.html">ellipsoidGate</a></span><span class="op">(</span>filterId<span class="op">=</span><span class="st">"singlets2"</span>,</span>
+<span>.gate <span class="op">=</span> <span class="va">shape</span>, mean <span class="op">=</span> <span class="va">mean</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="st">"/Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2"</span> <span class="op"><a href="https://rdrr.io/pkg/flowCore/man/filter-in-methods.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_add.html">gs_pop_remove</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"singlets2"</span><span class="op">)</span> <span class="co"># remove any leftover gate from a previous run before re-adding</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_add.html">gs_pop_add</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="va">R3</span>, parent <span class="op">=</span> <span class="st">"singlets1"</span>, name <span class="op">=</span> <span class="st">"singlets2"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 5</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "root"                                                           </span></span>
+<span><span class="co">#&gt; [2] "/Non-Beads,Non-debris"                                          </span></span>
+<span><span class="co">#&gt; [3] "/Non-Beads,Non-debris/event_length_singlets"                    </span></span>
+<span><span class="co">#&gt; [4] "/Non-Beads,Non-debris/event_length_singlets/singlets1"          </span></span>
+<span><span class="co">#&gt; [5] "/Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/recompute.html">recompute</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt; done!</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_get_count_fast.html">gs_pop_get_count_fast</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                         name</span></span>
+<span><span class="co">#&gt;                       &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  2:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  3:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  4:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  5: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  6: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  7: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  8: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  9:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 10:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 11:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 12:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 13:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 14:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 15:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 16:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 17:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 18:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 19:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 20:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;                         name</span></span>
+<span><span class="co">#&gt;                       &lt;char&gt;</span></span>
+<span><span class="co">#&gt;                                                          Population</span></span>
+<span><span class="co">#&gt;                                                              &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:                                           /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  2:                     /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  3:           /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt;  4: /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2</span></span>
+<span><span class="co">#&gt;  5:                                           /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  6:                     /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  7:           /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt;  8: /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2</span></span>
+<span><span class="co">#&gt;  9:                                           /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 10:                     /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt; 11:           /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt; 12: /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2</span></span>
+<span><span class="co">#&gt; 13:                                           /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 14:                     /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt; 15:           /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt; 16: /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2</span></span>
+<span><span class="co">#&gt; 17:                                           /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 18:                     /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt; 19:           /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt; 20: /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2</span></span>
+<span><span class="co">#&gt;                                                          Population</span></span>
+<span><span class="co">#&gt;                                                              &lt;char&gt;</span></span>
+<span><span class="co">#&gt;                                                    Parent</span></span>
+<span><span class="co">#&gt;                                                    &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:                                                  root</span></span>
+<span><span class="co">#&gt;  2:                                 /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  3:           /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  4: /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt;  5:                                                  root</span></span>
+<span><span class="co">#&gt;  6:                                 /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  7:           /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  8: /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt;  9:                                                  root</span></span>
+<span><span class="co">#&gt; 10:                                 /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 11:           /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt; 12: /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt; 13:                                                  root</span></span>
+<span><span class="co">#&gt; 14:                                 /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 15:           /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt; 16: /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt; 17:                                                  root</span></span>
+<span><span class="co">#&gt; 18:                                 /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 19:           /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt; 20: /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt;                                                    Parent</span></span>
+<span><span class="co">#&gt;                                                    &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     Count ParentCount</span></span>
+<span><span class="co">#&gt;     &lt;int&gt;       &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1: 30546       30825</span></span>
+<span><span class="co">#&gt;  2: 28068       30546</span></span>
+<span><span class="co">#&gt;  3: 27873       28068</span></span>
+<span><span class="co">#&gt;  4: 27823       27873</span></span>
+<span><span class="co">#&gt;  5: 13352       14171</span></span>
+<span><span class="co">#&gt;  6: 13222       13352</span></span>
+<span><span class="co">#&gt;  7: 12921       13222</span></span>
+<span><span class="co">#&gt;  8: 12917       12921</span></span>
+<span><span class="co">#&gt;  9: 14700       15158</span></span>
+<span><span class="co">#&gt; 10:  7909       14700</span></span>
+<span><span class="co">#&gt; 11:  7895        7909</span></span>
+<span><span class="co">#&gt; 12:  7810        7895</span></span>
+<span><span class="co">#&gt; 13: 57313       57521</span></span>
+<span><span class="co">#&gt; 14: 52918       57313</span></span>
+<span><span class="co">#&gt; 15: 52800       52918</span></span>
+<span><span class="co">#&gt; 16: 52748       52800</span></span>
+<span><span class="co">#&gt; 17: 23201       23790</span></span>
+<span><span class="co">#&gt; 18: 11815       23201</span></span>
+<span><span class="co">#&gt; 19: 11810       11815</span></span>
+<span><span class="co">#&gt; 20: 11723       11810</span></span>
+<span><span class="co">#&gt;     Count ParentCount</span></span>
+<span><span class="co">#&gt;     &lt;int&gt;       &lt;int&gt;</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="st">"191"</span>, <span class="st">"193"</span><span class="op">)</span>, subset <span class="op">=</span> <span class="st">"singlets1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">256</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/geom_gate.html">geom_gate</a></span><span class="op">(</span><span class="st">"singlets2"</span>, col <span class="op">=</span> <span class="st">"blue"</span>, fill <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/geom_stats.html">geom_stats</a></span><span class="op">(</span>adjust <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">1.5</span><span class="op">)</span>, abs <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">8000</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">12000</span><span class="op">)</span><span class="op">)</span> <span class="co"># linear scale, wide view: log10 was warping this tilted ellipse into two near-straight lines instead of a closed oval, same issue as the event_length ellipse</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/plotting%20an%20ellipse%20gate-2.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">Singlets2_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gh_pop_get_data.html">gs_pop_get_data</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"singlets2"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="a-better-way-fitting-the-ellipse-statistically" class="section level3" number="8.2.3">
+<h3>
+<span class="header-section-number">8.2.3</span> A Better Way: Fitting the Ellipse Statistically<a class="anchor" aria-label="anchor" href="#a-better-way-fitting-the-ellipse-statistically"><i class="fas fa-link"></i></a>
+</h3>
+<p>Trial and error works, but it isn’t the only option. The <code>flowClust</code> package fits a statistical cluster model to your events and returns a mean and covariance matrix as the actual output of that fit, the exact two things <code><a href="https://rdrr.io/pkg/flowCore/man/ellipsoidGate-class.html">ellipsoidGate()</a></code> needs, rather than numbers you adjust by hand:</p>
+<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">flowClust</span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"flowClust"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowClust</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">NonDebris_frame2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/methods/as.html">as</a></span><span class="op">(</span><span class="va">NonDebris_FLOWSET</span>, <span class="st">"flowFrame"</span><span class="op">)</span></span>
+<span><span class="va">raw_vals2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs</a></span><span class="op">(</span><span class="va">NonDebris_frame2</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Ir191Di"</span>, <span class="st">"Ir193Di"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">centers_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums-methods.html">colMeans</a></span><span class="op">(</span><span class="va">raw_vals2</span><span class="op">)</span></span>
+<span><span class="va">scales_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">raw_vals2</span>, <span class="fl">2</span>, <span class="va">sd</span><span class="op">)</span> <span class="co"># standardise before fitting, same reasoning as the event-length ellipse above</span></span>
+<span></span>
+<span><span class="va">Scaled_frame2</span> <span class="op">&lt;-</span> <span class="va">NonDebris_frame2</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs</a></span><span class="op">(</span><span class="va">Scaled_frame2</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Ir191Di"</span>, <span class="st">"Ir193Di"</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">raw_vals2</span>, center <span class="op">=</span> <span class="va">centers_fit</span>, scale <span class="op">=</span> <span class="va">scales_fit</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowClust/man/flowClust.html">flowClust</a></span><span class="op">(</span><span class="va">Scaled_frame2</span>, varNames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Ir191Di"</span>, <span class="st">"Ir193Di"</span><span class="op">)</span>, K <span class="op">=</span> <span class="fl">1</span>, trans <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">mean_fit</span> <span class="op">&lt;-</span> <span class="va">fit</span><span class="op">@</span><span class="va">mu</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span> <span class="op">*</span> <span class="va">scales_fit</span> <span class="op">+</span> <span class="va">centers_fit</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mean_fit</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Ir191Di"</span>, <span class="st">"Ir193Di"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">S_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span><span class="op">(</span><span class="va">scales_fit</span><span class="op">)</span></span>
+<span><span class="va">shape_fit</span> <span class="op">&lt;-</span> <span class="va">S_fit</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html">%*%</a></span> <span class="va">fit</span><span class="op">@</span><span class="va">sigma</span><span class="op">[</span><span class="fl">1</span>, , <span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html">%*%</a></span> <span class="va">S_fit</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dimnames.html">dimnames</a></span><span class="op">(</span><span class="va">shape_fit</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Ir191Di"</span>, <span class="st">"Ir193Di"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Ir191Di"</span>, <span class="st">"Ir193Di"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">R3_fit</span> <span class="op">&lt;-</span> <span class="fu">flowCore</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/ellipsoidGate-class.html">ellipsoidGate</a></span><span class="op">(</span>filterId <span class="op">=</span> <span class="st">"singlets2"</span>, .gate <span class="op">=</span> <span class="va">shape_fit</span>, mean <span class="op">=</span> <span class="va">mean_fit</span>, distance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Chisquare.html">qchisq</a></span><span class="op">(</span><span class="fl">0.95</span>, df <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><code>K = 1</code> tells <code>flowClust</code> to fit a single cluster (one ellipse) to the data you feed it, here the debris/doublet-excluded population from the previous gate. The resulting <code>mean_fit</code> and <code>shape_fit</code> describe an ellipse actually estimated from your data’s real spread, rather than one you dialled in by eye.</p>
+<p><strong>Note:</strong> this hasn’t been run against real data as part of writing this course, <code>flowClust</code>’s exact behaviour and argument names should be checked against its documentation and tested on your own files before relying on it.</p>
+<p>Viability is plotted against Time rather than against DNA here for two reasons. Practically, Time gives a simple rectangle to draw, a straightforward low-viability cutoff across the whole run, rather than a polygon or ellipse shape you’d need if plotting viability against DNA directly. More importantly, it also works as a diagnostic: if viability drifts or spikes at particular points in the run rather than sitting flat across Time, that’s exactly the kind of acquisition instability Chapter 9’s <code>flowCut</code> is built to catch.</p>
+<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span>, x <span class="op">=</span> <span class="st">"Time"</span>, y <span class="op">=</span> <span class="st">"Pt195Di"</span>, bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_logicle.html">scale_y_logicle</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/Create%20Live%20Gate-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Create gate 4 on Live cells</span></span>
+<span><span class="va">R4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/rectangleGate-class.html">rectangleGate</a></span><span class="op">(</span>filterId<span class="op">=</span><span class="st">"Non-Beads,Non-debris"</span>,</span>
+<span><span class="st">"Time"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1500000</span><span class="op">)</span>, <span class="st">"Pt195Di"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="st">"/Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2/LIVE"</span> <span class="op"><a href="https://rdrr.io/pkg/flowCore/man/filter-in-methods.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_add.html">gs_pop_remove</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"LIVE"</span><span class="op">)</span> <span class="co"># remove any leftover gate from a previous run before re-adding</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_add.html">gs_pop_add</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="va">R4</span>, parent <span class="op">=</span> <span class="st">"singlets2"</span>, name <span class="op">=</span> <span class="st">"LIVE"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 6</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_get_pop_paths.html">gs_get_pop_paths</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "root"                                                                </span></span>
+<span><span class="co">#&gt; [2] "/Non-Beads,Non-debris"                                               </span></span>
+<span><span class="co">#&gt; [3] "/Non-Beads,Non-debris/event_length_singlets"                         </span></span>
+<span><span class="co">#&gt; [4] "/Non-Beads,Non-debris/event_length_singlets/singlets1"               </span></span>
+<span><span class="co">#&gt; [5] "/Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2"     </span></span>
+<span><span class="co">#&gt; [6] "/Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2/LIVE"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/recompute.html">recompute</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt; done!</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gs_pop_get_count_fast.html">gs_pop_get_count_fast</a></span><span class="op">(</span><span class="va">Gates</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                         name</span></span>
+<span><span class="co">#&gt;                       &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  2:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  3:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  4:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  5:      2PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  6: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  7: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  8: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;  9: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 10: 4PFA1GLUTNASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 11:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 12:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 13:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 14:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 15:      4PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 16:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 17:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 18:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 19:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 20:       4PFANoPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 21:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 22:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 23:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 24:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt; 25:      8PFANASPermLIVE.fcs</span></span>
+<span><span class="co">#&gt;                         name</span></span>
+<span><span class="co">#&gt;                       &lt;char&gt;</span></span>
+<span><span class="co">#&gt;                                                               Population</span></span>
+<span><span class="co">#&gt;                                                                   &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:                                                /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  2:                          /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  3:                /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt;  4:      /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2</span></span>
+<span><span class="co">#&gt;  5: /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2/LIVE</span></span>
+<span><span class="co">#&gt;  6:                                                /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  7:                          /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  8:                /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt;  9:      /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2</span></span>
+<span><span class="co">#&gt; 10: /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2/LIVE</span></span>
+<span><span class="co">#&gt; 11:                                                /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 12:                          /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt; 13:                /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt; 14:      /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2</span></span>
+<span><span class="co">#&gt; 15: /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2/LIVE</span></span>
+<span><span class="co">#&gt; 16:                                                /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 17:                          /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt; 18:                /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt; 19:      /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2</span></span>
+<span><span class="co">#&gt; 20: /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2/LIVE</span></span>
+<span><span class="co">#&gt; 21:                                                /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 22:                          /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt; 23:                /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt; 24:      /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2</span></span>
+<span><span class="co">#&gt; 25: /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2/LIVE</span></span>
+<span><span class="co">#&gt;                                                               Population</span></span>
+<span><span class="co">#&gt;                                                                   &lt;char&gt;</span></span>
+<span><span class="co">#&gt;                                                              Parent</span></span>
+<span><span class="co">#&gt;                                                              &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:                                                            root</span></span>
+<span><span class="co">#&gt;  2:                                           /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  3:                     /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  4:           /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt;  5: /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2</span></span>
+<span><span class="co">#&gt;  6:                                                            root</span></span>
+<span><span class="co">#&gt;  7:                                           /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt;  8:                     /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt;  9:           /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt; 10: /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2</span></span>
+<span><span class="co">#&gt; 11:                                                            root</span></span>
+<span><span class="co">#&gt; 12:                                           /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 13:                     /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt; 14:           /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt; 15: /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2</span></span>
+<span><span class="co">#&gt; 16:                                                            root</span></span>
+<span><span class="co">#&gt; 17:                                           /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 18:                     /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt; 19:           /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt; 20: /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2</span></span>
+<span><span class="co">#&gt; 21:                                                            root</span></span>
+<span><span class="co">#&gt; 22:                                           /Non-Beads,Non-debris</span></span>
+<span><span class="co">#&gt; 23:                     /Non-Beads,Non-debris/event_length_singlets</span></span>
+<span><span class="co">#&gt; 24:           /Non-Beads,Non-debris/event_length_singlets/singlets1</span></span>
+<span><span class="co">#&gt; 25: /Non-Beads,Non-debris/event_length_singlets/singlets1/singlets2</span></span>
+<span><span class="co">#&gt;                                                              Parent</span></span>
+<span><span class="co">#&gt;                                                              &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     Count ParentCount</span></span>
+<span><span class="co">#&gt;     &lt;int&gt;       &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1: 30546       30825</span></span>
+<span><span class="co">#&gt;  2: 28068       30546</span></span>
+<span><span class="co">#&gt;  3: 27873       28068</span></span>
+<span><span class="co">#&gt;  4: 27823       27873</span></span>
+<span><span class="co">#&gt;  5: 27823       27823</span></span>
+<span><span class="co">#&gt;  6: 13352       14171</span></span>
+<span><span class="co">#&gt;  7: 13222       13352</span></span>
+<span><span class="co">#&gt;  8: 12921       13222</span></span>
+<span><span class="co">#&gt;  9: 12917       12921</span></span>
+<span><span class="co">#&gt; 10: 11688       12917</span></span>
+<span><span class="co">#&gt; 11: 14700       15158</span></span>
+<span><span class="co">#&gt; 12:  7909       14700</span></span>
+<span><span class="co">#&gt; 13:  7895        7909</span></span>
+<span><span class="co">#&gt; 14:  7810        7895</span></span>
+<span><span class="co">#&gt; 15:  7810        7810</span></span>
+<span><span class="co">#&gt; 16: 57313       57521</span></span>
+<span><span class="co">#&gt; 17: 52918       57313</span></span>
+<span><span class="co">#&gt; 18: 52800       52918</span></span>
+<span><span class="co">#&gt; 19: 52748       52800</span></span>
+<span><span class="co">#&gt; 20: 52748       52748</span></span>
+<span><span class="co">#&gt; 21: 23201       23790</span></span>
+<span><span class="co">#&gt; 22: 11815       23201</span></span>
+<span><span class="co">#&gt; 23: 11810       11815</span></span>
+<span><span class="co">#&gt; 24: 11723       11810</span></span>
+<span><span class="co">#&gt; 25: 11098       11723</span></span>
+<span><span class="co">#&gt;     Count ParentCount</span></span>
+<span><span class="co">#&gt;     &lt;int&gt;       &lt;int&gt;</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"LIVE"</span>, bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_logicle.html">scale_y_logicle</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/Create%20Live%20Gate-2.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Lets grab the data for the gated events; flowworkspace uses the cytoset rather than the flowSet...</span></span>
+<span><span class="va">LIVE_SINGLET_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/gh_pop_get_data.html">gs_pop_get_data</a></span><span class="op">(</span><span class="va">Gates</span>, <span class="st">"LIVE"</span><span class="op">)</span></span>
+<span><span class="co"># ... so we'll convert it to a flowSet ready to use for our downstream analyses</span></span>
+<span><span class="va">LIVE_SINGLET_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowWorkspace/man/convert.html">cytoset_to_flowSet</a></span><span class="op">(</span><span class="va">LIVE_SINGLET_FLOWSET</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Finally lets save the LIVE_SINGLET_FLOWSET to the RDS folder so that we can use it in the next chapters</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">LIVE_SINGLET_FLOWSET</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>,<span class="st">"RDS"</span>, <span class="st">"LIVE_SINGLET_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="choosing-the-time-cutoff" class="section level3" number="8.2.4">
+<h3>
+<span class="header-section-number">8.2.4</span> Choosing the Time Cutoff<a class="anchor" aria-label="anchor" href="#choosing-the-time-cutoff"><i class="fas fa-link"></i></a>
+</h3>
+<p>The upper Time bound in the Live gate above (<code>1500000</code>) isn’t a universal constant. CyTOF runs vary a lot in length, some samples take 10 minutes to acquire, others take 30, so this number has to fit the actual length of your own run, not be copied from someone else’s.</p>
+<p>Setting it wrong in either direction costs you real data. Too short, and you clip off live events that were acquired perfectly well near the end of a longer run, cells you’d otherwise keep. Too long, and you drag in whatever happened after the sample actually finished, instrument idle time, a clog, anything that shows up as a spike or flatline past the real endpoint, exactly the kind of thing that should be excluded, not kept.</p>
+<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># A cutoff set at roughly half the true run length would silently discard the back half of every sample's live events</span></span>
+<span><span class="va">R4_too_short</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/rectangleGate-class.html">rectangleGate</a></span><span class="op">(</span>filterId <span class="op">=</span> <span class="st">"Live_TooShort"</span>, <span class="st">"Time"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">750000</span><span class="op">)</span>, <span class="st">"Pt195Di"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># A cutoff set well past where acquisition actually stopped would keep in whatever came after real cell data ended</span></span>
+<span><span class="va">R4_too_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/rectangleGate-class.html">rectangleGate</a></span><span class="op">(</span>filterId <span class="op">=</span> <span class="st">"Live_TooLong"</span>, <span class="st">"Time"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3000000</span><span class="op">)</span>, <span class="st">"Pt195Di"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>There’s no shortcut around this: look at your own Time-versus-viability plot for each run, and set the bound to where that specific sample’s acquisition actually ends, not a number carried over from a different dataset.</p>
+<p>Now that we have completed the gating we can create a table to show how each gate has affected the samples: how many cells are in each gate, and how many have been removed at each step. Compare the numbers across your own samples once you run this, different fixation conditions can affect how many events survive gating.</p>
+<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Now we can create a table of the gating hierarchy, showing how many cells</span></span>
+<span><span class="va">ALL_cell_numbers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">FLOWSET</span>, <span class="va">nrow</span><span class="op">)</span></span>
+<span><span class="va">NonDebris_cell_numbers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">NonDebris_FLOWSET</span>, <span class="va">nrow</span><span class="op">)</span></span>
+<span><span class="va">Singlets_cell_numbers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">Singlets2_FLOWSET</span>, <span class="va">nrow</span><span class="op">)</span></span>
+<span><span class="va">LSF_cell_numbers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">LIVE_SINGLET_FLOWSET</span>, <span class="va">nrow</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Combine all of these into a data frame</span></span>
+<span><span class="va">Gating_table</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>ALL <span class="op">=</span> <span class="va">ALL_cell_numbers</span>, ND <span class="op">=</span> <span class="va">NonDebris_cell_numbers</span>, Singlets <span class="op">=</span> <span class="va">Singlets_cell_numbers</span>, LIVE_SINGLET <span class="op">=</span> <span class="va">LSF_cell_numbers</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">Gating_table</span></span>
+<span><span class="co">#&gt;                            ALL    ND Singlets LIVE_SINGLET</span></span>
+<span><span class="co">#&gt; 2PFANASPermLIVE.fcs      30825 30546    27823        27823</span></span>
+<span><span class="co">#&gt; 4PFA1GLUTNASPermLIVE.fcs 14171 13352    12917        11688</span></span>
+<span><span class="co">#&gt; 4PFANASPermLIVE.fcs      15158 14700     7810         7810</span></span>
+<span><span class="co">#&gt; 4PFANoPermLIVE.fcs       57521 57313    52748        52748</span></span>
+<span><span class="co">#&gt; 8PFANASPermLIVE.fcs      23790 23201    11723        11098</span></span></code></pre></div>
+<p>This table reveals how much data was lost to doublets and debris at each step.</p>
+<p>Finally we need to save the LIVE_SINGLET_FLOWSET to the RDS folder so that we can use it in the next chapters.</p>
+<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">LIVE_SINGLET_FLOWSET</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>,<span class="st">"RDS"</span>, <span class="st">"LIVE_SINGLET_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Additionally, it might be useful to save the flowSet into individual fcs fiels again so that we can use them in other software or analyses.</p>
+<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>,<span class="st">"fcs"</span>, <span class="st">"3_fcs-files_Live Singlets_R-Gated"</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/write.flowSet.html">write.flowSet</a></span><span class="op">(</span><span class="va">LIVE_SINGLET_FLOWSET</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>,<span class="st">"fcs"</span>, <span class="st">"3_fcs-files_Live Singlets_R-Gated"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "/Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R/Data/fcs/3_fcs-files_Live Singlets_R-Gated"</span></span></code></pre></div>
+<p><span class="warning">For data analysis it’s essential to remove any confounding or extraneous events. In cytometry this means getting rid of dead cells and doublets. For high parameter analysis this is doubly important. The analysis is computationally taxing so removing irrelevant data helps speed up the analysis as well as improving its quality. </span></p>
+<p><span class="warning">It is much simpler to manual gate in a graphical user interface like FlowJo or Cytobank than to gate with the R command line. So go do that rather than trying to brute force the gates through with co-ordinates. I would only use this method if there was no other option or I knew the gates were good for thousands of samples</span></p>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data</a></div>
+<div class="next"><a href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#chapter-7---gating-data"><span class="header-section-number">8</span> Chapter 7 - Gating Data</a></li>
+<li><a class="nav-link" href="#the-essentials-5"><span class="header-section-number">8.1</span> The Essentials</a></li>
+<li>
+<a class="nav-link" href="#a-deeper-dive-5"><span class="header-section-number">8.2</span> A Deeper Dive</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#event-length-a-standard-first-singlet-check"><span class="header-section-number">8.2.1</span> Event Length: A Standard First Singlet Check</a></li>
+<li><a class="nav-link" href="#oval-ellipse-gates"><span class="header-section-number">8.2.2</span> Oval (Ellipse) Gates</a></li>
+<li><a class="nav-link" href="#a-better-way-fitting-the-ellipse-statistically"><span class="header-section-number">8.2.3</span> A Better Way: Fitting the Ellipse Statistically</a></li>
+<li><a class="nav-link" href="#choosing-the-time-cutoff"><span class="header-section-number">8.2.4</span> Choosing the Time Cutoff</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

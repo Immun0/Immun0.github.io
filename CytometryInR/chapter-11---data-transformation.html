@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 12 Chapter 11 - Data Transformation | Analysing Cytometry Data with R</title>
+<meta name="author" content="Damian Carragher">
+<meta name="author" content="StemCore Laboratories and Flow Cytometry Core">
+<meta name="author" content="Ottawa Hospital Research Institute">
+<meta name="author" content="First edition by Damian Carragher">
+<meta name="description" content="12.1 What You’ll Learn Raw cytometry data is compressed near zero for negative populations and spread across orders of magnitude for positive ones. This chapter applies an arcsinh transformation,...">
+<meta name="generator" content="bookdown 0.47 with bs4_book()">
+<meta property="og:title" content="Chapter 12 Chapter 11 - Data Transformation | Analysing Cytometry Data with R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="12.1 What You’ll Learn Raw cytometry data is compressed near zero for negative populations and spread across orders of magnitude for positive ones. This chapter applies an arcsinh transformation,...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 12 Chapter 11 - Data Transformation | Analysing Cytometry Data with R">
+<meta name="twitter:description" content="12.1 What You’ll Learn Raw cytometry data is compressed near zero for negative populations and spread across orders of magnitude for positive ones. This chapter applies an arcsinh transformation,...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.12.0/transition.js"></script><script src="libs/bs3compat-0.12.0/tabs.js"></script><script src="libs/bs3compat-0.12.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Analysing Cytometry Data with R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> Preface and Notes</a></li>
+<li><a class="" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">2</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
+<li><a class="" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">3</span> Chapter 2 - Setting up an R environment</a></li>
+<li><a class="" href="chapter-3---packages.html"><span class="header-section-number">4</span> Chapter 3 - Packages</a></li>
+<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">5</span> Chapter 4 - File Management and Data Access</a></li>
+<li><a class="" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">6</span> Chapter 5 - Loading Cytometry Data</a></li>
+<li><a class="" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data</a></li>
+<li><a class="" href="chapter-7---gating-data.html"><span class="header-section-number">8</span> Chapter 7 - Gating Data</a></li>
+<li><a class="" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
+<li><a class="" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
+<li><a class="" href="chapter-10---downsampling.html"><span class="header-section-number">11</span> Chapter 10 - Downsampling</a></li>
+<li><a class="active" href="chapter-11---data-transformation.html"><span class="header-section-number">12</span> Chapter 11 - Data Transformation</a></li>
+<li><a class="" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">13</span> Chapter 12 - Extracting Expression Data</a></li>
+<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">14</span> Chapter 13 - Full Visualisation</a></li>
+<li><a class="" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">15</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
+<li><a class="" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery</a></li>
+<li><a class="" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">17</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="chapter-11---data-transformation" class="section level1" number="12">
+<h1>
+<span class="header-section-number">12</span> Chapter 11 - Data Transformation<a class="anchor" aria-label="anchor" href="#chapter-11---data-transformation"><i class="fas fa-link"></i></a>
+</h1>
+<div id="what-youll-learn-6" class="section level2" number="12.1">
+<h2>
+<span class="header-section-number">12.1</span> What You’ll Learn<a class="anchor" aria-label="anchor" href="#what-youll-learn-6"><i class="fas fa-link"></i></a>
+</h2>
+<p>Raw cytometry data is compressed near zero for negative populations and spread across orders of magnitude for positive ones. This chapter applies an arcsinh transformation, making the data usable for visualisation, dimensionality reduction, and clustering.</p>
+</div>
+<div id="the-essentials-9" class="section level2 essentials" number="12.2">
+<h2>
+<span class="header-section-number">12.2</span> The Essentials<a class="anchor" aria-label="anchor" href="#the-essentials-9"><i class="fas fa-link"></i></a>
+</h2>
+<div id="step-1-load-required-packages-and-data-1" class="section level3" number="12.2.1">
+<h3>
+<span class="header-section-number">12.2.1</span> Step 1: Load Required Packages and Data<a class="anchor" aria-label="anchor" href="#step-1-load-required-packages-and-data-1"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb200"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in readLines(f, n): line 1 appears to contain an</span></span>
+<span><span class="co">#&gt; embedded nul</span></span>
+<span><span class="co">#&gt; here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"Reordered_DOWNSAMPLED_CLEANED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-2-apply-the-arcsinh-transformation" class="section level3" number="12.2.2">
+<h3>
+<span class="header-section-number">12.2.2</span> Step 2: Apply the arcsinh Transformation<a class="anchor" aria-label="anchor" href="#step-2-apply-the-arcsinh-transformation"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb201"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">cofactor</span> <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">expr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span>  <span class="va">expr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">asinh</a></span><span class="op">(</span><span class="va">expr</span> <span class="op">/</span> <span class="va">cofactor</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">expr</span></span>
+<span>  <span class="va">x</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<p><code>cofactor = 5</code> is the standard scale factor for mass cytometry (CyTOF) data. Conventional/spectral flow cytometry typically uses a much larger cofactor, around 150, since the dynamic range and noise characteristics are different.</p>
+</div>
+<div id="step-3-save-your-work" class="section level3" number="12.2.3">
+<h3>
+<span class="header-section-number">12.2.3</span> Step 3: Save Your Work<a class="anchor" aria-label="anchor" href="#step-3-save-your-work"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb202"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb203"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div id="step-4-compare-transformed-vs-untransformed" class="section level3" number="12.2.4">
+<h3>
+<span class="header-section-number">12.2.4</span> Step 4: Compare Transformed vs Untransformed<a class="anchor" aria-label="anchor" href="#step-4-compare-transformed-vs-untransformed"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb205"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RGLab/ggcyto/issues">ggcyto</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: ggplot2</span></span>
+<span><span class="co">#&gt; Loading required package: ncdfFlow</span></span>
+<span><span class="co">#&gt; Loading required package: BH</span></span>
+<span><span class="co">#&gt; Loading required package: flowWorkspace</span></span>
+<span><span class="co">#&gt; As part of improvements to flowWorkspace, some behavior of</span></span>
+<span><span class="co">#&gt; GatingSet objects has changed. For details, please read the section</span></span>
+<span><span class="co">#&gt; titled "The cytoframe and cytoset classes" in the package vignette:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   vignette("flowWorkspace-Introduction", "flowWorkspace")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># `bins = 40`, not the 128 used earlier in the book, because Chapter 10 downsampled</span></span>
+<span><span class="co"># every file to 5000 events. 128 bins carves the plot into roughly 16000 hex cells,</span></span>
+<span><span class="co"># which leaves most cells holding a single event and nothing for the density colour</span></span>
+<span><span class="co"># scale to show. Earlier chapters plot 18000 to 24000 events per sample, where 128</span></span>
+<span><span class="co"># is fine. Fewer events means fewer, larger bins.</span></span>
+<span><span class="va">UNTRANSFORMED_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">name</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Untransformed"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">TRANSFORMED_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">name</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"arcsinh transformed"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">UNTRANSFORMED_PLOT</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">TRANSFORMED_PLOT</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="11-Data-Transformation_files/figure-html/compare-transform-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb206"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"arcsinh_transform_comparison.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"arcsinh_transform_comparison.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div id="a-deeper-dive-9" class="section level2 deeper-dive" number="12.3">
+<h2>
+<span class="header-section-number">12.3</span> A Deeper Dive<a class="anchor" aria-label="anchor" href="#a-deeper-dive-9"><i class="fas fa-link"></i></a>
+</h2>
+<p>Why arcsinh rather than log10? Log transforms can’t handle zero or negative values, which mass cytometry data genuinely has (background-subtracted signal can go slightly negative). Arcsinh behaves like a log transform for large values but stays well-defined through zero and into negative numbers, which is why it’s the standard choice for CyTOF data specifically.</p>
+<p>There’s a common workaround, adding a small pseudocount before taking the log (<code>log10(x + pseudocount)</code>), which does dodge the zero/negative problem. It’s a real technique, but it doesn’t make log10 the better choice here: the pseudocount is an arbitrary tuning value with no principled way to set it for a given dataset, unlike arcsinh’s cofactor, which has an established, defensible value for a given cytometry platform. Arcsinh solves the same problem without introducing a new arbitrary parameter.</p>
+<div id="what-happens-with-the-wrong-cofactor" class="section level3" number="12.3.1">
+<h3>
+<span class="header-section-number">12.3.1</span> What Happens With the Wrong Cofactor<a class="anchor" aria-label="anchor" href="#what-happens-with-the-wrong-cofactor"><i class="fas fa-link"></i></a>
+</h3>
+<p>The cofactor isn’t a minor tuning knob, using the wrong one visibly distorts the data. <code>cofactor = 5</code> is correct for mass cytometry; <code>cofactor = 150</code> is correct for conventional/spectral flow cytometry. Applying flow’s cofactor to mass cytometry data (or vice versa) shows exactly why that number matters, rather than just asserting it does:</p>
+<div class="sourceCode" id="cb207"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">WRONG_COFACTOR_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">cofactor</span> <span class="op">=</span> <span class="fl">150</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">expr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span>  <span class="va">expr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">asinh</a></span><span class="op">(</span><span class="va">expr</span> <span class="op">/</span> <span class="va">cofactor</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">expr</span></span>
+<span>  <span class="va">x</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">CORRECT_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">name</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"cofactor = 5 (correct for mass cytometry)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">WRONG_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">WRONG_COFACTOR_FLOWSET</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">name</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"cofactor = 150 (correct for flow, wrong here)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">CORRECT_PLOT</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">WRONG_PLOT</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="11-Data-Transformation_files/figure-html/wrong-cofactor-demo-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb208"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"cofactor_comparison.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"cofactor_comparison.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+<p>Too large a cofactor under-transforms mass cytometry data, populations stay compressed near the origin, closer to how the raw, untransformed plot looked in Step 4, because the divisor is too big relative to the actual signal range. The lesson isn’t “memorise 5 and 150”, it’s that the right cofactor depends on the instrument’s actual dynamic range and noise characteristics, and picking one for the wrong platform reintroduces the exact compression problem transformation is supposed to fix. Worth trying other values yourself (1, 20, 500) on this same data to see the full range of distortion, not just these two.</p>
+</div>
+<div id="other-transforms-logicle-and-biexponential" class="section level3" number="12.3.2">
+<h3>
+<span class="header-section-number">12.3.2</span> Other Transforms: Logicle and Biexponential<a class="anchor" aria-label="anchor" href="#other-transforms-logicle-and-biexponential"><i class="fas fa-link"></i></a>
+</h3>
+<p>Arcsinh isn’t the only transform built for compressed, wide-dynamic-range cytometry data, <code>logicle</code> and <code>biexponential</code> are the other two you’ll see most often, both from conventional flow cytometry rather than CyTOF specifically. Worth seeing what they do to the same data, not just taking on faith that arcsinh is the right call. Both transforms also have more than one way to set their parameters, worth comparing directly rather than picking one arbitrarily:</p>
+<div class="sourceCode" id="cb209"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">openCyto</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">channels_to_transform</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Sm149Di_CD34"</span>, <span class="st">"Yb172Di_CD38"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Logicle, fit A: parameters estimated from a single sample</span></span>
+<span><span class="va">logicle_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/logicleTransform.html">estimateLogicle</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, channels <span class="op">=</span> <span class="va">channels_to_transform</span><span class="op">)</span></span>
+<span><span class="va">LOGICLE_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/transform.html">transform</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="va">logicle_params</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Logicle, fit B: parameters estimated across the whole flowSet, using the median of each channel's negative population</span></span>
+<span><span class="va">logicle_median_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/estimateMedianLogicle.html">estimateMedianLogicle</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, channels <span class="op">=</span> <span class="va">channels_to_transform</span><span class="op">)</span></span>
+<span><span class="va">LOGICLE_MEDIAN_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/transform.html">transform</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="va">logicle_median_params</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Biexponential, fit A: flowCore's own defaults</span></span>
+<span><span class="va">biexp_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/transformList-class.html">transformList</a></span><span class="op">(</span><span class="va">channels_to_transform</span>, <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/biexponentialTransform.html">biexponentialTransform</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">BIEXP_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/transform.html">transform</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="va">biexp_list</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Biexponential, fit B: explicit width parameter (w = 5)</span></span>
+<span><span class="va">biexp_list_w5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/transformList-class.html">transformList</a></span><span class="op">(</span><span class="va">channels_to_transform</span>, <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/biexponentialTransform.html">biexponentialTransform</a></span><span class="op">(</span><span class="st">"biexpTransformW5"</span>, w <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">BIEXP_W5_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/transform.html">transform</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="va">biexp_list_w5</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># One sample is enough for this figure. It compares transforms, not samples, and</span></span>
+<span><span class="co"># Step 4 above already shows all five. Plotting the whole flowSet here puts five</span></span>
+<span><span class="co"># facets inside each of five panels, twenty five scatters in one figure, and every</span></span>
+<span><span class="co"># one of them is too small to read. Sample 1 is also the sample the single-sample</span></span>
+<span><span class="co"># logicle fit was estimated from, so this is a like-for-like comparison.</span></span>
+<span><span class="va">SAMPLE</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
+<span></span>
+<span><span class="co"># `bins` is set well below the usual 128 here on purpose. Chapter 10 downsampled</span></span>
+<span><span class="co"># every file to 5000 events, and 128 bins carves the plot into roughly 16000 hex</span></span>
+<span><span class="co"># cells, so almost every occupied hex holds a single event and the density colour</span></span>
+<span><span class="co"># scale has nothing to show. Fewer, larger hexes put enough events in each cell for</span></span>
+<span><span class="co"># the dense core to actually read as dense.</span></span>
+<span><span class="va">ARCSINH_ONE_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span><span class="op">[[</span><span class="va">SAMPLE</span><span class="op">]</span><span class="op">]</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"arcsinh, cofactor 5"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">LOGICLE_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">LOGICLE_FLOWSET</span><span class="op">[[</span><span class="va">SAMPLE</span><span class="op">]</span><span class="op">]</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"logicle, single-sample fit"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">LOGICLE_MEDIAN_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">LOGICLE_MEDIAN_FLOWSET</span><span class="op">[[</span><span class="va">SAMPLE</span><span class="op">]</span><span class="op">]</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"logicle, whole-flowSet median fit"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">BIEXP_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">BIEXP_FLOWSET</span><span class="op">[[</span><span class="va">SAMPLE</span><span class="op">]</span><span class="op">]</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"biexponential, defaults"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">BIEXP_W5_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">BIEXP_W5_FLOWSET</span><span class="op">[[</span><span class="va">SAMPLE</span><span class="op">]</span><span class="op">]</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"biexponential, w = 5"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">ARCSINH_ONE_PLOT</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">LOGICLE_PLOT</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">LOGICLE_MEDIAN_PLOT</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">BIEXP_PLOT</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">BIEXP_W5_PLOT</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="11-Data-Transformation_files/figure-html/other-transforms-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb210"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"transform_type_comparison.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">20</span>, height <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"transform_type_comparison.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">20</span>, height <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<p>Two genuine choices are being compared here, not just two functions with different names.</p>
+<p>For logicle: <code><a href="https://rdrr.io/pkg/flowCore/man/logicleTransform.html">estimateLogicle()</a></code> fits parameters to a single flowFrame, here the first sample in the set, then applies that one fit to every sample. <code><a href="https://rdrr.io/pkg/flowCore/man/estimateMedianLogicle.html">estimateMedianLogicle()</a></code> (from <code>openCyto</code>) instead fits across the whole flowSet at once, using the median of each channel’s negative population over all samples. The single-sample version is doing less work and trusting that sample 1 is representative of the rest, the whole-set version is the more defensible choice when samples might differ in background or offset, which is the more usual case with multiple files from different conditions, as here.</p>
+<p>For biexponential: <code><a href="https://rdrr.io/pkg/flowCore/man/biexponentialTransform.html">biexponentialTransform()</a></code> with no arguments runs on <code>flowCore</code>’s built-in defaults. Setting <code>w</code> explicitly (<code>w = 5</code>) sets the width of the linear region around zero, in asymptotic decades, rather than leaving it at whatever the default assumes. A wider linear region pulls more of the near-zero, noisy signal into a straight line instead of compressing it logarithmically, which matters more the noisier your negative population is.</p>
+<p>What that <code>w</code> parameter is actually controlling: biexponential is a piecewise function, not one formula applied everywhere. Near zero, where log-style transforms compress and distort noisy negative/low signal, it behaves close to linear, an ordinary straight line, avoiding the zero/negative problem the same way arcsinh does. Further from zero, where the signal is large and log-scale spread actually helps, it switches over to behaving exponentially. <code>w</code> sets how wide that near-zero linear region is before the exponential part takes over, a small <code>w</code> switches to exponential behaviour quickly, a large <code>w</code> keeps more of the range linear. This is the same underlying idea arcsinh and logicle both use, linear near zero, log-like further out, just a different specific formula for the transition between the two.</p>
+<p>Both logicle transforms and both biexponential transforms were designed around conventional flow cytometry’s signal and noise characteristics, not CyTOF’s, which is the deeper reason arcsinh with a mass-cytometry cofactor stays the standard choice for this kind of data, not just convention for its own sake. Run on this dataset, the two logicle panels come out near identical, and the two biexponential panels share a shape while sitting on different ranges, the defaults spanning roughly 0 to 8 and <code>w = 5</code> roughly 5 to 12.5. The transform family matters more than how its parameters are fitted.</p>
+<p><strong>Note:</strong> the whole-flowSet logicle fit and the <code>w = 5</code> biexponential parameter come from an earlier, unpublished draft chapter (<code>Draft Chapters/09-Data-Transformation.Rmd</code>) that used real course data at the time it was written, which is why they are better-grounded starting points than bare defaults.</p>
+</div>
+<div id="whats-next-7" class="section level3" number="12.3.3">
+<h3>
+<span class="header-section-number">12.3.3</span> What’s Next<a class="anchor" aria-label="anchor" href="#whats-next-7"><i class="fas fa-link"></i></a>
+</h3>
+<p>With <code>ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET.rds</code> saved, the next chapter extracts the expression data into a simpler table format and applies dimensionality reduction (UMAP and tSNE).</p>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="chapter-10---downsampling.html"><span class="header-section-number">11</span> Chapter 10 - Downsampling</a></div>
+<div class="next"><a href="chapter-12---extracting-expression-data.html"><span class="header-section-number">13</span> Chapter 12 - Extracting Expression Data</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#chapter-11---data-transformation"><span class="header-section-number">12</span> Chapter 11 - Data Transformation</a></li>
+<li><a class="nav-link" href="#what-youll-learn-6"><span class="header-section-number">12.1</span> What You’ll Learn</a></li>
+<li>
+<a class="nav-link" href="#the-essentials-9"><span class="header-section-number">12.2</span> The Essentials</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#step-1-load-required-packages-and-data-1"><span class="header-section-number">12.2.1</span> Step 1: Load Required Packages and Data</a></li>
+<li><a class="nav-link" href="#step-2-apply-the-arcsinh-transformation"><span class="header-section-number">12.2.2</span> Step 2: Apply the arcsinh Transformation</a></li>
+<li><a class="nav-link" href="#step-3-save-your-work"><span class="header-section-number">12.2.3</span> Step 3: Save Your Work</a></li>
+<li><a class="nav-link" href="#step-4-compare-transformed-vs-untransformed"><span class="header-section-number">12.2.4</span> Step 4: Compare Transformed vs Untransformed</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#a-deeper-dive-9"><span class="header-section-number">12.3</span> A Deeper Dive</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#what-happens-with-the-wrong-cofactor"><span class="header-section-number">12.3.1</span> What Happens With the Wrong Cofactor</a></li>
+<li><a class="nav-link" href="#other-transforms-logicle-and-biexponential"><span class="header-section-number">12.3.2</span> Other Transforms: Logicle and Biexponential</a></li>
+<li><a class="nav-link" href="#whats-next-7"><span class="header-section-number">12.3.3</span> What’s Next</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

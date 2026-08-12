@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 11 Chapter 10 - Downsampling | Analysing Cytometry Data with R</title>
+<meta name="author" content="Damian Carragher">
+<meta name="author" content="StemCore Laboratories and Flow Cytometry Core">
+<meta name="author" content="Ottawa Hospital Research Institute">
+<meta name="author" content="First edition by Damian Carragher">
+<meta name="description" content="11.1 What You’ll Learn Some downstream analyses (clustering, dimensionality reduction) get slow or unwieldy with the full event count from every file. This chapter downsamples every file in the...">
+<meta name="generator" content="bookdown 0.47 with bs4_book()">
+<meta property="og:title" content="Chapter 11 Chapter 10 - Downsampling | Analysing Cytometry Data with R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="11.1 What You’ll Learn Some downstream analyses (clustering, dimensionality reduction) get slow or unwieldy with the full event count from every file. This chapter downsamples every file in the...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 11 Chapter 10 - Downsampling | Analysing Cytometry Data with R">
+<meta name="twitter:description" content="11.1 What You’ll Learn Some downstream analyses (clustering, dimensionality reduction) get slow or unwieldy with the full event count from every file. This chapter downsamples every file in the...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.12.0/transition.js"></script><script src="libs/bs3compat-0.12.0/tabs.js"></script><script src="libs/bs3compat-0.12.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Analysing Cytometry Data with R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> Preface and Notes</a></li>
+<li><a class="" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">2</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
+<li><a class="" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">3</span> Chapter 2 - Setting up an R environment</a></li>
+<li><a class="" href="chapter-3---packages.html"><span class="header-section-number">4</span> Chapter 3 - Packages</a></li>
+<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">5</span> Chapter 4 - File Management and Data Access</a></li>
+<li><a class="" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">6</span> Chapter 5 - Loading Cytometry Data</a></li>
+<li><a class="" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data</a></li>
+<li><a class="" href="chapter-7---gating-data.html"><span class="header-section-number">8</span> Chapter 7 - Gating Data</a></li>
+<li><a class="" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
+<li><a class="" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
+<li><a class="active" href="chapter-10---downsampling.html"><span class="header-section-number">11</span> Chapter 10 - Downsampling</a></li>
+<li><a class="" href="chapter-11---data-transformation.html"><span class="header-section-number">12</span> Chapter 11 - Data Transformation</a></li>
+<li><a class="" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">13</span> Chapter 12 - Extracting Expression Data</a></li>
+<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">14</span> Chapter 13 - Full Visualisation</a></li>
+<li><a class="" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">15</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
+<li><a class="" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery</a></li>
+<li><a class="" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">17</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="chapter-10---downsampling" class="section level1" number="11">
+<h1>
+<span class="header-section-number">11</span> Chapter 10 - Downsampling<a class="anchor" aria-label="anchor" href="#chapter-10---downsampling"><i class="fas fa-link"></i></a>
+</h1>
+<div id="what-youll-learn-5" class="section level2" number="11.1">
+<h2>
+<span class="header-section-number">11.1</span> What You’ll Learn<a class="anchor" aria-label="anchor" href="#what-youll-learn-5"><i class="fas fa-link"></i></a>
+</h2>
+<p>Some downstream analyses (clustering, dimensionality reduction) get slow or unwieldy with the full event count from every file. This chapter downsamples every file in the flowSet to a fixed number of events each, so later steps run on a consistent, manageable dataset.</p>
+</div>
+<div id="the-essentials-8" class="section level2 essentials" number="11.2">
+<h2>
+<span class="header-section-number">11.2</span> The Essentials<a class="anchor" aria-label="anchor" href="#the-essentials-8"><i class="fas fa-link"></i></a>
+</h2>
+<div id="step-1-load-required-packages-and-data" class="section level3" number="11.2.1">
+<h3>
+<span class="header-section-number">11.2.1</span> Step 1: Load Required Packages and Data<a class="anchor" aria-label="anchor" href="#step-1-load-required-packages-and-data"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb190"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in readLines(f, n): line 1 appears to contain an</span></span>
+<span><span class="co">#&gt; embedded nul</span></span>
+<span><span class="co">#&gt; here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">CLEANED_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"CLEANED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-2-downsample-every-file" class="section level3" number="11.2.2">
+<h3>
+<span class="header-section-number">11.2.2</span> Step 2: Downsample Every File<a class="anchor" aria-label="anchor" href="#step-2-downsample-every-file"><i class="fas fa-link"></i></a>
+</h3>
+<p><code><a href="https://rdrr.io/pkg/flowCore/man/sampleFilter-class.html">sampleFilter()</a></code> defines a filter that keeps a fixed number of events per file, then <code><a href="https://rdrr.io/pkg/flowCore/man/Subset-methods.html">Subset()</a></code> actually applies it. <code><a href="https://rdrr.io/pkg/flowCore/man/sampleFilter-class.html">sampleFilter()</a></code> picks events randomly, so set a seed first, otherwise you’ll get a different 5000 cells every time you re-run this chapter:</p>
+<div class="sourceCode" id="cb191"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span><span class="va">Downsample_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/sampleFilter-class.html">sampleFilter</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">5000</span>, filterId <span class="op">=</span> <span class="st">"dsFilter"</span><span class="op">)</span></span>
+<span><span class="va">DOWNSAMPLER</span> <span class="op">&lt;-</span> <span class="fu">flowCore</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/filter-methods.html">filter</a></span><span class="op">(</span><span class="va">CLEANED_FLOWSET</span>, <span class="va">Downsample_filter</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">DOWNSAMPLED_CLEANED_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/Subset-methods.html">Subset</a></span><span class="op">(</span><span class="va">CLEANED_FLOWSET</span>, <span class="va">DOWNSAMPLER</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">DOWNSAMPLED_CLEANED_FLOWSET</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "2%PFA - NAS PERM"  "4%PFA - NAS PERM" </span></span>
+<span><span class="co">#&gt; [3] "8%PFA - NAS PERM"  "PFA+GLUT-NAS PERM"</span></span>
+<span><span class="co">#&gt; [5] "4%PFA - NO PERM"</span></span></code></pre></div>
+</div>
+<div id="step-3-verify-the-event-counts" class="section level3" number="11.2.3">
+<h3>
+<span class="header-section-number">11.2.3</span> Step 3: Verify the Event Counts<a class="anchor" aria-label="anchor" href="#step-3-verify-the-event-counts"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb192"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="va">nrow</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                   [,1]</span></span>
+<span><span class="co">#&gt; 2%PFA - NAS PERM  5000</span></span>
+<span><span class="co">#&gt; 4%PFA - NAS PERM  5000</span></span>
+<span><span class="co">#&gt; 8%PFA - NAS PERM  5000</span></span>
+<span><span class="co">#&gt; PFA+GLUT-NAS PERM 5000</span></span>
+<span><span class="co">#&gt; 4%PFA - NO PERM   5000</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong> every file showing 5000 (or fewer, if a file had fewer events than that to begin with, <code><a href="https://rdrr.io/pkg/flowCore/man/sampleFilter-class.html">sampleFilter()</a></code> can’t invent events that aren’t there).</p>
+</div>
+<div id="step-4-save-your-work-1" class="section level3" number="11.2.4">
+<h3>
+<span class="header-section-number">11.2.4</span> Step 4: Save Your Work<a class="anchor" aria-label="anchor" href="#step-4-save-your-work-1"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb193"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"DOWNSAMPLED_CLEANED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb194"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"DOWNSAMPLED_CLEANED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div id="step-5-compare-event-counts-before-and-after" class="section level3" number="11.2.5">
+<h3>
+<span class="header-section-number">11.2.5</span> Step 5: Compare Event Counts Before and After<a class="anchor" aria-label="anchor" href="#step-5-compare-event-counts-before-and-after"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb196"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">BEFORE_COUNTS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">CLEANED_FLOWSET</span>, <span class="va">nrow</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">BEFORE_COUNTS</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"Events"</span></span>
+<span><span class="va">BEFORE_COUNTS</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html">rownames_to_column</a></span><span class="op">(</span><span class="va">BEFORE_COUNTS</span>, <span class="st">"Sample"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">AFTER_COUNTS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="va">nrow</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">AFTER_COUNTS</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"Events"</span></span>
+<span><span class="va">AFTER_COUNTS</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html">rownames_to_column</a></span><span class="op">(</span><span class="va">AFTER_COUNTS</span>, <span class="st">"Sample"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Both panels must share a y axis, or ggplot scales each one to its own data</span></span>
+<span><span class="co"># and a large drop looks like a small one</span></span>
+<span><span class="va">Y_MAX</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">BEFORE_COUNTS</span><span class="op">$</span><span class="va">Events</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_before</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">BEFORE_COUNTS</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Sample</span>, y <span class="op">=</span> <span class="va">Events</span>, fill <span class="op">=</span> <span class="va">Sample</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Before downsampling"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/comma.html">comma</a></span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">Y_MAX</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_after</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">AFTER_COUNTS</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Sample</span>, y <span class="op">=</span> <span class="va">Events</span>, fill <span class="op">=</span> <span class="va">Sample</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"After downsampling"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/comma.html">comma</a></span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">Y_MAX</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">p_before</span>, <span class="va">p_after</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="10-Downsampling_files/figure-html/compare-counts-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb197"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"downsampling_before_after.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"downsampling_before_after.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-6-reorder-the-samples" class="section level3" number="11.2.6">
+<h3>
+<span class="header-section-number">11.2.6</span> Step 6: Reorder the Samples<a class="anchor" aria-label="anchor" href="#step-6-reorder-the-samples"><i class="fas fa-link"></i></a>
+</h3>
+<p>If you want your samples in a specific display order for plotting, reorder here:</p>
+<div class="sourceCode" id="cb198"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span> <span class="op">&lt;-</span> <span class="va">DOWNSAMPLED_CLEANED_FLOWSET</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">5</span>, <span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span><span class="op">]</span> <span class="co"># example order, replace with your real order</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/phenoData.html">pData</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span><span class="op">)</span><span class="op">$</span><span class="va">name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"Reordered_DOWNSAMPLED_CLEANED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div id="a-deeper-dive-8" class="section level2 deeper-dive" number="11.3">
+<h2>
+<span class="header-section-number">11.3</span> A Deeper Dive<a class="anchor" aria-label="anchor" href="#a-deeper-dive-8"><i class="fas fa-link"></i></a>
+</h2>
+<p>Downsampling to a fixed number of events per file matters for two reasons: it keeps computationally expensive steps (UMAP, tSNE, clustering) tractable, and it stops files with far more events than others from dominating those analyses just by sheer count. 5000 is a reasonable default for a tutorial dataset, real experiments often use a different number depending on how many events each file actually has and how much compute is available.</p>
+<div id="what-samplefilter-is-actually-doing" class="section level3" number="11.3.1">
+<h3>
+<span class="header-section-number">11.3.1</span> What sampleFilter() Is Actually Doing<a class="anchor" aria-label="anchor" href="#what-samplefilter-is-actually-doing"><i class="fas fa-link"></i></a>
+</h3>
+<p><code><a href="https://rdrr.io/pkg/flowCore/man/sampleFilter-class.html">sampleFilter()</a></code> isn’t running any special cytometry-aware logic, it’s random sampling without replacement, the same thing <code><a href="https://rdrr.io/r/base/sample.html">sample()</a></code> does on a vector of row indices. <code>flowCore</code> wraps it in a filter object so it works with <code><a href="https://rdrr.io/pkg/flowCore/man/Subset-methods.html">Subset()</a></code> and the rest of the flowSet machinery, but conceptually it’s no different from <code>exprs(x)[sample(nrow(exprs(x)), 5000), ]</code>. So everything you already understand about random sampling, including the need to set a seed, applies here directly, and there’s no hidden cytometry-specific behaviour to learn.</p>
+</div>
+<div id="the-cost-of-a-fixed-downsample" class="section level3" number="11.3.2">
+<h3>
+<span class="header-section-number">11.3.2</span> The Cost of a Fixed Downsample<a class="anchor" aria-label="anchor" href="#the-cost-of-a-fixed-downsample"><i class="fas fa-link"></i></a>
+</h3>
+<p>Sampling 5000 events at random assumes whatever’s rare in the full file is still represented, at roughly the same proportion, in the smaller sample. That holds up reasonably well at 5000 out of tens of thousands of events, it holds up much worse if you push the number down. Try re-running Step 2 with <code>size = 500</code> instead of <code>5000</code> and compare the results:</p>
+<div class="sourceCode" id="cb199"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span><span class="va">Downsample_filter_small</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/sampleFilter-class.html">sampleFilter</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">500</span>, filterId <span class="op">=</span> <span class="st">"dsFilterSmall"</span><span class="op">)</span></span>
+<span><span class="va">DOWNSAMPLER_SMALL</span> <span class="op">&lt;-</span> <span class="fu">flowCore</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/filter-methods.html">filter</a></span><span class="op">(</span><span class="va">CLEANED_FLOWSET</span>, <span class="va">Downsample_filter_small</span><span class="op">)</span></span>
+<span><span class="va">DOWNSAMPLED_SMALL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/Subset-methods.html">Subset</a></span><span class="op">(</span><span class="va">CLEANED_FLOWSET</span>, <span class="va">DOWNSAMPLER_SMALL</span><span class="op">)</span></span></code></pre></div>
+<p>A population that made up 2% of a file’s events is, on average, only about 10 cells at <code>size = 500</code>, sparse enough that it can look noisy, get missed by clustering entirely, or vanish through ordinary sampling variation from one run to the next. The same population at <code>size = 5000</code> averages around 100 cells, still small, but far more stable. There’s no single correct downsample size, it’s a real trade-off between speed and how much you trust your smallest populations to survive the cut.</p>
+</div>
+<div id="fixed-per-file-vs-proportional-downsampling" class="section level3" number="11.3.3">
+<h3>
+<span class="header-section-number">11.3.3</span> Fixed-Per-File vs Proportional Downsampling<a class="anchor" aria-label="anchor" href="#fixed-per-file-vs-proportional-downsampling"><i class="fas fa-link"></i></a>
+</h3>
+<p>This chapter downsamples every file to the same fixed number, 5000 regardless of how many events that file started with. That’s a deliberate choice, not the only valid one. It means a file that started with 8,000 live singlets and a file that started with 80,000 end up contributing equally to every downstream analysis, each file’s biological signal gets the same weight, regardless of how much data actually backs it. The alternative, proportional downsampling, keeps a fixed percentage of each file rather than a fixed count, preserving each file’s relative size but risking a single very large file dominating the combined analysis just by sheer numbers. Neither approach is universally correct, which one matters depends on whether you want every sample treated as an equal unit of evidence, or every event treated as an equal unit of evidence.</p>
+</div>
+<div id="whats-next-6" class="section level3" number="11.3.4">
+<h3>
+<span class="header-section-number">11.3.4</span> What’s Next<a class="anchor" aria-label="anchor" href="#whats-next-6"><i class="fas fa-link"></i></a>
+</h3>
+<p>With <code>Reordered_DOWNSAMPLED_CLEANED_FLOWSET.rds</code> saved, the next chapter transforms the data (arcsinh) to make it suitable for visualisation and downstream analysis.</p>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies</a></div>
+<div class="next"><a href="chapter-11---data-transformation.html"><span class="header-section-number">12</span> Chapter 11 - Data Transformation</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#chapter-10---downsampling"><span class="header-section-number">11</span> Chapter 10 - Downsampling</a></li>
+<li><a class="nav-link" href="#what-youll-learn-5"><span class="header-section-number">11.1</span> What You’ll Learn</a></li>
+<li>
+<a class="nav-link" href="#the-essentials-8"><span class="header-section-number">11.2</span> The Essentials</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#step-1-load-required-packages-and-data"><span class="header-section-number">11.2.1</span> Step 1: Load Required Packages and Data</a></li>
+<li><a class="nav-link" href="#step-2-downsample-every-file"><span class="header-section-number">11.2.2</span> Step 2: Downsample Every File</a></li>
+<li><a class="nav-link" href="#step-3-verify-the-event-counts"><span class="header-section-number">11.2.3</span> Step 3: Verify the Event Counts</a></li>
+<li><a class="nav-link" href="#step-4-save-your-work-1"><span class="header-section-number">11.2.4</span> Step 4: Save Your Work</a></li>
+<li><a class="nav-link" href="#step-5-compare-event-counts-before-and-after"><span class="header-section-number">11.2.5</span> Step 5: Compare Event Counts Before and After</a></li>
+<li><a class="nav-link" href="#step-6-reorder-the-samples"><span class="header-section-number">11.2.6</span> Step 6: Reorder the Samples</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#a-deeper-dive-8"><span class="header-section-number">11.3</span> A Deeper Dive</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#what-samplefilter-is-actually-doing"><span class="header-section-number">11.3.1</span> What sampleFilter() Is Actually Doing</a></li>
+<li><a class="nav-link" href="#the-cost-of-a-fixed-downsample"><span class="header-section-number">11.3.2</span> The Cost of a Fixed Downsample</a></li>
+<li><a class="nav-link" href="#fixed-per-file-vs-proportional-downsampling"><span class="header-section-number">11.3.3</span> Fixed-Per-File vs Proportional Downsampling</a></li>
+<li><a class="nav-link" href="#whats-next-6"><span class="header-section-number">11.3.4</span> What’s Next</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

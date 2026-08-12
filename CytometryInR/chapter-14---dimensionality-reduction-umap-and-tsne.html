@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 15 Chapter 14 - Dimensionality Reduction (UMAP and tSNE) | Analysing Cytometry Data with R</title>
+<meta name="author" content="Damian Carragher">
+<meta name="author" content="StemCore Laboratories and Flow Cytometry Core">
+<meta name="author" content="Ottawa Hospital Research Institute">
+<meta name="author" content="First edition by Damian Carragher">
+<meta name="description" content="15.1 What You’ll Learn Cytometry data has many dimensions, one per marker. Dimensionality reduction techniques like UMAP and tSNE project that high-dimensional data down to two dimensions for...">
+<meta name="generator" content="bookdown 0.47 with bs4_book()">
+<meta property="og:title" content="Chapter 15 Chapter 14 - Dimensionality Reduction (UMAP and tSNE) | Analysing Cytometry Data with R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="15.1 What You’ll Learn Cytometry data has many dimensions, one per marker. Dimensionality reduction techniques like UMAP and tSNE project that high-dimensional data down to two dimensions for...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 15 Chapter 14 - Dimensionality Reduction (UMAP and tSNE) | Analysing Cytometry Data with R">
+<meta name="twitter:description" content="15.1 What You’ll Learn Cytometry data has many dimensions, one per marker. Dimensionality reduction techniques like UMAP and tSNE project that high-dimensional data down to two dimensions for...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.12.0/transition.js"></script><script src="libs/bs3compat-0.12.0/tabs.js"></script><script src="libs/bs3compat-0.12.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Analysing Cytometry Data with R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> Preface and Notes</a></li>
+<li><a class="" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">2</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
+<li><a class="" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">3</span> Chapter 2 - Setting up an R environment</a></li>
+<li><a class="" href="chapter-3---packages.html"><span class="header-section-number">4</span> Chapter 3 - Packages</a></li>
+<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">5</span> Chapter 4 - File Management and Data Access</a></li>
+<li><a class="" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">6</span> Chapter 5 - Loading Cytometry Data</a></li>
+<li><a class="" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data</a></li>
+<li><a class="" href="chapter-7---gating-data.html"><span class="header-section-number">8</span> Chapter 7 - Gating Data</a></li>
+<li><a class="" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
+<li><a class="" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
+<li><a class="" href="chapter-10---downsampling.html"><span class="header-section-number">11</span> Chapter 10 - Downsampling</a></li>
+<li><a class="" href="chapter-11---data-transformation.html"><span class="header-section-number">12</span> Chapter 11 - Data Transformation</a></li>
+<li><a class="" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">13</span> Chapter 12 - Extracting Expression Data</a></li>
+<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">14</span> Chapter 13 - Full Visualisation</a></li>
+<li><a class="active" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">15</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
+<li><a class="" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery</a></li>
+<li><a class="" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">17</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="chapter-14---dimensionality-reduction-umap-and-tsne" class="section level1" number="15">
+<h1>
+<span class="header-section-number">15</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)<a class="anchor" aria-label="anchor" href="#chapter-14---dimensionality-reduction-umap-and-tsne"><i class="fas fa-link"></i></a>
+</h1>
+<div id="what-youll-learn-9" class="section level2" number="15.1">
+<h2>
+<span class="header-section-number">15.1</span> What You’ll Learn<a class="anchor" aria-label="anchor" href="#what-youll-learn-9"><i class="fas fa-link"></i></a>
+</h2>
+<p>Cytometry data has many dimensions, one per marker. Dimensionality reduction techniques like UMAP and tSNE project that high-dimensional data down to two dimensions for visualisation, while trying to preserve the relationships between similar cells. This chapter runs both twice, once on every marker, once on a smaller lineage-only subset, since these answer different questions and aren’t meant to be unified into a single “correct” version.</p>
+</div>
+<div id="the-essentials-12" class="section level2 essentials" number="15.2">
+<h2>
+<span class="header-section-number">15.2</span> The Essentials<a class="anchor" aria-label="anchor" href="#the-essentials-12"><i class="fas fa-link"></i></a>
+</h2>
+<div id="step-1-load-required-packages-and-data-4" class="section level3" number="15.2.1">
+<h3>
+<span class="header-section-number">15.2.1</span> Step 1: Load Required Packages and Data<a class="anchor" aria-label="anchor" href="#step-1-load-required-packages-and-data-4"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb236"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in readLines(f, n): line 1 appears to contain an</span></span>
+<span><span class="co">#&gt; embedded nul</span></span>
+<span><span class="co">#&gt; here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jlmelville/uwot">uwot</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: Matrix</span></span>
+<span><span class="co">#&gt; Warning: package 'Matrix' was built under R version 4.6.1</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jkrijthe/Rtsne">Rtsne</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     filter, lag</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/">viridis</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: viridisLite</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readxl.tidyverse.org">readxl</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mhahsler/dbscan">dbscan</a></span><span class="op">)</span>    <span class="co"># density clustering, used to gate regions in the Deep Dive</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'dbscan'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     as.dendrogram</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggforce.data-imaginist.com">ggforce</a></span><span class="op">)</span>   <span class="co"># geom_mark_hull(), draws those gates as outlines</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Scripts"</span>, <span class="st">"palette.R"</span><span class="op">)</span><span class="op">)</span>   <span class="co"># colour_conditions and the custom_*_manual() helpers</span></span>
+<span></span>
+<span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"EXPRESSION_DATA_SAMPLE_ID.rds"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"other"</span>, <span class="st">"ACDwR_metadata.xlsx"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>The palette comes from <code>Scripts/palette.R</code>, the same file Chapter 13 sources. Sourcing it rather than retyping the hex codes means one definition, so a sample is the same colour here as it was there, and changing it once changes it everywhere.</p>
+</div>
+<div id="step-2-run-umap-on-all-markers" class="section level3" number="15.2.2">
+<h3>
+<span class="header-section-number">15.2.2</span> Step 2: Run UMAP on All Markers<a class="anchor" aria-label="anchor" href="#step-2-run-umap-on-all-markers"><i class="fas fa-link"></i></a>
+</h3>
+<p><code>EXPRESSION_DATA_SAMPLE_ID</code> carries more than markers: <code>sample_id</code> is a label, <code>Time</code> and <code>Event_length</code> are acquisition metadata, and <code>Original_ID</code> is an event index PeacoQC added back in Chapter 9. None of those belong in a UMAP or tSNE run, and listing them by hand to exclude them is a trap, because the next tool that appends a column will silently get treated as a marker.</p>
+<p>Take the list from your panel file instead. <code>ACDwR_panel.csv</code> already classifies every channel in a <code>marker_class</code> column, so it can say which columns are markers rather than you maintaining a second list that has to be kept in step:</p>
+<div class="sourceCode" id="cb237"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">panel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"other"</span>, <span class="st">"ACDwR_panel.csv"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">panel_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/make.names.html">make.names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">panel</span><span class="op">$</span><span class="va">fcs_colname</span>, <span class="va">panel</span><span class="op">$</span><span class="va">antigen</span>, sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">marker_cols</span> <span class="op">&lt;-</span> <span class="va">panel_cols</span><span class="op">[</span><span class="va">panel</span><span class="op">$</span><span class="va">marker_class</span> <span class="op">!=</span> <span class="st">"none"</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">marker_cols</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 37</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>[1] 37</code></pre>
+<p><code><a href="https://rdrr.io/r/base/paste.html">paste()</a></code> rebuilds the same combined <code>channel_marker</code> names Chapter 8 created, and <code><a href="https://rdrr.io/r/base/make.names.html">make.names()</a></code> applies the same tidying <code><a href="https://rdrr.io/r/base/data.frame.html">data.frame()</a></code> applied in Chapter 12, so these match the table’s actual column names exactly, including the awkward ones. <code>marker_class == "none"</code> is how the panel labels <code>Time</code> and <code>Event_length</code>. <code>Original_ID</code> never appears because it is not in the panel at all, which is the point of deriving the list rather than writing it out.</p>
+<p>UMAP is a randomised algorithm, so <code><a href="https://rdrr.io/r/base/Random.html">set.seed()</a></code> before every run is what makes your projection reproducible, and what lets your figures match the ones in this book.</p>
+<p><strong>One setting quietly cancels that out.</strong> <code><a href="https://jlmelville.github.io/uwot/reference/umap.html">uwot::umap()</a></code> has a <code>fast_sgd</code> argument, and turning it on makes the run about twice as fast. It also sets <code>n_sgd_threads = "auto"</code>, <code>approx_pow = TRUE</code> and <code>pcg_rand = FALSE</code> all at once, and the result is no longer reproducible <strong>even with a seed</strong>. Two runs on identical data with identical seeds came out with coordinates differing by more than the entire width of the plot, and forcing the thread count back to one does not rescue it. On this dataset the speed saved was four seconds. Leave <code>fast_sgd</code> off, which is the default, and the seed does its job:</p>
+<div class="sourceCode" id="cb239"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span><span class="va">EDU_umap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://jlmelville.github.io/uwot/reference/umap.html">umap</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span><span class="op">[</span>, <span class="va">marker_cols</span><span class="op">]</span>, n_neighbors <span class="op">=</span> <span class="fl">15</span>, metric <span class="op">=</span> <span class="st">"cosine"</span>, min_dist <span class="op">=</span> <span class="fl">0.001</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 20:19:19 UMAP embedding parameters a = 1.929 b = 0.7915</span></span>
+<span><span class="co">#&gt; 20:19:19 Converting dataframe to numerical matrix</span></span>
+<span><span class="co">#&gt; 20:19:19 Read 25000 rows and found 37 numeric columns</span></span>
+<span><span class="co">#&gt; 20:19:19 Using Annoy for neighbor search, n_neighbors = 15</span></span>
+<span><span class="co">#&gt; 20:19:20 Building Annoy index with metric = cosine, n_trees = 50</span></span>
+<span><span class="co">#&gt; 0%   10   20   30   40   50   60   70   80   90   100%</span></span>
+<span><span class="co">#&gt; [----|----|----|----|----|----|----|----|----|----|</span></span>
+<span><span class="co">#&gt; **************************************************|</span></span>
+<span><span class="co">#&gt; 20:19:21 Writing NN index file to temp file /var/folders/b9/5sf7xbjx7dvf_sp2yq0ctcnc0000gq/T//RtmpyxfOe7/file103f5664ef377</span></span>
+<span><span class="co">#&gt; 20:19:21 Searching Annoy index using 6 threads, search_k = 1500</span></span>
+<span><span class="co">#&gt; 20:19:21 Annoy recall = 100%</span></span>
+<span><span class="co">#&gt; 20:19:21 Commencing smooth kNN distance calibration using 6 threads with target n_neighbors = 15</span></span>
+<span><span class="co">#&gt; 20:19:22 Initializing from normalized Laplacian + noise (using RSpectra)</span></span>
+<span><span class="co">#&gt; 20:19:22 Commencing optimization for 200 epochs, with 536332 positive edges</span></span>
+<span><span class="co">#&gt; 20:19:22 Using rng type: pcg</span></span>
+<span><span class="co">#&gt; 20:19:27 Optimization finished</span></span>
+<span><span class="va">EDU_umap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">EDU_umap</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">EDU_umap</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"UMAP1"</span>, <span class="st">"UMAP2"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">EDU_umap</span>, <span class="va">EXPRESSION_DATA_SAMPLE_ID</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Bring the experimental condition across from the metadata sheet, joined on sample name</span></span>
+<span><span class="co"># rather than on position, the same rule as Chapter 12.</span></span>
+<span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span><span class="op">$</span><span class="va">condition</span> <span class="op">&lt;-</span></span>
+<span>  <span class="va">metadata</span><span class="op">$</span><span class="va">condition</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span><span class="op">$</span><span class="va">sample_id</span>, <span class="va">metadata</span><span class="op">$</span><span class="va">sample_id</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"EXPRESSION_DATA_SAMPLE_ID_UMAPPED.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>A seed makes a run repeatable on the same machine with the same package versions. It does not survive an R or uwot upgrade, so record versions alongside any figure you intend to reproduce later.</p>
+</div>
+<div id="step-2b-fix-the-axis-limits-once" class="section level3" number="15.2.3">
+<h3>
+<span class="header-section-number">15.2.3</span> Step 2b: Fix the Axis Limits Once<a class="anchor" aria-label="anchor" href="#step-2b-fix-the-axis-limits-once"><i class="fas fa-link"></i></a>
+</h3>
+<p>Every plot from here uses the same limits, taken from the data. Panels drawn on their own scales are not comparable, and a reader will compare them anyway:</p>
+<div class="sourceCode" id="cb240"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">xmin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span><span class="op">$</span><span class="va">UMAP1</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">xmax</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span><span class="op">$</span><span class="va">UMAP1</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">ymin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span><span class="op">$</span><span class="va">UMAP2</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">ymax</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span><span class="op">$</span><span class="va">UMAP2</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">xmin</span>, <span class="va">xmax</span>, <span class="va">ymin</span>, <span class="va">ymax</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] -12.4  11.1 -15.1  11.3</span></span></code></pre></div>
+</div>
+<div id="step-3-plot-the-all-markers-umap" class="section level3" number="15.2.4">
+<h3>
+<span class="header-section-number">15.2.4</span> Step 3: Plot the All-Markers UMAP<a class="anchor" aria-label="anchor" href="#step-3-plot-the-all-markers-umap"><i class="fas fa-link"></i></a>
+</h3>
+<p>Three things here that the earlier chapters’ plots did not need, and <strong>every plot in this chapter that colours by sample or condition uses all of them.</strong> A palette applied to one figure and forgotten on the next three is worse than no palette at all, because the same sample changes colour between figures and the reader has no way to know.</p>
+<p><code>custom_colour_manual()</code> comes from <code>Scripts/palette.R</code>, so a sample is the same colour here as in Chapter 13. <code>override.aes</code> rebuilds the legend keys at a visible size: the plotted points are deliberately tiny and semi-transparent so 25,000 of them can be drawn at once, and a legend key inherits those aesthetics unless you say otherwise, which leaves you with a legend nobody can read.</p>
+<p>The <code>xlim</code>/<code>ylim</code> are the fixed limits from Step 2b, and those belong to <strong>this</strong> projection only. The tSNE and the lineage-only runs produce their own coordinate ranges, so forcing this projection’s limits onto them would crop the plot. Fixed limits are for comparing panels of the same projection, which is what the Deep Dive does; they are not a general setting to paste everywhere.</p>
+<div class="sourceCode" id="cb241"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP1</span>, y <span class="op">=</span> <span class="va">UMAP2</span>, color <span class="op">=</span> <span class="va">sample_id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.5</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">xmin</span>, <span class="va">xmax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">ymin</span>, <span class="va">ymax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">custom_colour_manual</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">guide_legend</a></span><span class="op">(</span>override.aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">8</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"UMAP, all markers, coloured by sample"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="14-Dimensionality-Reduction_files/figure-html/plot-umap-all-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb242"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"umap_all_markers.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"umap_all_markers.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-4-run-tsne-on-all-markers" class="section level3" number="15.2.5">
+<h3>
+<span class="header-section-number">15.2.5</span> Step 4: Run tSNE on All Markers<a class="anchor" aria-label="anchor" href="#step-4-run-tsne-on-all-markers"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb243"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tsne_in</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span><span class="op">[</span>, <span class="va">marker_cols</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span><span class="va">tsne_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Rtsne/man/Rtsne.html">Rtsne</a></span><span class="op">(</span><span class="va">tsne_in</span>, pca <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span>, check_duplicates <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Performing PCA</span></span>
+<span><span class="co">#&gt; Read the 25000 x 37 data matrix successfully!</span></span>
+<span><span class="co">#&gt; Using no_dims = 2, perplexity = 30.000000, and theta = 0.500000</span></span>
+<span><span class="co">#&gt; Computing input similarities...</span></span>
+<span><span class="co">#&gt; Building tree...</span></span>
+<span><span class="co">#&gt;  - point 10000 of 25000</span></span>
+<span><span class="co">#&gt;  - point 20000 of 25000</span></span>
+<span><span class="co">#&gt; Done in 4.35 seconds (sparsity = 0.005214)!</span></span>
+<span><span class="co">#&gt; Learning embedding...</span></span>
+<span><span class="co">#&gt; Iteration 50: error is 107.617945 (50 iterations in 1.69 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 100: error is 107.494785 (50 iterations in 1.77 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 150: error is 91.439048 (50 iterations in 1.53 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 200: error is 87.592434 (50 iterations in 1.56 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 250: error is 85.915933 (50 iterations in 1.64 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 300: error is 3.724382 (50 iterations in 1.52 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 350: error is 3.355635 (50 iterations in 1.46 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 400: error is 3.122446 (50 iterations in 1.47 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 450: error is 2.957886 (50 iterations in 1.45 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 500: error is 2.833609 (50 iterations in 1.44 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 550: error is 2.735669 (50 iterations in 1.48 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 600: error is 2.656206 (50 iterations in 1.46 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 650: error is 2.590256 (50 iterations in 1.45 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 700: error is 2.534433 (50 iterations in 1.45 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 750: error is 2.486316 (50 iterations in 1.46 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 800: error is 2.444342 (50 iterations in 1.47 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 850: error is 2.407324 (50 iterations in 1.44 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 900: error is 2.374716 (50 iterations in 1.45 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 950: error is 2.345861 (50 iterations in 1.54 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 1000: error is 2.320109 (50 iterations in 1.52 seconds)</span></span>
+<span><span class="co">#&gt; Fitting performed in 30.23 seconds.</span></span>
+<span></span>
+<span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span>, tsne1 <span class="op">=</span> <span class="va">tsne_out</span><span class="op">$</span><span class="va">Y</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, tsne2 <span class="op">=</span> <span class="va">tsne_out</span><span class="op">$</span><span class="va">Y</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-5-plot-the-all-markers-tsne" class="section level3" number="15.2.6">
+<h3>
+<span class="header-section-number">15.2.6</span> Step 5: Plot the All-Markers tSNE<a class="anchor" aria-label="anchor" href="#step-5-plot-the-all-markers-tsne"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb244"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">tsne1</span>, y <span class="op">=</span> <span class="va">tsne2</span>, color <span class="op">=</span> <span class="va">sample_id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.5</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">custom_colour_manual</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">guide_legend</a></span><span class="op">(</span>override.aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">8</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"tSNE, all markers, coloured by sample"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="14-Dimensionality-Reduction_files/figure-html/plot-tsne-all-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb245"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"tsne_all_markers.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"tsne_all_markers.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-6-choose-lineage-markers" class="section level3" number="15.2.7">
+<h3>
+<span class="header-section-number">15.2.7</span> Step 6: Choose Lineage Markers<a class="anchor" aria-label="anchor" href="#step-6-choose-lineage-markers"><i class="fas fa-link"></i></a>
+</h3>
+<p>Running UMAP/tSNE on every column, including markers that don’t define cell identity, can dilute the structure you actually care about. A second run on just your lineage/phenotyping markers often shows cleaner population separation:</p>
+<p>Same principle as Step 2: the panel already knows. <code>marker_class</code> distinguishes <code>type</code> markers, the ones that define what a cell <em>is</em>, from <code>state</code> markers, the ones that describe what it is <em>doing</em>:</p>
+<div class="sourceCode" id="cb246"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">lineage_markers</span> <span class="op">&lt;-</span> <span class="va">panel_cols</span><span class="op">[</span><span class="va">panel</span><span class="op">$</span><span class="va">marker_class</span> <span class="op">==</span> <span class="st">"type"</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">lineage_markers</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 32</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>[1] 32</code></pre>
+<p>The five left out are <code>I127Di_IdU</code>, <code>Eu153Di_CyclinB1</code>, <code>Dy162Di_Ki.67</code>, <code>Gd156Di_GATA1.PE</code> and <code>Dy163Di_Gata2</code>, all proliferation, cell-cycle or transcription-factor readouts. A cell in S phase is not a different lineage from the same cell in G1, so letting those drive the embedding spreads a population out by what it is doing rather than what it is.</p>
+<p>Classifying markers once, in the panel file, pays off here: every later step can then ask for the markers it needs instead of carrying its own hand-written list. This list doesn’t have to match the marker list you cluster on in Chapter 15. Visualising on one set and clustering on a different one is a legitimate choice, not an inconsistency, decide each independently based on what you’re trying to see or define.</p>
+</div>
+<div id="step-7-run-umap-on-lineage-markers-only" class="section level3" number="15.2.8">
+<h3>
+<span class="header-section-number">15.2.8</span> Step 7: Run UMAP on Lineage Markers Only<a class="anchor" aria-label="anchor" href="#step-7-run-umap-on-lineage-markers-only"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb248"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span><span class="va">EDU_umap_lineage</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://jlmelville.github.io/uwot/reference/umap.html">umap</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span><span class="op">[</span>, <span class="va">lineage_markers</span><span class="op">]</span>, n_neighbors <span class="op">=</span> <span class="fl">15</span>, metric <span class="op">=</span> <span class="st">"cosine"</span>, min_dist <span class="op">=</span> <span class="fl">0.001</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 20:20:06 UMAP embedding parameters a = 1.929 b = 0.7915</span></span>
+<span><span class="co">#&gt; 20:20:07 Converting dataframe to numerical matrix</span></span>
+<span><span class="co">#&gt; 20:20:07 Read 25000 rows and found 32 numeric columns</span></span>
+<span><span class="co">#&gt; 20:20:07 Using Annoy for neighbor search, n_neighbors = 15</span></span>
+<span><span class="co">#&gt; 20:20:07 Building Annoy index with metric = cosine, n_trees = 50</span></span>
+<span><span class="co">#&gt; 0%   10   20   30   40   50   60   70   80   90   100%</span></span>
+<span><span class="co">#&gt; [----|----|----|----|----|----|----|----|----|----|</span></span>
+<span><span class="co">#&gt; **************************************************|</span></span>
+<span><span class="co">#&gt; 20:20:08 Writing NN index file to temp file /var/folders/b9/5sf7xbjx7dvf_sp2yq0ctcnc0000gq/T//RtmpyxfOe7/file103f5333bfe3d</span></span>
+<span><span class="co">#&gt; 20:20:08 Searching Annoy index using 6 threads, search_k = 1500</span></span>
+<span><span class="co">#&gt; 20:20:08 Annoy recall = 100%</span></span>
+<span><span class="co">#&gt; 20:20:08 Commencing smooth kNN distance calibration using 6 threads with target n_neighbors = 15</span></span>
+<span><span class="co">#&gt; 20:20:09 Initializing from normalized Laplacian + noise (using RSpectra)</span></span>
+<span><span class="co">#&gt; 20:20:09 Commencing optimization for 200 epochs, with 539940 positive edges</span></span>
+<span><span class="co">#&gt; 20:20:09 Using rng type: pcg</span></span>
+<span><span class="co">#&gt; 20:20:14 Optimization finished</span></span>
+<span><span class="va">EDU_umap_lineage</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">EDU_umap_lineage</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">EDU_umap_lineage</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"UMAP1_lineage"</span>, <span class="st">"UMAP2_lineage"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_LINEAGE</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">EDU_umap_lineage</span>, <span class="va">EXPRESSION_DATA_SAMPLE_ID</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_LINEAGE</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"EXPRESSION_DATA_SAMPLE_ID_UMAPPED_LINEAGE.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-8-plot-the-lineage-only-umap" class="section level3" number="15.2.9">
+<h3>
+<span class="header-section-number">15.2.9</span> Step 8: Plot the Lineage-Only UMAP<a class="anchor" aria-label="anchor" href="#step-8-plot-the-lineage-only-umap"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb249"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_LINEAGE</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP1_lineage</span>, y <span class="op">=</span> <span class="va">UMAP2_lineage</span>, color <span class="op">=</span> <span class="va">sample_id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.5</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">custom_colour_manual</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">guide_legend</a></span><span class="op">(</span>override.aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">8</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"UMAP, lineage markers only, coloured by sample"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="14-Dimensionality-Reduction_files/figure-html/plot-umap-lineage-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb250"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"umap_lineage_markers.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"umap_lineage_markers.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-9-run-tsne-on-lineage-markers-only" class="section level3" number="15.2.10">
+<h3>
+<span class="header-section-number">15.2.10</span> Step 9: Run tSNE on Lineage Markers Only<a class="anchor" aria-label="anchor" href="#step-9-run-tsne-on-lineage-markers-only"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb251"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tsne_in_lineage</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span><span class="op">[</span>, <span class="va">lineage_markers</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span><span class="va">tsne_out_lineage</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Rtsne/man/Rtsne.html">Rtsne</a></span><span class="op">(</span><span class="va">tsne_in_lineage</span>, pca <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span>, check_duplicates <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Performing PCA</span></span>
+<span><span class="co">#&gt; Read the 25000 x 32 data matrix successfully!</span></span>
+<span><span class="co">#&gt; Using no_dims = 2, perplexity = 30.000000, and theta = 0.500000</span></span>
+<span><span class="co">#&gt; Computing input similarities...</span></span>
+<span><span class="co">#&gt; Building tree...</span></span>
+<span><span class="co">#&gt;  - point 10000 of 25000</span></span>
+<span><span class="co">#&gt;  - point 20000 of 25000</span></span>
+<span><span class="co">#&gt; Done in 3.20 seconds (sparsity = 0.005216)!</span></span>
+<span><span class="co">#&gt; Learning embedding...</span></span>
+<span><span class="co">#&gt; Iteration 50: error is 107.615936 (50 iterations in 1.55 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 100: error is 107.490985 (50 iterations in 1.81 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 150: error is 91.375371 (50 iterations in 1.52 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 200: error is 87.218854 (50 iterations in 1.52 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 250: error is 85.611740 (50 iterations in 1.51 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 300: error is 3.720626 (50 iterations in 1.49 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 350: error is 3.358805 (50 iterations in 1.45 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 400: error is 3.136466 (50 iterations in 1.46 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 450: error is 2.979606 (50 iterations in 1.46 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 500: error is 2.861771 (50 iterations in 1.41 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 550: error is 2.769302 (50 iterations in 1.44 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 600: error is 2.693772 (50 iterations in 1.45 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 650: error is 2.630995 (50 iterations in 1.40 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 700: error is 2.577232 (50 iterations in 1.43 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 750: error is 2.531071 (50 iterations in 1.48 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 800: error is 2.490709 (50 iterations in 1.42 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 850: error is 2.455517 (50 iterations in 1.42 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 900: error is 2.424385 (50 iterations in 1.44 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 950: error is 2.396727 (50 iterations in 1.43 seconds)</span></span>
+<span><span class="co">#&gt; Iteration 1000: error is 2.372034 (50 iterations in 1.43 seconds)</span></span>
+<span><span class="co">#&gt; Fitting performed in 29.51 seconds.</span></span>
+<span></span>
+<span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE_LINEAGE</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_LINEAGE</span>, tsne1_lineage <span class="op">=</span> <span class="va">tsne_out_lineage</span><span class="op">$</span><span class="va">Y</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, tsne2_lineage <span class="op">=</span> <span class="va">tsne_out_lineage</span><span class="op">$</span><span class="va">Y</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE_LINEAGE</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE_LINEAGE.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-10-plot-the-lineage-only-tsne" class="section level3" number="15.2.11">
+<h3>
+<span class="header-section-number">15.2.11</span> Step 10: Plot the Lineage-Only tSNE<a class="anchor" aria-label="anchor" href="#step-10-plot-the-lineage-only-tsne"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb252"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE_LINEAGE</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">tsne1_lineage</span>, y <span class="op">=</span> <span class="va">tsne2_lineage</span>, color <span class="op">=</span> <span class="va">sample_id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.5</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">custom_colour_manual</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">guide_legend</a></span><span class="op">(</span>override.aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">8</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"tSNE, lineage markers only, coloured by sample"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="14-Dimensionality-Reduction_files/figure-html/plot-tsne-lineage-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb253"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"tsne_lineage_markers.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"tsne_lineage_markers.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div id="a-deeper-dive-12" class="section level2 deeper-dive" number="15.3">
+<h2>
+<span class="header-section-number">15.3</span> A Deeper Dive<a class="anchor" aria-label="anchor" href="#a-deeper-dive-12"><i class="fas fa-link"></i></a>
+</h2>
+<p>UMAP and tSNE both aim to preserve local structure (similar cells stay close together) when squashing high-dimensional data into two dimensions, but they use different underlying math and can produce visibly different layouts from the same data. Neither one’s axes have a direct, interpretable meaning, distance and clustering in the plot are informative, but exact coordinates are not.</p>
+<div id="how-much-of-this-picture-is-real-change-the-seed-and-find-out" class="section level3" number="15.3.1">
+<h3>
+<span class="header-section-number">15.3.1</span> How Much of This Picture Is Real? Change the Seed and Find Out<a class="anchor" aria-label="anchor" href="#how-much-of-this-picture-is-real-change-the-seed-and-find-out"><i class="fas fa-link"></i></a>
+</h3>
+<p>A projection is one draw from a randomised algorithm. Before interpreting anything in it, find out which parts of the picture survive a different seed and which parts were never real to begin with. Run it four times and look:</p>
+<div class="sourceCode" id="cb254"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">seed_plot</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span></span>
+<span>  <span class="va">u</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://jlmelville.github.io/uwot/reference/umap.html">umap</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span><span class="op">[</span>, <span class="va">marker_cols</span><span class="op">]</span>, n_neighbors <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>            metric <span class="op">=</span> <span class="st">"cosine"</span>, min_dist <span class="op">=</span> <span class="fl">0.001</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span>  <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>UMAP1 <span class="op">=</span> <span class="va">u</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, UMAP2 <span class="op">=</span> <span class="va">u</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span>,</span>
+<span>                  condition <span class="op">=</span> <span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span><span class="op">$</span><span class="va">condition</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">d</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP1</span>, y <span class="op">=</span> <span class="va">UMAP2</span>, colour <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.01</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">custom_colour_manual</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"set.seed("</span>, <span class="va">s</span>, <span class="st">")"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span>plotlist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1234</span>, <span class="fl">42</span>, <span class="fl">2026</span>, <span class="fl">7</span><span class="op">)</span>, <span class="va">seed_plot</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="14-Dimensionality-Reduction_files/figure-html/umap-seed-stability-1.png" alt="" width="672"></div>
+<p>On this dataset, three things hold in every one of the four: the no-permeabilisation samples form their own isolated island, the glutaraldehyde samples stay separate from everything else, and the three PFA-plus-NAS conditions sit mixed together. Three things do not hold: the coordinates, the orientation of the whole map, and the exact number and arrangement of the small sub-islands.</p>
+<p>That distinction is the practical rule. A statement about which groups separate from which is safe. A statement that counts clusters, or quotes a position, or reads meaning into which island is next to which, is a statement about one random draw.</p>
+</div>
+<div id="what-is-this-projection-actually-separating-on" class="section level3" number="15.3.2">
+<h3>
+<span class="header-section-number">15.3.2</span> What Is This Projection Actually Separating On?<a class="anchor" aria-label="anchor" href="#what-is-this-projection-actually-separating-on"><i class="fas fa-link"></i></a>
+</h3>
+<p>Colour the same projection two ways, once by fixation protocol and once by a lineage marker:</p>
+<div class="sourceCode" id="cb255"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">by_protocol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span>,</span>
+<span>                      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP1</span>, y <span class="op">=</span> <span class="va">UMAP2</span>, colour <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.01</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">xmin</span>, <span class="va">xmax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">ymin</span>, <span class="va">ymax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">custom_colour_manual</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">guide_legend</a></span><span class="op">(</span>override.aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">6</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span>, legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Coloured by fixation protocol"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">by_marker</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span>,</span>
+<span>                    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP1</span>, y <span class="op">=</span> <span class="va">UMAP2</span>, colour <span class="op">=</span> <span class="va">Sm149Di_CD34</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.01</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">xmin</span>, <span class="va">xmax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">ymin</span>, <span class="va">ymax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/viridis/man/scale_viridis.html">scale_colour_viridis</a></span><span class="op">(</span>option <span class="op">=</span> <span class="st">"turbo"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Coloured by CD34 expression"</span>, colour <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">by_protocol</span>, <span class="va">by_marker</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="14-Dimensionality-Reduction_files/figure-html/umap-what-separates-1.png" alt="" width="672"></div>
+<p>The protocol version explains the picture and the marker version does not. <strong>The dominant structure in this projection is technical, not biological.</strong></p>
+<p>The experiment is doing what it was designed to do. These five samples are the same bone marrow prepared five ways. Without permeabilisation the intracellular markers are never stained, so those cells genuinely do have a different expression profile across the panel, and UMAP separates them because they are different. Glutaraldehyde separates for its own protocol reasons. The three PFA concentrations with NAS overlap, which is the useful practical result: across 2% to 8%, PFA concentration is not changing the measured phenotype much.</p>
+<p>UMAP separates on whatever varies most in the data you hand it. Very often that is batch, operator, staining day or protocol rather than biology. A clean separation is not evidence of a biological difference, and reading one as if it were is the commonest way this method is misused. Colour your projection by every technical variable you have before you colour it by the one you care about.</p>
+</div>
+<div id="reading-the-projection-expression-of-every-marker" class="section level3" number="15.3.3">
+<h3>
+<span class="header-section-number">15.3.3</span> Reading the Projection: Expression of Every Marker<a class="anchor" aria-label="anchor" href="#reading-the-projection-expression-of-every-marker"><i class="fas fa-link"></i></a>
+</h3>
+<p>To find out what a region <em>is</em>, colour it by one marker at a time:</p>
+<div class="sourceCode" id="cb256"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">marker_plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">m</span> <span class="kw">in</span> <span class="va">marker_cols</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">marker_plots</span><span class="op">[[</span><span class="va">m</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span>,</span>
+<span>                              <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP1</span>, y <span class="op">=</span> <span class="va">UMAP2</span>, colour <span class="op">=</span> <span class="va">.data</span><span class="op">[[</span><span class="va">m</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.01</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">xmin</span>, <span class="va">xmax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">ymin</span>, <span class="va">ymax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/viridis/man/scale_viridis.html">scale_colour_viridis</a></span><span class="op">(</span>option <span class="op">=</span> <span class="st">"turbo"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="va">m</span>, colour <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.key.size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="st">"cm"</span><span class="op">)</span>, legend.text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">marker_plots</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 37</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>[1] 37</code></pre>
+<p>Look at four of them before doing anything with the rest. Two of these say something and two do not, which is the more useful lesson:</p>
+<div class="sourceCode" id="cb258"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">marker_plots</span><span class="op">[[</span><span class="st">"Sm149Di_CD34"</span><span class="op">]</span><span class="op">]</span>, <span class="va">marker_plots</span><span class="op">[[</span><span class="st">"Er168Di_CD71"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>          <span class="va">marker_plots</span><span class="op">[[</span><span class="st">"Dy161Di_CD90"</span><span class="op">]</span><span class="op">]</span>, <span class="va">marker_plots</span><span class="op">[[</span><span class="st">"Nd143Di_CD45RA"</span><span class="op">]</span><span class="op">]</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="14-Dimensionality-Reduction_files/figure-html/umap-marker-examples-1.png" alt="" width="672"></div>
+<p>CD34 and CD71 each light up a distinct part of the projection, so they are worth annotating. CD90 and CD45RA are dark almost everywhere, so no region can be read from them and no amount of gating will change that. Most panels in a 37-marker survey look like the second pair, and the survey is how you find out which kind you have.</p>
+<p>Thirty-seven plots is too many to page through on screen, so write the whole set to a single PDF and open it properly:</p>
+<div class="sourceCode" id="cb259"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/split-methods.html">split</a></span><span class="op">(</span><span class="va">marker_plots</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">ceiling</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">marker_plots</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">page_grids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html">lapply</a></span><span class="op">(</span><span class="va">pages</span>, <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span>plotlist <span class="op">=</span> <span class="va">p</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">gg_save_pdf</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">plots</span>, <span class="va">filename</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html">pdf</a></span><span class="op">(</span><span class="va">filename</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">p</span> <span class="kw">in</span> <span class="va">plots</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">gg_save_pdf</span><span class="op">(</span><span class="va">page_grids</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"umap_every_marker.pdf"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">page_grids</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 10</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"umap_every_marker.pdf"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>[1] 10
+[1] TRUE</code></pre>
+<p><strong>This chunk draws nothing on screen, and that is expected.</strong> <code><a href="https://rdrr.io/r/grDevices/pdf.html">pdf()</a></code> redirects plotting to a file, so the ten pages go there instead of to the Plots pane. The two lines above are the only feedback you get: how many pages were built, and whether the file arrived.</p>
+<p><strong>Now go and open it.</strong> <code>Figures/umap_every_marker.pdf</code>, ten pages, four markers each. This is the survey you use to work out what your populations are, and it is the input to the next section, where regions get named. Scroll through the whole thing once and note which markers localise and which are flat. That list is what you will annotate.</p>
+<p>Keep <code>gg_save_pdf()</code>. <code><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave()</a></code> writes one plot to one file, so a 37-panel survey would be ten separate files to open and compare. Opening a PDF device, printing into it repeatedly and closing it puts everything in one document you can page through, which is how you actually read a survey like this.</p>
+<p><strong>A warning on file size.</strong> That PDF is around 55 MB, because a PDF stores every one of the 25,000 points on every one of the 37 panels as its own vector object. If you need to email it or put it in a repository, either write a PNG instead, at the cost of not being able to zoom, or downsample with <code><a href="https://dplyr.tidyverse.org/reference/sample_n.html">sample_frac()</a></code> first as described further down. Check that your <code>.gitignore</code> covers PDFs, as this project’s does.</p>
+<p><code>.data[[m]]</code> is how you tell <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> to use a column whose name is held in a variable. Older code uses <code><a href="https://ggplot2.tidyverse.org/reference/aes_.html">aes_string()</a></code> for this, which is deprecated and will eventually stop working.</p>
+</div>
+<div id="naming-regions-and-why-it-has-to-be-done-within-a-group" class="section level3" number="15.3.4">
+<h3>
+<span class="header-section-number">15.3.4</span> Naming Regions, and Why It Has to Be Done Within a Group<a class="anchor" aria-label="anchor" href="#naming-regions-and-why-it-has-to-be-done-within-a-group"><i class="fas fa-link"></i></a>
+</h3>
+<p>Now the identification step. Two warnings first, both of which follow from what we have already established.</p>
+<p>The first: protocol dominates this projection, so a region identified across the whole map risks being a protocol effect wearing a marker’s name. The unpermeabilised sample in particular has no intracellular staining at all, so any region it occupies says more about the preparation than about cell identity. <strong>Identify lineages inside one protocol group, not across the map</strong>, which is why everything below runs on <code>UMAP_PERM</code> rather than the full table.</p>
+<div class="sourceCode" id="cb261"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">PERM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"2%PFA+NAS"</span>, <span class="st">"4%PFA+NAS"</span>, <span class="st">"8%PFA+NAS"</span><span class="op">)</span></span>
+<span><span class="va">UMAP_PERM</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span>, <span class="va">condition</span> <span class="op"><a href="https://rdrr.io/pkg/flowCore/man/filter-in-methods.html">%in%</a></span> <span class="va">PERM</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fixed limits have to come from the cells you are actually drawing. Step 2b's limits</span></span>
+<span><span class="co"># were taken from the whole projection, and the no-permeabilisation territory that sat</span></span>
+<span><span class="co"># on one side of it has just been filtered out, so reusing them here would reserve a</span></span>
+<span><span class="co"># third of the panel width for cells that are no longer in the plot.</span></span>
+<span><span class="va">perm_xmin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">UMAP_PERM</span><span class="op">$</span><span class="va">UMAP1</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">perm_xmax</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">UMAP_PERM</span><span class="op">$</span><span class="va">UMAP1</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">perm_ymin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">UMAP_PERM</span><span class="op">$</span><span class="va">UMAP2</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">perm_ymax</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">UMAP_PERM</span><span class="op">$</span><span class="va">UMAP2</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">UMAP_PERM</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 15000</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>[1] 15000</code></pre>
+<p>Check rather than assume, though, and it is one line. <code><a href="https://rdrr.io/r/base/table.html">table()</a></code> on the top 5% of a marker tells you whether its high cells belong to one condition or to all of them:</p>
+<div class="sourceCode" id="cb263"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">hi</span> <span class="op">&lt;-</span> <span class="va">UMAP_PERM</span><span class="op">[</span><span class="va">UMAP_PERM</span><span class="op">$</span><span class="va">Er168Di_CD71</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">UMAP_PERM</span><span class="op">$</span><span class="va">Er168Di_CD71</span>, <span class="fl">0.95</span><span class="op">)</span>, <span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">hi</span><span class="op">$</span><span class="va">condition</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 2%PFA+NAS 4%PFA+NAS 8%PFA+NAS </span></span>
+<span><span class="co">#&gt;       274       298       178</span></span></code></pre></div>
+<p>If a marker’s positive cells come overwhelmingly from one condition, you are probably looking at a preparation effect. If they are spread across conditions, the population is real and worth naming.</p>
+<p>The second: any coordinates you write down belong to one seed on one machine. Rather than hard-coding numbers that will be wrong on your own data, find the region from the data itself:</p>
+<p>The obvious way to draw a gate is a rectangle around the high-expressing cells. Do not start there, because the failure is instructive. A bounding box assumes the cells you are gating form <strong>one</strong> blob. Take the top 10% of cells for a marker and box the middle 80% of them, and it works beautifully for a marker with one hot spot and falls apart completely for a marker with two: the box stretches across the gap between them and swallows every unstained cell in between.</p>
+<p>Cluster the high-expressing cells first, and the problem disappears. <code>dbscan</code> groups points by density, labels sparse points as noise, and does not need to be told how many groups to look for, which is exactly the property wanted here. A marker lighting up three islands gets three gates rather than one box over everything:</p>
+<div class="sourceCode" id="cb264"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gate_regions</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">marker</span>, <span class="va">top</span> <span class="op">=</span> <span class="fl">0.05</span>, <span class="va">eps</span> <span class="op">=</span> <span class="fl">0.6</span>, <span class="va">minPts</span> <span class="op">=</span> <span class="fl">25</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">v</span>  <span class="op">&lt;-</span> <span class="va">data</span><span class="op">[[</span><span class="va">marker</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="va">hi</span> <span class="op">&lt;-</span> <span class="va">data</span><span class="op">[</span><span class="va">v</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">v</span>, <span class="fl">1</span> <span class="op">-</span> <span class="va">top</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"UMAP1"</span>, <span class="st">"UMAP2"</span><span class="op">)</span><span class="op">]</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">hi</span><span class="op">)</span> <span class="op">&lt;</span> <span class="va">minPts</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">hi</span><span class="op">[</span><span class="fl">0</span>, <span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu">dbscan</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/dbscan/man/dbscan.html">dbscan</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">hi</span><span class="op">)</span>, eps <span class="op">=</span> <span class="va">eps</span>, minPts <span class="op">=</span> <span class="va">minPts</span><span class="op">)</span></span>
+<span>  <span class="va">hi</span><span class="op">$</span><span class="va">region</span> <span class="op">&lt;-</span> <span class="va">cl</span><span class="op">$</span><span class="va">cluster</span></span>
+<span>  <span class="va">hi</span><span class="op">[</span><span class="va">hi</span><span class="op">$</span><span class="va">region</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="op">]</span>     <span class="co"># region 0 is dbscan's noise label</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">gate_plot</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">marker</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">g</span> <span class="op">&lt;-</span> <span class="fu">gate_regions</span><span class="op">(</span><span class="va">UMAP_PERM</span>, <span class="va">marker</span><span class="op">)</span></span>
+<span>  <span class="va">n</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">g</span><span class="op">$</span><span class="va">region</span><span class="op">)</span><span class="op">)</span> <span class="kw">else</span> <span class="fl">0</span></span>
+<span>  <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">UMAP_PERM</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP1</span>, y <span class="op">=</span> <span class="va">UMAP2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="va">.data</span><span class="op">[[</span><span class="va">marker</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.01</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">perm_xmin</span>, <span class="va">perm_xmax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">perm_ymin</span>, <span class="va">perm_ymax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/viridis/man/scale_viridis.html">scale_colour_viridis</a></span><span class="op">(</span>option <span class="op">=</span> <span class="st">"turbo"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">n</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">p</span> <span class="op">&lt;-</span> <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/ggforce/man/geom_mark_hull.html">geom_mark_hull</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">g</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">region</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                            expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fl">2</span>, <span class="st">"mm"</span><span class="op">)</span>, radius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fl">2</span>, <span class="st">"mm"</span><span class="op">)</span>,</span>
+<span>                            colour <span class="op">=</span> <span class="st">"black"</span>, linewidth <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%s: %d region(s), cutoff %.2f"</span>,</span>
+<span>                           <span class="va">marker</span>, <span class="va">n</span>, <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">UMAP_PERM</span><span class="op">[[</span><span class="va">marker</span><span class="op">]</span><span class="op">]</span>, <span class="fl">1</span> <span class="op">-</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="fu">gate_plot</span><span class="op">(</span><span class="st">"Sm149Di_CD34"</span><span class="op">)</span>, <span class="fu">gate_plot</span><span class="op">(</span><span class="st">"Yb172Di_CD38"</span><span class="op">)</span>,</span>
+<span>          <span class="fu">gate_plot</span><span class="op">(</span><span class="st">"Er168Di_CD71"</span><span class="op">)</span>, <span class="fu">gate_plot</span><span class="op">(</span><span class="st">"Dy161Di_CD90"</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="14-Dimensionality-Reduction_files/figure-html/umap-gate-regions-1.png" alt="" width="672"></div>
+<p><code><a href="https://rdrr.io/pkg/ggforce/man/geom_mark_hull.html">geom_mark_hull()</a></code> from <code>ggforce</code> draws a rounded outline around each group instead of a rectangle, so the gate follows the shape of the island rather than boxing the empty space around it.</p>
+<p><strong>The cutoff in each title is the part to read.</strong> It is the expression value at the 95th percentile, the level a cell has to reach to be gated at all, and it tells you whether the gates mean anything:</p>
+<div class="inline-table"><table class="table table-sm">
+<thead><tr class="header">
+<th>Marker</th>
+<th>Cutoff</th>
+<th>Regions found</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>CD34</td>
+<td>5.15</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>CD38</td>
+<td>5.49</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td>CD71</td>
+<td>5.33</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>CD41</td>
+<td>2.96</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>CD235ab</td>
+<td>0.89</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>CD90</td>
+<td>0.81</td>
+<td>5</td>
+</tr>
+</tbody>
+</table></div>
+<p>The markers with a genuine positive population cut at around 5. CD90 and CD235ab cut below 1, which means their “top 5%” is barely above background, and the five neat regions found for CD90 are gates drawn around noise. <strong>A gating function will always return something.</strong> Print the cutoff next to it, and you can tell the difference between a real population and the least-negative corner of a negative marker, without needing an arbitrary threshold buried inside the function.</p>
+<p>Why 5% rather than 10%: at 10% the cutoff drops far enough to pull in the shoulder of the negative population, and the regions blur together. Try both on your own data. The right number depends on how large the positive population actually is, and if you know it is 20% of cells then gate 20%, not 5%.</p>
+</div>
+<div id="then-move-them-by-hand" class="section level3" number="15.3.5">
+<h3>
+<span class="header-section-number">15.3.5</span> Then Move Them by Hand<a class="anchor" aria-label="anchor" href="#then-move-them-by-hand"><i class="fas fa-link"></i></a>
+</h3>
+<p>Everything above is a first pass, not an answer. Automatic gating gets you a starting position quickly and without bias; your eye and your knowledge of the biology get you the rest of the way. This is exactly how gating works at the instrument, and it should work the same way here.</p>
+<p>Three levers, in the order worth trying them:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong><code>top</code></strong>, the fraction gated. The single most useful knob. Raise it if the gate is clearly missing part of a population, lower it if it is bleeding into the negative.</li>
+<li>
+<strong><code>eps</code></strong>, how close two cells must be to count as the same region. Raise it to merge regions the algorithm split unnecessarily, lower it to separate two populations it has run together.</li>
+<li>
+<strong><code>minPts</code></strong>, the smallest region worth reporting. Raise it to stop small scatter being called a population.</li>
+</ol>
+<p>And when none of that puts the gate where you know it belongs, place it yourself.</p>
+<p>The clearest case in this dataset is the unpermeabilised sample. We know exactly which cells those are, because the metadata says so, and that beats anything the algorithm can work out from coordinates. Note this one has to be drawn on the full projection rather than on <code>UMAP_PERM</code>, since that subset had these cells filtered out.</p>
+<p>Ask dbscan what it makes of them:</p>
+<div class="sourceCode" id="cb265"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">NOPERM</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span>, <span class="va">condition</span> <span class="op">==</span> <span class="st">"4%_PFA"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu">dbscan</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/dbscan/man/dbscan.html">dbscan</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">NOPERM</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"UMAP1"</span>, <span class="st">"UMAP2"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>, eps <span class="op">=</span> <span class="fl">0.8</span>, minPts <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
+<span><span class="va">NOPERM</span><span class="op">$</span><span class="va">patch</span> <span class="op">&lt;-</span> <span class="va">cl</span><span class="op">$</span><span class="va">cluster</span></span>
+<span></span>
+<span><span class="va">NOPERM</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">patch</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">patch</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>            x_from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">UMAP1</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>, x_to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">UMAP1</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>            y_from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">UMAP2</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>, y_to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">UMAP2</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 6</span></span>
+<span><span class="co">#&gt;   patch     n x_from  x_to y_from  y_to</span></span>
+<span><span class="co">#&gt;   &lt;int&gt; &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1     1  1633 -10.6  -8.35  -5.97 -2   </span></span>
+<span><span class="co">#&gt; 2     2  2976 -11.4  -9.05  -1.51  5.05</span></span>
+<span><span class="co">#&gt; 3     3   391  -8.71 -8.07  -9.73 -8.04</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>  patch     n x_from  x_to y_from  y_to
+      1  1633 -10.61 -8.35  -5.97 -2.00
+      2  2976 -11.38 -9.05  -1.51  5.05
+      3   391  -8.71 -8.07  -9.73 -8.04</code></pre>
+<p>Three patches. But these are not three populations, they are one sample, and no amount of tuning <code>eps</code> will tell the algorithm that, because the information is not in the coordinates. It is in the metadata. So draw one rectangle over the lot:</p>
+<div class="sourceCode" id="cb267"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP1</span>, y <span class="op">=</span> <span class="va">UMAP2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="va">condition</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.01</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">custom_colour_manual</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">guide_legend</a></span><span class="op">(</span>override.aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">6</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html">annotate</a></span><span class="op">(</span><span class="st">"rect"</span>, xmin <span class="op">=</span> <span class="op">-</span><span class="fl">11.7</span>, xmax <span class="op">=</span> <span class="op">-</span><span class="fl">7.8</span>, ymin <span class="op">=</span> <span class="op">-</span><span class="fl">10.0</span>, ymax <span class="op">=</span> <span class="fl">5.3</span>,</span>
+<span>           alpha <span class="op">=</span> <span class="fl">0.2</span>, fill <span class="op">=</span> <span class="st">"blue"</span>, colour <span class="op">=</span> <span class="st">"blue"</span>, linewidth <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html">annotate</a></span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="op">-</span><span class="fl">9.7</span>, y <span class="op">=</span> <span class="fl">6.4</span>, label <span class="op">=</span> <span class="st">"No permeabilisation"</span>,</span>
+<span>           colour <span class="op">=</span> <span class="st">"blue"</span>, size <span class="op">=</span> <span class="fl">3.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span>, legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="14-Dimensionality-Reduction_files/figure-html/umap-gate-manual-1.png" alt="" width="672"></div>
+<p>Check what it caught rather than trusting your eye:</p>
+<div class="sourceCode" id="cb268"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gated</span> <span class="op">&lt;-</span> <span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">UMAP1</span> <span class="op">&gt;=</span> <span class="op">-</span><span class="fl">12.2</span>, <span class="va">UMAP1</span> <span class="op">&lt;=</span> <span class="op">-</span><span class="fl">6.7</span>, <span class="va">UMAP2</span> <span class="op">&gt;=</span> <span class="op">-</span><span class="fl">9.6</span>, <span class="va">UMAP2</span> <span class="op">&lt;=</span> <span class="fl">5.1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">gated</span><span class="op">$</span><span class="va">condition</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;            4%_PFA 4%PFA+1%GLUTA+NAS </span></span>
+<span><span class="co">#&gt;              4949                 4</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>           4%_PFA 4%PFA+1%GLUTA+NAS
+             5000                 4</code></pre>
+<p>All 5,000 unpermeabilised cells, and four strays from another condition. One rectangle, typed by hand from the table above with 0.3 of margin, does in a single step what the clustering split into three, and it is 99.9% pure. <strong>That is the case for manual gating in one number.</strong> When you know something the coordinates do not contain, your rectangle beats the algorithm, and you can prove it rather than assert it.</p>
+<p>A translucent fill rather than an outline, because a filled gate reads as a region containing cells while an outline reads as a border between things. <code>alpha</code> controls the fill and the points stay visible through it, so you can still see what you have gated and what you have left out.</p>
+<p>Two habits to take from this. Get the coordinates from a printed table, not from squinting at the plot. And check the gate’s contents afterwards, because a gate that looks right and a gate that is right are different things, and the <code><a href="https://rdrr.io/r/base/table.html">table()</a></code> above is the difference between the two.</p>
+<p>Record the reason next to the coordinates. In six months the rectangle will still be in your script and the reason will not be.</p>
+</div>
+<div id="gating-the-territories-not-the-markers" class="section level3" number="15.3.6">
+<h3>
+<span class="header-section-number">15.3.6</span> Gating the Territories, Not the Markers<a class="anchor" aria-label="anchor" href="#gating-the-territories-not-the-markers"><i class="fas fa-link"></i></a>
+</h3>
+<p>The same technique answers the chapter’s main question directly. Rather than gating where a marker is high, gate where each fixation protocol lives, and the picture makes its own argument.</p>
+<p><code><a href="https://rdrr.io/pkg/ggforce/man/geom_mark_hull.html">geom_mark_hull()</a></code> takes <code>fill</code>, <code>colour</code> and <code>label</code> as aesthetics, so the regions can be coloured by what they are and labelled with a callout instead of needing separate <code><a href="https://ggplot2.tidyverse.org/reference/annotate.html">annotate()</a></code> calls:</p>
+<div class="sourceCode" id="cb270"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span><span class="op">$</span><span class="va">territory</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case-and-replace-when.html">case_when</a></span><span class="op">(</span></span>
+<span>  <span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span><span class="op">$</span><span class="va">condition</span> <span class="op">==</span> <span class="st">"4%_PFA"</span>            <span class="op">~</span> <span class="st">"No permeabilisation"</span>,</span>
+<span>  <span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span><span class="op">$</span><span class="va">condition</span> <span class="op">==</span> <span class="st">"4%PFA+1%GLUTA+NAS"</span> <span class="op">~</span> <span class="st">"Glutaraldehyde"</span>,</span>
+<span>  <span class="cn">TRUE</span>                                                               <span class="op">~</span> <span class="st">"PFA + NAS"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">territory_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"No permeabilisation"</span> <span class="op">=</span> <span class="st">"#58508d"</span>,</span>
+<span>                    <span class="st">"Glutaraldehyde"</span>      <span class="op">=</span> <span class="st">"#bc5090"</span>,</span>
+<span>                    <span class="st">"PFA + NAS"</span>           <span class="op">=</span> <span class="st">"#ffa600"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Split each territory into its own separate patches, for the same reason as before:</span></span>
+<span><span class="co"># a group scattered across the plot must not become one hull spanning all of it.</span></span>
+<span><span class="va">patches</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/split-methods.html">split</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span>,</span>
+<span>                        <span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span><span class="op">$</span><span class="va">territory</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">d</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu">dbscan</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/dbscan/man/dbscan.html">dbscan</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">d</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"UMAP1"</span>, <span class="st">"UMAP2"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>, eps <span class="op">=</span> <span class="fl">0.8</span>, minPts <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
+<span>  <span class="va">d</span><span class="op">$</span><span class="va">patch</span> <span class="op">&lt;-</span> <span class="va">cl</span><span class="op">$</span><span class="va">cluster</span></span>
+<span>  <span class="va">d</span><span class="op">[</span><span class="va">d</span><span class="op">$</span><span class="va">patch</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="op">]</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="va">PATCHES</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html">bind_rows</a></span><span class="op">(</span><span class="va">patches</span><span class="op">)</span></span>
+<span><span class="va">PATCHES</span><span class="op">$</span><span class="va">grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">PATCHES</span><span class="op">$</span><span class="va">territory</span>, <span class="va">PATCHES</span><span class="op">$</span><span class="va">patch</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Label only the largest patch of each territory, so each name is drawn once</span></span>
+<span><span class="va">biggest</span> <span class="op">&lt;-</span> <span class="va">PATCHES</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span><span class="op">(</span><span class="va">territory</span>, <span class="va">grp</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">territory</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice_max</a></span><span class="op">(</span><span class="va">n</span>, n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">grp</span><span class="op">)</span></span>
+<span><span class="va">PATCHES</span><span class="op">$</span><span class="va">lab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">PATCHES</span><span class="op">$</span><span class="va">grp</span> <span class="op"><a href="https://rdrr.io/pkg/flowCore/man/filter-in-methods.html">%in%</a></span> <span class="va">biggest</span>, <span class="va">PATCHES</span><span class="op">$</span><span class="va">territory</span>, <span class="cn">NA_character_</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP1</span>, y <span class="op">=</span> <span class="va">UMAP2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.01</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">6</span>, colour <span class="op">=</span> <span class="st">"grey40"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggforce/man/geom_mark_hull.html">geom_mark_hull</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">PATCHES</span>,</span>
+<span>                 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="va">grp</span>, fill <span class="op">=</span> <span class="va">territory</span>, colour <span class="op">=</span> <span class="va">territory</span>, label <span class="op">=</span> <span class="va">lab</span><span class="op">)</span>,</span>
+<span>                 concavity <span class="op">=</span> <span class="fl">2</span>, expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fl">2</span>, <span class="st">"mm"</span><span class="op">)</span>, radius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fl">2</span>, <span class="st">"mm"</span><span class="op">)</span>,</span>
+<span>                 alpha <span class="op">=</span> <span class="fl">0.18</span>, linewidth <span class="op">=</span> <span class="fl">0.4</span>, label.fontsize <span class="op">=</span> <span class="fl">9</span>,</span>
+<span>                 con.cap <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fl">1</span>, <span class="st">"mm"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">territory_cols</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">territory_cols</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">xmin</span> <span class="op">-</span> <span class="fl">4</span>, <span class="va">xmax</span> <span class="op">+</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">ymin</span> <span class="op">-</span> <span class="fl">2</span>, <span class="va">ymax</span> <span class="op">+</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"What the projection separates on: fixation protocol"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="14-Dimensionality-Reduction_files/figure-html/umap-territories-1.png" alt="" width="672"></div>
+<p>Three things to take from the result. <strong>No permeabilisation</strong> holds a block of patches on one side and shares none of them with anything else. <strong>Glutaraldehyde</strong> is scattered across several small patches round the edge, which is why a single hull for it spanned the whole plot until the patches were separated. <strong>PFA + NAS</strong> holds the most patches, through the middle, and the three concentrations pooled into it sit on top of each other rather than beside each other.</p>
+<p>The exact patch counts are not quoted here on purpose. They shift with the seed and the uwot version, the way every coordinate in this chapter does, so read them off your own run rather than off this page.</p>
+<p>None of the three overlaps another. On a projection built from every marker, the fixation protocol accounts for essentially all of the large-scale structure.</p>
+<p><strong>On <code>concavity</code>:</strong> it controls how far the hull is allowed to bend inwards to follow the points. <code>concavity = 2</code> traces the islands closely; raise it and the hulls relax towards convex blobs that swallow the space between islands, which is exactly what you do not want here. Try a few values on your own data, because the right one depends on how tight your clusters are.</p>
+<p><strong>And the same caution as everywhere else in this section.</strong> These hulls are drawn from the data, so unlike hand-typed coordinates they survive a re-run. What they do not survive is a change of seed or marker set, because then the patches themselves are different. Redraw, do not reuse.</p>
+<p><strong>One rule that is not negotiable.</strong> Those coordinates belong to this projection, this seed, this marker set and this version of uwot. Re-run the UMAP with anything changed and they point at empty space. Hand-drawn gates have to be re-checked every time the projection is rebuilt, which is the strongest practical argument for keeping the automatic pass in the code and the hand adjustment as a documented tweak on top of it, rather than replacing one with the other.</p>
+</div>
+<div id="does-condition-change-the-picture" class="section level3" number="15.3.7">
+<h3>
+<span class="header-section-number">15.3.7</span> Does Condition Change the Picture?<a class="anchor" aria-label="anchor" href="#does-condition-change-the-picture"><i class="fas fa-link"></i></a>
+</h3>
+<p>The question the experiment was designed to answer. Each condition alone, on the same fixed axes, beside the overlay:</p>
+<div class="sourceCode" id="cb271"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">one_condition</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">cond</span>, <span class="va">colour</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">condition</span> <span class="op">==</span> <span class="va">cond</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP1</span>, y <span class="op">=</span> <span class="va">UMAP2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.01</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">2</span>, colour <span class="op">=</span> <span class="va">colour</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">xmin</span>, <span class="va">xmax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">ymin</span>, <span class="va">ymax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="va">cond</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">conditions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span><span class="op">$</span><span class="va">condition</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">condition_panels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowClust/man/Map.html">Map</a></span><span class="op">(</span><span class="va">one_condition</span>, <span class="va">conditions</span>, <span class="va">colour_conditions</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">conditions</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span>plotlist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">condition_panels</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">by_protocol</span><span class="op">)</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="14-Dimensionality-Reduction_files/figure-html/umap-by-condition-1.png" alt="" width="672"></div>
+<p>Writing this as a function over the conditions rather than as five near-identical blocks means it still works when you have twenty samples instead of five, which you will.</p>
+</div>
+<div id="every-sample-side-by-side" class="section level3" number="15.3.8">
+<h3>
+<span class="header-section-number">15.3.8</span> Every Sample Side by Side<a class="anchor" aria-label="anchor" href="#every-sample-side-by-side"><i class="fas fa-link"></i></a>
+</h3>
+<p>The condition panels above pool samples within a condition. Sometimes you need to see each sample on its own, to check whether a condition-level effect is really there or is one odd sample dragging the group:</p>
+<div class="sourceCode" id="cb272"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span>,</span>
+<span>       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP1</span>, y <span class="op">=</span> <span class="va">UMAP2</span>, colour <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.05</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">10</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">xmin</span>, <span class="va">xmax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">ymin</span>, <span class="va">ymax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">custom_colour_manual</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">sample_id</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="14-Dimensionality-Reduction_files/figure-html/umap-per-sample-1.png" alt="" width="672"></div>
+<p>The fixed limits are doing real work here. Without them each panel would be scaled to its own sample’s range, and panels that look alike would not be comparable at all.</p>
+<p>This dataset has one sample per condition, so a plain <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap()</a></code> is enough. Real studies are usually nested: several patients within each treatment arm, several timepoints within each patient. <code><a href="https://teunbrand.github.io/ggh4x/reference/facet_nested_wrap.html">ggh4x::facet_nested_wrap()</a></code> draws the nesting as a two-level strip, which is far easier to read than pasting the variables into one label:</p>
+<div class="sourceCode" id="cb273"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/teunbrand/ggh4x">ggh4x</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span>,</span>
+<span>       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP1</span>, y <span class="op">=</span> <span class="va">UMAP2</span>, colour <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.05</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">10</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">xmin</span>, <span class="va">xmax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">ymin</span>, <span class="va">ymax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">custom_colour_manual</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://teunbrand.github.io/ggh4x/reference/facet_nested_wrap.html">facet_nested_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">condition</span> <span class="op">+</span> <span class="va">sample_id</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
+<p>That chunk is not run here because with one sample per condition the nesting has nothing to show. Swap it in when your design has a real hierarchy.</p>
+</div>
+<div id="plot-a-fraction-not-everything" class="section level3" number="15.3.9">
+<h3>
+<span class="header-section-number">15.3.9</span> Plot a Fraction, Not Everything<a class="anchor" aria-label="anchor" href="#plot-a-fraction-not-everything"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb274"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
+<span><span class="va">UMAP_FRAC</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/sample_n.html">sample_frac</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span>, <span class="fl">0.05</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">UMAP_FRAC</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 1250</span></span></code></pre></div>
+<p>Run the algorithm on all your data, then plot a fraction of it. At 25,000 cells this dataset does not need it, which makes it a good place to learn it before it matters. With several hundred samples it is the difference between a figure and a hung session, and the picture is essentially unchanged because you are drawing overlapping points anyway.</p>
+</div>
+<div id="assembling-a-figure-rather-than-a-plot" class="section level3" number="15.3.10">
+<h3>
+<span class="header-section-number">15.3.10</span> Assembling a Figure Rather Than a Plot<a class="anchor" aria-label="anchor" href="#assembling-a-figure-rather-than-a-plot"><i class="fas fa-link"></i></a>
+</h3>
+<p>Titles, subtitles and captions are drawn as their own strips and stacked with the plot:</p>
+<div class="sourceCode" id="cb275"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">title</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggdraw.html">ggdraw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://wilkelab.org/cowplot/reference/draw_label.html">draw_label</a></span><span class="op">(</span><span class="st">"What separates the cells in this projection?"</span>,</span>
+<span>             fontface <span class="op">=</span> <span class="st">"bold"</span>, x <span class="op">=</span> <span class="fl">0</span>, hjust <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>plot.margin <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">margin</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">7</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">subtitle</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggdraw.html">ggdraw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://wilkelab.org/cowplot/reference/draw_label.html">draw_label</a></span><span class="op">(</span><span class="st">"The same UMAP coloured by fixation protocol and by CD34 expression"</span>,</span>
+<span>             fontface <span class="op">=</span> <span class="st">"italic"</span>, x <span class="op">=</span> <span class="fl">0</span>, hjust <span class="op">=</span> <span class="fl">0</span>, size <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>plot.margin <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">margin</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">7</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">caption</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggdraw.html">ggdraw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://wilkelab.org/cowplot/reference/draw_label.html">draw_label</a></span><span class="op">(</span></span>
+<span>    <span class="st">"The five samples are one bone marrow prepared five ways. Protocol, not cell type, is what this projection separates on: the unpermeabilised sample sits apart because its intracellular markers were never stained, and the glutaraldehyde sample separates for its own reasons. The three PFA concentrations with NAS overlap, which is the practical result. Colour by every technical variable you have before you colour by the one you care about."</span>,</span>
+<span>    fontface <span class="op">=</span> <span class="st">"italic"</span>, x <span class="op">=</span> <span class="fl">0</span>, hjust <span class="op">=</span> <span class="fl">0</span>, size <span class="op">=</span> <span class="fl">8</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>plot.margin <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">margin</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">7</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">title</span>, <span class="va">subtitle</span>, <span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">by_protocol</span>, <span class="va">by_marker</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, <span class="va">caption</span>,</span>
+<span>          ncol <span class="op">=</span> <span class="fl">1</span>, rel_heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">0.3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="14-Dimensionality-Reduction_files/figure-html/umap-composite-1.png" alt="" width="672"></div>
+<p><code>rel_heights</code> controls how much vertical space each strip takes. The numbers are relative, so <code>c(0.1, 0.1, 1, 0.3)</code> gives the plot ten times the height of the title.</p>
+</div>
+<div id="cycling-through-the-samples" class="section level3" number="15.3.11">
+<h3>
+<span class="header-section-number">15.3.11</span> Cycling Through the Samples<a class="anchor" aria-label="anchor" href="#cycling-through-the-samples"><i class="fas fa-link"></i></a>
+</h3>
+<p>Small multiples force your eye to jump between panels. An animation holds the axes still and swaps the data underneath, which makes it much easier to see a population appear, move or vanish between conditions.</p>
+<p><code>gganimate</code> takes an ordinary ggplot and a variable to step through. Note that it needs a renderer to write the file: <code>gifski</code> is the usual choice, and without it <code><a href="https://gganimate.com/reference/anim_save.html">anim_save()</a></code> fails.</p>
+<div class="sourceCode" id="cb276"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://gganimate.com">gganimate</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-rust.r-universe.dev/gifski">gifski</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">anim_base</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">UMAP_FRAC</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP1</span>, y <span class="op">=</span> <span class="va">UMAP2</span>, colour <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">xmin</span>, <span class="va">xmax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">ymin</span>, <span class="va">ymax</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">custom_colour_manual</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">guide_legend</a></span><span class="op">(</span>override.aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">6</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Cumulative: each condition is added to the ones already drawn</span></span>
+<span><span class="va">anim_base</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span><span class="op">(</span><span class="va">condition</span>, cumulative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Condition: {current_frame}"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://gganimate.com/reference/anim_save.html">anim_save</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Images"</span>, <span class="st">"umap_animation_cumulative.gif"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># One at a time, fading between them</span></span>
+<span><span class="va">anim_base</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://gganimate.com/reference/transition_states.html">transition_states</a></span><span class="op">(</span><span class="va">condition</span>, transition_length <span class="op">=</span> <span class="fl">2</span>, state_length <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://gganimate.com/reference/enter_exit.html">enter_fade</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://gganimate.com/reference/enter_exit.html">exit_fade</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Condition: {closest_state}"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://gganimate.com/reference/anim_save.html">anim_save</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Images"</span>, <span class="st">"umap_animation_states.gif"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure">
+<img src="Images/umap_animation_cumulative.gif"><!-- -->
+</div>
+<p>The cumulative version is the more useful of the two for this experiment. Watch the unpermeabilised sample claim its own territory on the left and never share it, while the three PFA-plus-NAS conditions pile onto the same structures.</p>
+<p>Two practical notes. The chunk that builds the animations is <code>eval=FALSE</code> and the GIF is committed to <code>Images/</code>, so the book displays the result without re-rendering it on every build; this is the same pattern Chapter 2 uses for its screen recordings. And the animation runs on <code>UMAP_FRAC</code> rather than the full table, because rendering fifty frames of 25,000 points each is slow and the picture is no different.</p>
+<p><code>Rtsne</code> normally rejects duplicate rows in the input (identical expression values across every marker, more likely after downsampling and rounding from transformation). <code>check_duplicates = FALSE</code> tells it to skip that check and run anyway, rather than removing duplicate rows beforehand, which is deliberate here: removing rows would leave <code>tsne_out$Y</code> with fewer rows than the table you’re combining it back into, breaking the position-based <code>cbind</code>/<code><a href="https://rdrr.io/r/base/data.frame.html">data.frame()</a></code> step that follows.</p>
+</div>
+<div id="choosing-lineage-markers-interactively" class="section level3" number="15.3.12">
+<h3>
+<span class="header-section-number">15.3.12</span> Choosing Lineage Markers Interactively<a class="anchor" aria-label="anchor" href="#choosing-lineage-markers-interactively"><i class="fas fa-link"></i></a>
+</h3>
+<p>Step 6 takes its list from the panel file, which is the reproducible way and the one a book build can run unattended. Sometimes you want to pick by hand instead, to try a subset the panel doesn’t describe, or when the panel’s classification isn’t settled yet:</p>
+<div class="sourceCode" id="cb277"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">tcltk</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">choose_markers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/tcltk/tk_select.list.html">tk_select.list</a></span><span class="op">(</span><span class="va">marker_cols</span>, multiple <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                                 title <span class="op">=</span> <span class="st">"Choose the markers to project on"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">choose_markers</span>, file <span class="op">=</span> <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"choose_markers.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="https://rdrr.io/r/tcltk/tk_select.list.html">tk_select.list()</a></code> opens a real, interactive checklist window listing every marker, letting you tick off exactly the ones you want rather than typing out a vector. It is not something a book build can run, since there is nobody there to click through a dialog during a knit, which is why the chunk is <code>eval=FALSE</code>. Saving the result means you make the selection once and reload it in later sessions instead of choosing again every time.</p>
+<p><strong>Then use it.</strong> The survey above already showed which markers define a region on this data, CD34, CD38, CD71 and CD41, so project on just those four and see what a deliberately chosen, minimal marker set does compared with all thirty-two:</p>
+<div class="sourceCode" id="cb278"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Substitute your own choose_markers here. These four are the markers that produced</span></span>
+<span><span class="co"># real gates earlier in this chapter, so they are a defensible small set rather than</span></span>
+<span><span class="co"># an arbitrary one.</span></span>
+<span><span class="va">chosen_markers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Sm149Di_CD34"</span>, <span class="st">"Yb172Di_CD38"</span>, <span class="st">"Er168Di_CD71"</span>, <span class="st">"Y89Di_CD41.."</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span><span class="va">chosen_umap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://jlmelville.github.io/uwot/reference/umap.html">umap</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span><span class="op">[</span>, <span class="va">chosen_markers</span><span class="op">]</span>,</span>
+<span>                    n_neighbors <span class="op">=</span> <span class="fl">15</span>, metric <span class="op">=</span> <span class="st">"cosine"</span>, min_dist <span class="op">=</span> <span class="fl">0.001</span>,</span>
+<span>                    verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">CHOSEN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>UMAP1 <span class="op">=</span> <span class="va">chosen_umap</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, UMAP2 <span class="op">=</span> <span class="va">chosen_umap</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span>,</span>
+<span>                     condition <span class="op">=</span> <span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED</span><span class="op">$</span><span class="va">condition</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">chosen_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">CHOSEN</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP1</span>, y <span class="op">=</span> <span class="va">UMAP2</span>, colour <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.01</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">custom_colour_manual</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">guide_legend</a></span><span class="op">(</span>override.aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">6</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span>, legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">chosen_markers</span><span class="op">)</span>, <span class="st">"chosen markers"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">by_protocol</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">marker_cols</span><span class="op">)</span>, <span class="st">"markers"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>          <span class="va">chosen_plot</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="14-Dimensionality-Reduction_files/figure-html/umap-chosen-markers-1.png" alt="" width="672"></div>
+<p>Fewer markers is not automatically worse. Thirty-two markers include everything, which means they include every technical difference too. Four well-chosen ones ask a narrower question and often answer it more cleanly. Which of the two projections you should trust depends entirely on what you are asking. Build both and choose.</p>
+<p>This is also the honest end of what dimensionality reduction can tell you. It shows you that structure exists and roughly where. It will not tell you how many populations there are, or which cells belong to which, because outlines drawn by eye cannot be repeated or checked. That is what the next chapter is for.</p>
+</div>
+<div id="whats-next-10" class="section level3" number="15.3.13">
+<h3>
+<span class="header-section-number">15.3.13</span> What’s Next<a class="anchor" aria-label="anchor" href="#whats-next-10"><i class="fas fa-link"></i></a>
+</h3>
+<p>With both the all-markers and lineage-only UMAP/tSNE coordinates saved, the next chapter clusters the data to identify distinct cell populations, using Phenograph and FlowSOM.</p>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="chapter-13---full-visualisation.html"><span class="header-section-number">14</span> Chapter 13 - Full Visualisation</a></div>
+<div class="next"><a href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#chapter-14---dimensionality-reduction-umap-and-tsne"><span class="header-section-number">15</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
+<li><a class="nav-link" href="#what-youll-learn-9"><span class="header-section-number">15.1</span> What You’ll Learn</a></li>
+<li>
+<a class="nav-link" href="#the-essentials-12"><span class="header-section-number">15.2</span> The Essentials</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#step-1-load-required-packages-and-data-4"><span class="header-section-number">15.2.1</span> Step 1: Load Required Packages and Data</a></li>
+<li><a class="nav-link" href="#step-2-run-umap-on-all-markers"><span class="header-section-number">15.2.2</span> Step 2: Run UMAP on All Markers</a></li>
+<li><a class="nav-link" href="#step-2b-fix-the-axis-limits-once"><span class="header-section-number">15.2.3</span> Step 2b: Fix the Axis Limits Once</a></li>
+<li><a class="nav-link" href="#step-3-plot-the-all-markers-umap"><span class="header-section-number">15.2.4</span> Step 3: Plot the All-Markers UMAP</a></li>
+<li><a class="nav-link" href="#step-4-run-tsne-on-all-markers"><span class="header-section-number">15.2.5</span> Step 4: Run tSNE on All Markers</a></li>
+<li><a class="nav-link" href="#step-5-plot-the-all-markers-tsne"><span class="header-section-number">15.2.6</span> Step 5: Plot the All-Markers tSNE</a></li>
+<li><a class="nav-link" href="#step-6-choose-lineage-markers"><span class="header-section-number">15.2.7</span> Step 6: Choose Lineage Markers</a></li>
+<li><a class="nav-link" href="#step-7-run-umap-on-lineage-markers-only"><span class="header-section-number">15.2.8</span> Step 7: Run UMAP on Lineage Markers Only</a></li>
+<li><a class="nav-link" href="#step-8-plot-the-lineage-only-umap"><span class="header-section-number">15.2.9</span> Step 8: Plot the Lineage-Only UMAP</a></li>
+<li><a class="nav-link" href="#step-9-run-tsne-on-lineage-markers-only"><span class="header-section-number">15.2.10</span> Step 9: Run tSNE on Lineage Markers Only</a></li>
+<li><a class="nav-link" href="#step-10-plot-the-lineage-only-tsne"><span class="header-section-number">15.2.11</span> Step 10: Plot the Lineage-Only tSNE</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#a-deeper-dive-12"><span class="header-section-number">15.3</span> A Deeper Dive</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#how-much-of-this-picture-is-real-change-the-seed-and-find-out"><span class="header-section-number">15.3.1</span> How Much of This Picture Is Real? Change the Seed and Find Out</a></li>
+<li><a class="nav-link" href="#what-is-this-projection-actually-separating-on"><span class="header-section-number">15.3.2</span> What Is This Projection Actually Separating On?</a></li>
+<li><a class="nav-link" href="#reading-the-projection-expression-of-every-marker"><span class="header-section-number">15.3.3</span> Reading the Projection: Expression of Every Marker</a></li>
+<li><a class="nav-link" href="#naming-regions-and-why-it-has-to-be-done-within-a-group"><span class="header-section-number">15.3.4</span> Naming Regions, and Why It Has to Be Done Within a Group</a></li>
+<li><a class="nav-link" href="#then-move-them-by-hand"><span class="header-section-number">15.3.5</span> Then Move Them by Hand</a></li>
+<li><a class="nav-link" href="#gating-the-territories-not-the-markers"><span class="header-section-number">15.3.6</span> Gating the Territories, Not the Markers</a></li>
+<li><a class="nav-link" href="#does-condition-change-the-picture"><span class="header-section-number">15.3.7</span> Does Condition Change the Picture?</a></li>
+<li><a class="nav-link" href="#every-sample-side-by-side"><span class="header-section-number">15.3.8</span> Every Sample Side by Side</a></li>
+<li><a class="nav-link" href="#plot-a-fraction-not-everything"><span class="header-section-number">15.3.9</span> Plot a Fraction, Not Everything</a></li>
+<li><a class="nav-link" href="#assembling-a-figure-rather-than-a-plot"><span class="header-section-number">15.3.10</span> Assembling a Figure Rather Than a Plot</a></li>
+<li><a class="nav-link" href="#cycling-through-the-samples"><span class="header-section-number">15.3.11</span> Cycling Through the Samples</a></li>
+<li><a class="nav-link" href="#choosing-lineage-markers-interactively"><span class="header-section-number">15.3.12</span> Choosing Lineage Markers Interactively</a></li>
+<li><a class="nav-link" href="#whats-next-10"><span class="header-section-number">15.3.13</span> What’s Next</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

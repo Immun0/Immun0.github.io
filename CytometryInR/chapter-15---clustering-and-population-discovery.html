@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 16 Chapter 15 - Clustering and Population Discovery | Analysing Cytometry Data with R</title>
+<meta name="author" content="Damian Carragher">
+<meta name="author" content="StemCore Laboratories and Flow Cytometry Core">
+<meta name="author" content="Ottawa Hospital Research Institute">
+<meta name="author" content="First edition by Damian Carragher">
+<meta name="description" content="16.1 What You’ll Learn UMAP and tSNE show you structure, but they don’t assign labels. This chapter runs two clustering algorithms, FlowSOM and Phenograph, to assign each event to a discrete...">
+<meta name="generator" content="bookdown 0.47 with bs4_book()">
+<meta property="og:title" content="Chapter 16 Chapter 15 - Clustering and Population Discovery | Analysing Cytometry Data with R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="16.1 What You’ll Learn UMAP and tSNE show you structure, but they don’t assign labels. This chapter runs two clustering algorithms, FlowSOM and Phenograph, to assign each event to a discrete...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 16 Chapter 15 - Clustering and Population Discovery | Analysing Cytometry Data with R">
+<meta name="twitter:description" content="16.1 What You’ll Learn UMAP and tSNE show you structure, but they don’t assign labels. This chapter runs two clustering algorithms, FlowSOM and Phenograph, to assign each event to a discrete...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.12.0/transition.js"></script><script src="libs/bs3compat-0.12.0/tabs.js"></script><script src="libs/bs3compat-0.12.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Analysing Cytometry Data with R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> Preface and Notes</a></li>
+<li><a class="" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">2</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
+<li><a class="" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">3</span> Chapter 2 - Setting up an R environment</a></li>
+<li><a class="" href="chapter-3---packages.html"><span class="header-section-number">4</span> Chapter 3 - Packages</a></li>
+<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">5</span> Chapter 4 - File Management and Data Access</a></li>
+<li><a class="" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">6</span> Chapter 5 - Loading Cytometry Data</a></li>
+<li><a class="" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data</a></li>
+<li><a class="" href="chapter-7---gating-data.html"><span class="header-section-number">8</span> Chapter 7 - Gating Data</a></li>
+<li><a class="" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
+<li><a class="" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
+<li><a class="" href="chapter-10---downsampling.html"><span class="header-section-number">11</span> Chapter 10 - Downsampling</a></li>
+<li><a class="" href="chapter-11---data-transformation.html"><span class="header-section-number">12</span> Chapter 11 - Data Transformation</a></li>
+<li><a class="" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">13</span> Chapter 12 - Extracting Expression Data</a></li>
+<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">14</span> Chapter 13 - Full Visualisation</a></li>
+<li><a class="" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">15</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
+<li><a class="active" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery</a></li>
+<li><a class="" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">17</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="chapter-15---clustering-and-population-discovery" class="section level1" number="16">
+<h1>
+<span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery<a class="anchor" aria-label="anchor" href="#chapter-15---clustering-and-population-discovery"><i class="fas fa-link"></i></a>
+</h1>
+<div id="what-youll-learn-10" class="section level2" number="16.1">
+<h2>
+<span class="header-section-number">16.1</span> What You’ll Learn<a class="anchor" aria-label="anchor" href="#what-youll-learn-10"><i class="fas fa-link"></i></a>
+</h2>
+<p>UMAP and tSNE show you structure, but they don’t assign labels. This chapter runs two clustering algorithms, FlowSOM and Phenograph, to assign each event to a discrete population, so you can identify and count distinct cell types rather than just eyeballing a 2D plot.</p>
+</div>
+<div id="the-essentials-13" class="section level2 essentials" number="16.2">
+<h2>
+<span class="header-section-number">16.2</span> The Essentials<a class="anchor" aria-label="anchor" href="#the-essentials-13"><i class="fas fa-link"></i></a>
+</h2>
+<div id="step-1-load-required-packages-and-data-5" class="section level3" number="16.2.1">
+<h3>
+<span class="header-section-number">16.2.1</span> Step 1: Load Required Packages and Data<a class="anchor" aria-label="anchor" href="#step-1-load-required-packages-and-data-5"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb279"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in readLines(f, n): line 1 appears to contain an</span></span>
+<span><span class="co">#&gt; embedded nul</span></span>
+<span><span class="co">#&gt; here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:flowCore':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     filter</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     filter, lag</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span>      <span class="co"># pivot_longer(), used in the Deep Dive</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/">viridis</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: viridisLite</span></span>
+<span></span>
+<span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-2-choose-markers-to-cluster-on" class="section level3" number="16.2.2">
+<h3>
+<span class="header-section-number">16.2.2</span> Step 2: Choose Markers to Cluster On<a class="anchor" aria-label="anchor" href="#step-2-choose-markers-to-cluster-on"><i class="fas fa-link"></i></a>
+</h3>
+<p>Clustering is usually done on lineage/phenotyping markers rather than every channel, functional markers and QC channels (Time, Event_length) tend to add noise rather than help define populations.</p>
+<p>Name the antigens you want and let the panel file build the column names, the same approach as Chapter 14. Typing them out by hand does not survive contact with real panels: <code>CD41</code> in this one carries trailing whitespace, so its column is actually <code>Y89Di_CD41..</code>, and a hardcoded <code>"Y89Di_CD41"</code> fails with an unhelpful subscript error.</p>
+<div class="sourceCode" id="cb280"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">panel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"other"</span>, <span class="st">"ACDwR_panel.csv"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">panel_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/make.names.html">make.names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">panel</span><span class="op">$</span><span class="va">fcs_colname</span>, <span class="va">panel</span><span class="op">$</span><span class="va">antigen</span>, sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">cluster_antigens</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"CD34"</span>, <span class="st">"CD90"</span>, <span class="st">"CD49F"</span>, <span class="st">"CD71"</span>, <span class="st">"CD235ab"</span>, <span class="st">"CD41"</span><span class="op">)</span></span>
+<span><span class="va">lineage_markers</span>  <span class="op">&lt;-</span> <span class="va">panel_cols</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/trimws.html">trimws</a></span><span class="op">(</span><span class="va">panel</span><span class="op">$</span><span class="va">antigen</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/flowCore/man/filter-in-methods.html">%in%</a></span> <span class="va">cluster_antigens</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">lineage_markers</span></span>
+<span><span class="co">#&gt; [1] "Y89Di_CD41.."    "Pr141Di_CD235ab" "Sm149Di_CD34"   </span></span>
+<span><span class="co">#&gt; [4] "Dy161Di_CD90"    "Dy164Di_CD49F"   "Er168Di_CD71"</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>[1] "Y89Di_CD41.."    "Pr141Di_CD235ab" "Sm149Di_CD34"    "Dy161Di_CD90"
+[5] "Dy164Di_CD49F"   "Er168Di_CD71"</code></pre>
+<p><code><a href="https://rdrr.io/r/base/trimws.html">trimws()</a></code> is doing the work that matters here: it strips the whitespace before matching, so you can ask for <code>CD41</code> and still get the column whose real name has two dots on the end.</p>
+<p>This can be, and often should be, a different list from the one you used for UMAP/tSNE in Chapter 14. Clustering benefits from a narrower, more targeted marker set than visualisation does, using the same list for both isn’t the goal. Six here against Chapter 14’s thirty-two.</p>
+</div>
+<div id="step-3-run-flowsom" class="section level3" number="16.2.3">
+<h3>
+<span class="header-section-number">16.2.3</span> Step 3: Run FlowSOM<a class="anchor" aria-label="anchor" href="#step-3-run-flowsom"><i class="fas fa-link"></i></a>
+</h3>
+<p>FlowSOM works in two stages. First it builds a self-organising map, a grid of nodes where each node holds cells with similar expression, which gives you around a hundred small groups. Then it metaclusters those nodes down to the number of populations you actually want to work with.</p>
+<div class="sourceCode" id="cb282"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://www.r-project.org">FlowSOM</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: igraph</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'igraph'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:tidyr':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     crossing</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:dplyr':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     as_data_frame, groups, union</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:flowCore':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     normalize</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     decompose, spectrum</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     union</span></span>
+<span><span class="co">#&gt; Thanks for using FlowSOM. From version 2.1.4 on, the scale </span></span>
+<span><span class="co">#&gt; parameter in the FlowSOM function defaults to FALSE</span></span>
+<span></span>
+<span><span class="va">data_FlowSOM</span> <span class="op">&lt;-</span> <span class="fu">flowCore</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/flowFrame-class.html">flowFrame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span><span class="op">[</span>, <span class="va">lineage_markers</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span><span class="va">fSOM</span> <span class="op">&lt;-</span> <span class="fu">FlowSOM</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/FlowSOM/man/ReadInput.html">ReadInput</a></span><span class="op">(</span><span class="va">data_FlowSOM</span>, transform <span class="op">=</span> <span class="cn">FALSE</span>, scale <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">fSOM</span> <span class="op">&lt;-</span> <span class="fu">FlowSOM</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/FlowSOM/man/BuildSOM.html">BuildSOM</a></span><span class="op">(</span><span class="va">fSOM</span>, colsToUse <span class="op">=</span> <span class="va">lineage_markers</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Building SOM</span></span>
+<span><span class="co">#&gt; Mapping data to SOM</span></span>
+<span><span class="va">fSOM</span> <span class="op">&lt;-</span> <span class="fu">FlowSOM</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/FlowSOM/man/BuildMST.html">BuildMST</a></span><span class="op">(</span><span class="va">fSOM</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Building MST</span></span>
+<span></span>
+<span><span class="co"># every cell's SOM node</span></span>
+<span><span class="va">labels_pre</span> <span class="op">&lt;-</span> <span class="va">fSOM</span><span class="op">$</span><span class="va">map</span><span class="op">$</span><span class="va">mapping</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">k</span> <span class="op">&lt;-</span> <span class="fl">10</span>   <span class="co"># final number of clusters after metaclustering</span></span>
+<span><span class="va">fSOM_meta</span> <span class="op">&lt;-</span> <span class="fu">FlowSOM</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/FlowSOM/man/metaClustering_consensus.html">metaClustering_consensus</a></span><span class="op">(</span><span class="va">fSOM</span><span class="op">$</span><span class="va">map</span><span class="op">$</span><span class="va">codes</span>, k <span class="op">=</span> <span class="va">k</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># map each cell from its node to that node's metacluster</span></span>
+<span><span class="va">flowsom_labels</span> <span class="op">&lt;-</span> <span class="va">fSOM_meta</span><span class="op">[</span><span class="va">labels_pre</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">flowsom_labels</span><span class="op">)</span></span>
+<span><span class="co">#&gt; flowsom_labels</span></span>
+<span><span class="co">#&gt;     1     2     3     4     5     6     7     8     9    10 </span></span>
+<span><span class="co">#&gt;   314  3580    82   409   843   622  1496 15257  2161   236</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>flowsom_labels
+    1     2     3     4     5     6     7     8     9    10
+  314  3580    82   409   843   622  1496 15257  2161   236</code></pre>
+<p><code>k = 10</code> is the number of populations you are asking for, not something the data decides. Cluster 8 holding 15,257 of the 25,000 cells is worth noticing rather than glossing over: a single cluster carrying 60% of your events usually means either that population genuinely dominates the sample, or that <code>k</code> is too low and something is being lumped together. Try <code>k = 15</code> and see whether cluster 8 splits into things that look biologically distinct.</p>
+<p>Both <code><a href="https://rdrr.io/r/base/Random.html">set.seed()</a></code> and the <code>seed</code> argument are needed here, and they do different jobs. The first fixes the SOM build, the second fixes the metaclustering. Miss either and you get a different answer each run.</p>
+</div>
+<div id="step-4-add-cluster-labels-and-save" class="section level3" number="16.2.4">
+<h3>
+<span class="header-section-number">16.2.4</span> Step 4: Add Cluster Labels and Save<a class="anchor" aria-label="anchor" href="#step-4-add-cluster-labels-and-save"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb284"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span><span class="op">$</span><span class="va">FlowSOM_cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">flowsom_labels</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-5-plot-clusters-on-the-umaptsne" class="section level3" number="16.2.5">
+<h3>
+<span class="header-section-number">16.2.5</span> Step 5: Plot Clusters on the UMAP/tSNE<a class="anchor" aria-label="anchor" href="#step-5-plot-clusters-on-the-umaptsne"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb285"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_umap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP1</span>, y <span class="op">=</span> <span class="va">UMAP2</span>, color <span class="op">=</span> <span class="va">FlowSOM_cluster</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.3</span>, alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_colour_viridis_d</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">guide_legend</a></span><span class="op">(</span>override.aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"FlowSOM clusters on UMAP"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_tsne</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">tsne1</span>, y <span class="op">=</span> <span class="va">tsne2</span>, color <span class="op">=</span> <span class="va">FlowSOM_cluster</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.3</span>, alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_colour_viridis_d</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">guide_legend</a></span><span class="op">(</span>override.aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"FlowSOM clusters on tSNE"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">p_umap</span>, <span class="va">p_tsne</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="15-Clustering_files/figure-html/plot-clusters-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb286"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"flowsom_clusters.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"flowsom_clusters.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-6-cluster-abundance-per-sample" class="section level3" number="16.2.6">
+<h3>
+<span class="header-section-number">16.2.6</span> Step 6: Cluster Abundance per Sample<a class="anchor" aria-label="anchor" href="#step-6-cluster-abundance-per-sample"><i class="fas fa-link"></i></a>
+</h3>
+<p>The UMAP/tSNE plots above show where clusters sit in 2D space, but not whether a cluster is a similar size across all samples or concentrated in just one or two. A bubble plot of each cluster’s percentage of each sample’s cells answers that directly:</p>
+<div class="sourceCode" id="cb287"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cluster_counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span>sample_id <span class="op">=</span> <span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span><span class="op">$</span><span class="va">sample_id</span>, FlowSOM_cluster <span class="op">=</span> <span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span><span class="op">$</span><span class="va">FlowSOM_cluster</span><span class="op">)</span></span>
+<span><span class="va">cluster_percent</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/proportions.html">prop.table</a></span><span class="op">(</span><span class="va">cluster_counts</span>, margin <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span></span>
+<span><span class="va">cluster_percent</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">cluster_percent</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">cluster_percent</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"percent"</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">cluster_percent</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">sample_id</span>, y <span class="op">=</span> <span class="va">FlowSOM_cluster</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">percent</span>, colour <span class="op">=</span> <span class="va">FlowSOM_cluster</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_colour_viridis_d</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">""</span>, y <span class="op">=</span> <span class="st">"Cluster"</span>, size <span class="op">=</span> <span class="st">"% of sample"</span>, colour <span class="op">=</span> <span class="st">"Cluster"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="15-Clustering_files/figure-html/cluster-abundance-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb288"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"bubble_cluster_abundance.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"bubble_cluster_abundance.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+<p><code>prop.table(cluster_counts, margin = 1)</code> divides each row (each sample) by its own row total, so every sample’s percentages sum to 100 regardless of how many total cells that sample contributed, a cluster making up 20% of a small sample and 20% of a large sample both show up the same size here. This compares composition, not raw cell counts.</p>
+<p>Size carries the number, <code>percent</code>. Colour carries the identity, <code>FlowSOM_cluster</code>, using the same <code>viridis_d</code> scale as the UMAP and tSNE plots above, so cluster 7 is the same colour in all three figures and your eye can follow it between them.</p>
+<p>You could map both to <code>percent</code>, and plenty of bubble plots do. It reads well, because colour separates the small values that size alone struggles to distinguish. But it spends two aesthetics on one variable and quietly teaches that size and colour travel together, which they do not. Prove it to yourself by changing one and leaving the other, the plot will tell you immediately which is which.</p>
+</div>
+</div>
+<div id="a-deeper-dive-13" class="section level2 deeper-dive" number="16.3">
+<h2>
+<span class="header-section-number">16.3</span> A Deeper Dive<a class="anchor" aria-label="anchor" href="#a-deeper-dive-13"><i class="fas fa-link"></i></a>
+</h2>
+<div id="an-alternative-phenograph" class="section level3" number="16.3.1">
+<h3>
+<span class="header-section-number">16.3.1</span> An Alternative: Phenograph<a class="anchor" aria-label="anchor" href="#an-alternative-phenograph"><i class="fas fa-link"></i></a>
+</h3>
+<p>Phenograph builds a nearest-neighbour graph between events and detects communities within it, a different underlying approach to FlowSOM’s self-organising map. It’s worth trying both and comparing, they don’t always agree, and disagreement is often informative about where population boundaries are genuinely ambiguous.</p>
+<div class="sourceCode" id="cb289"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">Rphenograph</span><span class="op">)</span><span class="op">)</span> <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install-deprecated.html">install_github</a></span><span class="op">(</span><span class="st">"JinmiaoChenLab/Rphenograph"</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: Rphenograph</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">Rphenograph</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">Rpheno_in</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span><span class="op">[</span>, <span class="va">lineage_markers</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span><span class="va">Rphenograph_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Rphenograph/man/Rphenograph.html">Rphenograph</a></span><span class="op">(</span><span class="va">Rpheno_in</span>, k <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="co"># k is nearest-neighbours here, not a cluster count</span></span>
+<span><span class="co">#&gt; Run Rphenograph starts:</span></span>
+<span><span class="co">#&gt;   -Input data of 24207 rows and 6 columns</span></span>
+<span><span class="co">#&gt;   -k is set to 30</span></span>
+<span><span class="co">#&gt;   Finding nearest neighbors...DONE ~ 0.222 s</span></span>
+<span><span class="co">#&gt;   Compute jaccard coefficient between nearest-neighbor sets...DONE ~ 2.72 s</span></span>
+<span><span class="co">#&gt;   Build undirected graph from the weighted links...DONE ~ 0.754 s</span></span>
+<span><span class="co">#&gt;   Run louvain clustering on the graph ...DONE ~ 0.868 s</span></span>
+<span><span class="co">#&gt; Run Rphenograph DONE, totally takes 4.564s.</span></span>
+<span><span class="co">#&gt;   Return a community class</span></span>
+<span><span class="co">#&gt;   -Modularity value: 0.9102834 </span></span>
+<span><span class="co">#&gt;   -Number of clusters: 40</span></span>
+<span><span class="va">phenograph_labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://r.igraph.org/reference/communities.html">membership</a></span><span class="op">(</span><span class="va">Rphenograph_result</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">phenograph_labels</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 40</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>Run Rphenograph starts:
+  -Input data of 24207 rows and 6 columns
+  -k is set to 30
+  Finding nearest neighbors...DONE ~ 0.228 s
+  Compute jaccard coefficient between nearest-neighbor sets...DONE ~ 2.805 s
+  Build undirected graph from the weighted links...DONE ~ 0.711 s
+  Run louvain clustering on the graph ...DONE ~ 0.776 s
+Run Rphenograph DONE, totally takes 4.52 s
+  Return a community class
+  -Modularity value: 0.9102834
+  -Number of clusters: 40</code></pre>
+<p><strong>Forty clusters, from the same cells and the same six markers that gave FlowSOM ten.</strong></p>
+<p>That is not a disagreement about the biology, it is the difference between the two methods. FlowSOM’s <code>k</code> is a number you chose: you asked for ten populations and it gave you ten, whether or not ten is right. Phenograph’s <code>k</code> is the size of each cell’s neighbourhood when the graph is built, and the number of communities falls out of the graph structure. Nobody asked for forty.</p>
+<p>So the two are answering different questions. FlowSOM answers “divide this into ten”, Phenograph answers “how many groups are actually here, given how tightly cells cluster at this neighbourhood size”. Run both and the gap between the answers tells you something: forty against ten suggests the ten are coarse, and that several of them contain real substructure. That is the same signal as cluster 8 holding 61% of the cells.</p>
+<p><strong>Modularity 0.91</strong> is the graph’s own measure of how well-separated those communities are, from 0 for no better than random to 1 for perfectly separated. 0.91 is high, which says the structure Phenograph found is real rather than an artefact of cutting a continuum into pieces.</p>
+<p>Trying a few values of <code>k</code> (10, 20, 30) and comparing both the cluster count and the modularity is normal practice. There is no single correct value, and watching how both numbers move as you change it tells you more than any one run.</p>
+<p>Note <code><a href="https://rdrr.io/r/base/unique.html">unique()</a></code> on the input. Phenograph will not accept duplicate rows, and after downsampling and transformation a six-marker table has plenty of cells with identical values, so the graph is built on the distinct rows rather than on every cell.</p>
+</div>
+<div id="naming-clusters-from-marker-expression-a-worked-example" class="section level3" number="16.3.2">
+<h3>
+<span class="header-section-number">16.3.2</span> Naming Clusters from Marker Expression: A Worked Example<a class="anchor" aria-label="anchor" href="#naming-clusters-from-marker-expression-a-worked-example"><i class="fas fa-link"></i></a>
+</h3>
+<p>FlowSOM and Phenograph both output numbered clusters, <code>1</code>, <code>2</code>, <code>3</code>. Turning those into biologically meaningful names, “HSC-like”, “erythroid”, is a judgement call based on each cluster’s own marker expression, not something either algorithm does for you. The method: compute median expression per cluster per marker, look for which markers are distinctly high or low in each cluster, and match that pattern against what you know those markers mark.</p>
+<div class="sourceCode" id="cb291"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cluster_expression</span> <span class="op">&lt;-</span> <span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">FlowSOM_cluster</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html">all_of</a></span><span class="op">(</span><span class="va">lineage_markers</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">FlowSOM_cluster</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html">across</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html">everything</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">median</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">cluster_expression_long</span> <span class="op">&lt;-</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="va">cluster_expression</span>, <span class="op">-</span><span class="va">FlowSOM_cluster</span>,</span>
+<span>  names_to <span class="op">=</span> <span class="st">"marker"</span>, values_to <span class="op">=</span> <span class="st">"median_expression"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">cluster_expression_long</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">marker</span>, y <span class="op">=</span> <span class="va">FlowSOM_cluster</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">median_expression</span>, color <span class="op">=</span> <span class="va">median_expression</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_color_viridis_c</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">""</span>, y <span class="op">=</span> <span class="st">"Cluster"</span>, size <span class="op">=</span> <span class="st">"Median expression"</span>, color <span class="op">=</span> <span class="st">"Median expression"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="15-Clustering_files/figure-html/cluster-marker-expression-1.png" alt="" width="672"></div>
+<p>The bubble plot is for spotting patterns. To actually name things you want the numbers, along with how big each cluster is, because a striking phenotype in 0.3% of your cells means something different from the same phenotype in 30%:</p>
+<div class="sourceCode" id="cb292"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cluster_expression</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span>, <span class="va">FlowSOM_cluster</span><span class="op">)</span>,</span>
+<span>            by <span class="op">=</span> <span class="st">"FlowSOM_cluster"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>pct <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">n</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>         <span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html">across</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html">all_of</a></span><span class="op">(</span><span class="va">lineage_markers</span><span class="op">)</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">.x</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    FlowSOM_cluster Y89Di_CD41.. Pr141Di_CD235ab</span></span>
+<span><span class="co">#&gt; 1                1         0.00            0.00</span></span>
+<span><span class="co">#&gt; 2                2         0.00            0.00</span></span>
+<span><span class="co">#&gt; 3                3         2.54            0.10</span></span>
+<span><span class="co">#&gt; 4                4         0.00            0.00</span></span>
+<span><span class="co">#&gt; 5                5         0.00            0.98</span></span>
+<span><span class="co">#&gt; 6                6         0.00            3.45</span></span>
+<span><span class="co">#&gt; 7                7         0.00            0.00</span></span>
+<span><span class="co">#&gt; 8                8         0.00            0.00</span></span>
+<span><span class="co">#&gt; 9                9         3.22            0.00</span></span>
+<span><span class="co">#&gt; 10              10         0.00            0.00</span></span>
+<span><span class="co">#&gt;    Sm149Di_CD34 Dy161Di_CD90 Dy164Di_CD49F Er168Di_CD71</span></span>
+<span><span class="co">#&gt; 1          5.46         2.44          1.19         1.36</span></span>
+<span><span class="co">#&gt; 2          4.82         0.10          0.98         1.76</span></span>
+<span><span class="co">#&gt; 3          4.51         0.18          3.52         4.87</span></span>
+<span><span class="co">#&gt; 4          3.81         0.07          1.27         4.71</span></span>
+<span><span class="co">#&gt; 5          0.10         0.04          0.12         5.97</span></span>
+<span><span class="co">#&gt; 6          0.00         0.00          0.01         6.28</span></span>
+<span><span class="co">#&gt; 7          2.44         0.01          0.68         1.44</span></span>
+<span><span class="co">#&gt; 8          0.00         0.00          0.02         0.24</span></span>
+<span><span class="co">#&gt; 9          0.46         0.03          2.89         0.71</span></span>
+<span><span class="co">#&gt; 10         0.00         0.00          3.47         0.31</span></span>
+<span><span class="co">#&gt;        n  pct</span></span>
+<span><span class="co">#&gt; 1    314  1.3</span></span>
+<span><span class="co">#&gt; 2   3580 14.3</span></span>
+<span><span class="co">#&gt; 3     82  0.3</span></span>
+<span><span class="co">#&gt; 4    409  1.6</span></span>
+<span><span class="co">#&gt; 5    843  3.4</span></span>
+<span><span class="co">#&gt; 6    622  2.5</span></span>
+<span><span class="co">#&gt; 7   1496  6.0</span></span>
+<span><span class="co">#&gt; 8  15257 61.0</span></span>
+<span><span class="co">#&gt; 9   2161  8.6</span></span>
+<span><span class="co">#&gt; 10   236  0.9</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code> FlowSOM_cluster CD41.. CD235ab CD34 CD90 CD49F CD71     n  pct
+               1   0.00    0.00 5.46 2.44  1.19 1.36   314  1.3
+               2   0.00    0.00 4.82 0.10  0.98 1.76  3580 14.3
+               3   2.54    0.10 4.51 0.18  3.52 4.87    82  0.3
+               4   0.00    0.00 3.81 0.07  1.27 4.71   409  1.6
+               5   0.00    0.98 0.10 0.04  0.12 5.97   843  3.4
+               6   0.00    3.45 0.00 0.00  0.01 6.28   622  2.5
+               7   0.00    0.00 2.44 0.01  0.68 1.44  1496  6.0
+               8   0.00    0.00 0.00 0.00  0.02 0.24 15257 61.0
+               9   3.22    0.00 0.46 0.03  2.89 0.71  2161  8.6
+              10   0.00    0.00 0.00 0.00  3.47 0.31   236  0.9</code></pre>
+<p>Now do the work the algorithm cannot. Take each row and ask what that combination of markers means:</p>
+<p><strong>Cluster 1, CD34 high and CD90 high.</strong> CD34 marks haematopoietic stem and progenitor cells, and CD90 is what separates true stem cells from the progenitors below them. High both, and nothing else on. Haematopoietic stem cells, and at 1.3% the sort of frequency you would expect.</p>
+<p><strong>Cluster 2, CD34 high and CD90 absent.</strong> Same progenitor compartment, one step down. Progenitors rather than stem cells, and there are ten times as many of them, which is also what you would expect.</p>
+<p><strong>Clusters 4, 5 and 6 are the same lineage caught at three stages, and this is the nicest thing in the table.</strong> CD71 is the transferrin receptor, which erythroid cells need in quantity to take up iron for haemoglobin. CD235ab is glycophorin, which arrives later as the cell commits. So: cluster 4 is CD34 positive with CD71 climbing, an erythroid progenitor still carrying its stem marker. Cluster 5 has lost CD34 entirely, CD71 is higher still, glycophorin only just detectable. Cluster 6 has CD71 at its highest and glycophorin properly on. That is erythroid maturation, read straight off the medians, in a bone marrow sample where you would hope to find exactly that.</p>
+<p><strong>Cluster 9, CD41 high with CD49F.</strong> CD41 is integrin alpha-IIb, the platelet and megakaryocyte marker. Megakaryocytic.</p>
+<p>Which leaves four clusters.</p>
+<p><strong>Cluster 8 is 61% of your cells and every marker is at zero.</strong></p>
+<p>The clustering has not failed. Six markers are being asked to describe 25,000 bone marrow cells, and most of those cells are things this panel was never designed to see: mature lymphocytes, myeloid cells, anything without CD34, CD41 or an erythroid marker. The algorithm did its job and put them together correctly. There is simply nothing to call them.</p>
+<p><strong>Name it “unresolved” and move on.</strong> Do not invent a label for it, do not stretch a marker to cover it, and do not quietly drop it from your figures because it looks untidy. A cluster you cannot identify is a real result about the limits of your panel, and it is information: if 61% of your sample is invisible to your markers and the population you care about is in there, that is the finding, and the next experiment needs different antibodies rather than better clustering.</p>
+<p>Clusters 3, 7 and 10 are the same story in miniature. Cluster 3 is 82 cells with several markers up at once, too few and too mixed to call. Cluster 7 has CD34 at half the level of cluster 2, which could be a dimmer progenitor or could be spillover. Cluster 10 has CD49F alone. Describe the phenotype, admit you cannot name it, and let the next panel settle it.</p>
+<div class="sourceCode" id="cb294"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span><span class="op">$</span><span class="va">FlowSOM_cluster</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"HSC"</span>,                      <span class="co"># 1: CD34+ CD90+</span></span>
+<span>  <span class="st">"CD34+ progenitor"</span>,         <span class="co"># 2: CD34+ CD90-</span></span>
+<span>  <span class="st">"Unclear, mixed"</span>,           <span class="co"># 3: 82 cells, several markers up</span></span>
+<span>  <span class="st">"Erythroid progenitor"</span>,     <span class="co"># 4: CD34+ CD71+</span></span>
+<span>  <span class="st">"Proerythroblast"</span>,          <span class="co"># 5: CD71 high, CD235ab just appearing</span></span>
+<span>  <span class="st">"Erythroblast"</span>,             <span class="co"># 6: CD71 high, CD235ab on</span></span>
+<span>  <span class="st">"Unclear, CD34 dim"</span>,        <span class="co"># 7</span></span>
+<span>  <span class="st">"Unresolved"</span>,               <span class="co"># 8: 61% of cells, all six markers negative</span></span>
+<span>  <span class="st">"Megakaryocytic"</span>,           <span class="co"># 9: CD41+ CD49F+</span></span>
+<span>  <span class="st">"Unclear, CD49f only"</span><span class="op">)</span>      <span class="co"># 10</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span><span class="op">$</span><span class="va">FlowSOM_cluster</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                  HSC     CD34+ progenitor </span></span>
+<span><span class="co">#&gt;                  314                 3580 </span></span>
+<span><span class="co">#&gt;       Unclear, mixed Erythroid progenitor </span></span>
+<span><span class="co">#&gt;                   82                  409 </span></span>
+<span><span class="co">#&gt;      Proerythroblast         Erythroblast </span></span>
+<span><span class="co">#&gt;                  843                  622 </span></span>
+<span><span class="co">#&gt;    Unclear, CD34 dim           Unresolved </span></span>
+<span><span class="co">#&gt;                 1496                15257 </span></span>
+<span><span class="co">#&gt;       Megakaryocytic  Unclear, CD49f only </span></span>
+<span><span class="co">#&gt;                 2161                  236</span></span>
+<span></span>
+<span><span class="co"># Save again, now the clusters have names. Step 4's save was before this,</span></span>
+<span><span class="co"># so without this the naming exists only in your session.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE</span>,</span>
+<span>        <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Four of ten named with confidence, two more as stages of one lineage, four left open. That ratio is normal on a six-marker panel and it is a better outcome than ten confident labels, because every name here can be defended from the table above.</p>
+<p>Two things to hold on to. These names belong to this clustering run: change <code>k</code>, change the marker list, and the numbering changes with them, so re-derive rather than reuse. And a name is a hypothesis. Cluster 6 is erythroblasts because CD71 and glycophorin say so, and if that matters to your conclusion it wants confirming with a marker you did not cluster on.</p>
+</div>
+<div id="whats-next-11" class="section level3" number="16.3.3">
+<h3>
+<span class="header-section-number">16.3.3</span> What’s Next<a class="anchor" aria-label="anchor" href="#whats-next-11"><i class="fas fa-link"></i></a>
+</h3>
+<p>With clusters identified and labelled, the next chapter covers statistical comparison between conditions and building publication-quality figures.</p>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">15</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></div>
+<div class="next"><a href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">17</span> Chapter 16 - Statistical Analysis and Publication Figures</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#chapter-15---clustering-and-population-discovery"><span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery</a></li>
+<li><a class="nav-link" href="#what-youll-learn-10"><span class="header-section-number">16.1</span> What You’ll Learn</a></li>
+<li>
+<a class="nav-link" href="#the-essentials-13"><span class="header-section-number">16.2</span> The Essentials</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#step-1-load-required-packages-and-data-5"><span class="header-section-number">16.2.1</span> Step 1: Load Required Packages and Data</a></li>
+<li><a class="nav-link" href="#step-2-choose-markers-to-cluster-on"><span class="header-section-number">16.2.2</span> Step 2: Choose Markers to Cluster On</a></li>
+<li><a class="nav-link" href="#step-3-run-flowsom"><span class="header-section-number">16.2.3</span> Step 3: Run FlowSOM</a></li>
+<li><a class="nav-link" href="#step-4-add-cluster-labels-and-save"><span class="header-section-number">16.2.4</span> Step 4: Add Cluster Labels and Save</a></li>
+<li><a class="nav-link" href="#step-5-plot-clusters-on-the-umaptsne"><span class="header-section-number">16.2.5</span> Step 5: Plot Clusters on the UMAP/tSNE</a></li>
+<li><a class="nav-link" href="#step-6-cluster-abundance-per-sample"><span class="header-section-number">16.2.6</span> Step 6: Cluster Abundance per Sample</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#a-deeper-dive-13"><span class="header-section-number">16.3</span> A Deeper Dive</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#an-alternative-phenograph"><span class="header-section-number">16.3.1</span> An Alternative: Phenograph</a></li>
+<li><a class="nav-link" href="#naming-clusters-from-marker-expression-a-worked-example"><span class="header-section-number">16.3.2</span> Naming Clusters from Marker Expression: A Worked Example</a></li>
+<li><a class="nav-link" href="#whats-next-11"><span class="header-section-number">16.3.3</span> What’s Next</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

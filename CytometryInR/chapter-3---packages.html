@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 4 Chapter 3 - Packages | Analysing Cytometry Data with R</title>
+<meta name="author" content="Damian Carragher">
+<meta name="author" content="StemCore Laboratories and Flow Cytometry Core">
+<meta name="author" content="Ottawa Hospital Research Institute">
+<meta name="author" content="First edition by Damian Carragher">
+<meta name="description" content="4.1 What Are Packages? Before we install anything, let’s understand what we’re working with. A package is a collection of functions and tools that extends what R can do. Think of base R as a...">
+<meta name="generator" content="bookdown 0.47 with bs4_book()">
+<meta property="og:title" content="Chapter 4 Chapter 3 - Packages | Analysing Cytometry Data with R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="4.1 What Are Packages? Before we install anything, let’s understand what we’re working with. A package is a collection of functions and tools that extends what R can do. Think of base R as a...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 4 Chapter 3 - Packages | Analysing Cytometry Data with R">
+<meta name="twitter:description" content="4.1 What Are Packages? Before we install anything, let’s understand what we’re working with. A package is a collection of functions and tools that extends what R can do. Think of base R as a...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.12.0/transition.js"></script><script src="libs/bs3compat-0.12.0/tabs.js"></script><script src="libs/bs3compat-0.12.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Analysing Cytometry Data with R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> Preface and Notes</a></li>
+<li><a class="" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">2</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
+<li><a class="" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">3</span> Chapter 2 - Setting up an R environment</a></li>
+<li><a class="active" href="chapter-3---packages.html"><span class="header-section-number">4</span> Chapter 3 - Packages</a></li>
+<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">5</span> Chapter 4 - File Management and Data Access</a></li>
+<li><a class="" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">6</span> Chapter 5 - Loading Cytometry Data</a></li>
+<li><a class="" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data</a></li>
+<li><a class="" href="chapter-7---gating-data.html"><span class="header-section-number">8</span> Chapter 7 - Gating Data</a></li>
+<li><a class="" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
+<li><a class="" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
+<li><a class="" href="chapter-10---downsampling.html"><span class="header-section-number">11</span> Chapter 10 - Downsampling</a></li>
+<li><a class="" href="chapter-11---data-transformation.html"><span class="header-section-number">12</span> Chapter 11 - Data Transformation</a></li>
+<li><a class="" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">13</span> Chapter 12 - Extracting Expression Data</a></li>
+<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">14</span> Chapter 13 - Full Visualisation</a></li>
+<li><a class="" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">15</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
+<li><a class="" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery</a></li>
+<li><a class="" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">17</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="chapter-3---packages" class="section level1" number="4">
+<h1>
+<span class="header-section-number">4</span> Chapter 3 - Packages<a class="anchor" aria-label="anchor" href="#chapter-3---packages"><i class="fas fa-link"></i></a>
+</h1>
+<div id="what-are-packages" class="section level2" number="4.1">
+<h2>
+<span class="header-section-number">4.1</span> What Are Packages?<a class="anchor" aria-label="anchor" href="#what-are-packages"><i class="fas fa-link"></i></a>
+</h2>
+<p>Before we install anything, let’s understand what we’re working with. A package is a collection of functions and tools that extends what R can do. Think of base R as a toolkit that comes with essential tools like a hammer and screwdriver. A package adds more specialized tools to that same toolkit, a plane and router for fine woodworking, for instance. The tools we’ll add throughout this course are for cytometry analysis: reading FCS files, building cytometry-style plots, and running population-discovery algorithms.</p>
+<p>When you install R, you get “base R” - the core functions for basic data manipulation and statistics. But cytometry analysis requires specialized functions for reading FCS files, creating cytometry-specific plots, and applying flow cytometry algorithms. These come in packages written by researchers who share their tools with the community.</p>
+</div>
+<div id="where-packages-come-from" class="section level2" number="4.2">
+<h2>
+<span class="header-section-number">4.2</span> Where Packages Come From<a class="anchor" aria-label="anchor" href="#where-packages-come-from"><i class="fas fa-link"></i></a>
+</h2>
+<p>Packages are distributed through different repositories - online collections of software that you can download from. We’ll use three main sources:</p>
+<p><strong>CRAN (Comprehensive R Archive Network):</strong> The main repository for general-purpose R packages. These are rigorously tested and maintained. Examples include packages for data manipulation, statistical analysis, and general plotting.</p>
+<p><strong>Bioconductor:</strong> A specialized repository for biological data analysis packages. These packages often work together and use common data structures designed for biological research. Most cytometry-specific packages live here.</p>
+<p><strong>GitHub:</strong> A code sharing platform where developers publish packages that may not be on CRAN or Bioconductor yet. These can include cutting-edge methods or specialized tools for specific research needs.</p>
+<p>Each repository requires different installation methods, which we’ll learn below.</p>
+</div>
+<div id="version-notes-1" class="section level2" number="4.3">
+<h2>
+<span class="header-section-number">4.3</span> Version Notes<a class="anchor" aria-label="anchor" href="#version-notes-1"><i class="fas fa-link"></i></a>
+</h2>
+<p><strong>These instructions were tested with current CRAN and Bioconductor versions</strong><br><strong>Recommendation:</strong> Install the latest package versions available<br><strong>If you encounter installation errors:</strong> Package names and dependencies may change over time - check error messages for specific guidance</p>
+</div>
+<div id="the-essentials-1" class="section level2 essentials" number="4.4">
+<h2>
+<span class="header-section-number">4.4</span> The Essentials<a class="anchor" aria-label="anchor" href="#the-essentials-1"><i class="fas fa-link"></i></a>
+</h2>
+<p>To get ready for cytometry analysis, we need to install packages from all three sources. We’ll install everything now so we don’t interrupt later chapters with package management.</p>
+<div id="step-1-install-package-managers" class="section level3" number="4.4.1">
+<h3>
+<span class="header-section-number">4.4.1</span> Step 1: Install Package Managers<a class="anchor" aria-label="anchor" href="#step-1-install-package-managers"><i class="fas fa-link"></i></a>
+</h3>
+<p>First, we need tools that can install packages from Bioconductor and GitHub:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-2-install-all-required-packages" class="section level3" number="4.4.2">
+<h3>
+<span class="header-section-number">4.4.2</span> Step 2: Install All Required Packages<a class="anchor" aria-label="anchor" href="#step-2-install-all-required-packages"><i class="fas fa-link"></i></a>
+</h3>
+<p>Copy and run this entire code block - it installs everything we’ll need for cytometry analysis:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Package managers (if not already installed)</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.github.io/BiocManager/">BiocManager</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/">devtools</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Core programming utilities</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://rlang.r-lib.org">rlang</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"rlang"</span><span class="op">)</span>         <span class="co"># R language utilities and C++ integration</span></span>
+<span></span>
+<span><span class="co"># Core cytometry packages - read FCS files and create cytometry plots</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"flowCore"</span><span class="op">)</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RGLab/ggcyto/issues">ggcyto</a></span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"ggcyto"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Advanced cytometry analysis - clustering and population discovery</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="http://www.r-project.org">FlowSOM</a></span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"FlowSOM"</span><span class="op">)</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">flowCut</span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"flowCut"</span><span class="op">)</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">flowWorkspace</span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"flowWorkspace"</span><span class="op">)</span> <span class="co"># GatingSet functions used in the Gating chapter</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">openCyto</span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"openCyto"</span><span class="op">)</span>           <span class="co"># estimateMedianLogicle(), used in the Transformation chapter</span></span>
+<span></span>
+<span><span class="co"># Dimensionality reduction for cytometry</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jlmelville/uwot">uwot</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"uwot"</span><span class="op">)</span>           <span class="co"># UMAP implementation</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jkrijthe/Rtsne">Rtsne</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"Rtsne"</span><span class="op">)</span>         <span class="co"># t-SNE implementation</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/teunbrand/ggh4x">ggh4x</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggh4x"</span><span class="op">)</span>         <span class="co"># facet_nested_wrap(), nested per-sample panels in the Dimensionality Reduction chapter</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mhahsler/dbscan">dbscan</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"dbscan"</span><span class="op">)</span>       <span class="co"># Density clustering, used to gate regions on a UMAP</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://ggforce.data-imaginist.com">ggforce</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggforce"</span><span class="op">)</span>     <span class="co"># geom_mark_hull(), draws those gates as outlines rather than boxes</span></span>
+<span></span>
+<span><span class="co"># Data manipulation and general visualisation</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span><span class="op">)</span>  <span class="co"># Data wrangling toolkit</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tidyr"</span><span class="op">)</span>          <span class="co"># pivot_longer(), reshaping wide tables to long. Ships inside tidyverse, listed separately because several chapters load it directly</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"cowplot"</span><span class="op">)</span>     <span class="co"># Multi-panel figures</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/ggtext/">ggtext</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggtext"</span><span class="op">)</span>       <span class="co"># Enhanced text formatting</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/ggridges/">ggridges</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggridges"</span><span class="op">)</span>   <span class="co"># Ridge/density plots for distributions</span></span>
+<span></span>
+<span><span class="co"># Colour and visualisation utilities</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">RColorBrewer</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"RColorBrewer"</span><span class="op">)</span> <span class="co"># Colour palettes</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/">viridis</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"viridis"</span><span class="op">)</span>     <span class="co"># Colourblind-friendly palettes</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://colorspace.R-Forge.R-project.org/">colorspace</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"colorspace"</span><span class="op">)</span> <span class="co"># Colour manipulation</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://scales.r-lib.org">scales</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"scales"</span><span class="op">)</span>       <span class="co"># Plot scaling</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://ggobi.github.io/ggally/">GGally</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"GGally"</span><span class="op">)</span>       <span class="co"># ggpairs() NxN marker grids, used in the Channel Names chapter</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">pheatmap</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"pheatmap"</span><span class="op">)</span>   <span class="co"># Heatmaps, used in the Statistics chapter</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://ggrepel.slowkow.com/">ggrepel</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggrepel"</span><span class="op">)</span>     <span class="co"># Non-overlapping plot labels, used in the Statistics chapter</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">grDevices</span><span class="op">)</span> <span class="co"># Graphics devices; ships with base R, no installation needed</span></span>
+<span></span>
+<span><span class="co"># Animation, used in the Dimensionality Reduction chapter</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://gganimate.com">gganimate</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"gganimate"</span><span class="op">)</span> <span class="co"># Animates a ggplot across a variable</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://r-rust.r-universe.dev/gifski">gifski</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"gifski"</span><span class="op">)</span>       <span class="co"># Renders the frames to a GIF. gganimate needs a renderer and will fail without one</span></span>
+<span></span>
+<span><span class="co"># Statistical analysis</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://bioinf.wehi.edu.au/limma/">limma</a></span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"limma"</span><span class="op">)</span>     <span class="co"># Differential expression</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://geobosh.github.io/fBasicsDoc/">fBasics</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"fBasics"</span><span class="op">)</span>     <span class="co"># Basic statistics</span></span>
+<span></span>
+<span><span class="co"># File management and data handling</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"here"</span><span class="op">)</span>           <span class="co"># Portable file paths</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://readxl.tidyverse.org">readxl</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"readxl"</span><span class="op">)</span>       <span class="co"># Read Excel files</span></span>
+<span></span>
+<span><span class="co"># Utilities and system integration</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RevolutionAnalytics/foreach">foreach</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"foreach"</span><span class="op">)</span>     <span class="co"># Parallel processing</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://rstudio.github.io/rstudioapi/">rstudioapi</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"rstudioapi"</span><span class="op">)</span>    <span class="co"># RStudio integration</span></span>
+<span></span>
+<span><span class="co"># Specialized cytometry data cleaning</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">premessa</span><span class="op">)</span><span class="op">)</span> <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install-deprecated.html">install_github</a></span><span class="op">(</span><span class="st">"ParkerICI/premessa"</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">Rphenograph</span><span class="op">)</span><span class="op">)</span> <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install-deprecated.html">install_github</a></span><span class="op">(</span><span class="st">"JinmiaoChenLab/Rphenograph"</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  <span class="co"># Clustering alternative to FlowSOM, used in the Clustering chapter</span></span></code></pre></div>
+<p><strong>A prompt you’ll likely see partway through:</strong> installing this many packages, several from Bioconductor, R will often pause and ask something like:</p>
+<pre><code>These packages have more recent versions available.
+Which would you like to update?
+
+ 1: All
+ 2: CRAN packages only
+ 3: None
+Enter one or more numbers, or an empty line to skip updates:</code></pre>
+<p>or the shorter <code>Update all/some/none? [a/s/n]:</code> version. This is asking about <em>dependencies</em>, packages your new install already relies on, not the packages you asked for. Typing <code>3</code> (or <code>n</code>, or just pressing Enter to skip) is the safe default, it keeps installing what you asked for without touching anything else. Updating everything can work too, but occasionally breaks compatibility between packages that were tested together at specific versions, not worth the risk partway through a long install. If you’re ever unsure, skipping updates is always the safer choice here.</p>
+</div>
+<div id="step-3-verify-installation" class="section level3" number="4.4.3">
+<h3>
+<span class="header-section-number">4.4.3</span> Step 3: Verify Installation<a class="anchor" aria-label="anchor" href="#step-3-verify-installation"><i class="fas fa-link"></i></a>
+</h3>
+<p>Test that the core packages loaded successfully:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RGLab/ggcyto/issues">ggcyto</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>-- Attaching core tidyverse packages ------------------------ tidyverse 2.0.0 --
+v dplyr     1.1.4     v readr     2.1.5
+v forcats   1.0.0     v stringr   1.5.1
+v ggplot2   3.5.1     v tibble    3.2.1
+v lubridate 1.9.3     v tidyr     1.3.1
+v purrr     1.0.2
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()</code></pre>
+<p>Package “attaching” messages and even the odd “conflicts” or “masks” notice are normal, not errors, they just tell you two loaded packages both have a function with the same name.</p>
+<p><strong>Problem looks like this:</strong></p>
+<pre><code>Error in library(flowCore) : there is no package called 'flowCore'</code></pre>
+<p>This means the install step didn’t complete for that package. Go back to Step 2, run the install line for that specific package on its own, and check for a <code>Warning: package X is not available</code> message, that usually points to a spelling issue or a CRAN/Bioconductor mismatch.</p>
+</div>
+</div>
+<div id="a-deeper-dive-1" class="section level2 deeper-dive" number="4.5">
+<h2>
+<span class="header-section-number">4.5</span> A Deeper Dive<a class="anchor" aria-label="anchor" href="#a-deeper-dive-1"><i class="fas fa-link"></i></a>
+</h2>
+<div id="installing-without-blocking-your-console" class="section level3" number="4.5.1">
+<h3>
+<span class="header-section-number">4.5.1</span> Installing Without Blocking Your Console<a class="anchor" aria-label="anchor" href="#installing-without-blocking-your-console"><i class="fas fa-link"></i></a>
+</h3>
+<p>Step 2’s install block covers a lot of packages, several from Bioconductor, which can take a while. While it runs, your R console is locked, you can’t run anything else until it finishes. RStudio’s Jobs pane gets around this, via the <code>job</code> package:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://lindeloev.github.io/job/">job</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"job"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">job</span><span class="fu">::</span><span class="fu"><a href="https://lindeloev.github.io/job/reference/job.html">job</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ggplot2"</span>, <span class="st">"tidyverse"</span>, <span class="st">"devtools"</span>, <span class="st">"BiocManager"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<p>This runs the install in a separate background R process, RStudio’s Jobs tab (next to Console) shows its progress, and your console stays free to keep working in the meantime. Useful for this chapter’s long install, and for any future script that takes a while to run.</p>
+</div>
+<div id="understanding-package-installation" class="section level3" number="4.5.2">
+<h3>
+<span class="header-section-number">4.5.2</span> Understanding Package Installation<a class="anchor" aria-label="anchor" href="#understanding-package-installation"><i class="fas fa-link"></i></a>
+</h3>
+<p>When you type <code>install.packages("packagename")</code>, R downloads the package from CRAN and installs it on your computer. The package gets stored in a “library” - a folder where R keeps all installed packages.</p>
+<p>Note the quotation marks around the package name - they’re required during installation or you’ll get an error. However, when you load packages with <code><a href="https://rdrr.io/r/base/library.html">library()</a></code>, quotation marks are optional.</p>
+</div>
+<div id="package-sources-in-detail" class="section level3" number="4.5.3">
+<h3>
+<span class="header-section-number">4.5.3</span> Package Sources in Detail<a class="anchor" aria-label="anchor" href="#package-sources-in-detail"><i class="fas fa-link"></i></a>
+</h3>
+<div id="cran-packages" class="section level4" number="4.5.3.1">
+<h4>
+<span class="header-section-number">4.5.3.1</span> CRAN Packages<a class="anchor" aria-label="anchor" href="#cran-packages"><i class="fas fa-link"></i></a>
+</h4>
+<p>The Comprehensive R Archive Network hosts over 18,000 packages. These undergo automated testing on multiple operating systems and must meet strict standards. CRAN packages are the most stable and reliable.</p>
+<p>Install with:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"packagename"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="bioconductor-packages" class="section level4" number="4.5.3.2">
+<h4>
+<span class="header-section-number">4.5.3.2</span> Bioconductor Packages<a class="anchor" aria-label="anchor" href="#bioconductor-packages"><i class="fas fa-link"></i></a>
+</h4>
+<p>Bioconductor focuses on biological data analysis and maintains about 2,000 packages. These packages often work together using shared data structures. For example, the flowSet object we’ll use throughout this course was pioneered by Bioconductor. Like CRAN, every submission goes through extensive automated testing and manual review before acceptance, and packages are re-checked on every Bioconductor release to make sure they still work together.</p>
+<p>First install the manager:</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span></code></pre></div>
+<p>Then install packages:</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"packagename"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="github-packages" class="section level4" number="4.5.3.3">
+<h4>
+<span class="header-section-number">4.5.3.3</span> GitHub Packages<a class="anchor" aria-label="anchor" href="#github-packages"><i class="fas fa-link"></i></a>
+</h4>
+<p>GitHub hosts cutting-edge packages that may not be available elsewhere. These can be less stable but provide access to the newest methods. Some packages start on GitHub before moving to CRAN or Bioconductor. Unlike CRAN and Bioconductor, there’s no centralized testing, review, or acceptance process, whether a package works, is maintained, or is safe to rely on is entirely up to the individual author. That’s the trade-off for early access to new methods.</p>
+<p>First install the devtools:</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span></code></pre></div>
+<p>Then install packages:</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install-deprecated.html">install_github</a></span><span class="op">(</span><span class="st">"username/packagename"</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div id="loading-packages-vs-installing-packages" class="section level3" number="4.5.4">
+<h3>
+<span class="header-section-number">4.5.4</span> Loading Packages vs Installing Packages<a class="anchor" aria-label="anchor" href="#loading-packages-vs-installing-packages"><i class="fas fa-link"></i></a>
+</h3>
+<p>Installing a package downloads it to your computer once. Loading a package makes it available for your current R session. You need to load packages every time you start R.</p>
+<p><strong>Install once:</strong></p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"flowCore"</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Load every session:</strong></p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="about-require-vs-library" class="section level3" number="4.5.5">
+<h3>
+<span class="header-section-number">4.5.5</span> About require() vs library()<a class="anchor" aria-label="anchor" href="#about-require-vs-library"><i class="fas fa-link"></i></a>
+</h3>
+<p>We use the <code>if(!require(package)) install.packages("package")</code> pattern throughout this tutorial because it’s efficient for setup scripts:</p>
+<ol style="list-style-type: decimal">
+<li>Checks if the package is already loaded</li>
+<li>If not loaded, tries to load it</li>
+<li>If loading fails (package not installed), installs it automatically</li>
+<li>This means you can rerun the same installation script without wasting time or bandwidth</li>
+</ol>
+<p><strong>For tutorial and setup scripts:</strong> <code><a href="https://rdrr.io/r/base/library.html">require()</a></code> is the practical choice because it handles both installation and loading efficiently.</p>
+<p><strong>For your own analysis scripts:</strong> <code><a href="https://rdrr.io/r/base/library.html">library()</a></code> is often better because it stops with a clear error message if a package is missing. This makes problems obvious so you can fix them quickly.</p>
+<p><strong>Example of the difference:</strong></p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Using require() - gives warning, continues running</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">nonexistent_package</span><span class="op">)</span></span>
+<span><span class="fu">some_function</span><span class="op">(</span><span class="op">)</span>  <span class="co"># This might fail mysteriously later</span></span>
+<span></span>
+<span><span class="co"># Using library() - stops immediately with clear error  </span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">nonexistent_package</span><span class="op">)</span>  <span class="co"># Error: package not found</span></span>
+<span><span class="fu">some_function</span><span class="op">(</span><span class="op">)</span>  <span class="co"># This line never runs</span></span></code></pre></div>
+<p><strong>Why this matters:</strong> In analysis scripts, you want to know immediately if packages are missing. In setup scripts, you want the convenience of automatic installation and efficient reruns.</p>
+<p>Both functions have their place - we use the right tool for each situation.</p>
+</div>
+<div id="understanding-our-package-collection" class="section level3" number="4.5.6">
+<h3>
+<span class="header-section-number">4.5.6</span> Understanding Our Package Collection<a class="anchor" aria-label="anchor" href="#understanding-our-package-collection"><i class="fas fa-link"></i></a>
+</h3>
+<div id="core-cytometry-tools" class="section level4" number="4.5.6.1">
+<h4>
+<span class="header-section-number">4.5.6.1</span> Core Cytometry Tools<a class="anchor" aria-label="anchor" href="#core-cytometry-tools"><i class="fas fa-link"></i></a>
+</h4>
+<ul>
+<li>
+<code>flowCore</code>: Reads FCS files and provides basic data structures for cytometry data</li>
+<li>
+<code>ggcyto</code>: Creates publication-quality cytometry plots using familiar ggplot2 syntax</li>
+<li>
+<code>flowWorkspace</code>: <code>GatingSet</code> and related functions, used in the Gating chapter</li>
+<li>
+<code>openCyto</code>: <code><a href="https://rdrr.io/pkg/flowCore/man/estimateMedianLogicle.html">estimateMedianLogicle()</a></code>, used in the Transformation chapter’s logicle comparison</li>
+</ul>
+</div>
+<div id="advanced-analysis" class="section level4" number="4.5.6.2">
+<h4>
+<span class="header-section-number">4.5.6.2</span> Advanced Analysis<a class="anchor" aria-label="anchor" href="#advanced-analysis"><i class="fas fa-link"></i></a>
+</h4>
+<ul>
+<li>
+<code>FlowSOM</code>: Self-organising map clustering for population discovery</li>
+<li>
+<code>flowCut</code>: Automated quality control and outlier detection</li>
+<li>
+<code>limma</code>: Statistical analysis for differential expression</li>
+</ul>
+</div>
+<div id="visualisation-and-exploration" class="section level4" number="4.5.6.3">
+<h4>
+<span class="header-section-number">4.5.6.3</span> Visualisation and Exploration<a class="anchor" aria-label="anchor" href="#visualisation-and-exploration"><i class="fas fa-link"></i></a>
+</h4>
+<ul>
+<li>
+<code>ggridges</code>: Ridge plots are particularly useful for comparing marker expression distributions between samples or treatment groups</li>
+<li>
+<code>uwot</code> and <code>Rtsne</code>: Dimensionality reduction techniques (UMAP and t-SNE) for visualising high-dimensional cytometry data in 2D</li>
+<li>
+<code>GGally</code>: <code><a href="https://ggobi.github.io/ggally/reference/ggpairs.html">ggpairs()</a></code>, used in the Channel Names chapter’s NxN marker grid</li>
+<li>
+<code>pheatmap</code> and <code>ggrepel</code>: heatmaps and non-overlapping plot labels, used in the Statistics chapter</li>
+</ul>
+</div>
+<div id="data-manipulation" class="section level4" number="4.5.6.4">
+<h4>
+<span class="header-section-number">4.5.6.4</span> Data Manipulation<a class="anchor" aria-label="anchor" href="#data-manipulation"><i class="fas fa-link"></i></a>
+</h4>
+<ul>
+<li>
+<code>tidyverse</code>: Modern R tools for data cleaning, transformation, and analysis</li>
+<li>
+<code>here</code>: Portable file path management that works across different computers</li>
+</ul>
+</div>
+</div>
+<div id="package-dependencies" class="section level3" number="4.5.7">
+<h3>
+<span class="header-section-number">4.5.7</span> Package Dependencies<a class="anchor" aria-label="anchor" href="#package-dependencies"><i class="fas fa-link"></i></a>
+</h3>
+<p>Packages often depend on other packages to work. When you install a package, R automatically installs its dependencies. This is why installation sometimes takes longer than expected - R may be installing several related packages.</p>
+<p><strong>Example:</strong> When you install <code>ggcyto</code>, R also installs <code>ggplot2</code>, <code>flowCore</code>, and several other packages that <code>ggcyto</code> needs to function.</p>
+</div>
+<div id="what-a-package-actually-is-on-disk" class="section level3" number="4.5.8">
+<h3>
+<span class="header-section-number">4.5.8</span> What a Package Actually Is on Disk<a class="anchor" aria-label="anchor" href="#what-a-package-actually-is-on-disk"><i class="fas fa-link"></i></a>
+</h3>
+<p>R occasionally asks which form of a package you want, for example “Do you want to install the package from Source?” A source package is just a directory of files with a specific structure, a <code>DESCRIPTION</code> file, an <code>R/</code> folder containing <code>.R</code> files, and so on:</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:package-structure"></span>
+<img src="Images/SourcePackageStructure.PNG" alt="On your computer, a package is just an organised set of files and folders" width="577"><p class="caption">
+Figure 4.1: On your computer, a package is just an organised set of files and folders
+</p>
+</div>
+</div>
+<div id="managing-your-package-library" class="section level3" number="4.5.9">
+<h3>
+<span class="header-section-number">4.5.9</span> Managing Your Package Library<a class="anchor" aria-label="anchor" href="#managing-your-package-library"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>Check what’s installed:</strong></p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Update all packages:</strong></p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/update.packages.html">update.packages</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Remove a package:</strong></p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/remove.packages.html">remove.packages</a></span><span class="op">(</span><span class="st">"packagename"</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Find package information:</strong></p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html">packageDescription</a></span><span class="op">(</span><span class="st">"packagename"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="getting-help-with-packages" class="section level3" number="4.5.10">
+<h3>
+<span class="header-section-number">4.5.10</span> Getting Help with Packages<a class="anchor" aria-label="anchor" href="#getting-help-with-packages"><i class="fas fa-link"></i></a>
+</h3>
+<p>Every package includes documentation:</p>
+<p><strong>Quick help:</strong></p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">?</span><span class="va">packagename</span></span></code></pre></div>
+<p><strong>Detailed tutorials (vignettes):</strong></p>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html">browseVignettes</a></span><span class="op">(</span><span class="st">"packagename"</span><span class="op">)</span></span></code></pre></div>
+<p>Vignettes are particularly valuable - they’re tutorials written by package authors showing how to use their tools effectively.</p>
+</div>
+<div id="why-we-install-everything-upfront" class="section level3" number="4.5.11">
+<h3>
+<span class="header-section-number">4.5.11</span> Why We Install Everything Upfront<a class="anchor" aria-label="anchor" href="#why-we-install-everything-upfront"><i class="fas fa-link"></i></a>
+</h3>
+<p>This front-loaded approach means subsequent chapters won’t be interrupted by package installation. You can focus on learning analysis techniques rather than managing software.</p>
+</div>
+<div id="troubleshooting-installation-problems" class="section level3" number="4.5.12">
+<h3>
+<span class="header-section-number">4.5.12</span> Troubleshooting Installation Problems<a class="anchor" aria-label="anchor" href="#troubleshooting-installation-problems"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>Package installation fails:</strong>
+- Check your internet connection
+- Try installing one package at a time to identify the problem
+- Look at error messages for specific guidance</p>
+<p><strong>Package loading fails:</strong>
+- Make sure the package installed successfully
+- Check for typos in the package name
+- Try reinstalling the package</p>
+<p><strong>Version conflicts:</strong>
+- Update all packages with <code><a href="https://rdrr.io/r/utils/update.packages.html">update.packages()</a></code>
+- Remove and reinstall problematic packages
+- Restart R and try again</p>
+</div>
+<div id="whats-next" class="section level3" number="4.5.13">
+<h3>
+<span class="header-section-number">4.5.13</span> What’s Next<a class="anchor" aria-label="anchor" href="#whats-next"><i class="fas fa-link"></i></a>
+</h3>
+<p>With these packages installed, you have the tools needed for comprehensive cytometry analysis. Chapter 4 will show you how to organise your work, then Chapter 5 will show you how to load your first cytometry dataset.</p>
+<p>This gives you the foundation for everything that follows - from basic data import to advanced population discovery algorithms.</p>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">3</span> Chapter 2 - Setting up an R environment</a></div>
+<div class="next"><a href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">5</span> Chapter 4 - File Management and Data Access</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#chapter-3---packages"><span class="header-section-number">4</span> Chapter 3 - Packages</a></li>
+<li><a class="nav-link" href="#what-are-packages"><span class="header-section-number">4.1</span> What Are Packages?</a></li>
+<li><a class="nav-link" href="#where-packages-come-from"><span class="header-section-number">4.2</span> Where Packages Come From</a></li>
+<li><a class="nav-link" href="#version-notes-1"><span class="header-section-number">4.3</span> Version Notes</a></li>
+<li>
+<a class="nav-link" href="#the-essentials-1"><span class="header-section-number">4.4</span> The Essentials</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#step-1-install-package-managers"><span class="header-section-number">4.4.1</span> Step 1: Install Package Managers</a></li>
+<li><a class="nav-link" href="#step-2-install-all-required-packages"><span class="header-section-number">4.4.2</span> Step 2: Install All Required Packages</a></li>
+<li><a class="nav-link" href="#step-3-verify-installation"><span class="header-section-number">4.4.3</span> Step 3: Verify Installation</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#a-deeper-dive-1"><span class="header-section-number">4.5</span> A Deeper Dive</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#installing-without-blocking-your-console"><span class="header-section-number">4.5.1</span> Installing Without Blocking Your Console</a></li>
+<li><a class="nav-link" href="#understanding-package-installation"><span class="header-section-number">4.5.2</span> Understanding Package Installation</a></li>
+<li><a class="nav-link" href="#package-sources-in-detail"><span class="header-section-number">4.5.3</span> Package Sources in Detail</a></li>
+<li><a class="nav-link" href="#loading-packages-vs-installing-packages"><span class="header-section-number">4.5.4</span> Loading Packages vs Installing Packages</a></li>
+<li><a class="nav-link" href="#about-require-vs-library"><span class="header-section-number">4.5.5</span> About require() vs library()</a></li>
+<li><a class="nav-link" href="#understanding-our-package-collection"><span class="header-section-number">4.5.6</span> Understanding Our Package Collection</a></li>
+<li><a class="nav-link" href="#package-dependencies"><span class="header-section-number">4.5.7</span> Package Dependencies</a></li>
+<li><a class="nav-link" href="#what-a-package-actually-is-on-disk"><span class="header-section-number">4.5.8</span> What a Package Actually Is on Disk</a></li>
+<li><a class="nav-link" href="#managing-your-package-library"><span class="header-section-number">4.5.9</span> Managing Your Package Library</a></li>
+<li><a class="nav-link" href="#getting-help-with-packages"><span class="header-section-number">4.5.10</span> Getting Help with Packages</a></li>
+<li><a class="nav-link" href="#why-we-install-everything-upfront"><span class="header-section-number">4.5.11</span> Why We Install Everything Upfront</a></li>
+<li><a class="nav-link" href="#troubleshooting-installation-problems"><span class="header-section-number">4.5.12</span> Troubleshooting Installation Problems</a></li>
+<li><a class="nav-link" href="#whats-next"><span class="header-section-number">4.5.13</span> What’s Next</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

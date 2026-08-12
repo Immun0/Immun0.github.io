@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 10 Chapter 9 - Removing Acquisition Anomalies | Analysing Cytometry Data with R</title>
+<meta name="author" content="Damian Carragher">
+<meta name="author" content="StemCore Laboratories and Flow Cytometry Core">
+<meta name="author" content="Ottawa Hospital Research Institute">
+<meta name="author" content="First edition by Damian Carragher">
+<meta name="description" content="10.1 What You’ll Learn Cytometry acquisition isn’t always stable, clogs, voltage drift, or air bubbles can corrupt segments of a file partway through a run. Signal can also drift steadily across a...">
+<meta name="generator" content="bookdown 0.47 with bs4_book()">
+<meta property="og:title" content="Chapter 10 Chapter 9 - Removing Acquisition Anomalies | Analysing Cytometry Data with R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="10.1 What You’ll Learn Cytometry acquisition isn’t always stable, clogs, voltage drift, or air bubbles can corrupt segments of a file partway through a run. Signal can also drift steadily across a...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 10 Chapter 9 - Removing Acquisition Anomalies | Analysing Cytometry Data with R">
+<meta name="twitter:description" content="10.1 What You’ll Learn Cytometry acquisition isn’t always stable, clogs, voltage drift, or air bubbles can corrupt segments of a file partway through a run. Signal can also drift steadily across a...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.12.0/transition.js"></script><script src="libs/bs3compat-0.12.0/tabs.js"></script><script src="libs/bs3compat-0.12.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Analysing Cytometry Data with R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> Preface and Notes</a></li>
+<li><a class="" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">2</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
+<li><a class="" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">3</span> Chapter 2 - Setting up an R environment</a></li>
+<li><a class="" href="chapter-3---packages.html"><span class="header-section-number">4</span> Chapter 3 - Packages</a></li>
+<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">5</span> Chapter 4 - File Management and Data Access</a></li>
+<li><a class="" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">6</span> Chapter 5 - Loading Cytometry Data</a></li>
+<li><a class="" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data</a></li>
+<li><a class="" href="chapter-7---gating-data.html"><span class="header-section-number">8</span> Chapter 7 - Gating Data</a></li>
+<li><a class="" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
+<li><a class="active" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
+<li><a class="" href="chapter-10---downsampling.html"><span class="header-section-number">11</span> Chapter 10 - Downsampling</a></li>
+<li><a class="" href="chapter-11---data-transformation.html"><span class="header-section-number">12</span> Chapter 11 - Data Transformation</a></li>
+<li><a class="" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">13</span> Chapter 12 - Extracting Expression Data</a></li>
+<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">14</span> Chapter 13 - Full Visualisation</a></li>
+<li><a class="" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">15</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
+<li><a class="" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery</a></li>
+<li><a class="" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">17</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="chapter-9---removing-acquisition-anomalies" class="section level1" number="10">
+<h1>
+<span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies<a class="anchor" aria-label="anchor" href="#chapter-9---removing-acquisition-anomalies"><i class="fas fa-link"></i></a>
+</h1>
+<div id="what-youll-learn-4" class="section level2" number="10.1">
+<h2>
+<span class="header-section-number">10.1</span> What You’ll Learn<a class="anchor" aria-label="anchor" href="#what-youll-learn-4"><i class="fas fa-link"></i></a>
+</h2>
+<p>Cytometry acquisition isn’t always stable, clogs, voltage drift, or air bubbles can corrupt segments of a file partway through a run. Signal can also drift steadily across a long acquisition without any single dramatic event. <code>PeacoQC</code> detects both kinds of problem and removes the affected events. This chapter runs it across every file and saves the result as <code>CLEANED_FLOWSET.rds</code>.</p>
+<p><code>flowCut</code> is covered in the Deeper Dive as an alternative, along with a direct comparison of what the two tools do to the same data.</p>
+</div>
+<div id="the-essentials-7" class="section level2 essentials" number="10.2">
+<h2>
+<span class="header-section-number">10.2</span> The Essentials<a class="anchor" aria-label="anchor" href="#the-essentials-7"><i class="fas fa-link"></i></a>
+</h2>
+<div id="step-1-load-required-packages-3" class="section level3" number="10.2.1">
+<h3>
+<span class="header-section-number">10.2.1</span> Step 1: Load Required Packages<a class="anchor" aria-label="anchor" href="#step-1-load-required-packages-3"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb176"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in readLines(f, n): line 1 appears to contain an</span></span>
+<span><span class="co">#&gt; embedded nul</span></span>
+<span><span class="co">#&gt; here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="http://github.com/saeyslab/PeacoQC">PeacoQC</a></span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"PeacoQC"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: PeacoQC</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/saeyslab/PeacoQC">PeacoQC</a></span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-2-load-your-data-if-needed" class="section level3" number="10.2.2">
+<h3>
+<span class="header-section-number">10.2.2</span> Step 2: Load Your Data (if needed)<a class="anchor" aria-label="anchor" href="#step-2-load-your-data-if-needed"><i class="fas fa-link"></i></a>
+</h3>
+<p>If <code>Reordered_RENAMED_FLOWSET</code> isn’t already in your Environment tab from Chapter 8, load it:</p>
+<div class="sourceCode" id="cb177"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Reordered_RENAMED_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"Reordered_RENAMED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-3-clean-each-file" class="section level3" number="10.2.3">
+<h3>
+<span class="header-section-number">10.2.3</span> Step 3: Clean Each File<a class="anchor" aria-label="anchor" href="#step-3-clean-each-file"><i class="fas fa-link"></i></a>
+</h3>
+<p><code><a href="https://rdrr.io/pkg/PeacoQC/man/PeacoQC.html">PeacoQC()</a></code> works on one flowFrame at a time, not a whole flowSet, so we apply it across the flowSet with <code><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply()</a></code>, one file at a time.</p>
+<p><code>Time</code> and <code>Event_length</code> are excluded from the channels being checked. They aren’t markers, and asking a cleaning algorithm to look for anomalies in the time channel itself makes no sense:</p>
+<div class="sourceCode" id="cb178"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">channels_to_check</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span><span class="op">)</span><span class="op">[</span></span>
+<span>  <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/flowCore/man/filter-in-methods.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Time"</span>, <span class="st">"Event_length"</span><span class="op">)</span></span>
+<span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">CLEANED_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/PeacoQC/man/PeacoQC.html">PeacoQC</a></span><span class="op">(</span></span>
+<span>    ff               <span class="op">=</span> <span class="va">x</span>,</span>
+<span>    channels         <span class="op">=</span> <span class="va">channels_to_check</span>,</span>
+<span>    plot             <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    save_fcs         <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    output_directory <span class="op">=</span> <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Outputs"</span>, <span class="st">"PeacoQC"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span><span class="op">$</span><span class="va">FinalFF</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<p>The <code>FinalFF</code> element of what <code><a href="https://rdrr.io/pkg/PeacoQC/man/PeacoQC.html">PeacoQC()</a></code> returns is the cleaned flowFrame. The function hands back a list containing diagnostics as well, and <code>$FinalFF</code> is the part we want.</p>
+</div>
+<div id="step-4-save-your-work" class="section level3" number="10.2.4">
+<h3>
+<span class="header-section-number">10.2.4</span> Step 4: Save Your Work<a class="anchor" aria-label="anchor" href="#step-4-save-your-work"><i class="fas fa-link"></i></a>
+</h3>
+<p>Sample names are reassigned from the flowSet you started with before saving. This is cheap insurance, if the names ever fail to survive the <code><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply()</a></code>, every chapter after this one would be working with mislabelled samples and it wouldn’t be obvious:</p>
+<div class="sourceCode" id="cb179"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">CLEANED_FLOWSET</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/phenoData.html">pData</a></span><span class="op">(</span><span class="va">CLEANED_FLOWSET</span><span class="op">)</span><span class="op">$</span><span class="va">name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">CLEANED_FLOWSET</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">CLEANED_FLOWSET</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"CLEANED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="https://rdrr.io/r/base/readRDS.html">saveRDS()</a></code> doesn’t print anything when it works, so check the file exists instead:</p>
+<div class="sourceCode" id="cb180"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"CLEANED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div id="step-5-see-what-was-actually-removed" class="section level3" number="10.2.5">
+<h3>
+<span class="header-section-number">10.2.5</span> Step 5: See What Was Actually Removed<a class="anchor" aria-label="anchor" href="#step-5-see-what-was-actually-removed"><i class="fas fa-link"></i></a>
+</h3>
+<p>Saving the file isn’t proof the cleaning did anything. Plot a channel against Time, before and after, and you can see what came out:</p>
+<div class="sourceCode" id="cb182"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RGLab/ggcyto/issues">ggcyto</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: ggplot2</span></span>
+<span><span class="co">#&gt; Loading required package: ncdfFlow</span></span>
+<span><span class="co">#&gt; Loading required package: BH</span></span>
+<span><span class="co">#&gt; Loading required package: flowWorkspace</span></span>
+<span><span class="co">#&gt; As part of improvements to flowWorkspace, some behavior of</span></span>
+<span><span class="co">#&gt; GatingSet objects has changed. For details, please read the section</span></span>
+<span><span class="co">#&gt; titled "The cytoframe and cytoset classes" in the package vignette:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   vignette("flowWorkspace-Introduction", "flowWorkspace")</span></span>
+<span></span>
+<span><span class="va">Reordered_RENAMED_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"Reordered_RENAMED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">CLEANED_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"CLEANED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Pick any channel and any sample, adjust to whatever's relevant for your own data</span></span>
+<span><span class="va">BEFORE</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Time"</span>, <span class="st">"Sm149Di_CD34"</span>, bins <span class="op">=</span> <span class="fl">256</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Before cleaning"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">AFTER</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">CLEANED_FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Time"</span>, <span class="st">"Sm149Di_CD34"</span>, bins <span class="op">=</span> <span class="fl">256</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"After cleaning"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">BEFORE</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">AFTER</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="09-Data-Cleaning-3-Acquisition-Anomalies_files/figure-html/compare-before-after-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb183"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"PeacoQC_before_after.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"PeacoQC_before_after.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+<p><code>PeacoQC</code> also writes its own diagnostic plot for every file into <code>Outputs/PeacoQC/</code>, plus a summary table at <code>Outputs/PeacoQC/PeacoQC_results/PeacoQC_report.txt</code>. That report is worth opening: it breaks each file’s removals down by which check triggered them, which tells you <em>why</em> events were removed, not just how many.</p>
+<p><strong>A note on output volume:</strong> every tool in this chapter writes a diagnostic report for each file you run it on. With more than a handful of samples this adds up fast, expect <code>Outputs/</code> to fill with one report per file per tool, not a single summary. Bear that in mind before you run this on a real dataset with dozens of files.</p>
+</div>
+<div id="step-6-check-cell-counts-before-and-after" class="section level3" number="10.2.6">
+<h3>
+<span class="header-section-number">10.2.6</span> Step 6: Check Cell Counts Before and After<a class="anchor" aria-label="anchor" href="#step-6-check-cell-counts-before-and-after"><i class="fas fa-link"></i></a>
+</h3>
+<p>Cleaning can remove a meaningful chunk of a file. Compare the counts directly rather than looking at the cleaned numbers alone, a bar chart of what survived tells you nothing without the original beside it:</p>
+<div class="sourceCode" id="cb184"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">BEFORE_COUNTS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span>, <span class="va">nrow</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">BEFORE_COUNTS</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"Events"</span></span>
+<span><span class="va">BEFORE_COUNTS</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html">rownames_to_column</a></span><span class="op">(</span><span class="va">BEFORE_COUNTS</span>, <span class="st">"Sample"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">AFTER_COUNTS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">CLEANED_FLOWSET</span>, <span class="va">nrow</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">AFTER_COUNTS</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"Events"</span></span>
+<span><span class="va">AFTER_COUNTS</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html">rownames_to_column</a></span><span class="op">(</span><span class="va">AFTER_COUNTS</span>, <span class="st">"Sample"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Both panels must share a y axis, or ggplot scales each one to its own data</span></span>
+<span><span class="co"># and a large drop looks like a small one</span></span>
+<span><span class="va">Y_MAX</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">BEFORE_COUNTS</span><span class="op">$</span><span class="va">Events</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_before</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">BEFORE_COUNTS</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Sample</span>, y <span class="op">=</span> <span class="va">Events</span>, fill <span class="op">=</span> <span class="va">Sample</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Before cleaning"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/comma.html">comma</a></span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">Y_MAX</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span>, axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_after</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">AFTER_COUNTS</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Sample</span>, y <span class="op">=</span> <span class="va">Events</span>, fill <span class="op">=</span> <span class="va">Sample</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"After cleaning"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/comma.html">comma</a></span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">Y_MAX</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span>, axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">p_before</span>, <span class="va">p_after</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="09-Data-Cleaning-3-Acquisition-Anomalies_files/figure-html/compare-counts-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb185"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"cleaning_counts_before_after.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"cleaning_counts_before_after.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+<p>Both panels are forced onto the same y axis with <code>limits = c(0, Y_MAX)</code>. Without that, <code>ggplot</code> scales each panel to its own data, so the “after” panel stretches its bars back up to fill the space and a 25% loss looks like almost nothing. Any before-and-after bar chart needs this, and it’s an easy thing to miss because each panel looks perfectly reasonable on its own.</p>
+<p>A sample that drops far more than the others is worth investigating in its <code>PeacoQC</code> diagnostic plot before continuing. It might mean rough acquisition, or it might mean that sample drifted more than the rest, which is a different problem with different consequences.</p>
+</div>
+</div>
+<div id="a-deeper-dive-7" class="section level2 deeper-dive" number="10.3">
+<h2>
+<span class="header-section-number">10.3</span> A Deeper Dive<a class="anchor" aria-label="anchor" href="#a-deeper-dive-7"><i class="fas fa-link"></i></a>
+</h2>
+<p>Cleaning data happens in stages, and by this chapter three are done: gating to live singlets (already applied to the delivered dataset before Chapter 5), channel name cleanup with <code>premessa</code> (Chapter 8), and now acquisition anomaly removal.</p>
+<div id="why-peacoqc-rather-than-flowcut" class="section level3" number="10.3.1">
+<h3>
+<span class="header-section-number">10.3.1</span> Why PeacoQC Rather Than flowCut<a class="anchor" aria-label="anchor" href="#why-peacoqc-rather-than-flowcut"><i class="fas fa-link"></i></a>
+</h3>
+<p><code>flowCut</code> and <code>flowAI</code> are the established tools, and this chapter used to be built around <code>flowCut</code>. A 2022 benchmark (Emmaneel et al., <em>Cytometry Part A</em>) tested <code>PeacoQC</code> against both across nine flow, three mass, and four spectral cytometry datasets. <code>PeacoQC</code> had the highest median balanced accuracy and scaled better to large files; <code>flowAI</code> tended to over-filter, removing more good data than necessary, and <code>flowCut</code>/<code>flowClean</code> sometimes missed anomalies the others caught.</p>
+<p>The mechanism explains the results you’ll see below. <code>PeacoQC</code>, from the same lab that built <code>FlowSOM</code>, finds density peaks per channel over time and flags events that fall too far from them. It runs two checks: an isolation tree (IT) analysis for abrupt events, and a mean-absolute-deviation (MAD) distance check. The first catches clogs and bubbles. The second catches gradual drift, signal creeping up or down across a run with no single dramatic moment.</p>
+<p>That second check is the important one, and it’s what <code>flowCut</code> doesn’t act on.</p>
+</div>
+<div id="flowcut-and-what-happens-when-you-run-both" class="section level3" number="10.3.2">
+<h3>
+<span class="header-section-number">10.3.2</span> flowCut, and What Happens When You Run Both<a class="anchor" aria-label="anchor" href="#flowcut-and-what-happens-when-you-run-both"><i class="fas fa-link"></i></a>
+</h3>
+<p><code>flowCut</code> looks for abrupt changes over time in each channel, the signature of a clog, bubble, or voltage event, and flags the affected segment. It takes one flowFrame at a time, same as <code>PeacoQC</code>:</p>
+<div class="sourceCode" id="cb186"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">flowCut</span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"flowCut"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCut</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">CLEANED</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span></span>
+<span>  <span class="va">Reordered_RENAMED_FLOWSET</span>,</span>
+<span>  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCut/man/flowCut.html">flowCut</a></span><span class="op">(</span></span>
+<span>    <span class="va">x</span>,</span>
+<span>    Directory <span class="op">=</span> <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Outputs"</span>, <span class="st">"flowCut"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><code>CLEANED</code> is a list, not a flowSet, <code><a href="https://rdrr.io/pkg/flowCut/man/flowCut.html">flowCut()</a></code> returns diagnostics alongside the cleaned data, so pull out just the frames and rebuild a flowSet from them:</p>
+<div class="sourceCode" id="cb187"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">x</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">CLEANED</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/append.html">append</a></span><span class="op">(</span><span class="va">files</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">CLEANED</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">frame</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">CLEANED_FLOWCUT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/flowSet-class.html">flowSet</a></span><span class="op">(</span><span class="va">files</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">CLEANED_FLOWCUT</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/phenoData.html">pData</a></span><span class="op">(</span><span class="va">CLEANED_FLOWCUT</span><span class="op">)</span><span class="op">$</span><span class="va">name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">CLEANED_FLOWCUT</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">CLEANED_FLOWCUT</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"CLEANED_FLOWCUT.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Note this saves to <code>CLEANED_FLOWCUT.rds</code>, not <code>CLEANED_FLOWSET.rds</code>. The rest of the course reads <code>CLEANED_FLOWSET.rds</code>, so running this section won’t overwrite what the Essentials produced.</p>
+<p>Now compare the two directly, on the same files:</p>
+<div class="sourceCode" id="cb188"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">COMPARISON_COUNTS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  Sample   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span><span class="op">)</span>,</span>
+<span>  Before   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html">as.vector</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span>, <span class="va">nrow</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  PeacoQC  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html">as.vector</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">CLEANED_FLOWSET</span>, <span class="va">nrow</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  flowCut  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html">as.vector</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">CLEANED_FLOWCUT</span>, <span class="va">nrow</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">COMPARISON_COUNTS</span><span class="op">$</span><span class="va">PeacoQC_pct</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span></span>
+<span>  <span class="fl">100</span> <span class="op">*</span> <span class="op">(</span><span class="va">COMPARISON_COUNTS</span><span class="op">$</span><span class="va">Before</span> <span class="op">-</span> <span class="va">COMPARISON_COUNTS</span><span class="op">$</span><span class="va">PeacoQC</span><span class="op">)</span> <span class="op">/</span> <span class="va">COMPARISON_COUNTS</span><span class="op">$</span><span class="va">Before</span>, <span class="fl">2</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">COMPARISON_COUNTS</span><span class="op">$</span><span class="va">flowCut_pct</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span></span>
+<span>  <span class="fl">100</span> <span class="op">*</span> <span class="op">(</span><span class="va">COMPARISON_COUNTS</span><span class="op">$</span><span class="va">Before</span> <span class="op">-</span> <span class="va">COMPARISON_COUNTS</span><span class="op">$</span><span class="va">flowCut</span><span class="op">)</span> <span class="op">/</span> <span class="va">COMPARISON_COUNTS</span><span class="op">$</span><span class="va">Before</span>, <span class="fl">2</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">COMPARISON_COUNTS</span></span>
+<span><span class="co">#&gt;              Sample Before PeacoQC flowCut PeacoQC_pct</span></span>
+<span><span class="co">#&gt; 1  2%PFA - NAS PERM  30825   25575   30825       17.03</span></span>
+<span><span class="co">#&gt; 2  4%PFA - NAS PERM  15158   11250   11997       25.78</span></span>
+<span><span class="co">#&gt; 3  8%PFA - NAS PERM  23790   18250   23172       23.29</span></span>
+<span><span class="co">#&gt; 4 PFA+GLUT-NAS PERM  14171    9000   14171       36.49</span></span>
+<span><span class="co">#&gt; 5   4%PFA - NO PERM  57521   46250   56000       19.59</span></span>
+<span><span class="co">#&gt;   flowCut_pct</span></span>
+<span><span class="co">#&gt; 1        0.00</span></span>
+<span><span class="co">#&gt; 2       20.85</span></span>
+<span><span class="co">#&gt; 3        2.60</span></span>
+<span><span class="co">#&gt; 4        0.00</span></span>
+<span><span class="co">#&gt; 5        2.64</span></span></code></pre></div>
+<p>On this course’s dataset, <code>PeacoQC</code> removes roughly 17% to 36% per file while <code>flowCut</code> removes nothing at all. Both are behaving correctly, and the reason is in <code>PeacoQC</code>’s own report: its IT analysis, the abrupt-event check that is <code>flowCut</code>’s direct counterpart, removes essentially nothing either. Every event <code>PeacoQC</code> removes here comes from the MAD check, and every file in the report is flagged with an increasing or decreasing channel. The data has no clogs or bubbles. What it has is steady drift, which has no abrupt boundary for <code>flowCut</code>’s segment comparison to find.</p>
+<p>This is the single most useful thing in this chapter: <strong>two respectable tools can disagree completely and both be right, because they are not asking the same question.</strong> Always check which mechanism did the removing, not just how much came out.</p>
+</div>
+<div id="making-flowcut-cut-anyway" class="section level3" number="10.3.3">
+<h3>
+<span class="header-section-number">10.3.3</span> Making flowCut Cut Anyway<a class="anchor" aria-label="anchor" href="#making-flowcut-cut-anyway"><i class="fas fa-link"></i></a>
+</h3>
+<p>By default <code>flowCut</code> runs three cleanliness tests and, if a file passes all of them, decides it’s clean enough and skips further cleaning. <code>AlwaysClean = TRUE</code> overrides that:</p>
+<div class="sourceCode" id="cb189"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">CLEANED_AC</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span></span>
+<span>  <span class="va">Reordered_RENAMED_FLOWSET</span>,</span>
+<span>  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCut/man/flowCut.html">flowCut</a></span><span class="op">(</span></span>
+<span>    <span class="va">x</span>,</span>
+<span>    Directory   <span class="op">=</span> <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Outputs"</span>, <span class="st">"flowCut_AlwaysClean"</span><span class="op">)</span>,</span>
+<span>    AlwaysClean <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">before</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html">as.vector</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span>, <span class="va">nrow</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">after</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">CLEANED_AC</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">frame</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  file    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span><span class="op">)</span>,</span>
+<span>  before  <span class="op">=</span> <span class="va">before</span>,</span>
+<span>  after   <span class="op">=</span> <span class="va">after</span>,</span>
+<span>  removed <span class="op">=</span> <span class="va">before</span> <span class="op">-</span> <span class="va">after</span>,</span>
+<span>  percent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="op">(</span><span class="va">before</span> <span class="op">-</span> <span class="va">after</span><span class="op">)</span> <span class="op">/</span> <span class="va">before</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>On this dataset that shifts <code>flowCut</code> from removing nothing to removing about 3.7% overall, and the removals are wildly uneven: one file loses 20.85%, two lose around 2.6%, and two still lose nothing. It’s a useful demonstration of how much a single default can change a result, and a reminder to read what a function’s arguments actually do before trusting its output.</p>
+</div>
+<div id="other-tools-exist" class="section level3" number="10.3.4">
+<h3>
+<span class="header-section-number">10.3.4</span> Other Tools Exist<a class="anchor" aria-label="anchor" href="#other-tools-exist"><i class="fas fa-link"></i></a>
+</h3>
+<p><code>flowAI</code> is the third tool in the benchmark above, and there are others. It won’t run on this course’s data, though.</p>
+<p><code>flowAI</code> bins events by time in fractions of a second, converting raw time values using the FCS <code>$TIMESTEP</code> keyword. Mass cytometry files from a Helios don’t carry that keyword. Without it, <code>flowAI</code> treats the raw time values as seconds, and this dataset’s time channel runs to roughly 559,000, so it tries to bin a nominal 155 hour acquisition at tenth-of-a-second resolution and exhausts memory before finishing the first file.</p>
+<p>That isn’t a bug in <code>flowAI</code> so much as a mismatch between a tool built for conventional flow cytometry and a mass cytometry file. It’s a good illustration of a general point: cleaning tools carry assumptions about your data, and when one fails outright it’s usually one of those assumptions, not your code.</p>
+</div>
+<div id="whats-next-5" class="section level3" number="10.3.5">
+<h3>
+<span class="header-section-number">10.3.5</span> What’s Next<a class="anchor" aria-label="anchor" href="#whats-next-5"><i class="fas fa-link"></i></a>
+</h3>
+<p>With <code>CLEANED_FLOWSET.rds</code> saved, the next chapter downsamples the data to a manageable size before transformation.</p>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa</a></div>
+<div class="next"><a href="chapter-10---downsampling.html"><span class="header-section-number">11</span> Chapter 10 - Downsampling</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#chapter-9---removing-acquisition-anomalies"><span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
+<li><a class="nav-link" href="#what-youll-learn-4"><span class="header-section-number">10.1</span> What You’ll Learn</a></li>
+<li>
+<a class="nav-link" href="#the-essentials-7"><span class="header-section-number">10.2</span> The Essentials</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#step-1-load-required-packages-3"><span class="header-section-number">10.2.1</span> Step 1: Load Required Packages</a></li>
+<li><a class="nav-link" href="#step-2-load-your-data-if-needed"><span class="header-section-number">10.2.2</span> Step 2: Load Your Data (if needed)</a></li>
+<li><a class="nav-link" href="#step-3-clean-each-file"><span class="header-section-number">10.2.3</span> Step 3: Clean Each File</a></li>
+<li><a class="nav-link" href="#step-4-save-your-work"><span class="header-section-number">10.2.4</span> Step 4: Save Your Work</a></li>
+<li><a class="nav-link" href="#step-5-see-what-was-actually-removed"><span class="header-section-number">10.2.5</span> Step 5: See What Was Actually Removed</a></li>
+<li><a class="nav-link" href="#step-6-check-cell-counts-before-and-after"><span class="header-section-number">10.2.6</span> Step 6: Check Cell Counts Before and After</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#a-deeper-dive-7"><span class="header-section-number">10.3</span> A Deeper Dive</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#why-peacoqc-rather-than-flowcut"><span class="header-section-number">10.3.1</span> Why PeacoQC Rather Than flowCut</a></li>
+<li><a class="nav-link" href="#flowcut-and-what-happens-when-you-run-both"><span class="header-section-number">10.3.2</span> flowCut, and What Happens When You Run Both</a></li>
+<li><a class="nav-link" href="#making-flowcut-cut-anyway"><span class="header-section-number">10.3.3</span> Making flowCut Cut Anyway</a></li>
+<li><a class="nav-link" href="#other-tools-exist"><span class="header-section-number">10.3.4</span> Other Tools Exist</a></li>
+<li><a class="nav-link" href="#whats-next-5"><span class="header-section-number">10.3.5</span> What’s Next</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

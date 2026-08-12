@@ -1,0 +1,29 @@
+p.caption {
+  color: #777;
+  margin-top: 10px;
+}
+p code {
+  white-space: inherit;
+}
+pre {
+  word-break: normal;
+  word-wrap: normal;
+}
+pre code {
+  white-space: inherit;
+}
+
+/* Two-track chapter headings: quick "Essentials" vs "Deeper Dive" explanation.
+   Apply with the pandoc attribute syntax, e.g. ## The Essentials {.essentials} */
+.essentials {
+  color: red;
+}
+.deeper-dive {
+  color: #295D90;
+}
+
+/* Inline callouts within body text, cautions and strong recommendations.
+   Apply as a normal HTML class, e.g. <span class="warning">...</span> */
+.warning {
+  color: #2E7D32;
+}

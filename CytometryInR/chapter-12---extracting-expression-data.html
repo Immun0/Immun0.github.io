@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 13 Chapter 12 - Extracting Expression Data | Analysing Cytometry Data with R</title>
+<meta name="author" content="Damian Carragher">
+<meta name="author" content="StemCore Laboratories and Flow Cytometry Core">
+<meta name="author" content="Ottawa Hospital Research Institute">
+<meta name="author" content="First edition by Damian Carragher">
+<meta name="description" content="13.1 What You’ll Learn So far you’ve worked with flowSet and flowFrame objects, specialised structures built for cytometry. Most further analysis, comparing conditions, plotting distributions,...">
+<meta name="generator" content="bookdown 0.47 with bs4_book()">
+<meta property="og:title" content="Chapter 13 Chapter 12 - Extracting Expression Data | Analysing Cytometry Data with R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="13.1 What You’ll Learn So far you’ve worked with flowSet and flowFrame objects, specialised structures built for cytometry. Most further analysis, comparing conditions, plotting distributions,...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 13 Chapter 12 - Extracting Expression Data | Analysing Cytometry Data with R">
+<meta name="twitter:description" content="13.1 What You’ll Learn So far you’ve worked with flowSet and flowFrame objects, specialised structures built for cytometry. Most further analysis, comparing conditions, plotting distributions,...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.12.0/transition.js"></script><script src="libs/bs3compat-0.12.0/tabs.js"></script><script src="libs/bs3compat-0.12.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Analysing Cytometry Data with R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> Preface and Notes</a></li>
+<li><a class="" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">2</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
+<li><a class="" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">3</span> Chapter 2 - Setting up an R environment</a></li>
+<li><a class="" href="chapter-3---packages.html"><span class="header-section-number">4</span> Chapter 3 - Packages</a></li>
+<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">5</span> Chapter 4 - File Management and Data Access</a></li>
+<li><a class="" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">6</span> Chapter 5 - Loading Cytometry Data</a></li>
+<li><a class="" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data</a></li>
+<li><a class="" href="chapter-7---gating-data.html"><span class="header-section-number">8</span> Chapter 7 - Gating Data</a></li>
+<li><a class="" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
+<li><a class="" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
+<li><a class="" href="chapter-10---downsampling.html"><span class="header-section-number">11</span> Chapter 10 - Downsampling</a></li>
+<li><a class="" href="chapter-11---data-transformation.html"><span class="header-section-number">12</span> Chapter 11 - Data Transformation</a></li>
+<li><a class="active" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">13</span> Chapter 12 - Extracting Expression Data</a></li>
+<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">14</span> Chapter 13 - Full Visualisation</a></li>
+<li><a class="" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">15</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
+<li><a class="" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery</a></li>
+<li><a class="" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">17</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="chapter-12---extracting-expression-data" class="section level1" number="13">
+<h1>
+<span class="header-section-number">13</span> Chapter 12 - Extracting Expression Data<a class="anchor" aria-label="anchor" href="#chapter-12---extracting-expression-data"><i class="fas fa-link"></i></a>
+</h1>
+<div id="what-youll-learn-7" class="section level2" number="13.1">
+<h2>
+<span class="header-section-number">13.1</span> What You’ll Learn<a class="anchor" aria-label="anchor" href="#what-youll-learn-7"><i class="fas fa-link"></i></a>
+</h2>
+<p>So far you’ve worked with flowSet and flowFrame objects, specialised structures built for cytometry. Most further analysis, comparing conditions, plotting distributions, statistics, is easier in a plain data frame: one row per cell, one column per marker, plus sample and condition labels. This chapter converts your cleaned, transformed flowSet into that format.</p>
+<p><strong>Why convert at all?</strong> Chapter 5 introduced flowSets and flowFrames as S4 objects, R’s more rigid, formally-defined object system, built for packages like Bioconductor’s where structure needs to be strictly enforced. A plain data frame, by contrast, is an S3 object, R’s older, looser system. S3 objects are what most of R’s ecosystem expects: <code>ggplot2</code>, <code>dplyr</code>, base subsetting with <code>[</code> and <code>$</code>, all assume S3-style data frames, not S4 flowSets. You can’t hand a flowSet straight to <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot()</a></code> and get a sensible plot out, the object doesn’t have rows and columns in the way <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot()</a></code> expects. That’s not a limitation of this course’s data, it’s true of any flowSet. Converting to a data frame here is what makes the rest of standard R, and everything downstream in this course, usable.</p>
+</div>
+<div id="the-essentials-10" class="section level2 essentials" number="13.2">
+<h2>
+<span class="header-section-number">13.2</span> The Essentials<a class="anchor" aria-label="anchor" href="#the-essentials-10"><i class="fas fa-link"></i></a>
+</h2>
+<div id="step-1-load-required-packages-and-data-2" class="section level3" number="13.2.1">
+<h3>
+<span class="header-section-number">13.2.1</span> Step 1: Load Required Packages and Data<a class="anchor" aria-label="anchor" href="#step-1-load-required-packages-and-data-2"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb211"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in readLines(f, n): line 1 appears to contain an</span></span>
+<span><span class="co">#&gt; embedded nul</span></span>
+<span><span class="co">#&gt; here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readxl.tidyverse.org">readxl</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"other"</span>, <span class="st">"ACDwR_metadata.xlsx"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">metadata</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                  file_name         sample_id</span></span>
+<span><span class="co">#&gt; 1      2PFANASPermLIVE.fcs  2%PFA - NAS PERM</span></span>
+<span><span class="co">#&gt; 2 4PFA1GLUTNASPermLIVE.fcs PFA+GLUT-NAS PERM</span></span>
+<span><span class="co">#&gt; 3      4PFANASPermLIVE.fcs  4%PFA - NAS PERM</span></span>
+<span><span class="co">#&gt; 4       4PFANoPermLIVE.fcs   4%PFA - NO PERM</span></span>
+<span><span class="co">#&gt; 5      8PFANASPermLIVE.fcs  8%PFA - NAS PERM</span></span>
+<span><span class="co">#&gt;           condition patient_id</span></span>
+<span><span class="co">#&gt; 1         2%PFA+NAS        025</span></span>
+<span><span class="co">#&gt; 2 4%PFA+1%GLUTA+NAS        025</span></span>
+<span><span class="co">#&gt; 3         4%PFA+NAS        025</span></span>
+<span><span class="co">#&gt; 4            4%_PFA        025</span></span>
+<span><span class="co">#&gt; 5         8%PFA+NAS        025</span></span></code></pre></div>
+</div>
+<div id="step-2-extract-the-expression-matrix" class="section level3" number="13.2.2">
+<h3>
+<span class="header-section-number">13.2.2</span> Step 2: Extract the Expression Matrix<a class="anchor" aria-label="anchor" href="#step-2-extract-the-expression-matrix"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb212"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">EXPRESSION_DATA</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="va">exprs</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 25000    40</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "Time"               "Event_length"      </span></span>
+<span><span class="co">#&gt;  [3] "Y89Di_CD41  "       "I127Di_IdU"        </span></span>
+<span><span class="co">#&gt;  [5] "Pr141Di_CD235ab"    "Nd142Di_EMP-MAEA"  </span></span>
+<span><span class="co">#&gt;  [7] "Nd143Di_CD45RA"     "Nd144Di_HBB-FITC"  </span></span>
+<span><span class="co">#&gt;  [9] "Nd145Di_C-EBPa"     "Nd146Di_CD203c"    </span></span>
+<span><span class="co">#&gt; [11] "Sm147Di_CD70"       "Nd148Di_ProMBP1"   </span></span>
+<span><span class="co">#&gt; [13] "Sm149Di_CD34"       "Nd150Di_BACH1"     </span></span>
+<span><span class="co">#&gt; [15] "Eu151Di_CD123"      "Sm152Di_MAFG"      </span></span>
+<span><span class="co">#&gt; [17] "Eu153Di_CyclinB1"   "Sm154Di_NFE2p45"   </span></span>
+<span><span class="co">#&gt; [19] "Gd155Di_CD36"       "Gd156Di_GATA1-PE"  </span></span>
+<span><span class="co">#&gt; [21] "Gd158Di_RUNX1"      "Tb159Di_IKAROS"    </span></span>
+<span><span class="co">#&gt; [23] "Gd160Di_CD105"      "Dy161Di_CD90"      </span></span>
+<span><span class="co">#&gt; [25] "Dy162Di_Ki-67"      "Dy163Di_Gata2"     </span></span>
+<span><span class="co">#&gt; [27] "Dy164Di_CD49F"      "Ho165Di_Klf1"      </span></span>
+<span><span class="co">#&gt; [29] "Er166Di_CD44"       "Er167Di_PU.1"      </span></span>
+<span><span class="co">#&gt; [31] "Er168Di_CD71"       "Tm169Di_FLI1 abcam"</span></span>
+<span><span class="co">#&gt; [33] "Er170Di_GlobinHBA"  "Yb171Di_Tbx15"     </span></span>
+<span><span class="co">#&gt; [35] "Yb172Di_CD38"       "Yb173Di_CD184"     </span></span>
+<span><span class="co">#&gt; [37] "Yb174Di_HA.11"      "Lu175Di_CD135"     </span></span>
+<span><span class="co">#&gt; [39] "Yb176Di_CD164"      "Original_ID"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"EXPRESSION_DATA.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><strong>What this does:</strong> <code>fsApply(..., exprs)</code> pulls the expression matrix out of every flowFrame and stacks them into one table, every cell from every sample, one row each.</p>
+</div>
+<div id="step-3-label-each-cell-with-its-sample" class="section level3" number="13.2.3">
+<h3>
+<span class="header-section-number">13.2.3</span> Step 3: Label Each Cell With Its Sample<a class="anchor" aria-label="anchor" href="#step-3-label-each-cell-with-its-sample"><i class="fas fa-link"></i></a>
+</h3>
+<p>The expression matrix alone doesn’t say which sample each row came from, that has to be added back in. The obvious way is to assume the metadata sheet and the flowSet are in the same order and pair them up position by position. Don’t. Sample order is not a stable thing: Chapters 8 and 10 both reorder the flowSet, a file that fails QC gets dropped, a sheet gets re-sorted in Excel. Any of those and a positional pairing silently attaches the wrong labels to real cells. Join on the sample name instead, which survives all of it.</p>
+<p>The check to run is not “are these in the same order” but “are these the same five samples at all”:</p>
+<div class="sourceCode" id="cb213"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://generics.r-lib.org/reference/setops.html">setequal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span><span class="op">)</span>, <span class="va">metadata</span><span class="op">$</span><span class="va">sample_id</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>[1] TRUE</code></pre>
+<p>If this returns <code>FALSE</code>, your sheet and your data disagree about which samples exist, and no amount of careful joining will fix that. Compare the two lists directly and resolve it before going further.</p>
+<p>Now label each cell, taking the names from the flowSet itself rather than from the sheet. The flowSet is the source of truth for which cells you actually have:</p>
+<div class="sourceCode" id="cb215"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sample_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span><span class="op">)</span>,</span>
+<span>                  <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="va">nrow</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">sample_ids</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div id="step-4-build-the-combined-table" class="section level3" number="13.2.4">
+<h3>
+<span class="header-section-number">13.2.4</span> Step 4: Build the Combined Table<a class="anchor" aria-label="anchor" href="#step-4-build-the-combined-table"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb217"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>sample_id <span class="op">=</span> <span class="va">sample_ids</span>, <span class="va">EXPRESSION_DATA</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 25000    41</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"EXPRESSION_DATA_SAMPLE_ID.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-5-reshape-to-long-format-and-add-condition" class="section level3" number="13.2.5">
+<h3>
+<span class="header-section-number">13.2.5</span> Step 5: Reshape to Long Format and Add Condition<a class="anchor" aria-label="anchor" href="#step-5-reshape-to-long-format-and-add-condition"><i class="fas fa-link"></i></a>
+</h3>
+<p>Most plotting and statistics want one row per cell per marker, not one row per cell with a column per marker. <code><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer()</a></code> reshapes it, and we attach each row’s experimental condition from the metadata sheet at the same time:</p>
+<div class="sourceCode" id="cb218"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">EXPRESSION_DATA_SAMPLE_ID_MELTED</span> <span class="op">&lt;-</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span>,</span>
+<span>  <span class="op">-</span><span class="va">sample_id</span>, names_to <span class="op">=</span> <span class="st">"antigen"</span>, values_to <span class="op">=</span> <span class="st">"expression"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_MELTED</span><span class="op">$</span><span class="va">sample_id</span>, <span class="va">metadata</span><span class="op">$</span><span class="va">sample_id</span><span class="op">)</span></span>
+<span><span class="va">EXPRESSION_DATA_SAMPLE_ID_MELTED</span><span class="op">$</span><span class="va">condition</span> <span class="op">&lt;-</span> <span class="va">metadata</span><span class="op">$</span><span class="va">condition</span><span class="op">[</span><span class="va">mm</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_MELTED</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"EXPRESSION_DATA_SAMPLE_ID_MELTED.rds"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_MELTED</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 6 × 4</span></span>
+<span><span class="co">#&gt;   sample_id        antigen          expression condition</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;            &lt;chr&gt;                 &lt;dbl&gt; &lt;chr&gt;    </span></span>
+<span><span class="co">#&gt; 1 2%PFA - NAS PERM Time                 9.20   2%PFA+NAS</span></span>
+<span><span class="co">#&gt; 2 2%PFA - NAS PERM Event_length         2.46   2%PFA+NAS</span></span>
+<span><span class="co">#&gt; 3 2%PFA - NAS PERM Y89Di_CD41..         0      2%PFA+NAS</span></span>
+<span><span class="co">#&gt; 4 2%PFA - NAS PERM I127Di_IdU           0.0191 2%PFA+NAS</span></span>
+<span><span class="co">#&gt; 5 2%PFA - NAS PERM Pr141Di_CD235ab      0      2%PFA+NAS</span></span>
+<span><span class="co">#&gt; 6 2%PFA - NAS PERM Nd142Di_EMP.MAEA     1.11   2%PFA+NAS</span></span></code></pre></div>
+<p><code><a href="https://rdrr.io/r/base/match.html">match()</a></code> looks up each cell’s <code>sample_id</code> against the metadata sheet and pulls back the matching <code>condition</code>, this is the same join logic as <code>VLOOKUP</code> in Excel.</p>
+</div>
+</div>
+<div id="a-deeper-dive-10" class="section level2 deeper-dive" number="13.3">
+<h2>
+<span class="header-section-number">13.3</span> A Deeper Dive<a class="anchor" aria-label="anchor" href="#a-deeper-dive-10"><i class="fas fa-link"></i></a>
+</h2>
+<div id="what-positional-joining-actually-does" class="section level3" number="13.3.1">
+<h3>
+<span class="header-section-number">13.3.1</span> What Positional Joining Actually Does<a class="anchor" aria-label="anchor" href="#what-positional-joining-actually-does"><i class="fas fa-link"></i></a>
+</h3>
+<p>See it fail rather than take the warning on trust, because the failure does not look like a failure. Build the labels both ways on the real data and compare.</p>
+<div class="sourceCode" id="cb219"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">n_cells</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="va">nrow</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">labels_by_name</span>     <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span><span class="op">)</span>, <span class="va">n_cells</span><span class="op">)</span></span>
+<span><span class="va">labels_by_position</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="va">metadata</span><span class="op">$</span><span class="va">sample_id</span>, <span class="va">n_cells</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">labels_by_name</span> <span class="op">!=</span> <span class="va">labels_by_position</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.8</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>[1] 0.8</code></pre>
+<p>Eighty per cent of the cells in the dataset carry the wrong sample name. Only the first sample survives, because position one happens to agree. Nothing errors, nothing warns.</p>
+<p>Now look at what that does to an actual result. CD34 is the marker Chapter 13 uses, so compare its median per condition under both labellings:</p>
+<div class="sourceCode" id="cb221"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">CD34</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="va">exprs</span><span class="op">)</span><span class="op">[</span>, <span class="st">"Sm149Di_CD34"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">condition_of</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">ids</span><span class="op">)</span> <span class="va">metadata</span><span class="op">$</span><span class="va">condition</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="va">ids</span>, <span class="va">metadata</span><span class="op">$</span><span class="va">sample_id</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">conditions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">metadata</span><span class="op">$</span><span class="va">condition</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">COMPARISON</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  condition   <span class="op">=</span> <span class="va">conditions</span>,</span>
+<span>  by_name     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tapply.html">tapply</a></span><span class="op">(</span><span class="va">CD34</span>, <span class="fu">condition_of</span><span class="op">(</span><span class="va">labels_by_name</span><span class="op">)</span>,     <span class="va">median</span><span class="op">)</span><span class="op">[</span><span class="va">conditions</span><span class="op">]</span>,</span>
+<span>  by_position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tapply.html">tapply</a></span><span class="op">(</span><span class="va">CD34</span>, <span class="fu">condition_of</span><span class="op">(</span><span class="va">labels_by_position</span><span class="op">)</span>, <span class="va">median</span><span class="op">)</span><span class="op">[</span><span class="va">conditions</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">COMPARISON</span></span>
+<span><span class="co">#&gt;                           condition    by_name by_position</span></span>
+<span><span class="co">#&gt; 2%PFA+NAS                 2%PFA+NAS 0.08467258  0.08467258</span></span>
+<span><span class="co">#&gt; 4%_PFA                       4%_PFA 0.13482420  0.18662449</span></span>
+<span><span class="co">#&gt; 4%PFA+1%GLUTA+NAS 4%PFA+1%GLUTA+NAS 0.08012901  0.01979156</span></span>
+<span><span class="co">#&gt; 4%PFA+NAS                 4%PFA+NAS 0.18662449  0.13482420</span></span>
+<span><span class="co">#&gt; 8%PFA+NAS                 8%PFA+NAS 0.01979156  0.08012901</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>                          condition    by_name by_position
+2%PFA+NAS                 2%PFA+NAS 0.08467258  0.08467258
+4%_PFA                       4%_PFA 0.13482420  0.18662449
+4%PFA+1%GLUTA+NAS 4%PFA+1%GLUTA+NAS 0.08012901  0.01979156
+4%PFA+NAS                 4%PFA+NAS 0.18662449  0.13482420
+8%PFA+NAS                 8%PFA+NAS 0.01979156  0.08012901</code></pre>
+<div class="sourceCode" id="cb223"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="va">COMPARISON</span>, <span class="op">-</span><span class="va">condition</span>,</span>
+<span>                           names_to <span class="op">=</span> <span class="st">"labelling"</span>, values_to <span class="op">=</span> <span class="st">"median_CD34"</span><span class="op">)</span>,</span>
+<span>       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">condition</span>, y <span class="op">=</span> <span class="va">median_CD34</span>, fill <span class="op">=</span> <span class="va">labelling</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span>position <span class="op">=</span> <span class="st">"dodge"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html">coord_flip</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"The same cells, labelled two ways"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="12-Extract-Expression-Data_files/figure-html/positional-join-plot-1.png" alt="" width="672"></div>
+<p>Every number is plausible. Nothing is negative, nothing is enormous, nothing looks like a bug. The medians have simply swapped between conditions, in pairs, and the conclusion swaps with them. Joined by name, 8% PFA has the lowest CD34 and glutaraldehyde is mid-range. Joined by position, glutaraldehyde has the lowest and 8% PFA is mid-range. Both are clean results. One is fiction.</p>
+<p>This is the failure mode to be afraid of in cytometry analysis. It does not crash, it does not warn, and it survives every plot you draw and every statistic you run, because the arithmetic is all correct. Only the labels are wrong. Join on names, and check that the two sides agree about which samples exist, every time.</p>
+</div>
+<div id="why-this-shape-matters" class="section level3" number="13.3.2">
+<h3>
+<span class="header-section-number">13.3.2</span> Why This Shape Matters<a class="anchor" aria-label="anchor" href="#why-this-shape-matters"><i class="fas fa-link"></i></a>
+</h3>
+<p><code>EXPRESSION_DATA_SAMPLE_ID_MELTED</code> (sample_id, antigen, expression, condition, one row per cell per marker) is the shape the next two chapters build on directly: ggridges density plots facet by <code>antigen</code> and colour by <code>condition</code> straight off this table, and later summary statistics group by <code>sample_id</code> or <code>condition</code> the same way. Getting this table right once means every later chapter is a <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot()</a></code> or <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code> call away, not another data-wrangling exercise.</p>
+</div>
+<div id="whats-next-8" class="section level3" number="13.3.3">
+<h3>
+<span class="header-section-number">13.3.3</span> What’s Next<a class="anchor" aria-label="anchor" href="#whats-next-8"><i class="fas fa-link"></i></a>
+</h3>
+<p>With <code>EXPRESSION_DATA_SAMPLE_ID_MELTED.rds</code> saved, the next chapter uses it to build full visualisations, density and ridge plots faceted by marker, before moving on to dimensionality reduction.</p>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="chapter-11---data-transformation.html"><span class="header-section-number">12</span> Chapter 11 - Data Transformation</a></div>
+<div class="next"><a href="chapter-13---full-visualisation.html"><span class="header-section-number">14</span> Chapter 13 - Full Visualisation</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#chapter-12---extracting-expression-data"><span class="header-section-number">13</span> Chapter 12 - Extracting Expression Data</a></li>
+<li><a class="nav-link" href="#what-youll-learn-7"><span class="header-section-number">13.1</span> What You’ll Learn</a></li>
+<li>
+<a class="nav-link" href="#the-essentials-10"><span class="header-section-number">13.2</span> The Essentials</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#step-1-load-required-packages-and-data-2"><span class="header-section-number">13.2.1</span> Step 1: Load Required Packages and Data</a></li>
+<li><a class="nav-link" href="#step-2-extract-the-expression-matrix"><span class="header-section-number">13.2.2</span> Step 2: Extract the Expression Matrix</a></li>
+<li><a class="nav-link" href="#step-3-label-each-cell-with-its-sample"><span class="header-section-number">13.2.3</span> Step 3: Label Each Cell With Its Sample</a></li>
+<li><a class="nav-link" href="#step-4-build-the-combined-table"><span class="header-section-number">13.2.4</span> Step 4: Build the Combined Table</a></li>
+<li><a class="nav-link" href="#step-5-reshape-to-long-format-and-add-condition"><span class="header-section-number">13.2.5</span> Step 5: Reshape to Long Format and Add Condition</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#a-deeper-dive-10"><span class="header-section-number">13.3</span> A Deeper Dive</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#what-positional-joining-actually-does"><span class="header-section-number">13.3.1</span> What Positional Joining Actually Does</a></li>
+<li><a class="nav-link" href="#why-this-shape-matters"><span class="header-section-number">13.3.2</span> Why This Shape Matters</a></li>
+<li><a class="nav-link" href="#whats-next-8"><span class="header-section-number">13.3.3</span> What’s Next</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

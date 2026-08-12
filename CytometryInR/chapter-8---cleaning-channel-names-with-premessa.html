@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 9 Chapter 8 - Cleaning Channel Names with Premessa | Analysing Cytometry Data with R</title>
+<meta name="author" content="Damian Carragher">
+<meta name="author" content="StemCore Laboratories and Flow Cytometry Core">
+<meta name="author" content="Ottawa Hospital Research Institute">
+<meta name="author" content="First edition by Damian Carragher">
+<meta name="description" content="9.1 What You’ll Learn Every downstream chapter assumes every file uses exactly the same channel names, no typos, no variants. This chapter uses the premessa package to check and standardise...">
+<meta name="generator" content="bookdown 0.47 with bs4_book()">
+<meta property="og:title" content="Chapter 9 Chapter 8 - Cleaning Channel Names with Premessa | Analysing Cytometry Data with R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="9.1 What You’ll Learn Every downstream chapter assumes every file uses exactly the same channel names, no typos, no variants. This chapter uses the premessa package to check and standardise...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 9 Chapter 8 - Cleaning Channel Names with Premessa | Analysing Cytometry Data with R">
+<meta name="twitter:description" content="9.1 What You’ll Learn Every downstream chapter assumes every file uses exactly the same channel names, no typos, no variants. This chapter uses the premessa package to check and standardise...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.12.0/transition.js"></script><script src="libs/bs3compat-0.12.0/tabs.js"></script><script src="libs/bs3compat-0.12.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Analysing Cytometry Data with R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> Preface and Notes</a></li>
+<li><a class="" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">2</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
+<li><a class="" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">3</span> Chapter 2 - Setting up an R environment</a></li>
+<li><a class="" href="chapter-3---packages.html"><span class="header-section-number">4</span> Chapter 3 - Packages</a></li>
+<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">5</span> Chapter 4 - File Management and Data Access</a></li>
+<li><a class="" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">6</span> Chapter 5 - Loading Cytometry Data</a></li>
+<li><a class="" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data</a></li>
+<li><a class="" href="chapter-7---gating-data.html"><span class="header-section-number">8</span> Chapter 7 - Gating Data</a></li>
+<li><a class="active" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
+<li><a class="" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
+<li><a class="" href="chapter-10---downsampling.html"><span class="header-section-number">11</span> Chapter 10 - Downsampling</a></li>
+<li><a class="" href="chapter-11---data-transformation.html"><span class="header-section-number">12</span> Chapter 11 - Data Transformation</a></li>
+<li><a class="" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">13</span> Chapter 12 - Extracting Expression Data</a></li>
+<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">14</span> Chapter 13 - Full Visualisation</a></li>
+<li><a class="" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">15</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
+<li><a class="" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery</a></li>
+<li><a class="" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">17</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="chapter-8---cleaning-channel-names-with-premessa" class="section level1" number="9">
+<h1>
+<span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa<a class="anchor" aria-label="anchor" href="#chapter-8---cleaning-channel-names-with-premessa"><i class="fas fa-link"></i></a>
+</h1>
+<div id="what-youll-learn-3" class="section level2" number="9.1">
+<h2>
+<span class="header-section-number">9.1</span> What You’ll Learn<a class="anchor" aria-label="anchor" href="#what-youll-learn-3"><i class="fas fa-link"></i></a>
+</h2>
+<p>Every downstream chapter assumes every file uses exactly the same channel names, no typos, no variants. This chapter uses the <code>premessa</code> package to check and standardise channel names across your FCS files, then loads the result back into R and saves it as an RDS file so later chapters can pick it up directly.</p>
+</div>
+<div id="the-essentials-6" class="section level2 essentials" number="9.2">
+<h2>
+<span class="header-section-number">9.2</span> The Essentials<a class="anchor" aria-label="anchor" href="#the-essentials-6"><i class="fas fa-link"></i></a>
+</h2>
+<div id="step-1-load-required-packages-2" class="section level3" number="9.2.1">
+<h3>
+<span class="header-section-number">9.2.1</span> Step 1: Load Required Packages<a class="anchor" aria-label="anchor" href="#step-1-load-required-packages-2"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in readLines(f, n): line 1 appears to contain an</span></span>
+<span><span class="co">#&gt; embedded nul</span></span>
+<span><span class="co">#&gt; here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">premessa</span><span class="op">)</span><span class="op">)</span> <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install-deprecated.html">install_github</a></span><span class="op">(</span><span class="st">"ParkerICI/premessa"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: premessa</span></span></code></pre></div>
+</div>
+<div id="step-2-run-premessas-channel-renaming-tool" class="section level3" number="9.2.2">
+<h3>
+<span class="header-section-number">9.2.2</span> Step 2: Run premessa’s Channel-Renaming Tool<a class="anchor" aria-label="anchor" href="#step-2-run-premessas-channel-renaming-tool"><i class="fas fa-link"></i></a>
+</h3>
+<p>Run this from RStudio. <code>premessa</code> includes an interactive tool, it opens in your web browser rather than running as a normal function call:</p>
+<div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">premessa</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/premessa/man/paneleditor_GUI.html">paneleditor_GUI</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>Once it opens:</p>
+<ol style="list-style-type: lower-alpha">
+<li>A file browser opens. Navigate into <code>Data/fcs</code> and select any one of the <code>.fcs</code> files inside it. You can’t pick the folder itself, premessa asks for a file, then loads every FCS file sitting alongside it in that same folder. Which one you click doesn’t matter, they all lead to the same place.</li>
+<li>The browser window shows every channel across all your files, highlighting any that differ.</li>
+<li>Check the channel names match; where they don’t, choose which name should be used.</li>
+<li>Tick the Remove box for every channel you don’t need. For this course’s data that means removing 22 of them, leaving 39. The next section lists exactly which, and why.</li>
+<li>Enter a new folder name for the cleaned files. This tutorial uses <code>pruned</code>.</li>
+</ol>
+<p>Closing the browser window writes the cleaned FCS files to <code>Data/fcs/pruned/</code>, it does not modify your original files.</p>
+</div>
+<div id="which-channels-to-remove-and-why" class="section level3" number="9.2.3">
+<h3>
+<span class="header-section-number">9.2.3</span> Which Channels to Remove, and Why<a class="anchor" aria-label="anchor" href="#which-channels-to-remove-and-why"><i class="fas fa-link"></i></a>
+</h3>
+<p>Twenty-two channels are removed at this step, leaving thirty-nine: <code>Time</code>, <code>Event_length</code>, and thirty-seven markers. The panel sheet in <code>Data/other/</code> is the definitive list of what should survive, and Step 8 later checks the two match exactly, so if you remove the wrong set you’ll find out then.</p>
+<p><strong>Channels whose job is already finished.</strong> <code>Pt195Di</code> (Live-Dead) goes because Chapter 7’s gating already removed the dead cells, so the viability measurement has served its purpose and carries nothing into the analysis that follows. The same reasoning covers <code>Ce140Di</code>, the EQ4 bead channel the bead gate ran on, <code>Ir191Di</code> and <code>Ir193Di</code>, the DNA channels behind the debris and singlet gates, and the four Gaussian discrimination parameters <code>Center</code>, <code>Offset</code>, <code>Width</code> and <code>Residual</code>, of which <code>Width</code> and <code>Residual</code> drew the doublet gate.</p>
+<p><strong>Debarcoding channels.</strong> <code>Pd102Di</code>, <code>Pd104Di</code>, <code>Pd105Di</code>, <code>Pd106Di</code>, <code>Pd108Di</code> and <code>Pd110Di</code> carried the palladium barcodes that separated multiplexed samples back into one file each. As Chapter 5 explains, that happened before the data ever reached you, so these have nothing left to contribute.</p>
+<p><strong>Environmental and background channels.</strong> <code>Ba138Di</code>, <code>Cs133Di</code>, <code>Xe131Di</code>, <code>Sn120Di</code>, <code>Pb208Di</code>, <code>BCKG190Di</code> and <code>Bi209Di</code> monitor instrument background and contamination. They measure the machine, not the cells.</p>
+<p><strong>Unused.</strong> <code>Rh103Di</code> is labelled unused in the panel itself.</p>
+<p><strong>What stays, besides the markers.</strong> <code>Time</code> has to stay, because Chapter 9’s cleaning tools work along the Time axis to find acquisition anomalies, and removing it here would break that chapter. <code>Event_length</code> stays as well; both appear in the panel sheet with <code>marker_class</code> set to <code>none</code>, marking them as real channels that aren’t measuring a marker.</p>
+<p><strong>Nothing seems to happen?</strong> Your R console will show as busy while the tool is running, that’s normal, it’s a live Shiny app, not a function that returns instantly. Check for a new browser tab: some browsers open it in the background rather than switching to it automatically. If no tab appears within a few seconds, check your default browser is set correctly, or try running the command again after closing other browser windows.</p>
+</div>
+<div id="step-3-verify-the-pruned-files" class="section level3" number="9.2.4">
+<h3>
+<span class="header-section-number">9.2.4</span> Step 3: Verify the Pruned Files<a class="anchor" aria-label="anchor" href="#step-3-verify-the-pruned-files"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># check we're in the right folder</span></span>
+<span><span class="co">#&gt; [1] "/Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"fcs"</span>, <span class="st">"pruned"</span><span class="op">)</span><span class="op">)</span> <span class="co"># list cleaned fcs files</span></span>
+<span><span class="co">#&gt; [1] "2PFANASPermLIVE.fcs"      "4PFA1GLUTNASPermLIVE.fcs"</span></span>
+<span><span class="co">#&gt; [3] "4PFANASPermLIVE.fcs"      "4PFANoPermLIVE.fcs"      </span></span>
+<span><span class="co">#&gt; [5] "8PFANASPermLIVE.fcs"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"other"</span><span class="op">)</span><span class="op">)</span> <span class="co"># list any peripheral/supporting files</span></span>
+<span><span class="co">#&gt; [1] "ACDwR_metadata.xlsx" "ACDwR_panel.csv"</span></span></code></pre></div>
+</div>
+<div id="step-4-load-the-cleaned-files-back-into-r" class="section level3" number="9.2.5">
+<h3>
+<span class="header-section-number">9.2.5</span> Step 4: Load the Cleaned Files Back into R<a class="anchor" aria-label="anchor" href="#step-4-load-the-cleaned-files-back-into-r"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">RENAMED_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/read.flowSet.html">read.flowSet</a></span><span class="op">(</span>path <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"fcs"</span>, <span class="st">"pruned"</span><span class="op">)</span>, pattern <span class="op">=</span> <span class="st">"\\.fcs$"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-5-save-your-work-1" class="section level3" number="9.2.6">
+<h3>
+<span class="header-section-number">9.2.6</span> Step 5: Save Your Work<a class="anchor" aria-label="anchor" href="#step-5-save-your-work-1"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb159"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">RENAMED_FLOWSET</span>, <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"RENAMED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="https://rdrr.io/r/base/readRDS.html">saveRDS()</a></code> doesn’t print anything when it works, so check the file exists instead:</p>
+<div class="sourceCode" id="cb160"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"RENAMED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div id="step-6-give-samples-readable-names" class="section level3" number="9.2.7">
+<h3>
+<span class="header-section-number">9.2.7</span> Step 6: Give Samples Readable Names<a class="anchor" aria-label="anchor" href="#step-6-give-samples-readable-names"><i class="fas fa-link"></i></a>
+</h3>
+<p><code><a href="https://rdrr.io/pkg/flowCore/man/read.flowSet.html">read.flowSet()</a></code> names each sample after its raw acquisition filename. Real filenames are often long and unwieldy, and even here, giving samples short, meaningful names makes every later table and plot easier to read. The metadata sheet introduced in Chapter 4 has exactly what you need, a <code>sample_id</code> column matching each file to a readable label:</p>
+<div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readxl.tidyverse.org">readxl</a></span><span class="op">)</span></span>
+<span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html">read_xlsx</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"other"</span>, <span class="st">"ACDwR_metadata.xlsx"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">metadata</span></span>
+<span><span class="co">#&gt; # A tibble: 5 × 4</span></span>
+<span><span class="co">#&gt;   file_name                sample_id    condition patient_id</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;                    &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;     </span></span>
+<span><span class="co">#&gt; 1 2PFANASPermLIVE.fcs      2%PFA - NAS… 2%PFA+NAS 025       </span></span>
+<span><span class="co">#&gt; 2 4PFA1GLUTNASPermLIVE.fcs PFA+GLUT-NA… 4%PFA+1%… 025       </span></span>
+<span><span class="co">#&gt; 3 4PFANASPermLIVE.fcs      4%PFA - NAS… 4%PFA+NAS 025       </span></span>
+<span><span class="co">#&gt; 4 4PFANoPermLIVE.fcs       4%PFA - NO … 4%_PFA    025       </span></span>
+<span><span class="co">#&gt; 5 8PFANASPermLIVE.fcs      8%PFA - NAS… 8%PFA+NAS 025</span></span></code></pre></div>
+<div class="sourceCode" id="cb163"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">RENAMED_FLOWSET</span><span class="op">)</span> <span class="co"># check the current order</span></span>
+<span><span class="co">#&gt; [1] "2PFANASPermLIVE.fcs"      "4PFA1GLUTNASPermLIVE.fcs"</span></span>
+<span><span class="co">#&gt; [3] "4PFANASPermLIVE.fcs"      "4PFANoPermLIVE.fcs"      </span></span>
+<span><span class="co">#&gt; [5] "8PFANASPermLIVE.fcs"</span></span>
+<span><span class="va">metadata</span><span class="op">$</span><span class="va">file_name</span> <span class="co"># confirm this lists the same files in the same order as above</span></span>
+<span><span class="co">#&gt; [1] "2PFANASPermLIVE.fcs"      "4PFA1GLUTNASPermLIVE.fcs"</span></span>
+<span><span class="co">#&gt; [3] "4PFANASPermLIVE.fcs"      "4PFANoPermLIVE.fcs"      </span></span>
+<span><span class="co">#&gt; [5] "8PFANASPermLIVE.fcs"</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">RENAMED_FLOWSET</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">metadata</span><span class="op">$</span><span class="va">sample_id</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">RENAMED_FLOWSET</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "2%PFA - NAS PERM"  "PFA+GLUT-NAS PERM"</span></span>
+<span><span class="co">#&gt; [3] "4%PFA - NAS PERM"  "4%PFA - NO PERM"  </span></span>
+<span><span class="co">#&gt; [5] "8%PFA - NAS PERM"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">RENAMED_FLOWSET</span>, <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"RENAMED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Important:</strong> <code>sampleNames()&lt;-</code> assigns by position, not by matching filenames. If <code>sampleNames(RENAMED_FLOWSET)</code> and <code>metadata$file_name</code> aren’t already in the same order, reorder <code>metadata</code> to match before assigning, otherwise you’ll silently mislabel samples.</p>
+</div>
+<div id="step-7-reorder-the-samples" class="section level3" number="9.2.8">
+<h3>
+<span class="header-section-number">9.2.8</span> Step 7: Reorder the Samples<a class="anchor" aria-label="anchor" href="#step-7-reorder-the-samples"><i class="fas fa-link"></i></a>
+</h3>
+<p><code><a href="https://rdrr.io/pkg/flowCore/man/read.flowSet.html">read.flowSet()</a></code> also reads files in alphabetical order, which won’t necessarily match a sensible display order. Plotting these five conditions alphabetically would jumble what’s actually a dose/treatment progression, so you’ll usually want to reorder into a more logical sequence, letting autoplot’s facets read in a sensible order rather than alphabetically. Use the <code>[,]</code> notation with the index order you want:</p>
+<div class="sourceCode" id="cb164"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">RENAMED_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"RENAMED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">RENAMED_FLOWSET</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "2%PFA - NAS PERM"  "PFA+GLUT-NAS PERM"</span></span>
+<span><span class="co">#&gt; [3] "4%PFA - NAS PERM"  "4%PFA - NO PERM"  </span></span>
+<span><span class="co">#&gt; [5] "8%PFA - NAS PERM"</span></span>
+<span></span>
+<span><span class="va">Reordered_RENAMED_FLOWSET</span> <span class="op">&lt;-</span> <span class="va">RENAMED_FLOWSET</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">5</span>, <span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span><span class="op">]</span> <span class="co"># example order, replace with whatever order makes sense for your own data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "2%PFA - NAS PERM"  "4%PFA - NAS PERM" </span></span>
+<span><span class="co">#&gt; [3] "8%PFA - NAS PERM"  "PFA+GLUT-NAS PERM"</span></span>
+<span><span class="co">#&gt; [5] "4%PFA - NO PERM"</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/phenoData.html">pData</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span><span class="op">)</span><span class="op">$</span><span class="va">name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span><span class="op">)</span> <span class="co"># ggcyto uses pData()$name for graph labels, so we update it to match</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span>, file <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"Reordered_RENAMED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-8-rename-channels-to-include-marker-names" class="section level3" number="9.2.9">
+<h3>
+<span class="header-section-number">9.2.9</span> Step 8: Rename Channels to Include Marker Names<a class="anchor" aria-label="anchor" href="#step-8-rename-channels-to-include-marker-names"><i class="fas fa-link"></i></a>
+</h3>
+<p>Right now your channels are still named after their raw metal-isotope detector, like <code>Y89Di</code>. That tells you nothing about what was actually measured. The panel sheet you saw introduced in Chapter 4 fixes this, it maps each channel to the antibody it carried.</p>
+<div class="sourceCode" id="cb165"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">panel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"other"</span>, <span class="st">"ACDwR_panel.csv"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">panel</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    fcs_colname      antigen marker_class</span></span>
+<span><span class="co">#&gt; 1         Time         Time         none</span></span>
+<span><span class="co">#&gt; 2 Event_length Event_length         none</span></span>
+<span><span class="co">#&gt; 3        Y89Di       CD41           type</span></span>
+<span><span class="co">#&gt; 4       I127Di          IdU        state</span></span>
+<span><span class="co">#&gt; 5      Pr141Di      CD235ab         type</span></span>
+<span><span class="co">#&gt; 6      Nd142Di     EMP-MAEA         type</span></span></code></pre></div>
+<p>Combine the channel name and the antigen into one readable label:</p>
+<div class="sourceCode" id="cb166"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">panel</span><span class="op">$</span><span class="va">desc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">panel</span><span class="op">$</span><span class="va">fcs_colname</span>, <span class="va">panel</span><span class="op">$</span><span class="va">antigen</span>, sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Time and Event_length aren't markers. They're the two channels the panel marks as marker_class "none",</span></span>
+<span><span class="co"># so leave their names exactly as they are. This matters beyond tidiness: flowCut identifies the time</span></span>
+<span><span class="co"># channel by name in the next chapter, and a channel called "Time_Time" isn't one it recognises.</span></span>
+<span><span class="va">panel</span><span class="op">$</span><span class="va">desc</span><span class="op">[</span><span class="va">panel</span><span class="op">$</span><span class="va">marker_class</span> <span class="op">==</span> <span class="st">"none"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">panel</span><span class="op">$</span><span class="va">fcs_colname</span><span class="op">[</span><span class="va">panel</span><span class="op">$</span><span class="va">marker_class</span> <span class="op">==</span> <span class="st">"none"</span><span class="op">]</span></span></code></pre></div>
+<p>Every real marker now gets the combined label, while <code>Time</code> and <code>Event_length</code> keep their original names.</p>
+<p>Before applying it, check the panel actually matches your flowSet’s channels, in the same order:</p>
+<div class="sourceCode" id="cb167"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="va">panel</span><span class="op">$</span><span class="va">fcs_colname</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p><strong>Success looks like this:</strong></p>
+<pre><code>[1] TRUE</code></pre>
+<p>If this returns <code>FALSE</code>, don’t proceed, your panel sheet and flowSet are out of sync, likely a different channel order or a channel present in one but not the other. Compare <code>panel$fcs_colname</code> against <code>colnames(Reordered_RENAMED_FLOWSET)</code> directly to find the mismatch before continuing.</p>
+<p>Once they match, apply the new names:</p>
+<div class="sourceCode" id="cb169"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">panel</span><span class="op">$</span><span class="va">desc</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "Time"               "Event_length"      </span></span>
+<span><span class="co">#&gt;  [3] "Y89Di_CD41  "       "I127Di_IdU"        </span></span>
+<span><span class="co">#&gt;  [5] "Pr141Di_CD235ab"    "Nd142Di_EMP-MAEA"  </span></span>
+<span><span class="co">#&gt;  [7] "Nd143Di_CD45RA"     "Nd144Di_HBB-FITC"  </span></span>
+<span><span class="co">#&gt;  [9] "Nd145Di_C-EBPa"     "Nd146Di_CD203c"    </span></span>
+<span><span class="co">#&gt; [11] "Sm147Di_CD70"       "Nd148Di_ProMBP1"   </span></span>
+<span><span class="co">#&gt; [13] "Sm149Di_CD34"       "Nd150Di_BACH1"     </span></span>
+<span><span class="co">#&gt; [15] "Eu151Di_CD123"      "Sm152Di_MAFG"      </span></span>
+<span><span class="co">#&gt; [17] "Eu153Di_CyclinB1"   "Sm154Di_NFE2p45"   </span></span>
+<span><span class="co">#&gt; [19] "Gd155Di_CD36"       "Gd156Di_GATA1-PE"  </span></span>
+<span><span class="co">#&gt; [21] "Gd158Di_RUNX1"      "Tb159Di_IKAROS"    </span></span>
+<span><span class="co">#&gt; [23] "Gd160Di_CD105"      "Dy161Di_CD90"      </span></span>
+<span><span class="co">#&gt; [25] "Dy162Di_Ki-67"      "Dy163Di_Gata2"     </span></span>
+<span><span class="co">#&gt; [27] "Dy164Di_CD49F"      "Ho165Di_Klf1"      </span></span>
+<span><span class="co">#&gt; [29] "Er166Di_CD44"       "Er167Di_PU.1"      </span></span>
+<span><span class="co">#&gt; [31] "Er168Di_CD71"       "Tm169Di_FLI1 abcam"</span></span>
+<span><span class="co">#&gt; [33] "Er170Di_GlobinHBA"  "Yb171Di_Tbx15"     </span></span>
+<span><span class="co">#&gt; [35] "Yb172Di_CD38"       "Yb173Di_CD184"     </span></span>
+<span><span class="co">#&gt; [37] "Yb174Di_HA.11"      "Lu175Di_CD135"     </span></span>
+<span><span class="co">#&gt; [39] "Yb176Di_CD164"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span>, file <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"Reordered_RENAMED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Every later chapter now sees channels like <code>Y89Di_CD41</code> instead of <code>Y89Di</code>, plots and tables are readable without cross-referencing the panel sheet every time.</p>
+<p>This is the file every later chapter actually reads, <code>Reordered_RENAMED_FLOWSET.rds</code>, not <code>RENAMED_FLOWSET.rds</code>.</p>
+</div>
+</div>
+<div id="a-deeper-dive-6" class="section level2 deeper-dive" number="9.3">
+<h2>
+<span class="header-section-number">9.3</span> A Deeper Dive<a class="anchor" aria-label="anchor" href="#a-deeper-dive-6"><i class="fas fa-link"></i></a>
+</h2>
+<p>Cleaning data is a large part of cytometry analysis, and it happens in stages. The FCS files you loaded in Chapter 5 have already been gated to live singlets before you ever received them, removing dead cells and doublets, so that part of the cleaning is done for you. <code>premessa</code> is the first cleaning step you perform yourself in this course:</p>
+<ul>
+<li>Channel name consistency, so every later function call works the same way across every file</li>
+<li>Removing extraneous channels that aren’t needed for analysis</li>
+</ul>
+<div id="see-what-channel-matching-actually-bought-you" class="section level3" number="9.3.1">
+<h3>
+<span class="header-section-number">9.3.1</span> See What Channel Matching Actually Bought You<a class="anchor" aria-label="anchor" href="#see-what-channel-matching-actually-bought-you"><i class="fas fa-link"></i></a>
+</h3>
+<p>Before <code>premessa</code>, your files’ channel names didn’t necessarily agree with each other, you couldn’t reliably plot the same marker across every sample at once. Now that they match, you can build a proper NxN grid, every channel against every other channel, and trust that the same column means the same thing in every file.</p>
+<p><code><a href="https://ggobi.github.io/ggally/reference/ggpairs.html">GGally::ggpairs()</a></code> is a better tool for this than base R’s <code><a href="https://rdrr.io/r/graphics/pairs.html">pairs()</a></code>, both plot raw points by default, which get slow and badly overplotted with the tens of thousands of events a single cytometry file holds. <code><a href="https://ggobi.github.io/ggally/reference/ggpairs.html">ggpairs()</a></code> lets you swap in hexbin panels instead, which handle large event counts properly:</p>
+<div class="sourceCode" id="cb170"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggobi.github.io/ggally/">GGally</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: ggplot2</span></span>
+<span><span class="va">EXPRS_DF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">hex_panel</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">mapping</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">mapping</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">marker_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">EXPRS_DF</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Time"</span>, <span class="st">"Event_length"</span><span class="op">)</span><span class="op">)</span> <span class="co"># the 37 real markers; drops the two channels that aren't markers</span></span>
+<span></span>
+<span><span class="va">NXN_GRID</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggobi.github.io/ggally/reference/ggpairs.html">ggpairs</a></span><span class="op">(</span></span>
+<span>  <span class="va">EXPRS_DF</span><span class="op">[</span>, <span class="va">marker_cols</span><span class="op">]</span>,</span>
+<span>  lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>continuous <span class="op">=</span> <span class="va">hex_panel</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">NXN_GRID</span></span></code></pre></div>
+<div class="inline-figure"><img src="08-Data-Cleaning-2-Channel-Names_files/figure-html/ggpairs-nxn-1.png" alt="" width="672"></div>
+<p>Taking everything except <code>Time</code> and <code>Event_length</code> means you get every marker and only the markers, without typing a range that goes stale the moment your panel changes. Chapters 14 and 16 exclude the same two channels the same way, for the same reason.</p>
+<p><strong>This is a big computation.</strong> Thirty-seven markers means over 1,300 individual hexbin panels, each drawn from tens of thousands of events. Expect it to take a while and to use a lot of memory. If it’s too slow on your machine, cut <code>marker_cols</code> down to the markers you actually care about, <code>marker_cols[1:15]</code> for instance, and the rest of the code is unchanged.</p>
+<p>An NxN grid this size is far too dense to read on screen, every panel ends up thumbnail-sized. Save it out large instead, as a PDF: it’s vector, so you can zoom right into any single panel without it going blurry, and the whole grid stays in one file.</p>
+<div class="sourceCode" id="cb171"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span></span>
+<span>  <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"channel_check_NxN.pdf"</span><span class="op">)</span>,</span>
+<span>  plot <span class="op">=</span> <span class="va">NXN_GRID</span>,</span>
+<span>  width <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  height <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  limitsize <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The PDF is the one to use, since zooming into a vector file keeps every panel sharp.</p>
+<p>Building this grid is slow enough that it’s worth keeping the finished object, so you can come back and re-save it at a different size or format without recomputing all 1,300 panels:</p>
+<div class="sourceCode" id="cb172"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">NXN_GRID</span>, <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"NXN_GRID.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Open it from your <code>Figures/</code> folder and zoom in, the same way you’d look at any large figure. A PNG version is possible too, but at this size you need a high <code>dpi</code> to keep it legible and the file gets very large, so the PDF is the better default.</p>
+<p><strong>Fair warning:</strong> even with hexbin panels, a full panel’s NxN grid is dense, this isn’t something you’ll read every individual plot of closely, it’s a sanity check that channel names line up and a broad-strokes look at pairwise relationships. You can loop the same call across <code>Reordered_RENAMED_FLOWSET[[i]]</code> for each sample the same way you would with any other plot, now that channel matching guarantees every sample’s grid compares the same channels in the same positions.</p>
+</div>
+<div id="a-fallback-if-ggally-isnt-available" class="section level3" number="9.3.2">
+<h3>
+<span class="header-section-number">9.3.2</span> A Fallback If GGally Isn’t Available<a class="anchor" aria-label="anchor" href="#a-fallback-if-ggally-isnt-available"><i class="fas fa-link"></i></a>
+</h3>
+<p><code><a href="https://ggobi.github.io/ggally/reference/ggpairs.html">ggpairs()</a></code> is the recommended approach, but it’s one more package dependency, and packages do occasionally get orphaned or pulled from CRAN/Bioconductor. If that ever happens to <code>GGally</code>, the same NxN grid is buildable with nothing but base <code>ggplot2</code>, one scatter plot per marker pair, arranged into a grid:</p>
+<div class="sourceCode" id="cb173"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">gridExtra</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">EXPRS_DF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">markers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">EXPRS_DF</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">plot_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">counter</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="va">markers</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="va">markers</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">!=</span> <span class="va">j</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">plot_list</span><span class="op">[[</span><span class="va">counter</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">EXPRS_DF</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">.data</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, y <span class="op">=</span> <span class="va">.data</span><span class="op">[[</span><span class="va">j</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">i</span>, <span class="st">"vs"</span>, <span class="va">j</span><span class="op">)</span>, x <span class="op">=</span> <span class="va">i</span>, y <span class="op">=</span> <span class="va">j</span><span class="op">)</span></span>
+<span>      <span class="va">counter</span> <span class="op">&lt;-</span> <span class="va">counter</span> <span class="op">+</span> <span class="fl">1</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">grid.arrange</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">plot_list</span>, ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">markers</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>To save this one out, use <code><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html">arrangeGrob()</a></code> rather than <code><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html">grid.arrange()</a></code>. They build the same grid, but <code><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html">grid.arrange()</a></code> draws straight to the device and hands nothing back, whereas <code><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html">arrangeGrob()</a></code> returns the arranged object so you can pass it to <code><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2()</a></code>:</p>
+<div class="sourceCode" id="cb174"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">NXN_FALLBACK</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">arrangeGrob</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">plot_list</span>, ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">markers</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span></span>
+<span>  <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"channel_check_NxN_fallback.pdf"</span><span class="op">)</span>,</span>
+<span>  plot <span class="op">=</span> <span class="va">NXN_FALLBACK</span>,</span>
+<span>  width <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  height <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  limitsize <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Slower to write, slower to run (raw points rather than <code><a href="https://ggobi.github.io/ggally/reference/ggpairs.html">ggpairs()</a></code>’s hexbin option, so the overplotting problem from earlier returns), and every marker pair gets its own axis labels rather than <code><a href="https://ggobi.github.io/ggally/reference/ggpairs.html">ggpairs()</a></code>’s shared grid layout. Expect just under ten minutes on a recent laptop, measured on a MacBook Pro 16 with an M3, so give it time rather than assuming it has hung. But it depends on nothing beyond <code>ggplot2</code> itself, so keep it in mind as a fallback, not a replacement.</p>
+</div>
+<div id="taking-your-renamed-data-back-out-of-r" class="section level3" number="9.3.3">
+<h3>
+<span class="header-section-number">9.3.3</span> Taking Your Renamed Data Back Out of R<a class="anchor" aria-label="anchor" href="#taking-your-renamed-data-back-out-of-r"><i class="fas fa-link"></i></a>
+</h3>
+<p>Everything so far stays inside R, saved as an RDS file. Sometimes you want the opposite, your renamed channels back out as real FCS files, so you can open them in FlowJo, Cytobank, or another tool outside R. <code><a href="https://rdrr.io/pkg/flowCore/man/write.flowSet.html">write.flowSet()</a></code> does that:</p>
+<div class="sourceCode" id="cb175"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/write.flowSet.html">write.flowSet</a></span><span class="op">(</span><span class="va">Reordered_RENAMED_FLOWSET</span>, <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"renamed"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>This writes one <code>.fcs</code> file per sample into <code>Data/renamed/</code>, with the new channel names baked in, readable by any cytometry software, not just R. Useful any time you want to do the renaming once in R, then hand the result to a colleague or a different analysis tool.</p>
+</div>
+<div id="whats-next-4" class="section level3" number="9.3.4">
+<h3>
+<span class="header-section-number">9.3.4</span> What’s Next<a class="anchor" aria-label="anchor" href="#whats-next-4"><i class="fas fa-link"></i></a>
+</h3>
+<p>With <code>Reordered_RENAMED_FLOWSET.rds</code> saved, the next chapter removes acquisition anomalies with <code>PeacoQC</code>, a cleaning step that builds on the consistent, correctly ordered channel names you’ve just created here.</p>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="chapter-7---gating-data.html"><span class="header-section-number">8</span> Chapter 7 - Gating Data</a></div>
+<div class="next"><a href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#chapter-8---cleaning-channel-names-with-premessa"><span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
+<li><a class="nav-link" href="#what-youll-learn-3"><span class="header-section-number">9.1</span> What You’ll Learn</a></li>
+<li>
+<a class="nav-link" href="#the-essentials-6"><span class="header-section-number">9.2</span> The Essentials</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#step-1-load-required-packages-2"><span class="header-section-number">9.2.1</span> Step 1: Load Required Packages</a></li>
+<li><a class="nav-link" href="#step-2-run-premessas-channel-renaming-tool"><span class="header-section-number">9.2.2</span> Step 2: Run premessa’s Channel-Renaming Tool</a></li>
+<li><a class="nav-link" href="#which-channels-to-remove-and-why"><span class="header-section-number">9.2.3</span> Which Channels to Remove, and Why</a></li>
+<li><a class="nav-link" href="#step-3-verify-the-pruned-files"><span class="header-section-number">9.2.4</span> Step 3: Verify the Pruned Files</a></li>
+<li><a class="nav-link" href="#step-4-load-the-cleaned-files-back-into-r"><span class="header-section-number">9.2.5</span> Step 4: Load the Cleaned Files Back into R</a></li>
+<li><a class="nav-link" href="#step-5-save-your-work-1"><span class="header-section-number">9.2.6</span> Step 5: Save Your Work</a></li>
+<li><a class="nav-link" href="#step-6-give-samples-readable-names"><span class="header-section-number">9.2.7</span> Step 6: Give Samples Readable Names</a></li>
+<li><a class="nav-link" href="#step-7-reorder-the-samples"><span class="header-section-number">9.2.8</span> Step 7: Reorder the Samples</a></li>
+<li><a class="nav-link" href="#step-8-rename-channels-to-include-marker-names"><span class="header-section-number">9.2.9</span> Step 8: Rename Channels to Include Marker Names</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#a-deeper-dive-6"><span class="header-section-number">9.3</span> A Deeper Dive</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#see-what-channel-matching-actually-bought-you"><span class="header-section-number">9.3.1</span> See What Channel Matching Actually Bought You</a></li>
+<li><a class="nav-link" href="#a-fallback-if-ggally-isnt-available"><span class="header-section-number">9.3.2</span> A Fallback If GGally Isn’t Available</a></li>
+<li><a class="nav-link" href="#taking-your-renamed-data-back-out-of-r"><span class="header-section-number">9.3.3</span> Taking Your Renamed Data Back Out of R</a></li>
+<li><a class="nav-link" href="#whats-next-4"><span class="header-section-number">9.3.4</span> What’s Next</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

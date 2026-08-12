@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 17 Chapter 16 - Statistical Analysis and Publication Figures | Analysing Cytometry Data with R</title>
+<meta name="author" content="Damian Carragher">
+<meta name="author" content="StemCore Laboratories and Flow Cytometry Core">
+<meta name="author" content="Ottawa Hospital Research Institute">
+<meta name="author" content="First edition by Damian Carragher">
+<meta name="description" content="17.1 What You’ll Learn This chapter covers four ways to summarise and compare samples at a higher level than individual-cell plots: an MDS plot to see which samples resemble each other, a heatmap...">
+<meta name="generator" content="bookdown 0.47 with bs4_book()">
+<meta property="og:title" content="Chapter 17 Chapter 16 - Statistical Analysis and Publication Figures | Analysing Cytometry Data with R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="17.1 What You’ll Learn This chapter covers four ways to summarise and compare samples at a higher level than individual-cell plots: an MDS plot to see which samples resemble each other, a heatmap...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 17 Chapter 16 - Statistical Analysis and Publication Figures | Analysing Cytometry Data with R">
+<meta name="twitter:description" content="17.1 What You’ll Learn This chapter covers four ways to summarise and compare samples at a higher level than individual-cell plots: an MDS plot to see which samples resemble each other, a heatmap...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.12.0/transition.js"></script><script src="libs/bs3compat-0.12.0/tabs.js"></script><script src="libs/bs3compat-0.12.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Analysing Cytometry Data with R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> Preface and Notes</a></li>
+<li><a class="" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">2</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
+<li><a class="" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">3</span> Chapter 2 - Setting up an R environment</a></li>
+<li><a class="" href="chapter-3---packages.html"><span class="header-section-number">4</span> Chapter 3 - Packages</a></li>
+<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">5</span> Chapter 4 - File Management and Data Access</a></li>
+<li><a class="" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">6</span> Chapter 5 - Loading Cytometry Data</a></li>
+<li><a class="" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data</a></li>
+<li><a class="" href="chapter-7---gating-data.html"><span class="header-section-number">8</span> Chapter 7 - Gating Data</a></li>
+<li><a class="" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
+<li><a class="" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
+<li><a class="" href="chapter-10---downsampling.html"><span class="header-section-number">11</span> Chapter 10 - Downsampling</a></li>
+<li><a class="" href="chapter-11---data-transformation.html"><span class="header-section-number">12</span> Chapter 11 - Data Transformation</a></li>
+<li><a class="" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">13</span> Chapter 12 - Extracting Expression Data</a></li>
+<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">14</span> Chapter 13 - Full Visualisation</a></li>
+<li><a class="" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">15</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
+<li><a class="" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery</a></li>
+<li><a class="active" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">17</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="chapter-16---statistical-analysis-and-publication-figures" class="section level1" number="17">
+<h1>
+<span class="header-section-number">17</span> Chapter 16 - Statistical Analysis and Publication Figures<a class="anchor" aria-label="anchor" href="#chapter-16---statistical-analysis-and-publication-figures"><i class="fas fa-link"></i></a>
+</h1>
+<div id="what-youll-learn-11" class="section level2" number="17.1">
+<h2>
+<span class="header-section-number">17.1</span> What You’ll Learn<a class="anchor" aria-label="anchor" href="#what-youll-learn-11"><i class="fas fa-link"></i></a>
+</h2>
+<p>This chapter covers four ways to summarise and compare samples at a higher level than individual-cell plots: an MDS plot to see which samples resemble each other, a heatmap of median marker expression, a bubble plot showing the same median expression a different way, and a Non-Redundancy Score to identify which markers actually drive the differences between samples.</p>
+</div>
+<div id="the-essentials-14" class="section level2 essentials" number="17.2">
+<h2>
+<span class="header-section-number">17.2</span> The Essentials<a class="anchor" aria-label="anchor" href="#the-essentials-14"><i class="fas fa-link"></i></a>
+</h2>
+<div id="step-1-load-required-packages-and-data-6" class="section level3" number="17.2.1">
+<h3>
+<span class="header-section-number">17.2.1</span> Step 1: Load Required Packages and Data<a class="anchor" aria-label="anchor" href="#step-1-load-required-packages-and-data-6"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb295"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in readLines(f, n): line 1 appears to contain an</span></span>
+<span><span class="co">#&gt; embedded nul</span></span>
+<span><span class="co">#&gt; here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     filter, lag</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span>   <span class="co"># fsApply() and flowSet subsetting, used by the NRS section</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioinf.wehi.edu.au/limma/">limma</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggrepel.slowkow.com/">ggrepel</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"EXPRESSION_DATA_SAMPLE_ID.rds"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"other"</span>, <span class="st">"ACDwR_metadata.xlsx"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-2-compute-median-expression-per-sample" class="section level3" number="17.2.2">
+<h3>
+<span class="header-section-number">17.2.2</span> Step 2: Compute Median Expression per Sample<a class="anchor" aria-label="anchor" href="#step-2-compute-median-expression-per-sample"><i class="fas fa-link"></i></a>
+</h3>
+<p><code>EXPRESSION_DATA_SAMPLE_ID</code> carries three columns that are not markers: <code>Time</code>, <code>Event_length</code>, and <code>Original_ID</code>, the event index PeacoQC added back in Chapter 9. None of them belongs in a median expression table used for MDS, heatmap, or NRS, so exclude all three before summarising:</p>
+<div class="sourceCode" id="cb296"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">marker_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span><span class="op">)</span>,</span>
+<span>                       <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"sample_id"</span>, <span class="st">"Time"</span>, <span class="st">"Event_length"</span>, <span class="st">"Original_ID"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">EXPRESSION_DATA_SAMPLE_ID_TABLE</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">sample_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html">across</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html">everything</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">median</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">MEDIAN_EXPRESSION_DATA_SAMPLE_ID</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">EXPRESSION_DATA_SAMPLE_ID_TABLE</span><span class="op">[</span>, <span class="va">marker_cols</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">MEDIAN_EXPRESSION_DATA_SAMPLE_ID</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">EXPRESSION_DATA_SAMPLE_ID_TABLE</span><span class="op">$</span><span class="va">sample_id</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">MEDIAN_EXPRESSION_DATA_SAMPLE_ID</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"MEDIAN_EXPRESSION_DATA_SAMPLE_ID.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-3-mds-plot" class="section level3" number="17.2.3">
+<h3>
+<span class="header-section-number">17.2.3</span> Step 3: MDS Plot<a class="anchor" aria-label="anchor" href="#step-3-mds-plot"><i class="fas fa-link"></i></a>
+</h3>
+<p>MDS (multidimensional scaling) places samples in 2D space such that samples with similar overall marker expression profiles sit close together, useful for spotting outlier samples or batch effects at a glance:</p>
+<div class="sourceCode" id="cb297"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/plotMDS.html">plotMDS</a></span><span class="op">(</span><span class="va">MEDIAN_EXPRESSION_DATA_SAMPLE_ID</span>, plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">MDS_TABLE</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>MDS1 <span class="op">=</span> <span class="va">mds</span><span class="op">$</span><span class="va">x</span>, MDS2 <span class="op">=</span> <span class="va">mds</span><span class="op">$</span><span class="va">y</span>, sample_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">MEDIAN_EXPRESSION_DATA_SAMPLE_ID</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="va">MDS_TABLE</span><span class="op">$</span><span class="va">sample_id</span>, <span class="va">metadata</span><span class="op">$</span><span class="va">sample_id</span><span class="op">)</span></span>
+<span><span class="va">MDS_TABLE</span><span class="op">$</span><span class="va">condition</span> <span class="op">&lt;-</span> <span class="va">metadata</span><span class="op">$</span><span class="va">condition</span><span class="op">[</span><span class="va">mm</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">MDS_TABLE</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">MDS1</span>, y <span class="op">=</span> <span class="va">MDS2</span>, color <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">6</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggrepel.slowkow.com/reference/geom_text_repel.html">geom_label_repel</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">sample_id</span><span class="op">)</span>, fontface <span class="op">=</span> <span class="st">"bold"</span>, fill <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html">coord_fixed</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="16-Statistics-and-Publication-Figures_files/figure-html/mds-plot-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb298"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"mds_plot.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"mds_plot.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-4-heatmap-of-median-expression" class="section level3" number="17.2.4">
+<h3>
+<span class="header-section-number">17.2.4</span> Step 4: Heatmap of Median Expression<a class="anchor" aria-label="anchor" href="#step-4-heatmap-of-median-expression"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb299"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">pheatmap</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">RColorBrewer</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">MEDIAN_EXPRESSION_DATA_SAMPLE_ID</span><span class="op">)</span>, <span class="va">metadata</span><span class="op">$</span><span class="va">sample_id</span><span class="op">)</span></span>
+<span><span class="va">annotation_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>condition <span class="op">=</span> <span class="va">metadata</span><span class="op">$</span><span class="va">condition</span><span class="op">[</span><span class="va">mm</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">annotation_col</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">MEDIAN_EXPRESSION_DATA_SAMPLE_ID</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">color</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html">brewer.pal</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">9</span>, name <span class="op">=</span> <span class="st">"YlOrRd"</span><span class="op">)</span><span class="op">)</span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">heatmap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/pheatmap/man/pheatmap.html">pheatmap</a></span><span class="op">(</span><span class="va">MEDIAN_EXPRESSION_DATA_SAMPLE_ID</span>, color <span class="op">=</span> <span class="va">color</span>, annotation_col <span class="op">=</span> <span class="va">annotation_col</span>, fontsize <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
+<span><span class="va">heatmap</span></span></code></pre></div>
+<div class="inline-figure"><img src="16-Statistics-and-Publication-Figures_files/figure-html/heatmap-1.png" alt="" width="672"></div>
+</div>
+<div id="step-5-bubble-plot-of-median-expression" class="section level3" number="17.2.5">
+<h3>
+<span class="header-section-number">17.2.5</span> Step 5: Bubble Plot of Median Expression<a class="anchor" aria-label="anchor" href="#step-5-bubble-plot-of-median-expression"><i class="fas fa-link"></i></a>
+</h3>
+<p>The Step 4 heatmap and this bubble plot show the same <code>MEDIAN_EXPRESSION_DATA_SAMPLE_ID</code> data, just encoded differently, tile colour there, dot size and colour together here. Both are useful: a heatmap reads well as a whole grid at a glance, a bubble plot makes individual high/low values easier to compare precisely once you’re looking closely at one marker or one sample. Needs melting to long format first, one row per marker/sample pair, since <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code> expects that shape rather than the wide matrix <code><a href="https://rdrr.io/pkg/pheatmap/man/pheatmap.html">pheatmap()</a></code> took directly:</p>
+<div class="sourceCode" id="cb300"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">MEDIAN_EXPRESSION_LONG</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>marker <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">MEDIAN_EXPRESSION_DATA_SAMPLE_ID</span><span class="op">)</span>, <span class="va">MEDIAN_EXPRESSION_DATA_SAMPLE_ID</span>, check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">MEDIAN_EXPRESSION_LONG</span> <span class="op">&lt;-</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="va">MEDIAN_EXPRESSION_LONG</span>, <span class="op">-</span><span class="va">marker</span>,</span>
+<span>  names_to <span class="op">=</span> <span class="st">"sample_id"</span>, values_to <span class="op">=</span> <span class="st">"median_expression"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">MEDIAN_EXPRESSION_LONG</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">sample_id</span>, y <span class="op">=</span> <span class="va">marker</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">median_expression</span>, color <span class="op">=</span> <span class="va">median_expression</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_color_viridis_c</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">""</span>, y <span class="op">=</span> <span class="st">""</span>, size <span class="op">=</span> <span class="st">"Median expression"</span>, color <span class="op">=</span> <span class="st">"Median expression"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, axis.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="16-Statistics-and-Publication-Figures_files/figure-html/bubble-plot-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb301"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"bubble_median_expression.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"bubble_median_expression.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Note:</strong> <code>check.names = FALSE</code> is needed because sample IDs in this course’s metadata contain spaces and <code>%</code> (e.g. <code>2%PFA - NAS PERM</code>), which <code><a href="https://rdrr.io/r/base/data.frame.html">data.frame()</a></code> would otherwise silently rewrite into syntactically valid but unrecognisable column names.</p>
+</div>
+<div id="step-6-non-redundancy-score-nrs" class="section level3" number="17.2.6">
+<h3>
+<span class="header-section-number">17.2.6</span> Step 6: Non-Redundancy Score (NRS)<a class="anchor" aria-label="anchor" href="#step-6-non-redundancy-score-nrs"><i class="fas fa-link"></i></a>
+</h3>
+<p>NRS identifies which markers contribute most to the differences between samples, using PCA on each sample’s events and weighting each marker by how much it drives the first few principal components:</p>
+<div class="sourceCode" id="cb302"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">NRS</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">ncomp</span> <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">pr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/prcomp.html">prcomp</a></span><span class="op">(</span><span class="va">x</span>, center <span class="op">=</span> <span class="cn">TRUE</span>, scale. <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span>  <span class="va">score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums-methods.html">rowSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/outer.html">outer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>, <span class="va">pr</span><span class="op">$</span><span class="va">sdev</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">ncomp</span><span class="op">]</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">pr</span><span class="op">$</span><span class="va">rotation</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="va">ncomp</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">score</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># marker_cols came from the data frame, and the flowSet spells seven of those antigens</span></span>
+<span><span class="co"># differently, so it cannot be used here. Take the names from the flowSet itself.</span></span>
+<span><span class="va">marker_cols_flowset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span><span class="op">)</span>,</span>
+<span>                               <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Time"</span>, <span class="st">"Event_length"</span>, <span class="st">"Original_ID"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nrs_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span><span class="op">[</span>, <span class="va">marker_cols_flowset</span><span class="op">]</span>, <span class="va">NRS</span>, use.exprs <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">nrs_sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">nrs_matrix</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums-methods.html">colMeans</a></span><span class="op">(</span><span class="va">nrs_sample</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">markers_ord</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">nrs</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nrs_sample</span><span class="op">$</span><span class="va">sample_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">nrs_sample</span><span class="op">)</span></span>
+<span><span class="va">nrs_df</span> <span class="op">&lt;-</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="va">nrs_sample</span>, <span class="op">-</span><span class="va">sample_id</span>, names_to <span class="op">=</span> <span class="st">"antigen"</span>, values_to <span class="op">=</span> <span class="st">"nrs"</span><span class="op">)</span></span>
+<span><span class="va">nrs_df</span><span class="op">$</span><span class="va">antigen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">nrs_df</span><span class="op">$</span><span class="va">antigen</span>, levels <span class="op">=</span> <span class="va">markers_ord</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">nrs_df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">antigen</span>, y <span class="op">=</span> <span class="va">nrs</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">sample_id</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.9</span>, position <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/position_jitter.html">position_jitter</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.3</span>, height <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span>outlier.color <span class="op">=</span> <span class="cn">NA</span>, fill <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html">stat_summary</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"mean"</span>, geom <span class="op">=</span> <span class="st">"point"</span>, shape <span class="op">=</span> <span class="fl">21</span>, fill <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="16-Statistics-and-Publication-Figures_files/figure-html/nrs-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb303"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"nrs_plot_unfinished_labels.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"nrs_plot_unfinished_labels.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+<p>Markers further left (higher mean NRS) contribute more to distinguishing samples from each other; markers further right contribute less.</p>
+</div>
+<div id="step-7-finish-the-labels" class="section level3" number="17.2.7">
+<h3>
+<span class="header-section-number">17.2.7</span> Step 7: Finish the Labels<a class="anchor" aria-label="anchor" href="#step-7-finish-the-labels"><i class="fas fa-link"></i></a>
+</h3>
+<p>Look along the x axis before you go any further. Seven antigens are not spelled the way you wrote them:</p>
+<pre><code>Dy162Di_Ki.67        should be   Dy162Di_Ki-67
+Nd144Di_HBB.FITC     should be   Nd144Di_HBB-FITC
+Nd142Di_EMP.MAEA     should be   Nd142Di_EMP-MAEA
+Nd145Di_C.EBPa       should be   Nd145Di_C-EBPa
+Gd156Di_GATA1.PE     should be   Gd156Di_GATA1-PE
+Tm169Di_FLI1.abcam   should be   Tm169Di_FLI1 abcam
+Y89Di_CD41..         should be   Y89Di_CD41   (with two trailing spaces you cannot see)</code></pre>
+<p>Two other antigens, <code>Er167Di_PU.1</code> and <code>Yb174Di_HA.11</code>, carry dots of their own. Those are correct and untouched, which is part of why this is easy to miss: the axis is a mixture of dots that belong and dots that do not.</p>
+<p>The figure is not wrong. Every score on it is correct, and the markers are in the right order. The labels are simply unfinished, and a figure with unfinished labels is not a publication figure.</p>
+<p>The cause is <code><a href="https://rdrr.io/r/base/data.frame.html">data.frame()</a></code> on the line above the plot. It calls <code>check.names</code> by default, which rewrites anything that is not a legal R variable name: hyphens and spaces become dots, and the two trailing spaces on <code>Y89Di_CD41</code> become two more. You have already switched this off once in this chapter, at Step 5, for exactly the same reason. Here it is switched off again, and the plot rebuilt from the same numbers:</p>
+<div class="sourceCode" id="cb305"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">nrs_finished</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">nrs_matrix</span>, check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nrs_finished_order</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums-methods.html">colMeans</a></span><span class="op">(</span><span class="va">nrs_finished</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nrs_finished</span><span class="op">$</span><span class="va">sample_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">nrs_finished</span><span class="op">)</span></span>
+<span><span class="va">nrs_finished_df</span> <span class="op">&lt;-</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="va">nrs_finished</span>, <span class="op">-</span><span class="va">sample_id</span>,</span>
+<span>                                       names_to <span class="op">=</span> <span class="st">"antigen"</span>, values_to <span class="op">=</span> <span class="st">"nrs"</span><span class="op">)</span></span>
+<span><span class="va">nrs_finished_df</span><span class="op">$</span><span class="va">antigen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">nrs_finished_df</span><span class="op">$</span><span class="va">antigen</span>, levels <span class="op">=</span> <span class="va">nrs_finished_order</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">nrs_finished_df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">antigen</span>, y <span class="op">=</span> <span class="va">nrs</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">sample_id</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.9</span>, position <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/position_jitter.html">position_jitter</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.3</span>, height <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span>outlier.color <span class="op">=</span> <span class="cn">NA</span>, fill <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html">stat_summary</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"mean"</span>, geom <span class="op">=</span> <span class="st">"point"</span>, shape <span class="op">=</span> <span class="fl">21</span>, fill <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="16-Statistics-and-Publication-Figures_files/figure-html/nrs-finished-labels-1.png" alt="" width="672"></div>
+<div class="sourceCode" id="cb306"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"nrs_plot.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"nrs_plot.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+<p>Both versions are saved, <code>nrs_plot_unfinished_labels</code> and <code>nrs_plot</code>, so you can put them side by side. <code>nrs_plot</code> is the one to use.</p>
+</div>
+<div id="step-8-record-your-package-versions" class="section level3" number="17.2.8">
+<h3>
+<span class="header-section-number">17.2.8</span> Step 8: Record Your Package Versions<a class="anchor" aria-label="anchor" href="#step-8-record-your-package-versions"><i class="fas fa-link"></i></a>
+</h3>
+<p>Throughout this course, saving each pipeline stage as an RDS file and setting a seed before every random step (downsampling, UMAP, tSNE, clustering) has already made your analysis reproducible in the sense that matters most: anyone, including you in six months, can rerun any chapter and get the identical result, or pick up from any saved stage without redoing earlier work. The one thing that isn’t recorded anywhere is which package versions actually produced those results:</p>
+<div class="sourceCode" id="cb307"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; R version 4.6.0 (2026-04-24)</span></span>
+<span><span class="co">#&gt; Platform: aarch64-apple-darwin23</span></span>
+<span><span class="co">#&gt; Running under: macOS Tahoe 26.5.2</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Matrix products: default</span></span>
+<span><span class="co">#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRblas.0.dylib </span></span>
+<span><span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; locale:</span></span>
+<span><span class="co">#&gt; [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; time zone: America/Toronto</span></span>
+<span><span class="co">#&gt; tzcode source: internal</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attached base packages:</span></span>
+<span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets </span></span>
+<span><span class="co">#&gt; [6] methods   base     </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; other attached packages:</span></span>
+<span><span class="co">#&gt;  [1] tidyr_1.3.2        RColorBrewer_1.1-3</span></span>
+<span><span class="co">#&gt;  [3] pheatmap_1.0.13    cowplot_1.2.0     </span></span>
+<span><span class="co">#&gt;  [5] ggrepel_0.9.8      ggplot2_4.0.3     </span></span>
+<span><span class="co">#&gt;  [7] limma_3.68.4       flowCore_2.24.0   </span></span>
+<span><span class="co">#&gt;  [9] dplyr_1.2.1        here_1.0.2        </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span><span class="co">#&gt;  [1] sass_0.4.10         generics_0.1.4     </span></span>
+<span><span class="co">#&gt;  [3] xml2_1.6.0          digest_0.6.39      </span></span>
+<span><span class="co">#&gt;  [5] magrittr_2.0.5      evaluate_1.0.5     </span></span>
+<span><span class="co">#&gt;  [7] grid_4.6.0          bookdown_0.47      </span></span>
+<span><span class="co">#&gt;  [9] fastmap_1.2.0       cellranger_1.1.0   </span></span>
+<span><span class="co">#&gt; [11] rprojroot_2.1.1     jsonlite_2.0.0     </span></span>
+<span><span class="co">#&gt; [13] purrr_1.2.2         viridisLite_0.4.3  </span></span>
+<span><span class="co">#&gt; [15] scales_1.4.0        textshaping_1.0.5  </span></span>
+<span><span class="co">#&gt; [17] jquerylib_0.1.4     cli_3.6.6          </span></span>
+<span><span class="co">#&gt; [19] rlang_1.3.0         RProtoBufLib_2.24.0</span></span>
+<span><span class="co">#&gt; [21] Biobase_2.72.0      withr_3.0.3        </span></span>
+<span><span class="co">#&gt; [23] cachem_1.1.0        yaml_2.3.12        </span></span>
+<span><span class="co">#&gt; [25] otel_0.2.0          cytolib_2.24.0     </span></span>
+<span><span class="co">#&gt; [27] tools_4.6.0         memoise_2.0.1      </span></span>
+<span><span class="co">#&gt; [29] BiocGenerics_0.58.1 vctrs_0.7.3        </span></span>
+<span><span class="co">#&gt; [31] R6_2.6.1            matrixStats_1.5.0  </span></span>
+<span><span class="co">#&gt; [33] stats4_4.6.0        lifecycle_1.0.5    </span></span>
+<span><span class="co">#&gt; [35] S4Vectors_0.50.1    fs_2.1.0           </span></span>
+<span><span class="co">#&gt; [37] ragg_1.5.2          pkgconfig_2.0.3    </span></span>
+<span><span class="co">#&gt; [39] pillar_1.11.1       bslib_0.12.0       </span></span>
+<span><span class="co">#&gt; [41] gtable_0.3.6        Rcpp_1.1.2         </span></span>
+<span><span class="co">#&gt; [43] glue_1.8.1          systemfonts_1.3.2  </span></span>
+<span><span class="co">#&gt; [45] statmod_1.5.2       xfun_0.60          </span></span>
+<span><span class="co">#&gt; [47] tibble_3.3.1        tidyselect_1.2.1   </span></span>
+<span><span class="co">#&gt; [49] rstudioapi_0.19.0   knitr_1.51         </span></span>
+<span><span class="co">#&gt; [51] farver_2.1.2        htmltools_0.5.9    </span></span>
+<span><span class="co">#&gt; [53] labeling_0.4.3      rmarkdown_2.31     </span></span>
+<span><span class="co">#&gt; [55] compiler_4.6.0      S7_0.2.2           </span></span>
+<span><span class="co">#&gt; [57] readxl_1.5.0        downlit_0.4.5</span></span></code></pre></div>
+<p>Save this output alongside your analysis, in a script comment, a README, or a supplementary file for publication. If <code>FlowSOM</code> or <code>flowCore</code> changes behaviour in a future release, this is what tells you, or a reviewer, exactly what you ran it with.</p>
+</div>
+</div>
+<div id="a-deeper-dive-14" class="section level2 deeper-dive" number="17.3">
+<h2>
+<span class="header-section-number">17.3</span> A Deeper Dive<a class="anchor" aria-label="anchor" href="#a-deeper-dive-14"><i class="fas fa-link"></i></a>
+</h2>
+<p>These tools answer different questions: MDS tells you which whole samples resemble each other, the heatmap and bubble plot both show which markers are high or low in which samples (just laid out differently), and NRS tells you which markers are actually doing the work of separating your samples, useful for deciding which markers deserve closer follow-up versus which are largely uninformative for this particular dataset.</p>
+<div id="why-the-labels-arrive-unfinished" class="section level3" number="17.3.1">
+<h3>
+<span class="header-section-number">17.3.1</span> Why the Labels Arrive Unfinished<a class="anchor" aria-label="anchor" href="#why-the-labels-arrive-unfinished"><i class="fas fa-link"></i></a>
+</h3>
+<p><code>check.names</code> is not a bug and it is not <code><a href="https://rdrr.io/r/base/data.frame.html">data.frame()</a></code> being careless. It is R protecting itself. A data frame’s column names are meant to be usable as variable names, and <code>Ki-67</code> is not one: R would read the hyphen as a minus sign and try to subtract 67 from an object called <code>Ki</code>. Spaces are worse. So <code><a href="https://rdrr.io/r/base/data.frame.html">data.frame()</a></code> quietly substitutes dots, which are legal, and says nothing.</p>
+<p>Quietly is the part worth remembering. There is no warning, no error, and nothing in the object to tell you it happened. The rename lands in the same class of problem as the positional join in Chapter 12: your analysis keeps running, the numbers stay correct, and something you did not authorise has changed underneath the results. Here it costs you a figure caption. In Chapter 12 it cost you the biology.</p>
+<p>It also has a second effect, which you may already have hit. The renamed columns no longer match the channel names in the flowSet, which still holds the originals, so a name that works against one object fails against the other:</p>
+<div class="sourceCode" id="cb308"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># marker_cols came from the data frame. The flowSet spells seven of these differently,</span></span>
+<span><span class="co"># so this fails. Deliberate: the error below is the output of this chunk, not a typo.</span></span>
+<span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span><span class="op">[</span>, <span class="va">marker_cols</span><span class="op">]</span></span>
+<span><span class="co">#&gt; Error:</span></span>
+<span><span class="co">#&gt; ! Subset out of bounds</span></span></code></pre></div>
+<p>That is why Step 6 builds <code>marker_cols_flowset</code> from the flowSet’s own <code><a href="https://rdrr.io/r/base/colnames.html">colnames()</a></code> rather than reusing <code>marker_cols</code>. Two objects, two spellings, and you have to know which one you are addressing. When in doubt, print <code><a href="https://rdrr.io/r/base/colnames.html">colnames()</a></code> of both and compare them.</p>
+</div>
+<div id="beyond-sessioninfo-renv" class="section level3" number="17.3.2">
+<h3>
+<span class="header-section-number">17.3.2</span> Beyond sessionInfo(): renv<a class="anchor" aria-label="anchor" href="#beyond-sessioninfo-renv"><i class="fas fa-link"></i></a>
+</h3>
+<p><code><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo()</a></code> tells you what you ran, after the fact. It doesn’t stop your packages from silently updating between now and your next analysis, and it can’t hand someone else your exact environment to install in one step. The <code>renv</code> package does both: it creates a project-specific library (so updating a package elsewhere on your computer doesn’t touch this project), and a lockfile recording every package’s exact version, which anyone can restore with <code>renv::restore()</code>. It’s a more complete answer to reproducibility than <code><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo()</a></code>, at the cost of real overhead, a lockfile to maintain, an initialisation step, and a restore workflow to teach, worth adopting once you’re running analyses you’ll need to defend or rerun months later, not something this introductory course sets up for you.</p>
+</div>
+<div id="whats-next-12" class="section level3" number="17.3.3">
+<h3>
+<span class="header-section-number">17.3.3</span> What’s Next<a class="anchor" aria-label="anchor" href="#whats-next-12"><i class="fas fa-link"></i></a>
+</h3>
+<p>This is the final chapter in the core pipeline. From here, the specific statistical tests and figures you build depend on your actual experimental question, comparing conditions, tracking populations over time, or correlating marker expression with an outcome.</p>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery</a></div>
+<div class="empty"></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#chapter-16---statistical-analysis-and-publication-figures"><span class="header-section-number">17</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+<li><a class="nav-link" href="#what-youll-learn-11"><span class="header-section-number">17.1</span> What You’ll Learn</a></li>
+<li>
+<a class="nav-link" href="#the-essentials-14"><span class="header-section-number">17.2</span> The Essentials</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#step-1-load-required-packages-and-data-6"><span class="header-section-number">17.2.1</span> Step 1: Load Required Packages and Data</a></li>
+<li><a class="nav-link" href="#step-2-compute-median-expression-per-sample"><span class="header-section-number">17.2.2</span> Step 2: Compute Median Expression per Sample</a></li>
+<li><a class="nav-link" href="#step-3-mds-plot"><span class="header-section-number">17.2.3</span> Step 3: MDS Plot</a></li>
+<li><a class="nav-link" href="#step-4-heatmap-of-median-expression"><span class="header-section-number">17.2.4</span> Step 4: Heatmap of Median Expression</a></li>
+<li><a class="nav-link" href="#step-5-bubble-plot-of-median-expression"><span class="header-section-number">17.2.5</span> Step 5: Bubble Plot of Median Expression</a></li>
+<li><a class="nav-link" href="#step-6-non-redundancy-score-nrs"><span class="header-section-number">17.2.6</span> Step 6: Non-Redundancy Score (NRS)</a></li>
+<li><a class="nav-link" href="#step-7-finish-the-labels"><span class="header-section-number">17.2.7</span> Step 7: Finish the Labels</a></li>
+<li><a class="nav-link" href="#step-8-record-your-package-versions"><span class="header-section-number">17.2.8</span> Step 8: Record Your Package Versions</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#a-deeper-dive-14"><span class="header-section-number">17.3</span> A Deeper Dive</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#why-the-labels-arrive-unfinished"><span class="header-section-number">17.3.1</span> Why the Labels Arrive Unfinished</a></li>
+<li><a class="nav-link" href="#beyond-sessioninfo-renv"><span class="header-section-number">17.3.2</span> Beyond sessionInfo(): renv</a></li>
+<li><a class="nav-link" href="#whats-next-12"><span class="header-section-number">17.3.3</span> What’s Next</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

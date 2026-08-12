@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 7 Chapter 6 - Visualising Cytometry Data | Analysing Cytometry Data with R</title>
+<meta name="author" content="Damian Carragher">
+<meta name="author" content="StemCore Laboratories and Flow Cytometry Core">
+<meta name="author" content="Ottawa Hospital Research Institute">
+<meta name="author" content="First edition by Damian Carragher">
+<meta name="description" content="7.1 What You’ll Learn Cytometry data lives in high-dimensional space - dozens of markers measured simultaneously on each cell. Visualisation helps us see patterns, identify populations, and verify...">
+<meta name="generator" content="bookdown 0.47 with bs4_book()">
+<meta property="og:title" content="Chapter 7 Chapter 6 - Visualising Cytometry Data | Analysing Cytometry Data with R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="7.1 What You’ll Learn Cytometry data lives in high-dimensional space - dozens of markers measured simultaneously on each cell. Visualisation helps us see patterns, identify populations, and verify...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 7 Chapter 6 - Visualising Cytometry Data | Analysing Cytometry Data with R">
+<meta name="twitter:description" content="7.1 What You’ll Learn Cytometry data lives in high-dimensional space - dozens of markers measured simultaneously on each cell. Visualisation helps us see patterns, identify populations, and verify...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.12.0/transition.js"></script><script src="libs/bs3compat-0.12.0/tabs.js"></script><script src="libs/bs3compat-0.12.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Analysing Cytometry Data with R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> Preface and Notes</a></li>
+<li><a class="" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">2</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
+<li><a class="" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">3</span> Chapter 2 - Setting up an R environment</a></li>
+<li><a class="" href="chapter-3---packages.html"><span class="header-section-number">4</span> Chapter 3 - Packages</a></li>
+<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">5</span> Chapter 4 - File Management and Data Access</a></li>
+<li><a class="" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">6</span> Chapter 5 - Loading Cytometry Data</a></li>
+<li><a class="active" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data</a></li>
+<li><a class="" href="chapter-7---gating-data.html"><span class="header-section-number">8</span> Chapter 7 - Gating Data</a></li>
+<li><a class="" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
+<li><a class="" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
+<li><a class="" href="chapter-10---downsampling.html"><span class="header-section-number">11</span> Chapter 10 - Downsampling</a></li>
+<li><a class="" href="chapter-11---data-transformation.html"><span class="header-section-number">12</span> Chapter 11 - Data Transformation</a></li>
+<li><a class="" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">13</span> Chapter 12 - Extracting Expression Data</a></li>
+<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">14</span> Chapter 13 - Full Visualisation</a></li>
+<li><a class="" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">15</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
+<li><a class="" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery</a></li>
+<li><a class="" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">17</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="chapter-6---visualising-cytometry-data" class="section level1" number="7">
+<h1>
+<span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data<a class="anchor" aria-label="anchor" href="#chapter-6---visualising-cytometry-data"><i class="fas fa-link"></i></a>
+</h1>
+<div id="what-youll-learn-2" class="section level2" number="7.1">
+<h2>
+<span class="header-section-number">7.1</span> What You’ll Learn<a class="anchor" aria-label="anchor" href="#what-youll-learn-2"><i class="fas fa-link"></i></a>
+</h2>
+<p>Cytometry data lives in high-dimensional space - dozens of markers measured simultaneously on each cell. Visualisation helps us see patterns, identify populations, and verify our analysis at every step. This chapter teaches you to create the plots you’ll need throughout the course.</p>
+</div>
+<div id="understanding-cytometry-visualisation" class="section level2" number="7.2">
+<h2>
+<span class="header-section-number">7.2</span> Understanding Cytometry Visualisation<a class="anchor" aria-label="anchor" href="#understanding-cytometry-visualisation"><i class="fas fa-link"></i></a>
+</h2>
+<p>Traditional cytometry analysis relies heavily on visual inspection. We look at scatter plots to:
+- Identify cell populations
+- Set gates
+- Verify data quality
+- Compare samples
+- Present results</p>
+<p>In R, we use the <code>ggcyto</code> package, which combines:
+- <code>flowCore</code>: Cytometry data structures
+- <code>ggplot2</code>: R’s powerful plotting system</p>
+</div>
+<div id="the-essentials-4" class="section level2 essentials" number="7.3">
+<h2>
+<span class="header-section-number">7.3</span> The Essentials<a class="anchor" aria-label="anchor" href="#the-essentials-4"><i class="fas fa-link"></i></a>
+</h2>
+<div id="step-1-load-required-packages-1" class="section level3" number="7.3.1">
+<h3>
+<span class="header-section-number">7.3.1</span> Step 1: Load Required Packages<a class="anchor" aria-label="anchor" href="#step-1-load-required-packages-1"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RGLab/ggcyto/issues">ggcyto</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: ggplot2</span></span>
+<span><span class="co">#&gt; Loading required package: ncdfFlow</span></span>
+<span><span class="co">#&gt; Loading required package: BH</span></span>
+<span><span class="co">#&gt; Loading required package: flowWorkspace</span></span>
+<span><span class="co">#&gt; As part of improvements to flowWorkspace, some behavior of</span></span>
+<span><span class="co">#&gt; GatingSet objects has changed. For details, please read the section</span></span>
+<span><span class="co">#&gt; titled "The cytoframe and cytoset classes" in the package vignette:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   vignette("flowWorkspace-Introduction", "flowWorkspace")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in readLines(f, n): line 1 appears to contain an</span></span>
+<span><span class="co">#&gt; embedded nul</span></span>
+<span><span class="co">#&gt; here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R</span></span></code></pre></div>
+</div>
+<div id="step-2-load-your-data" class="section level3" number="7.3.2">
+<h3>
+<span class="header-section-number">7.3.2</span> Step 2: Load Your Data<a class="anchor" aria-label="anchor" href="#step-2-load-your-data"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="step-3-your-first-cytometry-plot" class="section level3" number="7.3.3">
+<h3>
+<span class="header-section-number">7.3.3</span> Step 3: Your First Cytometry Plot<a class="anchor" aria-label="anchor" href="#step-3-your-first-cytometry-plot"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="06-Data-Visualisation_files/figure-html/first-plot-1.png" alt="" width="672"></div>
+<p>This creates a basic scatter plot showing DNA markers (Ir191 and Ir193) for the first sample.</p>
+<p><strong>What you should see:</strong> A scatter plot with most events clustered together, some spread along the axes.</p>
+</div>
+<div id="step-4-improve-the-visualisation" class="section level3" number="7.3.4">
+<h3>
+<span class="header-section-number">7.3.4</span> Step 4: Improve the Visualisation<a class="anchor" aria-label="anchor" href="#step-4-improve-the-visualisation"><i class="fas fa-link"></i></a>
+</h3>
+<p>The default plot compresses data onto the axes. Transform it for better visibility:</p>
+<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span>, bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="06-Data-Visualisation_files/figure-html/plot-with-transform-1.png" alt="" width="672"></div>
+<p><strong>What changed:</strong>
+- Data spreads out from the axes
+- Populations become visible
+- Colours show density</p>
+</div>
+<div id="step-5-plot-multiple-samples" class="section level3" number="7.3.5">
+<h3>
+<span class="header-section-number">7.3.5</span> Step 5: Plot Multiple Samples<a class="anchor" aria-label="anchor" href="#step-5-plot-multiple-samples"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span>, bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="06-Data-Visualisation_files/figure-html/plot-all-samples-1.png" alt="" width="672"></div>
+<p>This creates separate plots for each sample, making it easy to compare them.</p>
+<p>Channel names are all you have at this point in the pipeline, the metal isotope names you saw in Chapter 5. Marker names (like “CD34”) only become available once you’ve matched channels to your panel in Chapter 8, every plot in this chapter uses channel names for that reason.</p>
+</div>
+</div>
+<div id="a-deeper-dive-4" class="section level2 deeper-dive" number="7.4">
+<h2>
+<span class="header-section-number">7.4</span> A Deeper Dive<a class="anchor" aria-label="anchor" href="#a-deeper-dive-4"><i class="fas fa-link"></i></a>
+</h2>
+<div id="understanding-autoplot" class="section level3" number="7.4.1">
+<h3>
+<span class="header-section-number">7.4.1</span> Understanding autoplot<a class="anchor" aria-label="anchor" href="#understanding-autoplot"><i class="fas fa-link"></i></a>
+</h3>
+<p><code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot()</a></code> is ggcyto’s quick plotting function. It automatically:
+- Detects you’re plotting cytometry data
+- Creates appropriate plot types
+- Handles both flowFrames and flowSets</p>
+<p><strong>Basic syntax:</strong></p>
+<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">data</span>, x <span class="op">=</span> <span class="st">"marker1"</span>, y <span class="op">=</span> <span class="st">"marker2"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="binning-and-hexagonal-plots" class="section level3" number="7.4.2">
+<h3>
+<span class="header-section-number">7.4.2</span> Binning and Hexagonal Plots<a class="anchor" aria-label="anchor" href="#binning-and-hexagonal-plots"><i class="fas fa-link"></i></a>
+</h3>
+<p>By default, <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot()</a></code> creates hexagonal density plots rather than showing individual points.</p>
+<p><strong>Why hexagons?</strong>
+- Cytometry files contain thousands to millions of events
+- Plotting every point is slow and cluttered
+- Binning shows density patterns clearly</p>
+<p><strong>Control bin number:</strong></p>
+<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span>, bins <span class="op">=</span> <span class="fl">64</span><span class="op">)</span>   <span class="co"># Coarser</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span>, bins <span class="op">=</span> <span class="fl">256</span><span class="op">)</span>  <span class="co"># Finer</span></span></code></pre></div>
+<p>Higher bin numbers show more detail but take longer to render.</p>
+</div>
+<div id="transformation-for-visualisation" class="section level3" number="7.4.3">
+<h3>
+<span class="header-section-number">7.4.3</span> Transformation for Visualisation<a class="anchor" aria-label="anchor" href="#transformation-for-visualisation"><i class="fas fa-link"></i></a>
+</h3>
+<p>Raw cytometry data is compressed - negative populations cluster near zero, positive populations spread across orders of magnitude.</p>
+<p><strong>Scale functions transform axes:</strong></p>
+<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span>    <span class="co"># Hyperbolic arcsinh (recommended)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_logicle.html">scale_y_logicle</a></span><span class="op">(</span><span class="op">)</span>             <span class="co"># Logicle transform</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span>               <span class="co"># Log10 (can't handle negatives)</span></span></code></pre></div>
+<p><strong>Why transform?</strong>
+- Separates negative and positive populations
+- Shows dim populations clearly
+- Matches FlowJo visualisation</p>
+<p>We’ll cover transformations in detail in Chapter 11. For now, use <code><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh()</a></code> for visualisation.</p>
+</div>
+<div id="selecting-different-channels" class="section level3" number="7.4.4">
+<h3>
+<span class="header-section-number">7.4.4</span> Selecting Different Channels<a class="anchor" aria-label="anchor" href="#selecting-different-channels"><i class="fas fa-link"></i></a>
+</h3>
+<p>You can plot any channel in your dataset:</p>
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span>, x <span class="op">=</span> <span class="st">"Pr141Di"</span>, y <span class="op">=</span> <span class="st">"Nd142Di"</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Check available channels:</strong></p>
+<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="single-sample-vs-multiple-samples" class="section level3" number="7.4.5">
+<h3>
+<span class="header-section-number">7.4.5</span> Single Sample vs Multiple Samples<a class="anchor" aria-label="anchor" href="#single-sample-vs-multiple-samples"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>Plot one sample:</strong></p>
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Plot all samples:</strong></p>
+<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span><span class="op">)</span></span></code></pre></div>
+<p>When plotting flowSets, ggcyto automatically creates a panel with one plot per sample.</p>
+</div>
+<div id="controlling-facets" class="section level3" number="7.4.6">
+<h3>
+<span class="header-section-number">7.4.6</span> Controlling Facets<a class="anchor" aria-label="anchor" href="#controlling-facets"><i class="fas fa-link"></i></a>
+</h3>
+<p>Facets are the small multiple plots created for each sample.</p>
+<p><strong>Arrange facets:</strong></p>
+<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">name</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>  <span class="co"># 3 columns</span></span></code></pre></div>
+</div>
+<div id="using-ggcyto-instead-of-autoplot" class="section level3" number="7.4.7">
+<h3>
+<span class="header-section-number">7.4.7</span> Using ggcyto Instead of autoplot<a class="anchor" aria-label="anchor" href="#using-ggcyto-instead-of-autoplot"><i class="fas fa-link"></i></a>
+</h3>
+<p><code><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto()</a></code> provides more control than <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot()</a></code>:</p>
+<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">FLOWSET</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">name</span><span class="op">)</span></span></code></pre></div>
+<p>This gives the same result as <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot()</a></code> but with explicit control over each element.</p>
+</div>
+<div id="plot-types" class="section level3" number="7.4.8">
+<h3>
+<span class="header-section-number">7.4.8</span> Plot Types<a class="anchor" aria-label="anchor" href="#plot-types"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>Hexagonal density plot (default):</strong></p>
+<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Point plot (use sparingly - slow with many events):</strong></p>
+<div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.5</span>, alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Density contour plot:</strong></p>
+<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density_2d.html">geom_density2d</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="one-dimensional-plots-histograms" class="section level3" number="7.4.9">
+<h3>
+<span class="header-section-number">7.4.9</span> One-Dimensional Plots (Histograms)<a class="anchor" aria-label="anchor" href="#one-dimensional-plots-histograms"><i class="fas fa-link"></i></a>
+</h3>
+<p>View distribution of a single marker:</p>
+<div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span>, <span class="st">"Pr141Di"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Overlay multiple samples:</strong></p>
+<div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RGLab/ggcyto/issues">ggcyto</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">FLOWSET</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Pr141Di</span>,colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span>,group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_freqpoly</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html">after_stat</a></span><span class="op">(</span><span class="va">count</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">count</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>This shows all samples on one plot instead of separate facets.</p>
+<p>This chunk is more involved than most of this chapter’s plotting code, and that’s deliberate, not a sign something’s wrong. <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot()</a></code> and <code><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto()</a></code> handle single samples and side-by-side facets as one-liners, but neither has a built-in shortcut for stacking every sample’s distribution onto one shared axis, the overlay view FlowJo gives you natively when you tick multiple samples in its histogram tool. Getting that same overlay here means dropping down to plain <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot()</a></code> and <code><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_freqpoly()</a></code>, and doing the colour/grouping-by-sample wiring yourself (<code>colour = factor(name), group = factor(name)</code>) rather than letting <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot()</a></code> do it for you.</p>
+</div>
+<div id="customising-appearance" class="section level3" number="7.4.10">
+<h3>
+<span class="header-section-number">7.4.10</span> Customising Appearance<a class="anchor" aria-label="anchor" href="#customising-appearance"><i class="fas fa-link"></i></a>
+</h3>
+<p><code>ggcyto</code> uses ggplot2, so all ggplot2 customisation works:</p>
+<p><strong>Change colours:</strong></p>
+<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span>, bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_fill_viridis_c</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Add titles:</strong></p>
+<div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"DNA Markers"</span>, </span>
+<span>       subtitle <span class="op">=</span> <span class="st">"Sample 1"</span>,</span>
+<span>       x <span class="op">=</span> <span class="st">"DNA (Ir191)"</span>, </span>
+<span>       y <span class="op">=</span> <span class="st">"DNA (Ir193)"</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Apply themes:</strong></p>
+<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="saving-plots" class="section level3" number="7.4.11">
+<h3>
+<span class="header-section-number">7.4.11</span> Saving Plots<a class="anchor" aria-label="anchor" href="#saving-plots"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>Save last plot:</strong></p>
+<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"dna_plot.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">8</span>, height <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Save specific plot:</strong></p>
+<div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span><span class="op">)</span></span>
+<span><span class="va">p</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"dna_all_samples.png"</span><span class="op">)</span>, plot <span class="op">=</span> <span class="va">p</span>, width <span class="op">=</span> <span class="fl">12</span>, height <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Go look at the file:</strong> <code><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave()</a></code> writes the PNG to disk silently, RStudio won’t pop it open for you. Find <code>dna_all_samples.png</code> in your <code>Figures/</code> folder (Finder on Mac, File Explorer on Windows) and open it directly to actually see what you saved, don’t just trust that the code ran.</p>
+</div>
+<div id="comparing-samples-side-by-side" class="section level3" number="7.4.12">
+<h3>
+<span class="header-section-number">7.4.12</span> Comparing Samples Side by Side<a class="anchor" aria-label="anchor" href="#comparing-samples-side-by-side"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>Overlay two samples:</strong></p>
+<div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span></span>
+<span>  <span class="va">FLOWSET</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">Ir191Di</span>,</span>
+<span>    y <span class="op">=</span> <span class="va">Ir193Di</span>,</span>
+<span>    colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density_2d.html">geom_density_2d</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="building-complex-plots" class="section level3" number="7.4.13">
+<h3>
+<span class="header-section-number">7.4.13</span> Building Complex Plots<a class="anchor" aria-label="anchor" href="#building-complex-plots"><i class="fas fa-link"></i></a>
+</h3>
+<p>Combine multiple plot layers:</p>
+<div class="sourceCode" id="cb116"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_fill_viridis_c</a></span><span class="op">(</span>option <span class="op">=</span> <span class="st">"plasma"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"DNA Markers"</span>, x <span class="op">=</span> <span class="st">"DNA 1 (Ir191)"</span>, y <span class="op">=</span> <span class="st">"DNA 2 (Ir193)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="verification-plots" class="section level3" number="7.4.14">
+<h3>
+<span class="header-section-number">7.4.14</span> Verification Plots<a class="anchor" aria-label="anchor" href="#verification-plots"><i class="fas fa-link"></i></a>
+</h3>
+<p>Use plots to verify your data at each step:</p>
+<p><strong>Check all markers quickly:</strong></p>
+<div class="sourceCode" id="cb117"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Plot all markers</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Compare before and after processing:</strong></p>
+<div class="sourceCode" id="cb118"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Untransformed"</span><span class="op">)</span></span>
+<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Ir193Di"</span>, bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Transformed"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">p1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">p2</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="common-plot-combinations" class="section level3" number="7.4.15">
+<h3>
+<span class="header-section-number">7.4.15</span> Common Plot Combinations<a class="anchor" aria-label="anchor" href="#common-plot-combinations"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>Two channels together:</strong></p>
+<div class="sourceCode" id="cb119"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span>, x <span class="op">=</span> <span class="st">"Ir191Di"</span>, y <span class="op">=</span> <span class="st">"Pr141Di"</span>, bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Cell size parameters:</strong></p>
+<div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span>, x <span class="op">=</span> <span class="st">"Event_length"</span>, y <span class="op">=</span> <span class="st">"Width"</span>, bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Channel expression:</strong></p>
+<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">FLOWSET</span>, x <span class="op">=</span> <span class="st">"Sm149Di"</span>, y <span class="op">=</span> <span class="st">"Yb172Di"</span>, bins <span class="op">=</span> <span class="fl">128</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_x_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/scale_x_flowCore_fasinh.html">scale_y_flowCore_fasinh</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="troubleshooting-visualisation" class="section level3" number="7.4.16">
+<h3>
+<span class="header-section-number">7.4.16</span> Troubleshooting Visualisation<a class="anchor" aria-label="anchor" href="#troubleshooting-visualisation"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>Problem:</strong> Plot shows compressed data on axes<br><strong>Solution:</strong> Add transformation scales</p>
+<p><strong>Problem:</strong> Can’t see populations<br><strong>Solution:</strong> Adjust bin number (try 64, 128, or 256)</p>
+<p><strong>Problem:</strong> Plot is slow to render<br><strong>Solution:</strong> Use fewer bins or subset your data</p>
+<p><strong>Problem:</strong> Channel name not recognised
+<strong>Solution:</strong> Check exact spelling with <code>colnames(FLOWSET)</code></p>
+<p><strong>Problem:</strong> Colours unclear
+<strong>Solution:</strong> Try different colour scales (viridis, plasma, etc.)</p>
+</div>
+<div id="best-practices" class="section level3" number="7.4.17">
+<h3>
+<span class="header-section-number">7.4.17</span> Best Practices<a class="anchor" aria-label="anchor" href="#best-practices"><i class="fas fa-link"></i></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Always transform for visualisation</strong> - Raw data is hard to interpret</li>
+<li>
+<strong>Use consistent bin numbers</strong> - Makes visual comparison easier</li>
+<li>
+<strong>Save plots as you go</strong> - Document your analysis steps</li>
+<li>
+<strong>Check multiple marker combinations</strong> - Verify data quality</li>
+<li>
+<strong>Use meaningful titles</strong> - Future you will thank present you</li>
+</ol>
+</div>
+<div id="whats-next-3" class="section level3" number="7.4.18">
+<h3>
+<span class="header-section-number">7.4.18</span> What’s Next<a class="anchor" aria-label="anchor" href="#whats-next-3"><i class="fas fa-link"></i></a>
+</h3>
+<p>With visualisation skills in hand, you’re ready to move into the data cleaning phase, covered over the next several chapters: gating, channel matching, and artefact removal.</p>
+<p>The plots you create here will be essential for understanding every subsequent analysis step.</p>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">6</span> Chapter 5 - Loading Cytometry Data</a></div>
+<div class="next"><a href="chapter-7---gating-data.html"><span class="header-section-number">8</span> Chapter 7 - Gating Data</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#chapter-6---visualising-cytometry-data"><span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data</a></li>
+<li><a class="nav-link" href="#what-youll-learn-2"><span class="header-section-number">7.1</span> What You’ll Learn</a></li>
+<li><a class="nav-link" href="#understanding-cytometry-visualisation"><span class="header-section-number">7.2</span> Understanding Cytometry Visualisation</a></li>
+<li>
+<a class="nav-link" href="#the-essentials-4"><span class="header-section-number">7.3</span> The Essentials</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#step-1-load-required-packages-1"><span class="header-section-number">7.3.1</span> Step 1: Load Required Packages</a></li>
+<li><a class="nav-link" href="#step-2-load-your-data"><span class="header-section-number">7.3.2</span> Step 2: Load Your Data</a></li>
+<li><a class="nav-link" href="#step-3-your-first-cytometry-plot"><span class="header-section-number">7.3.3</span> Step 3: Your First Cytometry Plot</a></li>
+<li><a class="nav-link" href="#step-4-improve-the-visualisation"><span class="header-section-number">7.3.4</span> Step 4: Improve the Visualisation</a></li>
+<li><a class="nav-link" href="#step-5-plot-multiple-samples"><span class="header-section-number">7.3.5</span> Step 5: Plot Multiple Samples</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#a-deeper-dive-4"><span class="header-section-number">7.4</span> A Deeper Dive</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#understanding-autoplot"><span class="header-section-number">7.4.1</span> Understanding autoplot</a></li>
+<li><a class="nav-link" href="#binning-and-hexagonal-plots"><span class="header-section-number">7.4.2</span> Binning and Hexagonal Plots</a></li>
+<li><a class="nav-link" href="#transformation-for-visualisation"><span class="header-section-number">7.4.3</span> Transformation for Visualisation</a></li>
+<li><a class="nav-link" href="#selecting-different-channels"><span class="header-section-number">7.4.4</span> Selecting Different Channels</a></li>
+<li><a class="nav-link" href="#single-sample-vs-multiple-samples"><span class="header-section-number">7.4.5</span> Single Sample vs Multiple Samples</a></li>
+<li><a class="nav-link" href="#controlling-facets"><span class="header-section-number">7.4.6</span> Controlling Facets</a></li>
+<li><a class="nav-link" href="#using-ggcyto-instead-of-autoplot"><span class="header-section-number">7.4.7</span> Using ggcyto Instead of autoplot</a></li>
+<li><a class="nav-link" href="#plot-types"><span class="header-section-number">7.4.8</span> Plot Types</a></li>
+<li><a class="nav-link" href="#one-dimensional-plots-histograms"><span class="header-section-number">7.4.9</span> One-Dimensional Plots (Histograms)</a></li>
+<li><a class="nav-link" href="#customising-appearance"><span class="header-section-number">7.4.10</span> Customising Appearance</a></li>
+<li><a class="nav-link" href="#saving-plots"><span class="header-section-number">7.4.11</span> Saving Plots</a></li>
+<li><a class="nav-link" href="#comparing-samples-side-by-side"><span class="header-section-number">7.4.12</span> Comparing Samples Side by Side</a></li>
+<li><a class="nav-link" href="#building-complex-plots"><span class="header-section-number">7.4.13</span> Building Complex Plots</a></li>
+<li><a class="nav-link" href="#verification-plots"><span class="header-section-number">7.4.14</span> Verification Plots</a></li>
+<li><a class="nav-link" href="#common-plot-combinations"><span class="header-section-number">7.4.15</span> Common Plot Combinations</a></li>
+<li><a class="nav-link" href="#troubleshooting-visualisation"><span class="header-section-number">7.4.16</span> Troubleshooting Visualisation</a></li>
+<li><a class="nav-link" href="#best-practices"><span class="header-section-number">7.4.17</span> Best Practices</a></li>
+<li><a class="nav-link" href="#whats-next-3"><span class="header-section-number">7.4.18</span> What’s Next</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

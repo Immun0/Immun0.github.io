@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 3 Chapter 2 - Setting up an R environment | Analysing Cytometry Data with R</title>
+<meta name="author" content="Damian Carragher">
+<meta name="author" content="StemCore Laboratories and Flow Cytometry Core">
+<meta name="author" content="Ottawa Hospital Research Institute">
+<meta name="author" content="First edition by Damian Carragher">
+<meta name="description" content="3.1 What We’re Building An “R environment” means having all the software tools installed and configured so you can write and run R commands. Think of it like setting up a laboratory - you need the...">
+<meta name="generator" content="bookdown 0.47 with bs4_book()">
+<meta property="og:title" content="Chapter 3 Chapter 2 - Setting up an R environment | Analysing Cytometry Data with R">
+<meta property="og:type" content="book">
+<meta property="og:description" content="3.1 What We’re Building An “R environment” means having all the software tools installed and configured so you can write and run R commands. Think of it like setting up a laboratory - you need the...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 3 Chapter 2 - Setting up an R environment | Analysing Cytometry Data with R">
+<meta name="twitter:description" content="3.1 What We’re Building An “R environment” means having all the software tools installed and configured so you can write and run R commands. Think of it like setting up a laboratory - you need the...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.12.0/transition.js"></script><script src="libs/bs3compat-0.12.0/tabs.js"></script><script src="libs/bs3compat-0.12.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Analysing Cytometry Data with R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> Preface and Notes</a></li>
+<li><a class="" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">2</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
+<li><a class="active" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">3</span> Chapter 2 - Setting up an R environment</a></li>
+<li><a class="" href="chapter-3---packages.html"><span class="header-section-number">4</span> Chapter 3 - Packages</a></li>
+<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">5</span> Chapter 4 - File Management and Data Access</a></li>
+<li><a class="" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">6</span> Chapter 5 - Loading Cytometry Data</a></li>
+<li><a class="" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data</a></li>
+<li><a class="" href="chapter-7---gating-data.html"><span class="header-section-number">8</span> Chapter 7 - Gating Data</a></li>
+<li><a class="" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
+<li><a class="" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
+<li><a class="" href="chapter-10---downsampling.html"><span class="header-section-number">11</span> Chapter 10 - Downsampling</a></li>
+<li><a class="" href="chapter-11---data-transformation.html"><span class="header-section-number">12</span> Chapter 11 - Data Transformation</a></li>
+<li><a class="" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">13</span> Chapter 12 - Extracting Expression Data</a></li>
+<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">14</span> Chapter 13 - Full Visualisation</a></li>
+<li><a class="" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">15</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
+<li><a class="" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery</a></li>
+<li><a class="" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">17</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="chapter-2---setting-up-an-r-environment" class="section level1" number="3">
+<h1>
+<span class="header-section-number">3</span> Chapter 2 - Setting up an <code>R</code> environment<a class="anchor" aria-label="anchor" href="#chapter-2---setting-up-an-r-environment"><i class="fas fa-link"></i></a>
+</h1>
+<div id="what-were-building" class="section level2" number="3.1">
+<h2>
+<span class="header-section-number">3.1</span> What We’re Building<a class="anchor" aria-label="anchor" href="#what-were-building"><i class="fas fa-link"></i></a>
+</h2>
+<p>An “R environment” means having all the software tools installed and configured so you can write and run R commands. Think of it like setting up a laboratory - you need the right equipment in the right places before you can do experiments.
+We’ll install three things in order:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>R</strong> - the programming language itself</li>
+<li>
+<strong>Compiler Tools</strong> - additional tools R needs to work with some packages (RTools on Windows, Xcode Command Line Tools on Mac, r-base-dev on Linux)</li>
+<li>
+<strong>RStudio</strong> - a program that makes R easier to use</li>
+</ol>
+<p>The order matters because each tool depends on the previous ones working correctly.</p>
+</div>
+<div id="version-notes" class="section level2" number="3.2">
+<h2>
+<span class="header-section-number">3.2</span> Version Notes<a class="anchor" aria-label="anchor" href="#version-notes"><i class="fas fa-link"></i></a>
+</h2>
+<p><strong>These instructions were originally tested with R 4.3+ and RTools43 (Windows), and confirmed still working on R 4.6.0 (2026-04-24, Mac).</strong></p>
+<p><strong>Recommendation:</strong> Install the latest versions of R and your compiler tools, even if they’re newer than what’s shown here
+If you encounter version-related errors: The concepts remain the same, but specific variable names may need updating for your R version</p>
+</div>
+<div id="the-essentials" class="section level2 essentials" number="3.3">
+<h2>
+<span class="header-section-number">3.3</span> The Essentials<a class="anchor" aria-label="anchor" href="#the-essentials"><i class="fas fa-link"></i></a>
+</h2>
+<p><strong>Step 1: Install R</strong>
+R is the core programming language. Without it, nothing else will work. Go to <a href="https://cloud.r-project.org/" class="uri">https://cloud.r-project.org/</a> and download the version for your operating system:</p>
+<ul>
+<li>
+<strong>Windows:</strong> Click “Download R for Windows” &gt; “base” &gt; download the latest version (something like “R-4.3.x for Windows”) &gt; run the installer with default settings</li>
+<li>
+<strong>Mac:</strong> Click “Download R for macOS” &gt; choose the installer that matches your Mac (Apple silicon or Intel) &gt; run the installer with default settings</li>
+<li>
+<strong>Linux:</strong> Install through your distribution’s package manager instead of the website, for example <code>sudo apt install r-base</code> on Ubuntu/Debian, or the equivalent for your distribution</li>
+</ul>
+<pre><code>#&gt; Warning in readLines(f, n): line 1 appears to contain an
+#&gt; embedded nul</code></pre>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:install-r-step-1"></span>
+<img src="Images/Install_R_Step_1.png" alt="Download the correct R version for your operating system" width="100%"><p class="caption">
+Figure 3.1: Download the correct R version for your operating system
+</p>
+</div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:install-r-step-4"></span>
+<img src="Images/Install_R_Step_4.png" alt="Download the latest version of R. The version you download may be higher than the one pictured" width="100%"><p class="caption">
+Figure 3.2: Download the latest version of R. The version you download may be higher than the one pictured
+</p>
+</div>
+<p>Once installed, you can open R directly to confirm it worked, you’ll see a single window with version information and a blinking cursor:</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:use-r"></span>
+<img src="Images/Use_R.png" alt="The base R interface is basic but functional" width="100%"><p class="caption">
+Figure 3.3: The base R interface is basic but functional
+</p>
+</div>
+<p><strong>Success check:</strong> You should now have R installed. We’ll test it more thoroughly after installing the other components.</p>
+<p><strong>Step 2: Install Compiler Tools</strong>
+Many R packages contain code written in other languages (like C++) that needs to be “compiled.” R needs the right compiler tools installed to do that. What you install depends on your operating system:</p>
+<ul>
+<li>
+<strong>Windows:</strong> Install RTools from <a href="https://cran.r-project.org/bin/windows/Rtools/" class="uri">https://cran.r-project.org/bin/windows/Rtools/</a>. Download the version matching your R install (likely RTools46) and install with default settings.</li>
+<li>
+<strong>Mac:</strong> Install Xcode Command Line Tools. Open the Terminal app and run <code>xcode-select --install</code>, then follow the prompts.</li>
+<li>
+<strong>Linux:</strong> Install the R development package through your distribution’s package manager, for example <code>sudo apt install r-base-dev</code> on Ubuntu/Debian.</li>
+</ul>
+<p><strong>Step 3: Connect the Compiler Tools to R</strong>
+This step tells R where to find the compiler tools you just installed.</p>
+<p><strong>Windows only:</strong> Open R (look for “R” in your Start menu), then type this command exactly and press Enter:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html">writeLines</a></span><span class="op">(</span><span class="st">'PATH="${RTOOLS43_HOME}\\usr\\bin;${PATH}"'</span>, con <span class="op">=</span> <span class="st">"~/.Renviron"</span><span class="op">)</span></span></code></pre></div>
+<p><strong>What this does:</strong> Creates a configuration file that tells R where RTools is installed. Close R completely, then reopen it.</p>
+<p><strong>Mac and Linux:</strong> No extra configuration step is needed, Xcode Command Line Tools and r-base-dev connect to R automatically once installed.</p>
+<p><strong>Step 4: Verify the Compiler Tools Work</strong></p>
+<p>Test that R can find them, on any operating system:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.which.html">Sys.which</a></span><span class="op">(</span><span class="st">"make"</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Success looks like this (Windows):</strong></p>
+<pre><code>                                  make
+"C:\\rtools43\\usr\\bin\\make.exe"</code></pre>
+<p><strong>Success looks like this (Mac/Linux):</strong></p>
+<pre><code>        make
+"/usr/bin/make"</code></pre>
+<p><strong>Problem looks like this:</strong></p>
+<pre><code>make
+ ""</code></pre>
+<p>Empty quotes mean the compiler tools aren’t configured correctly. On Windows this means RTools isn’t connected (repeat Step 3); on Mac or Linux it usually means the Step 2 install didn’t complete.</p>
+<p><strong>Step 5: Install RStudio</strong></p>
+<p>RStudio is what’s called an “IDE” - an Integrated Development Environment. An IDE is a program that combines multiple programming tools into one interface. Instead of having separate programs for writing code, running it, viewing results, and managing files, an IDE puts everything in one place.
+While you could use R by itself, RStudio makes R much easier to use by providing helpful features like syntax highlighting, project organisation, and integrated help.</p>
+<ol style="list-style-type: decimal">
+<li>Go to <a href="https://posit.co/downloads/" class="uri">https://posit.co/downloads/</a>
+</li>
+<li>Click “Download RStudio Desktop” (the free version)</li>
+<li>Download and install with default settings</li>
+</ol>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:install-rstudio"></span>
+<img src="Images/InstallRStudio.gif" alt="There are several RStudio versions, the free Desktop version is the one we need" width="100%"><p class="caption">
+Figure 3.4: There are several RStudio versions, the free Desktop version is the one we need
+</p>
+</div>
+<p><strong>Step 6: Open RStudio and Verify Everything Works</strong></p>
+<p>Open RStudio (not R - look for “RStudio” in your programs)
+You should see a window divided into several sections (called “panes”)</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:rstudio-overview"></span>
+<img src="Images/RStudio_Overview.PNG" alt="What RStudio looks like when it's set up and running" width="100%"><p class="caption">
+Figure 3.5: What RStudio looks like when it’s set up and running
+</p>
+</div>
+<p>In the bottom-left pane (called the “Console”), type:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">R.version</span></span>
+<span><span class="co">#&gt;                _                           </span></span>
+<span><span class="co">#&gt; platform       aarch64-apple-darwin23      </span></span>
+<span><span class="co">#&gt; arch           aarch64                     </span></span>
+<span><span class="co">#&gt; os             darwin23                    </span></span>
+<span><span class="co">#&gt; system         aarch64, darwin23           </span></span>
+<span><span class="co">#&gt; status                                     </span></span>
+<span><span class="co">#&gt; major          4                           </span></span>
+<span><span class="co">#&gt; minor          6.0                         </span></span>
+<span><span class="co">#&gt; year           2026                        </span></span>
+<span><span class="co">#&gt; month          04                          </span></span>
+<span><span class="co">#&gt; day            24                          </span></span>
+<span><span class="co">#&gt; svn rev        89956                       </span></span>
+<span><span class="co">#&gt; language       R                           </span></span>
+<span><span class="co">#&gt; version.string R version 4.6.0 (2026-04-24)</span></span>
+<span><span class="co">#&gt; nickname       Because it was There</span></span></code></pre></div>
+<p><strong>Success looks like this (Windows):</strong></p>
+<pre><code>               _
+platform       x86_64-w64-mingw32
+arch           x86_64
+os             mingw32
+system         x86_64, mingw32
+status
+major          4
+minor          3.2
+year           2023
+month          10
+day            31
+svn rev        85441
+language       R
+version.string R version 4.3.2 (2023-10-31 ucrt)
+nickname       Eye Holes</code></pre>
+<p><strong>Success looks like this (Mac):</strong></p>
+<pre><code>               _
+platform       aarch64-apple-darwin23
+arch           aarch64
+os             darwin23
+system         aarch64, darwin23
+status
+major          4
+minor          6.0
+year           2026
+month          04
+day            24
+svn rev        89956
+language       R
+version.string R version 4.6.0 (2026-04-24)
+nickname       Because it was There</code></pre>
+<p>Real output, checked against an actual Mac install running current R. The exact numbers will differ depending on your R version and operating system (Mac will show <code>x86_64</code> instead of <code>aarch64</code> on an Intel Mac, for instance), what matters is that something like this prints with no error message.</p>
+<p><strong>Problem:</strong> If you see <code>Error: object 'R.version' not found</code> or similar, RStudio isn’t finding a working R installation, go back and confirm Step 1 completed successfully.</p>
+</div>
+<div id="common-problems-and-solutions" class="section level2" number="3.4">
+<h2>
+<span class="header-section-number">3.4</span> Common Problems and Solutions<a class="anchor" aria-label="anchor" href="#common-problems-and-solutions"><i class="fas fa-link"></i></a>
+</h2>
+<p><strong>Problem:</strong> <code>Sys.which("make")</code> returns empty quotes</p>
+<p><strong>Cause:</strong> The compiler tools aren’t properly connected to R</p>
+<p><strong>Solution:</strong></p>
+<ul>
+<li>
+<strong>Windows:</strong> Make sure you closed and reopened R after Step 3, and check that RTools installed correctly. If using an older R version, try:</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html">writeLines</a></span><span class="op">(</span><span class="st">'PATH="${RTOOLS42_HOME}\\usr\\bin;${PATH}"'</span>, con <span class="op">=</span> <span class="st">"~/.Renviron"</span><span class="op">)</span></span></code></pre></div>
+<ul>
+<li>
+<strong>Mac:</strong> Check that Xcode Command Line Tools finished installing by running <code>xcode-select --install</code> again, it will tell you if they’re already installed.</li>
+<li>
+<strong>Linux:</strong> Check that <code>r-base-dev</code> (or your distribution’s equivalent) installed without errors.</li>
+</ul>
+<p><strong>Problem:</strong> RStudio won’t start</p>
+<ul>
+<li>Make sure R installed successfully first</li>
+<li>Try restarting your computer</li>
+<li>Run R directly to test if the problem is R or RStudio</li>
+</ul>
+<p><strong>Problem:</strong> Can’t find downloaded files</p>
+<p><strong>Solution:</strong> Check your Downloads folder and make sure you’re downloading the version that matches your operating system</p>
+</div>
+<div id="a-deeper-dive" class="section level2 deeper-dive" number="3.5">
+<h2>
+<span class="header-section-number">3.5</span> A Deeper Dive<a class="anchor" aria-label="anchor" href="#a-deeper-dive"><i class="fas fa-link"></i></a>
+</h2>
+<div id="understanding-the-components" class="section level3" number="3.5.1">
+<h3>
+<span class="header-section-number">3.5.1</span> Understanding the Components<a class="anchor" aria-label="anchor" href="#understanding-the-components"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>R (the language):</strong> The core program that interprets and runs R commands. It includes basic mathematical functions, data manipulation tools, and the ability to load additional packages.</p>
+<p><strong>Compiler Tools:</strong> Many R packages contain code written in other programming languages like C++ that needs to be “compiled” (translated into computer instructions). RTools (Windows), Xcode Command Line Tools (Mac), or r-base-dev (Linux) provide the compilers and other development tools needed for this process.</p>
+<p><strong>RStudio (the IDE):</strong> While you can run R commands directly in the basic R console, RStudio provides a much more user-friendly environment. As an Integrated Development Environment, it combines multiple tools:</p>
+<ul>
+<li>A code editor with syntax highlighting (colors that make code easier to read)</li>
+<li>The R console for running commands</li>
+<li>Project organisation tools</li>
+<li>An integrated help system</li>
+<li>A plot viewing area</li>
+<li>File management capabilities</li>
+</ul>
+</div>
+<div id="the-rstudio-interface" class="section level3" number="3.5.2">
+<h3>
+<span class="header-section-number">3.5.2</span> The RStudio Interface<a class="anchor" aria-label="anchor" href="#the-rstudio-interface"><i class="fas fa-link"></i></a>
+</h3>
+<p>When you open RStudio, you’ll see four main areas (called “panes”):</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:rstudio-panes-overview"></span>
+<img src="Images/RStudioConsoleZoom.gif" alt="The four main panes: Console/Terminal/Jobs, Source, Environment, and Files/Plots/Help/Viewer" width="100%"><p class="caption">
+Figure 3.6: The four main panes: Console/Terminal/Jobs, Source, Environment, and Files/Plots/Help/Viewer
+</p>
+</div>
+<p><strong>Console (bottom-left):</strong> Where you type R commands and see results. This is the same as the basic R program, but integrated into RStudio.</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:rstudio-console"></span>
+<img src="Images/RStudioConsole.gif" alt="The console works exactly like the base R interface you tested earlier" width="100%"><p class="caption">
+Figure 3.7: The console works exactly like the base R interface you tested earlier
+</p>
+</div>
+<p>This pane also has a <strong>Terminal</strong> tab, giving access to your system’s command line (bash, PowerShell, etc.), not something this course uses directly, but it’s there if you need it, for tasks like remote log-in, file management, or version control with Git:</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:rstudio-terminal"></span>
+<img src="Images/RStudioPanesTerminal.gif" alt="The Terminal tab gives access to your system shell without leaving RStudio" width="100%"><p class="caption">
+Figure 3.8: The Terminal tab gives access to your system shell without leaving RStudio
+</p>
+</div>
+<p>And a <strong>Jobs</strong> tab, for running scripts in the background, useful for long installs or long-running analyses that would otherwise block you from using R while they run:</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:rstudio-jobs"></span>
+<img src="Images/RStudioPanesJobs.gif" alt="The Jobs tab lets you run scripts in the background" width="100%"><p class="caption">
+Figure 3.9: The Jobs tab lets you run scripts in the background
+</p>
+</div>
+<p><strong>Source (top-left):</strong> Where you write and edit longer R scripts. A script is a file containing multiple R commands that you want to save and reuse. Think of this as your notebook where you write down the steps of your analysis.</p>
+<p><strong>Environment (top-right):</strong> Shows the data objects you’ve created. When you load cytometry data, it will appear here so you can see what data you’re working with.</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:rstudio-environment"></span>
+<img src="Images/RStudioEnvironmentPaneEnvironment.gif" alt="As you create variables and load data, they appear here with basic info about each one" width="100%"><p class="caption">
+Figure 3.10: As you create variables and load data, they appear here with basic info about each one
+</p>
+</div>
+<p><strong>Files/Plots (bottom-right):</strong> Contains several tabs:</p>
+<ul>
+<li>
+<strong>Files:</strong> A file browser for navigating folders</li>
+</ul>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:rstudio-files"></span>
+<img src="Images/RStudioFilesPaneFiles.gif" alt="The Files tab works like a standard file browser" width="100%"><p class="caption">
+Figure 3.11: The Files tab works like a standard file browser
+</p>
+</div>
+<ul>
+<li>
+<strong>Plots:</strong> Where graphs will appear when you create them</li>
+</ul>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:rstudio-plots"></span>
+<img src="Images/RStudioConsolePanePlots.gif" alt="The Plots tab shows every plot you generate; scroll through multiple plots with the arrow icons" width="100%"><p class="caption">
+Figure 3.12: The Plots tab shows every plot you generate; scroll through multiple plots with the arrow icons
+</p>
+</div>
+<ul>
+<li>
+<strong>Help:</strong> Where documentation appears when you ask for help (<code>?functionname</code> or <code>??keyword</code>)</li>
+</ul>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:rstudio-help"></span>
+<img src="Images/RStudioFilesPaneHelp.gif" alt="The Help tab shows package documentation and vignettes" width="100%"><p class="caption">
+Figure 3.13: The Help tab shows package documentation and vignettes
+</p>
+</div>
+<ul>
+<li>
+<strong>Viewer:</strong> Displays local web-compatible content, tables, interactive plots, and similar</li>
+</ul>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:rstudio-viewer"></span>
+<img src="Images/RStudioFilesPanelViewer.gif" alt="The Viewer tab displays local web-compatible output like interactive tables" width="100%"><p class="caption">
+Figure 3.14: The Viewer tab displays local web-compatible output like interactive tables
+</p>
+</div>
+<ul>
+<li>
+<strong>Packages:</strong> Shows installed packages (we’ll learn about packages in the next chapter)</li>
+</ul>
+</div>
+<div id="why-this-setup-process-matters" class="section level3" number="3.5.3">
+<h3>
+<span class="header-section-number">3.5.3</span> Why This Setup Process Matters<a class="anchor" aria-label="anchor" href="#why-this-setup-process-matters"><i class="fas fa-link"></i></a>
+</h3>
+<p>This installation sequence creates a stable foundation for everything that follows. Each component serves a specific purpose:</p>
+<ol style="list-style-type: decimal">
+<li>R provides the analytical capabilities</li>
+<li>Compiler tools enable installation of specialized packages</li>
+<li>RStudio makes the whole system usable for daily work</li>
+</ol>
+<p>Without this proper setup, you’ll encounter errors when trying to install the cytometry-specific packages we need for analysis.</p>
+</div>
+<div id="packages-preview" class="section level3" number="3.5.4">
+<h3>
+<span class="header-section-number">3.5.4</span> Packages Preview<a class="anchor" aria-label="anchor" href="#packages-preview"><i class="fas fa-link"></i></a>
+</h3>
+<p>Once this environment is working, you’ll install “packages” - collections of additional functions written by other researchers. A package is like an add-on that gives R new capabilities. The cytometry analysis we’ll do depends on several specialized packages that extend R’s basic functions.</p>
+</div>
+<div id="file-paths-and-working-directories" class="section level3" number="3.5.5">
+<h3>
+<span class="header-section-number">3.5.5</span> File Paths and Working Directories<a class="anchor" aria-label="anchor" href="#file-paths-and-working-directories"><i class="fas fa-link"></i></a>
+</h3>
+<p>As you start using R, you’ll encounter the concept of “working directories” - the folder where R looks for files by default. A working directory is like R’s current location on your computer’s file system. RStudio helps manage this through “Projects” which we’ll set up in the next chapter.</p>
+<p>Understanding file paths is crucial for cytometry analysis because you’ll be loading data files and saving results. The setup we’re building now will make file management much easier later.</p>
+</div>
+<div id="next-steps" class="section level3" number="3.5.6">
+<h3>
+<span class="header-section-number">3.5.6</span> Next Steps<a class="anchor" aria-label="anchor" href="#next-steps"><i class="fas fa-link"></i></a>
+</h3>
+<p>With R, your compiler tools, and RStudio installed, you have a complete environment for cytometry analysis. The next chapter will show you how to extend R’s capabilities by installing specialized packages for working with cytometry data.</p>
+<p>Don’t worry if some of this setup felt abstract - the purpose will become clear when we start loading actual data and creating visualisations.</p>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">2</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></div>
+<div class="next"><a href="chapter-3---packages.html"><span class="header-section-number">4</span> Chapter 3 - Packages</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#chapter-2---setting-up-an-r-environment"><span class="header-section-number">3</span> Chapter 2 - Setting up an R environment</a></li>
+<li><a class="nav-link" href="#what-were-building"><span class="header-section-number">3.1</span> What We’re Building</a></li>
+<li><a class="nav-link" href="#version-notes"><span class="header-section-number">3.2</span> Version Notes</a></li>
+<li><a class="nav-link" href="#the-essentials"><span class="header-section-number">3.3</span> The Essentials</a></li>
+<li><a class="nav-link" href="#common-problems-and-solutions"><span class="header-section-number">3.4</span> Common Problems and Solutions</a></li>
+<li>
+<a class="nav-link" href="#a-deeper-dive"><span class="header-section-number">3.5</span> A Deeper Dive</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#understanding-the-components"><span class="header-section-number">3.5.1</span> Understanding the Components</a></li>
+<li><a class="nav-link" href="#the-rstudio-interface"><span class="header-section-number">3.5.2</span> The RStudio Interface</a></li>
+<li><a class="nav-link" href="#why-this-setup-process-matters"><span class="header-section-number">3.5.3</span> Why This Setup Process Matters</a></li>
+<li><a class="nav-link" href="#packages-preview"><span class="header-section-number">3.5.4</span> Packages Preview</a></li>
+<li><a class="nav-link" href="#file-paths-and-working-directories"><span class="header-section-number">3.5.5</span> File Paths and Working Directories</a></li>
+<li><a class="nav-link" href="#next-steps"><span class="header-section-number">3.5.6</span> Next Steps</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

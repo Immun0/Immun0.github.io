@@ -1,0 +1,10 @@
+# macOS metadata. These are created by writing to a non-native filesystem and have
+# no business in a website repository. 324 of them were tracked before 2026-08-12.
+._*
+.DS_Store
+
+# Editor and session leftovers
+.Rhistory
+.Rproj.user/
+debug.log
+Thumbs.db

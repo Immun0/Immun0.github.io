@@ -125,7 +125,7 @@
 <span class="header-section-number">6.3.2</span> Step 2: Load the Course Dataset<a class="anchor" aria-label="anchor" href="#step-2-load-the-course-dataset"><i class="fas fa-link"></i></a>
 </h3>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/read.flowSet.html">read.flowSet</a></span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"fcs"</span><span class="op">)</span>, pattern <span class="op">=</span> <span class="st">"\\.fcs$"</span><span class="op">)</span> <span class="co"># The "pattern ="\\.fcs" command ensures that the data import can take place even if there are other irrelevant files and folders present. If you don't use this ad there is an unexpected folder or file, you'lkl get an error.</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/read.flowSet.html">read.flowSet</a></span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"fcs"</span><span class="op">)</span>, pattern <span class="op">=</span> <span class="st">"\\.fcs$"</span><span class="op">)</span> <span class="co"># The pattern = "\\.fcs$" argument ensures that the data import can take place even if there are other irrelevant files and folders present. If you don't use this and there is an unexpected folder or file, you'll get an error.</span></span></code></pre></div>
 <p><strong>What this does:</strong> Reads all FCS files from the <code>fcs</code> folder and stores the result under the name <code>FLOWSET</code>.</p>
 <p>In R, an <strong>object</strong> is a reserved location in memory that stores data, a data structure, or even code. R is a functional, object-oriented language, which means everything that exists in R is an object: a single number, a table, a plot, even a function itself. When you ran the line above, R reserved memory for your loaded FCS data and gave it the name <code>FLOWSET</code>, so you created an object.</p>
 <p>You can see this happen: look at the Environment pane in the top-right of RStudio, the one Chapter 2 pointed out. <code>FLOWSET</code> now appears there, one entry in a list of every object that currently exists in your session.</p>
@@ -627,7 +627,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-12.</p>
+    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-25.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

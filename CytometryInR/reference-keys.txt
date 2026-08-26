@@ -81,8 +81,9 @@ step-1-create-your-project-folder
 step-2-create-an-r-project
 step-3-create-your-folder-structure-with-dir.create
 step-4-download-this-courses-data
-step-5-verify-here-works
-step-6-verify-your-data
+step-5-work-in-a-script-not-the-console
+step-6-verify-here-works
+step-7-verify-your-data
 a-deeper-dive-2
 understanding-working-directories
 what-r-projects-actually-do

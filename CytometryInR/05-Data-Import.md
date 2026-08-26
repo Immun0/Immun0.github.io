@@ -46,7 +46,7 @@ library(here)
 
 
 ``` r
-FLOWSET <- read.flowSet(path = here("Data", "fcs"), pattern = "\\.fcs$") # The "pattern ="\\.fcs" command ensures that the data import can take place even if there are other irrelevant files and folders present. If you don't use this ad there is an unexpected folder or file, you'lkl get an error.
+FLOWSET <- read.flowSet(path = here("Data", "fcs"), pattern = "\\.fcs$") # The pattern = "\\.fcs$" argument ensures that the data import can take place even if there are other irrelevant files and folders present. If you don't use this and there is an unexpected folder or file, you'll get an error.
 ```
 
 **What this does:** Reads all FCS files from the `fcs` folder and stores the result under the name `FLOWSET`.

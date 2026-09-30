@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Capillary Separation — Sanger Sequencing</title>
+<title>Capillary Separation: Sanger Sequencing</title>
 <style>
   :root {
     --bg: #D9D9D9;
@@ -136,7 +136,7 @@
 <div class="brand-badge"><img src="Core Principles Logo.png" alt="Core Principles" class="brand-logo"></div>
 <div class="wrap">
   <h1>Capillary Separation</h1>
-  <div class="subtitle">All 25 terminated fragments enter the capillary together, still unsorted by size. Under the same electric field, shorter fragments migrate faster than longer ones, so the mixture spreads out as it travels. A detector near the far end reads each fragment's colour the instant it passes — that single event both adds a letter to the sequence and plots a peak on the trace below, shortest to longest.</div>
+  <div class="subtitle">All 25 terminated fragments enter the capillary together, still unsorted by size. Under the same electric field, shorter fragments migrate faster than longer ones, so the mixture spreads out as it travels. A detector near the far end reads each fragment's colour the instant it passes. That single event both adds a letter to the sequence and plots a peak on the trace below, shortest to longest.</div>
 
   <div class="stageTop">
     <div class="panel capillaryPanel">
@@ -178,7 +178,7 @@
   const DETECT_X = 590;
   const TRACK_Y = 270;
   const STRAND_SCALE = 9; // px per unit length, for the initial strand display
-  const BASE_TIME = 700;   // ms — travel time for the shortest fragment
+  const BASE_TIME = 700;   // ms, travel time for the shortest fragment
   const PER_UNIT_TIME = 480; // ms added per unit of length
 
   const PEAK_MARGIN_X = 20;
@@ -269,7 +269,7 @@
   }
 
   // Manual rAF interpolation (not CSS transitions) for cross-browser
-  // reliability on animated SVG attributes — same approach used for the
+  // reliability on animated SVG attributes, same approach used for the
   // fold/extend animation in "Building a Cluster".
   function collapseAndGather(strandEls, duration) {
     return new Promise(resolve => {
@@ -323,7 +323,7 @@
     traceSvg.appendChild(line);
   }
 
-  // Draws the next peak at position `order` (arrival order, 0-indexed) —
+  // Draws the next peak at position `order` (arrival order, 0-indexed),
   // this is the same detection event that appends a letter to the readout,
   // just rendered as an amplitude peak instead of text.
   function drawPeak(order, base) {
@@ -385,7 +385,7 @@
     fragments.forEach(f => createDot(INJECT_X, f.yJitter, f.base, f.id));
     await wait(500);
 
-    stepLabel.textContent = "Voltage applied — shorter fragments outrun longer ones";
+    stepLabel.textContent = "Voltage applied: shorter fragments outrun longer ones";
     const raceStart = performance.now();
     function raceFrame(now) {
       let allDone = true;
@@ -414,7 +414,7 @@
         span.style.color = colors[f.base];
         span.textContent = f.base;
         sequenceEl.appendChild(span);
-        drawPeak(detected, f.base); // same event, same base — arrival order sets x-position
+        drawPeak(detected, f.base); // same event, same base; arrival order sets x-position
         detected += 1;
         countLabel.textContent = detected + " of " + NUM_FRAGMENTS;
         if (detected === NUM_FRAGMENTS) {

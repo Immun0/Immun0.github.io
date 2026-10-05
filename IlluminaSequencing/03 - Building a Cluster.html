@@ -84,7 +84,7 @@
     stroke-width: 2.8;
     stroke-linecap: butt;
     fill: none;
-    /* no CSS transition on d — handled by rAF interpolation for Safari compatibility */
+    /* no CSS transition on d, handled by rAF interpolation for Safari compatibility */
   }
   .segInsert { stroke: var(--insert); }
   .segAdapterStart { stroke: var(--adapter-start); }
@@ -233,7 +233,7 @@
     g.setAttribute("id", id);
 
     const insertLen = 100 - ADAPTER_LEN * 2;
-    // a copy is antiparallel to its template — whichever adapter was at the
+    // a copy is antiparallel to its template, whichever adapter was at the
     // surface-anchored end on the template ends up at the free end on the copy
     const startCls = flipped ? "segAdapterEnd" : "segAdapterStart";
     const endCls = flipped ? "segAdapterStart" : "segAdapterEnd";
@@ -267,7 +267,7 @@
     path.setAttribute("class", "extendArc");
     path.setAttribute("id", "extend_" + tag);
     path.setAttribute("pathLength", "100");
-    // starts at the new primer (newX) and grows back toward the original anchor (x) —
+    // starts at the new primer (newX) and grows back toward the original anchor (x),
     // this matches the real direction polymerase extension runs
     path.setAttribute("d", "M " + newX + " " + (SURFACE_Y - 6) + " Q " + midX + " " + peakY + " " + x + " " + (SURFACE_Y - 6));
     path.setAttribute("stroke-dasharray", "100 100");

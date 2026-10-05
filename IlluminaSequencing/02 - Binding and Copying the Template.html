@@ -129,12 +129,12 @@
 
   const SURFACE_Y   = 550;  // top of surface rect
   const ADAPTER_LEN = 8;    // bases per adapter
-  const SPACING     = 5.5;  // px per base — radius 2.3px gives 0.9px gap between beads
-  const PRIMER_STUB = ADAPTER_LEN * SPACING;  // 44px — same height as template orange adapter
-  const PRIMER_TIP  = SURFACE_Y - PRIMER_STUB;  // 422 — where template adapter docks
+  const SPACING     = 5.5;  // px per base, radius 2.3px gives 0.9px gap between beads
+  const PRIMER_STUB = ADAPTER_LEN * SPACING;  // 44px, same height as template orange adapter
+  const PRIMER_TIP  = SURFACE_Y - PRIMER_STUB;  // 422, where template adapter docks
   // Bottom template bead (adapterStart, index 0) sits at PRIMER_TIP - SPACING at rest.
   // START_LIFT positions it at y = 0 so the full fragment descends visibly through solution.
-  const START_LIFT  = -(SURFACE_Y - SPACING);   // -460.5 — bead 0 enters at y=0
+  const START_LIFT  = -(SURFACE_Y - SPACING);   // -460.5, bead 0 enters at y=0
   const BATCH_SIZE  = 2;
   const TICK_MS     = 200;
 
@@ -156,7 +156,7 @@
     }
   })();
 
-  // Columns 2 and 5 carry the green/olive surface oligo — fragment binds the other way
+  // Columns 2 and 5 carry the green/olive surface oligo, fragment binds the other way
   const COL_TYPES = ["orange","orange","green","orange","orange","green","orange"];
 
   // Orange columns: adapterStart (orange) at bottom hybridises to surface, adapterEnd (olive) free at top
@@ -195,7 +195,7 @@
     // Anchor point at the surface (left strand, x=-9)
     g.appendChild(svgEl("circle", { cx: -9, cy: SURFACE_Y, r: 5, class: "anchor" }));
 
-    // Surface adapter stub — colour matches the column type
+    // Surface adapter stub, colour matches the column type
     g.appendChild(svgEl("line", {
       x1: -9, y1: SURFACE_Y, x2: -9, y2: PRIMER_TIP,
       stroke: stubColor, "stroke-width": 2, "stroke-linecap": "round"
@@ -207,7 +207,7 @@
       }));
     }
 
-    // Copy backbone — starts at PRIMER_TIP, grows upward during synthesis
+    // Copy backbone, starts at PRIMER_TIP, grows upward during synthesis
     g.appendChild(svgEl("line", {
       id: g.id + "_copyline",
       x1: -9, y1: PRIMER_TIP, x2: -9, y2: PRIMER_TIP,
@@ -217,7 +217,7 @@
     // Copy beads container
     g.appendChild(svgEl("g", { id: g.id + "_copybeads" }));
 
-    // Template group — full fragment, descends from above
+    // Template group, full fragment, descends from above
     const tg = document.createElementNS(ns, "g");
     tg.setAttribute("id", g.id + "_template");
     tg.setAttribute("class", "templateGroup");
@@ -234,7 +234,7 @@
       class: "backboneLine"
     }));
 
-    // Beads — bottom section matches surface stub colour, top section is the free-end adapter
+    // Beads, bottom section matches surface stub colour, top section is the free-end adapter
     state.structure.forEach((type, i) => {
       let fill = "var(--tmpl-insert)";
       if (type === "adapterStart") fill = "var(--tmpl-adapter-start)";
@@ -249,7 +249,7 @@
   }
 
   function addCopyBead(g, index, type, colType) {
-    // Skip the surface adapter — polymerase only copies insert + free-end adapter
+    // Skip the surface adapter, polymerase only copies insert + free-end adapter
     const surfaceType = colType === "green" ? "adapterEnd" : "adapterStart";
     if (type === surfaceType) return;
 

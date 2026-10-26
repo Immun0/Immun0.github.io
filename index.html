@@ -129,6 +129,8 @@
 
     .site-nav a:hover { color: var(--navy); }
     .site-nav a.active { color: var(--navy); border-bottom-color: var(--teal); }
+    .site-nav a.nav-home { padding-left: 0; margin-right: 0.5rem; font-weight: 600; color: var(--navy); }
+    .site-nav a.nav-home img { width: 24px; height: 24px; }
 
     .nav-dot {
       width: 7px; height: 7px;
@@ -304,6 +306,7 @@
 
 <!-- NAV -->
 <nav class="site-nav">
+  <a href="#" class="nav-home"><img src="Images/favicon.png" alt="">Core Principles</a>
   <a href="#flow"><span class="nav-dot" style="background:var(--teal)"></span>Flow Cytometry</a>
   <a href="#genomics"><span class="nav-dot" style="background:var(--blue)"></span>Genomics</a>
   <a href="#r-analysis"><span class="nav-dot" style="background:var(--navy)"></span>R Analysis</a>

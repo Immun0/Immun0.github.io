@@ -17,6 +17,10 @@
   var base = script.src.replace(/js\/sitebar\.js(\?.*)?$/, '');
   var current = script.getAttribute('data-section');
 
+  // An animation panel shown inside its series page gets that page's bar;
+  // only a page opened on its own draws one.
+  if (window.self !== window.top) return;
+
   var sections = [
     ['flow', 'Flow Cytometry', '#4ABCCC'],
     ['genomics', 'Genomics', '#3267B0'],
@@ -65,6 +69,13 @@
     });
 
     document.body.insertBefore(bar, document.body.firstChild);
+
+    // The animation panels pin a round logo to the top left; drop it below the bar.
+    var badges = document.querySelectorAll('.brand-badge');
+    for (var j = 0; j < badges.length; j++) {
+      // 'important' because the panels' own rule for it is !important.
+      badges[j].style.setProperty('top', (parseFloat(getComputedStyle(badges[j]).top) + bar.offsetHeight) + 'px', 'important');
+    }
 
     // Pages that are one full-screen embed (the Canva infographics) would push
     // their bottom edge off screen; shrink those frames by the bar's height.

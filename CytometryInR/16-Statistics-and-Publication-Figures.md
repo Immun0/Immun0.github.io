@@ -11,9 +11,7 @@ This chapter covers four ways to summarise and compare samples at a higher level
 
 ``` r
 library(here)
-#> Warning in readLines(f, n): line 1 appears to contain an
-#> embedded nul
-#> here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R
+#> here() starts at /Users/dcarragher/Sync/CLAUDE/Analysing-Cytometry-Data-With-R
 library(dplyr)
 #> 
 #> Attaching package: 'dplyr'
@@ -100,7 +98,7 @@ heatmap
 
 ### Step 5: Bubble Plot of Median Expression
 
-The Step 4 heatmap and this bubble plot show the same `MEDIAN_EXPRESSION_DATA_SAMPLE_ID` data, just encoded differently, tile colour there, dot size and colour together here. Both are useful: a heatmap reads well as a whole grid at a glance, a bubble plot makes individual high/low values easier to compare precisely once you're looking closely at one marker or one sample. Needs melting to long format first, one row per marker/sample pair, since `geom_point()` expects that shape rather than the wide matrix `pheatmap()` took directly:
+The Step 4 heatmap and this bubble plot show the same `MEDIAN_EXPRESSION_DATA_SAMPLE_ID` data, just encoded differently, tile colour there, dot size and colour together here. Both are useful: a heatmap reads well as a whole grid at a glance, a bubble plot makes individual high/low values easier to compare precisely once you're looking closely at one marker or one sample. The data needs melting to long format first, one row per marker/sample pair, since `geom_point()` expects that shape rather than the wide matrix `pheatmap()` took directly:
 
 
 ``` r
@@ -193,7 +191,7 @@ Y89Di_CD41..         should be   Y89Di_CD41   (with two trailing spaces you cann
 
 Two other antigens, `Er167Di_PU.1` and `Yb174Di_HA.11`, carry dots of their own. Those are correct and untouched, which is part of why this is easy to miss: the axis is a mixture of dots that belong and dots that do not.
 
-The figure is not wrong. Every score on it is correct, and the markers are in the right order. The labels are simply unfinished, and a figure with unfinished labels is not a publication figure.
+The figure is not wrong. Every score on it is correct, and the markers are in the right order. The labels are simply unfinished, and they need finishing before it goes in a paper.
 
 The cause is `data.frame()` on the line above the plot. It calls `check.names` by default, which rewrites anything that is not a legal R variable name: hyphens and spaces become dots, and the two trailing spaces on `Y89Di_CD41` become two more. You have already switched this off once in this chapter, at Step 5, for exactly the same reason. Here it is switched off again, and the plot rebuilt from the same numbers:
 
@@ -235,14 +233,14 @@ Throughout this course, saving each pipeline stage as an RDS file and setting a 
 sessionInfo()
 #> R version 4.6.0 (2026-04-24)
 #> Platform: aarch64-apple-darwin23
-#> Running under: macOS Tahoe 26.5.2
+#> Running under: macOS Tahoe 26.6.2
 #> 
 #> Matrix products: default
 #> BLAS:   /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRblas.0.dylib 
 #> LAPACK: /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
 #> 
 #> locale:
-#> [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+#> [1] en_CA/en_CA/en_CA/C/en_CA/en_CA
 #> 
 #> time zone: America/Toronto
 #> tzcode source: internal
@@ -279,15 +277,15 @@ sessionInfo()
 #> [35] S4Vectors_0.50.1    fs_2.1.0           
 #> [37] ragg_1.5.2          pkgconfig_2.0.3    
 #> [39] pillar_1.11.1       bslib_0.12.0       
-#> [41] gtable_0.3.6        Rcpp_1.1.2         
-#> [43] glue_1.8.1          systemfonts_1.3.2  
+#> [41] gtable_0.3.6        glue_1.8.1         
+#> [43] Rcpp_1.1.2          systemfonts_1.3.2  
 #> [45] statmod_1.5.2       xfun_0.60          
 #> [47] tibble_3.3.1        tidyselect_1.2.1   
-#> [49] rstudioapi_0.19.0   knitr_1.51         
-#> [51] farver_2.1.2        htmltools_0.5.9    
-#> [53] labeling_0.4.3      rmarkdown_2.31     
-#> [55] compiler_4.6.0      S7_0.2.2           
-#> [57] readxl_1.5.0        downlit_0.4.5
+#> [49] knitr_1.51          farver_2.1.2       
+#> [51] htmltools_0.5.9     labeling_0.4.3     
+#> [53] rmarkdown_2.31      compiler_4.6.0     
+#> [55] S7_0.2.2            readxl_1.5.0       
+#> [57] downlit_0.4.5
 ```
 
 Save this output alongside your analysis, in a script comment, a README, or a supplementary file for publication. If `FlowSOM` or `flowCore` changes behaviour in a future release, this is what tells you, or a reviewer, exactly what you ran it with.
@@ -298,9 +296,9 @@ These tools answer different questions: MDS tells you which whole samples resemb
 
 ### Why the Labels Arrive Unfinished
 
-`check.names` is not a bug and it is not `data.frame()` being careless. It is R protecting itself. A data frame's column names are meant to be usable as variable names, and `Ki-67` is not one: R would read the hyphen as a minus sign and try to subtract 67 from an object called `Ki`. Spaces are worse. So `data.frame()` quietly substitutes dots, which are legal, and says nothing.
+`check.names` isn't a bug. R does it on purpose, to keep column names usable as variable names. A data frame's column names are meant to be usable as variable names, and `Ki-67` is not one: R would read the hyphen as a minus sign and try to subtract 67 from an object called `Ki`. Spaces are worse. So `data.frame()` quietly substitutes dots, which are legal, and says nothing.
 
-Quietly is the part worth remembering. There is no warning, no error, and nothing in the object to tell you it happened. The rename lands in the same class of problem as the positional join in Chapter 12: your analysis keeps running, the numbers stay correct, and something you did not authorise has changed underneath the results. Here it costs you a figure caption. In Chapter 12 it cost you the biology.
+The important part is that it does this quietly. There's no warning or error to tell you it happened. The rename lands in the same class of problem as the positional join in Chapter 12: your analysis keeps running, the numbers stay correct, and something you did not authorise has changed underneath the results. Here it only affects the figure labels, but in Chapter 12 the same kind of problem changed the biological result.
 
 It also has a second effect, which you may already have hit. The renamed columns no longer match the channel names in the flowSet, which still holds the originals, so a name that works against one object fails against the other:
 
@@ -313,7 +311,7 @@ ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET[, marker_cols]
 #> ! Subset out of bounds
 ```
 
-That is why Step 6 builds `marker_cols_flowset` from the flowSet's own `colnames()` rather than reusing `marker_cols`. Two objects, two spellings, and you have to know which one you are addressing. When in doubt, print `colnames()` of both and compare them.
+That is why Step 6 builds `marker_cols_flowset` from the flowSet's own `colnames()` rather than reusing `marker_cols`. The two objects spell these names differently, so you have to know which one you are addressing. When in doubt, print `colnames()` of both and compare them.
 
 ### Beyond sessionInfo(): renv
 

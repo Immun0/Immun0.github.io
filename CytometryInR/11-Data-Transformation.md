@@ -11,9 +11,7 @@ Raw cytometry data is compressed near zero for negative populations and spread a
 
 ``` r
 library(here)
-#> Warning in readLines(f, n): line 1 appears to contain an
-#> embedded nul
-#> here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R
+#> here() starts at /Users/dcarragher/Sync/CLAUDE/Analysing-Cytometry-Data-With-R
 library(flowCore)
 
 Reordered_DOWNSAMPLED_CLEANED_FLOWSET <- readRDS(here("Data", "RDS", "Reordered_DOWNSAMPLED_CLEANED_FLOWSET.rds"))
@@ -103,7 +101,7 @@ There's a common workaround, adding a small pseudocount before taking the log (`
 
 ### What Happens With the Wrong Cofactor
 
-The cofactor isn't a minor tuning knob, using the wrong one visibly distorts the data. `cofactor = 5` is correct for mass cytometry; `cofactor = 150` is correct for conventional/spectral flow cytometry. Applying flow's cofactor to mass cytometry data (or vice versa) shows exactly why that number matters, rather than just asserting it does:
+Using the wrong cofactor visibly distorts the data. `cofactor = 5` is correct for mass cytometry; `cofactor = 150` is correct for conventional/spectral flow cytometry. Applying flow's cofactor to mass cytometry data (or vice versa) shows why that number matters:
 
 
 ``` r
@@ -137,11 +135,11 @@ ggsave2(here("Figures", "cofactor_comparison.pdf"), width = 11, height = 8.5)
 ggsave2(here("Figures", "cofactor_comparison.png"), width = 11, height = 8.5)
 ```
 
-Too large a cofactor under-transforms mass cytometry data, populations stay compressed near the origin, closer to how the raw, untransformed plot looked in Step 4, because the divisor is too big relative to the actual signal range. The lesson isn't "memorise 5 and 150", it's that the right cofactor depends on the instrument's actual dynamic range and noise characteristics, and picking one for the wrong platform reintroduces the exact compression problem transformation is supposed to fix. Worth trying other values yourself (1, 20, 500) on this same data to see the full range of distortion, not just these two.
+Too large a cofactor under-transforms mass cytometry data, populations stay compressed near the origin, closer to how the raw, untransformed plot looked in Step 4, because the divisor is too big relative to the actual signal range. The right cofactor depends on the instrument's dynamic range and noise characteristics, and one picked for the wrong platform brings back the compression problem the transformation is meant to remove. It's worth trying other values yourself (1, 20, 500) on this same data to see the full range of distortion.
 
 ### Other Transforms: Logicle and Biexponential
 
-Arcsinh isn't the only transform built for compressed, wide-dynamic-range cytometry data, `logicle` and `biexponential` are the other two you'll see most often, both from conventional flow cytometry rather than CyTOF specifically. Worth seeing what they do to the same data, not just taking on faith that arcsinh is the right call. Both transforms also have more than one way to set their parameters, worth comparing directly rather than picking one arbitrarily:
+Arcsinh isn't the only transform built for compressed, wide-dynamic-range cytometry data, `logicle` and `biexponential` are the other two you'll see most often, both from conventional flow cytometry rather than CyTOF specifically. Let's see what they do to the same data. Both also have more than one way to set their parameters, so we'll compare two of each:
 
 
 ``` r
@@ -215,7 +213,7 @@ ggsave2(here("Figures", "transform_type_comparison.pdf"), width = 20, height = 5
 ggsave2(here("Figures", "transform_type_comparison.png"), width = 20, height = 5)
 ```
 
-Two genuine choices are being compared here, not just two functions with different names.
+There are two choices being compared here.
 
 For logicle: `estimateLogicle()` fits parameters to a single flowFrame, here the first sample in the set, then applies that one fit to every sample. `estimateMedianLogicle()` (from `openCyto`) instead fits across the whole flowSet at once, using the median of each channel's negative population over all samples. The single-sample version is doing less work and trusting that sample 1 is representative of the rest, the whole-set version is the more defensible choice when samples might differ in background or offset, which is the more usual case with multiple files from different conditions, as here.
 
@@ -223,7 +221,7 @@ For biexponential: `biexponentialTransform()` with no arguments runs on `flowCor
 
 What that `w` parameter is actually controlling: biexponential is a piecewise function, not one formula applied everywhere. Near zero, where log-style transforms compress and distort noisy negative/low signal, it behaves close to linear, an ordinary straight line, avoiding the zero/negative problem the same way arcsinh does. Further from zero, where the signal is large and log-scale spread actually helps, it switches over to behaving exponentially. `w` sets how wide that near-zero linear region is before the exponential part takes over, a small `w` switches to exponential behaviour quickly, a large `w` keeps more of the range linear. This is the same underlying idea arcsinh and logicle both use, linear near zero, log-like further out, just a different specific formula for the transition between the two.
 
-Both logicle transforms and both biexponential transforms were designed around conventional flow cytometry's signal and noise characteristics, not CyTOF's, which is the deeper reason arcsinh with a mass-cytometry cofactor stays the standard choice for this kind of data, not just convention for its own sake. Run on this dataset, the two logicle panels come out near identical, and the two biexponential panels share a shape while sitting on different ranges, the defaults spanning roughly 0 to 8 and `w = 5` roughly 5 to 12.5. The transform family matters more than how its parameters are fitted.
+Both logicle transforms and both biexponential transforms were designed around conventional flow cytometry's signal and noise characteristics, not CyTOF's, which is why arcsinh with a mass-cytometry cofactor stays the standard choice for this kind of data. Run on this dataset, the two logicle panels come out near identical, and the two biexponential panels share a shape while sitting on different ranges, the defaults spanning roughly 0 to 8 and `w = 5` roughly 5 to 12.5. On this data, the choice of transform made more difference than how its parameters were fitted.
 
 **Note:** the whole-flowSet logicle fit and the `w = 5` biexponential parameter come from an earlier, unpublished draft chapter (`Draft Chapters/09-Data-Transformation.Rmd`) that used real course data at the time it was written, which is why they are better-grounded starting points than bare defaults.
 

@@ -2,7 +2,7 @@
 
 ## What You'll Learn
 
-Every downstream chapter assumes every file uses exactly the same channel names, no typos, no variants. This chapter uses the `premessa` package to check and standardise channel names across your FCS files, then loads the result back into R and saves it as an RDS file so later chapters can pick it up directly.
+Every downstream chapter assumes every file uses exactly the same channel names. This chapter uses the `premessa` package to check and standardise channel names across your FCS files, then loads the result back into R and saves it as an RDS file so later chapters can pick it up directly.
 
 ## The Essentials {.essentials}
 
@@ -12,9 +12,7 @@ Every downstream chapter assumes every file uses exactly the same channel names,
 ``` r
 library(flowCore)
 library(here)
-#> Warning in readLines(f, n): line 1 appears to contain an
-#> embedded nul
-#> here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R
+#> here() starts at /Users/dcarragher/Sync/CLAUDE/Analysing-Cytometry-Data-With-R
 if(!require(premessa)) devtools::install_github("ParkerICI/premessa")
 #> Loading required package: premessa
 ```
@@ -46,7 +44,7 @@ Twenty-two channels are removed at this step, leaving thirty-nine: `Time`, `Even
 
 **Debarcoding channels.** `Pd102Di`, `Pd104Di`, `Pd105Di`, `Pd106Di`, `Pd108Di` and `Pd110Di` carried the palladium barcodes that separated multiplexed samples back into one file each. As Chapter 5 explains, that happened before the data ever reached you, so these have nothing left to contribute.
 
-**Environmental and background channels.** `Ba138Di`, `Cs133Di`, `Xe131Di`, `Sn120Di`, `Pb208Di`, `BCKG190Di` and `Bi209Di` monitor instrument background and contamination. They measure the machine, not the cells.
+**Environmental and background channels.** `Ba138Di`, `Cs133Di`, `Xe131Di`, `Sn120Di`, `Pb208Di`, `BCKG190Di` and `Bi209Di` monitor instrument background and contamination rather than anything about the cells.
 
 **Unused.** `Rh103Di` is labelled unused in the panel itself.
 
@@ -59,7 +57,7 @@ Twenty-two channels are removed at this step, leaving thirty-nine: `Time`, `Even
 
 ``` r
 here::here() # check we're in the right folder
-#> [1] "/Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R"
+#> [1] "/Users/dcarragher/Sync/CLAUDE/Analysing-Cytometry-Data-With-R"
 list.files(here::here("Data", "fcs", "pruned")) # list cleaned fcs files
 #> [1] "2PFANASPermLIVE.fcs"      "4PFA1GLUTNASPermLIVE.fcs"
 #> [3] "4PFANASPermLIVE.fcs"      "4PFANoPermLIVE.fcs"      
@@ -160,7 +158,7 @@ saveRDS(Reordered_RENAMED_FLOWSET, file = here::here("Data", "RDS", "Reordered_R
 
 ### Step 8: Rename Channels to Include Marker Names
 
-Right now your channels are still named after their raw metal-isotope detector, like `Y89Di`. That tells you nothing about what was actually measured. The panel sheet you saw introduced in Chapter 4 fixes this, it maps each channel to the antibody it carried.
+Right now your channels are still named after their raw metal-isotope detector, like `Y89Di`. That tells you nothing about what was actually measured. The panel sheet introduced in Chapter 4 resolves this, it maps each channel to the antibody it carried.
 
 
 ``` r
@@ -353,7 +351,7 @@ ggsave2(
 )
 ```
 
-Slower to write, slower to run (raw points rather than `ggpairs()`'s hexbin option, so the overplotting problem from earlier returns), and every marker pair gets its own axis labels rather than `ggpairs()`'s shared grid layout. Expect just under ten minutes on a recent laptop, measured on a MacBook Pro 16 with an M3, so give it time rather than assuming it has hung. But it depends on nothing beyond `ggplot2` itself, so keep it in mind as a fallback, not a replacement.
+It's slower to write and slower to run (raw points rather than `ggpairs()`'s hexbin option, so the overplotting problem from earlier returns), and every marker pair gets its own axis labels rather than `ggpairs()`'s shared grid layout. Expect just under ten minutes on a recent laptop, measured on a MacBook Pro 16 with an M3, so give it time rather than assuming it has hung. But it depends on nothing beyond `ggplot2` itself, so keep it in mind as a fallback.
 
 ### Taking Your Renamed Data Back Out of R
 
@@ -364,7 +362,7 @@ Everything so far stays inside R, saved as an RDS file. Sometimes you want the o
 write.flowSet(Reordered_RENAMED_FLOWSET, here::here("Data", "renamed"))
 ```
 
-This writes one `.fcs` file per sample into `Data/renamed/`, with the new channel names baked in, readable by any cytometry software, not just R. Useful any time you want to do the renaming once in R, then hand the result to a colleague or a different analysis tool.
+This writes one `.fcs` file per sample into `Data/renamed/`, with the new channel names baked in, readable by any cytometry software, not just R. This is useful any time you want to do the renaming once in R, then hand the result to a colleague or a different analysis tool.
 
 ### What's Next
 

@@ -11,9 +11,7 @@ Chapter 6 covered the basics of plotting cytometry data. This chapter goes furth
 
 ``` r
 library(here)
-#> Warning in readLines(f, n): line 1 appears to contain an
-#> embedded nul
-#> here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R
+#> here() starts at /Users/dcarragher/Sync/CLAUDE/Analysing-Cytometry-Data-With-R
 library(ggplot2)
 library(ggridges)
 library(cowplot)
@@ -199,7 +197,7 @@ library(dplyr)
 #>     intersect, setdiff, setequal, union
 
 MEDIAN_CD34 <- EXPRESSION_DATA_SAMPLE_ID_MELTED %>%
-  filter(antigen == "Sm149Di_CD34") %>%
+  dplyr::filter(antigen == "Sm149Di_CD34") %>%
   group_by(sample_id, condition) %>%
   summarize(median_expression = median(expression), .groups = "drop")
 
@@ -223,7 +221,7 @@ Do the same for a second marker to compare:
 
 ``` r
 MEDIAN_CD38 <- EXPRESSION_DATA_SAMPLE_ID_MELTED %>%
-  filter(antigen == "Yb172Di_CD38") %>%
+  dplyr::filter(antigen == "Yb172Di_CD38") %>%
   group_by(sample_id, condition) %>%
   summarize(median_expression = median(expression), .groups = "drop")
 
@@ -250,7 +248,7 @@ ggsave2(here("Figures", "cd38_median_expression.png"), width = 11, height = 8.5)
 
 Look back at Chapter 9's cell-count bar chart, then at Step 2's density plot above. Both describe the same 5 samples. But Chapter 9 colours by the raw FCS filename (`2PFANASPermLIVE.fcs`), this chapter colours by `sample_id` or `condition`, a completely different label (`2%PFA - NAS PERM`, `2%PFA+NAS`). ggplot2 assigns default colours by alphabetical order of whatever labels are present in that specific plot, so even though both charts describe the same 5 samples, the colour-to-sample mapping in one chart has no relationship to the colour-to-sample mapping in the other. A reader can't glance between the two and know they're looking at the same sample by colour alone.
 
-Fix it properly from here on: one fixed colour per sample, reused in every chapter going forward.
+From here on we'll use one fixed colour per sample, reused in every chapter.
 
 ### Building a Shared Colour Palette
 
@@ -271,7 +269,7 @@ colour_conditions
 
 That file defines `colour_conditions` and two helpers, `custom_colour_manual()` and `custom_fill_manual()`, which you drop into any plot in place of letting ggplot choose. Sourcing a file rather than putting the definition in a chapter matters here because chapters are meant to be runnable on their own: a reader starting at Chapter 14 still gets the same colours.
 
-Five colours for five samples, running dark blue, purple, magenta, coral, amber. Size the list to the number of groups you actually have. A long palette used for a short list is not harmless: `scale_colour_manual()` simply takes the first *n* values, so a thirteen-colour ramp applied to five samples hands out its first five, and if those five sit close together on the ramp every sample comes out a slightly different shade of the same colour. Distinguishable is the whole requirement here, so pick colours that are far apart across the range you need and no more of them than that.
+There are five colours for five samples: dark blue, purple, magenta, coral and amber. Size the list to the number of groups you actually have. A long palette used for a short list can cause problems: `scale_colour_manual()` simply takes the first *n* values, so a thirteen-colour ramp applied to five samples hands out its first five, and if those five sit close together on the ramp every sample comes out a slightly different shade of the same colour. The colours need to be easy to tell apart, so pick ones that are far apart across the range and only as many as you need.
 
 `custom_colour_manual()` and `custom_fill_manual()` are small helper functions that apply this fixed list wherever you'd normally use ggplot2's own colour or fill scale, so every plot draws from the same fixed list instead of picking its own colours based on whatever's alphabetically present in that one plot.
 

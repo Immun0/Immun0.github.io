@@ -41,7 +41,7 @@ Key concepts:
 **Community:** Thousands of researchers contributing methods and tools
 
 ### What You'll Learn
-This guide teaches you to use R specifically for cytometry analysis. You won't become a general programmer, but you'll gain capabilities that are difficult or impossible with commercial software.
+This guide teaches you to use R specifically for cytometry analysis. You won't become a general programmer, but you'll be able to do things that are difficult or impossible with commercial software.
 
 **By Chapter 5:** You'll load cytometry data into R
 
@@ -80,28 +80,27 @@ Two-track approach:
 
 Use Essentials if you want immediate results. Read Deeper Dive when you want to understand why something works or how to modify it.
 
-## The Honest Assessment
+## What to Expect
 
-Learning R requires effort. The first few chapters involve setup and learning new vocabulary. But the payoff comes surprisingly quickly - by Chapter 13, you'll be running clustering analysis that would take hours, or simply isn't possible, in FlowJo.
+Learning R requires effort. The first few chapters involve setup and learning new vocabulary. But it pays off quickly. By Chapter 15, you'll be running clustering analysis that would take hours, or simply isn't possible, in FlowJo.
 When R wins: Batch processing, new methods, reproducible analysis, integration with other data types
 When FlowJo wins: Interactive exploration, manual gating, immediate visual feedback
-Use the right tool for each job. This guide teaches you when and how to use R effectively.
+So keep FlowJo for those jobs and use R for the others. This guide teaches you when and how to use R.
 
 ## Before You Begin
 
 This guide uses a real dataset provided for you, so everyone works from identical data and gets identical results to check against. You can substitute your own FCS files at any point once you're comfortable with the workflow, Chapter 4 covers both options.
 
-The next chapter gets R installed and working on your computer. You don't need any programming experience - just patience with setup and willingness to learn a new approach to familiar problems.
+The next chapter gets R installed and working on your computer. You don't need any programming experience - just some patience with the setup.
 
 **What you'll need:**
 
 - A computer with internet access
 - About 2GB of free disk space
 - Willingness to type commands instead of clicking buttons
-- Curiosity about what becomes possible
 
 ## A Note on Learning
 
-Programming feels different from other learning. You'll encounter error messages, unexpected outputs, and moments of confusion. This is normal and temporary. Every programmer - including the experts - deals with these same challenges.
-The key is building understanding gradually. Each chapter introduces a few new concepts and shows how they connect to what you already know. By the end, you'll have gained a new set of analytical capabilities that expand what's possible with your cytometry data.
-Ready to begin? The next chapter will get R installed and introduce you to the programming environment we'll use throughout this course.
+Programming feels different from other learning. You'll get error messages and outputs you didn't expect. That's normal, and it gets better. Every programmer, experts included, deals with the same thing.
+The key is building understanding gradually. Each chapter introduces a few new concepts and shows how they connect to what you already know. By the end, you'll be able to analyse your cytometry data in ways you couldn't before.
+The next chapter gets R installed and introduces the programming environment we'll use throughout this course.

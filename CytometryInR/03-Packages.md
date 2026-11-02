@@ -2,9 +2,9 @@
 
 ## What Are Packages?
 
-Before we install anything, let's understand what we're working with. A package is a collection of functions and tools that extends what R can do. Think of base R as a toolkit that comes with essential tools like a hammer and screwdriver. A package adds more specialized tools to that same toolkit, a plane and router for fine woodworking, for instance. The tools we'll add throughout this course are for cytometry analysis: reading FCS files, building cytometry-style plots, and running population-discovery algorithms.
+Before we install anything, let's understand what we're working with. A package is a collection of functions and tools that extends what R can do. Think of base R as a toolkit that comes with essential tools like a hammer and screwdriver. A package adds more specialised tools to that same toolkit, a plane and router for fine woodworking, for instance. The tools we'll add throughout this course are for cytometry analysis: reading FCS files, building cytometry-style plots, and running population-discovery algorithms.
 
-When you install R, you get "base R" - the core functions for basic data manipulation and statistics. But cytometry analysis requires specialized functions for reading FCS files, creating cytometry-specific plots, and applying flow cytometry algorithms. These come in packages written by researchers who share their tools with the community.
+When you install R, you get "base R" - the core functions for basic data manipulation and statistics. But cytometry analysis requires specialised functions for reading FCS files, creating cytometry-specific plots, and applying flow cytometry algorithms. These come in packages written by researchers who share their tools with the community.
 
 ## Where Packages Come From
 
@@ -12,9 +12,9 @@ Packages are distributed through different repositories - online collections of 
 
 **CRAN (Comprehensive R Archive Network):** The main repository for general-purpose R packages. These are rigorously tested and maintained. Examples include packages for data manipulation, statistical analysis, and general plotting.
 
-**Bioconductor:** A specialized repository for biological data analysis packages. These packages often work together and use common data structures designed for biological research. Most cytometry-specific packages live here.
+**Bioconductor:** A specialised repository for biological data analysis packages. These packages often work together and use common data structures designed for biological research. Most cytometry-specific packages live here.
 
-**GitHub:** A code sharing platform where developers publish packages that may not be on CRAN or Bioconductor yet. These can include cutting-edge methods or specialized tools for specific research needs.
+**GitHub:** A code sharing platform where developers publish packages that may not be on CRAN or Bioconductor yet. These can include cutting-edge methods or specialised tools for specific research needs.
 
 Each repository requires different installation methods, which we'll learn below.
 
@@ -167,7 +167,7 @@ job::job({
 })
 ```
 
-This runs the install in a separate background R process, RStudio's Jobs tab (next to Console) shows its progress, and your console stays free to keep working in the meantime. Useful for this chapter's long install, and for any future script that takes a while to run.
+This runs the install in a separate background R process, RStudio's Jobs tab (next to Console) shows its progress, and your console stays free to keep working in the meantime. It's useful for this chapter's long install, and for any future script that takes a while to run.
 
 ### Understanding Package Installation
 
@@ -205,7 +205,7 @@ BiocManager::install("packagename")
 
 #### GitHub Packages
 
-GitHub hosts cutting-edge packages that may not be available elsewhere. These can be less stable but provide access to the newest methods. Some packages start on GitHub before moving to CRAN or Bioconductor. Unlike CRAN and Bioconductor, there's no centralized testing, review, or acceptance process, whether a package works, is maintained, or is safe to rely on is entirely up to the individual author. That's the trade-off for early access to new methods.
+GitHub hosts cutting-edge packages that may not be available elsewhere. These can be less stable but provide access to the newest methods. Some packages start on GitHub before moving to CRAN or Bioconductor. Unlike CRAN and Bioconductor, there's no centralised testing, review, or acceptance process, whether a package works, is maintained, or is safe to rely on is entirely up to the individual author. That's the trade-off for early access to new methods.
 
 First install the devtools:
 
@@ -262,7 +262,7 @@ some_function()  # This line never runs
 
 **Why this matters:** In analysis scripts, you want to know immediately if packages are missing. In setup scripts, you want the convenience of automatic installation and efficient reruns.
 
-Both functions have their place - we use the right tool for each situation.
+So we use `require()` in setup scripts and `library()` in analysis scripts.
 
 ### Understanding Our Package Collection
 
@@ -370,5 +370,3 @@ This front-loaded approach means subsequent chapters won't be interrupted by pac
 ### What's Next
 
 With these packages installed, you have the tools needed for comprehensive cytometry analysis. Chapter 4 will show you how to organise your work, then Chapter 5 will show you how to load your first cytometry dataset.
-
-This gives you the foundation for everything that follows - from basic data import to advanced population discovery algorithms.

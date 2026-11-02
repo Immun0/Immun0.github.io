@@ -4,19 +4,19 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 6 Chapter 5 - Loading Cytometry Data | Analysing Cytometry Data with R</title>
+<title>Chapter 5 Chapter 5 - Loading Cytometry Data | Analysing Cytometry Data with R</title>
 <meta name="author" content="Damian Carragher">
 <meta name="author" content="StemCore Laboratories and Flow Cytometry Core">
 <meta name="author" content="Ottawa Hospital Research Institute">
 <meta name="author" content="First edition by Damian Carragher">
-<meta name="description" content="6.1 What You’ll Learn This chapter introduces how R stores and organises cytometry data. You’ll load your first FCS files and learn to examine what’s inside them. By the end, you’ll understand the...">
+<meta name="description" content="5.1 What You’ll Learn This chapter introduces how R stores and organises cytometry data. You’ll load your first FCS files and learn to examine what’s inside them. By the end, you’ll understand the...">
 <meta name="generator" content="bookdown 0.47 with bs4_book()">
-<meta property="og:title" content="Chapter 6 Chapter 5 - Loading Cytometry Data | Analysing Cytometry Data with R">
+<meta property="og:title" content="Chapter 5 Chapter 5 - Loading Cytometry Data | Analysing Cytometry Data with R">
 <meta property="og:type" content="book">
-<meta property="og:description" content="6.1 What You’ll Learn This chapter introduces how R stores and organises cytometry data. You’ll load your first FCS files and learn to examine what’s inside them. By the end, you’ll understand the...">
+<meta property="og:description" content="5.1 What You’ll Learn This chapter introduces how R stores and organises cytometry data. You’ll load your first FCS files and learn to examine what’s inside them. By the end, you’ll understand the...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 6 Chapter 5 - Loading Cytometry Data | Analysing Cytometry Data with R">
-<meta name="twitter:description" content="6.1 What You’ll Learn This chapter introduces how R stores and organises cytometry data. You’ll load your first FCS files and learn to examine what’s inside them. By the end, you’ll understand the...">
+<meta name="twitter:title" content="Chapter 5 Chapter 5 - Loading Cytometry Data | Analysing Cytometry Data with R">
+<meta name="twitter:description" content="5.1 What You’ll Learn This chapter introduces how R stores and organises cytometry data. You’ll load your first FCS files and learn to examine what’s inside them. By the end, you’ll understand the...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.12.0/transition.js"></script><script src="libs/bs3compat-0.12.0/tabs.js"></script><script src="libs/bs3compat-0.12.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
@@ -46,23 +46,23 @@
 
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
-<li><a class="" href="index.html"><span class="header-section-number">1</span> Preface and Notes</a></li>
-<li><a class="" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">2</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
-<li><a class="" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">3</span> Chapter 2 - Setting up an R environment</a></li>
-<li><a class="" href="chapter-3---packages.html"><span class="header-section-number">4</span> Chapter 3 - Packages</a></li>
-<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">5</span> Chapter 4 - File Management and Data Access</a></li>
-<li><a class="active" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">6</span> Chapter 5 - Loading Cytometry Data</a></li>
-<li><a class="" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data</a></li>
-<li><a class="" href="chapter-7---gating-data.html"><span class="header-section-number">8</span> Chapter 7 - Gating Data</a></li>
-<li><a class="" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">9</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
-<li><a class="" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">10</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
-<li><a class="" href="chapter-10---downsampling.html"><span class="header-section-number">11</span> Chapter 10 - Downsampling</a></li>
-<li><a class="" href="chapter-11---data-transformation.html"><span class="header-section-number">12</span> Chapter 11 - Data Transformation</a></li>
-<li><a class="" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">13</span> Chapter 12 - Extracting Expression Data</a></li>
-<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">14</span> Chapter 13 - Full Visualisation</a></li>
-<li><a class="" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">15</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
-<li><a class="" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">16</span> Chapter 15 - Clustering and Population Discovery</a></li>
-<li><a class="" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">17</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+<li><a class="" href="index.html">Preface and Notes</a></li>
+<li><a class="" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">1</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
+<li><a class="" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">2</span> Chapter 2 - Setting up an R environment</a></li>
+<li><a class="" href="chapter-3---packages.html"><span class="header-section-number">3</span> Chapter 3 - Packages</a></li>
+<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">4</span> Chapter 4 - File Management and Data Access</a></li>
+<li><a class="active" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">5</span> Chapter 5 - Loading Cytometry Data</a></li>
+<li><a class="" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">6</span> Chapter 6 - Visualising Cytometry Data</a></li>
+<li><a class="" href="chapter-7---gating-data.html"><span class="header-section-number">7</span> Chapter 7 - Gating Data</a></li>
+<li><a class="" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">8</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
+<li><a class="" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">9</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
+<li><a class="" href="chapter-10---downsampling.html"><span class="header-section-number">10</span> Chapter 10 - Downsampling</a></li>
+<li><a class="" href="chapter-11---data-transformation.html"><span class="header-section-number">11</span> Chapter 11 - Data Transformation</a></li>
+<li><a class="" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">12</span> Chapter 12 - Extracting Expression Data</a></li>
+<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">13</span> Chapter 13 - Full Visualisation</a></li>
+<li><a class="" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">14</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
+<li><a class="" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">15</span> Chapter 15 - Clustering and Population Discovery</a></li>
+<li><a class="" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">16</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
 </ul>
 
         <div class="book-extra">
@@ -70,19 +70,19 @@
         </div>
       </nav>
 </div>
-  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="chapter-5---loading-cytometry-data" class="section level1" number="6">
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="chapter-5---loading-cytometry-data" class="section level1" number="5">
 <h1>
-<span class="header-section-number">6</span> Chapter 5 - Loading Cytometry Data<a class="anchor" aria-label="anchor" href="#chapter-5---loading-cytometry-data"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5</span> Chapter 5 - Loading Cytometry Data<a class="anchor" aria-label="anchor" href="#chapter-5---loading-cytometry-data"><i class="fas fa-link"></i></a>
 </h1>
-<div id="what-youll-learn-1" class="section level2" number="6.1">
+<div id="what-youll-learn-1" class="section level2" number="5.1">
 <h2>
-<span class="header-section-number">6.1</span> What You’ll Learn<a class="anchor" aria-label="anchor" href="#what-youll-learn-1"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.1</span> What You’ll Learn<a class="anchor" aria-label="anchor" href="#what-youll-learn-1"><i class="fas fa-link"></i></a>
 </h2>
 <p>This chapter introduces how R stores and organises cytometry data. You’ll load your first FCS files and learn to examine what’s inside them. By the end, you’ll understand the basic data structures that all subsequent analysis depends on.</p>
 </div>
-<div id="understanding-fcs-files" class="section level2" number="6.2">
+<div id="understanding-fcs-files" class="section level2" number="5.2">
 <h2>
-<span class="header-section-number">6.2</span> Understanding FCS Files<a class="anchor" aria-label="anchor" href="#understanding-fcs-files"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.2</span> Understanding FCS Files<a class="anchor" aria-label="anchor" href="#understanding-fcs-files"><i class="fas fa-link"></i></a>
 </h2>
 <p>Before loading data into R, let’s understand what we’re working with.</p>
 <p><strong>FCS (Flow Cytometry Standard) files</strong> are the universal format for cytometry data. They contain:
@@ -94,37 +94,35 @@
 - Each row is one cell (or “event”)
 - Each column is one marker or measurement
 - Additional information is stored as file properties</p>
-<div id="where-this-courses-data-came-from" class="section level3" number="6.2.1">
+<div id="where-this-courses-data-came-from" class="section level3" number="5.2.1">
 <h3>
-<span class="header-section-number">6.2.1</span> Where This Course’s Data Came From<a class="anchor" aria-label="anchor" href="#where-this-courses-data-came-from"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.2.1</span> Where This Course’s Data Came From<a class="anchor" aria-label="anchor" href="#where-this-courses-data-came-from"><i class="fas fa-link"></i></a>
 </h3>
 <p>Mass cytometers (e.g. the Helios) don’t output FCS directly, their raw output is an <code>.IMD</code> file, the same format other mass spectrometers use. Someone, usually the core facility that ran your samples, converts that into the <code>.fcs</code> format this course and every other cytometry analysis tool expects.</p>
-<p>You’ll also see the word “debarcoded” used throughout this course to describe the provided data. Debarcoding is what separates out multiplexed samples: rather than running each sample through the cytometer separately, several samples are tagged with a unique combination of barcodes and run together in one tube, reducing batch effects from pipetting or titration differences between separate runs. Debarcoding is the step afterward that sorts events back out into one FCS file per original sample. This is usually done for you by whoever exported the data (as it was for this course’s dataset), but self-service debarcoding tools exist too, e.g. the Nolan lab’s <a href="https://github.com/nolanlab/single-cell-debarcoder">single-cell debarcoder</a>, if you need to redo it yourself or reprocess the original acquisition.</p>
+<p>You’ll also see the word “debarcoded” used throughout this course to describe the provided data. Debarcoding is what separates out multiplexed samples: rather than running each sample through the cytometer separately, several samples are tagged with a unique combination of barcodes and run together in one tube, reducing batch effects from pipetting or titration differences between separate runs. Debarcoding is the step afterwards that sorts events back out into one FCS file per original sample. This is usually done for you by whoever exported the data (as it was for this course’s dataset), but self-service debarcoding tools exist too, e.g. the Nolan lab’s <a href="https://github.com/nolanlab/single-cell-debarcoder">single-cell debarcoder</a>, if you need to redo it yourself or reprocess the original acquisition.</p>
 </div>
 </div>
-<div id="the-essentials-3" class="section level2 essentials" number="6.3">
+<div id="the-essentials-3" class="section level2 essentials" number="5.3">
 <h2>
-<span class="header-section-number">6.3</span> The Essentials<a class="anchor" aria-label="anchor" href="#the-essentials-3"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.3</span> The Essentials<a class="anchor" aria-label="anchor" href="#the-essentials-3"><i class="fas fa-link"></i></a>
 </h2>
-<div id="step-1-load-required-packages" class="section level3" number="6.3.1">
+<div id="step-1-load-required-packages" class="section level3" number="5.3.1">
 <h3>
-<span class="header-section-number">6.3.1</span> Step 1: Load Required Packages<a class="anchor" aria-label="anchor" href="#step-1-load-required-packages"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.3.1</span> Step 1: Load Required Packages<a class="anchor" aria-label="anchor" href="#step-1-load-required-packages"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in readLines(f, n): line 1 appears to contain an</span></span>
-<span><span class="co">#&gt; embedded nul</span></span>
-<span><span class="co">#&gt; here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R</span></span></code></pre></div>
+<span><span class="co">#&gt; here() starts at /Users/dcarragher/Sync/CLAUDE/Analysing-Cytometry-Data-With-R</span></span></code></pre></div>
 <p><strong>What these do:</strong>
 - <code>flowCore</code>: Specialized package for reading and working with cytometry data
 - <code>here</code>: Manages file paths (we set this up in Chapter 4)</p>
 </div>
-<div id="step-2-load-the-course-dataset" class="section level3" number="6.3.2">
+<div id="step-2-load-the-course-dataset" class="section level3" number="5.3.2">
 <h3>
-<span class="header-section-number">6.3.2</span> Step 2: Load the Course Dataset<a class="anchor" aria-label="anchor" href="#step-2-load-the-course-dataset"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.3.2</span> Step 2: Load the Course Dataset<a class="anchor" aria-label="anchor" href="#step-2-load-the-course-dataset"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/read.flowSet.html">read.flowSet</a></span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"fcs"</span><span class="op">)</span>, pattern <span class="op">=</span> <span class="st">"\\.fcs$"</span><span class="op">)</span> <span class="co"># The pattern = "\\.fcs$" argument ensures that the data import can take place even if there are other irrelevant files and folders present. If you don't use this and there is an unexpected folder or file, you'll get an error.</span></span></code></pre></div>
 <p><strong>What this does:</strong> Reads all FCS files from the <code>fcs</code> folder and stores the result under the name <code>FLOWSET</code>.</p>
 <p>In R, an <strong>object</strong> is a reserved location in memory that stores data, a data structure, or even code. R is a functional, object-oriented language, which means everything that exists in R is an object: a single number, a table, a plot, even a function itself. When you ran the line above, R reserved memory for your loaded FCS data and gave it the name <code>FLOWSET</code>, so you created an object.</p>
@@ -132,18 +130,18 @@
 <p>This particular object is of a special type called a “flowSet”, the next section explains what that means.</p>
 <p>This data has already been normalised, debarcoded, and gated to live singlets, we don’t ship every intermediate processing stage, just the data you’ll actually work with.</p>
 </div>
-<div id="step-3-verify-the-data-loaded" class="section level3" number="6.3.3">
+<div id="step-3-verify-the-data-loaded" class="section level3" number="5.3.3">
 <h3>
-<span class="header-section-number">6.3.3</span> Step 3: Verify the Data Loaded<a class="anchor" aria-label="anchor" href="#step-3-verify-the-data-loaded"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.3.3</span> Step 3: Verify the Data Loaded<a class="anchor" aria-label="anchor" href="#step-3-verify-the-data-loaded"><i class="fas fa-link"></i></a>
 </h3>
 <p>Check how many files were loaded:</p>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 5</span></span></code></pre></div>
 <p><strong>Success looks like this:</strong></p>
 <pre><code>[1] 5</code></pre>
 <p>Check the file names:</p>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "2PFANASPermLIVE.fcs"      "4PFA1GLUTNASPermLIVE.fcs"</span></span>
 <span><span class="co">#&gt; [3] "4PFANASPermLIVE.fcs"      "4PFANoPermLIVE.fcs"      </span></span>
@@ -155,12 +153,12 @@
   path 'C:/Users/YourName/Documents/Cytometry_R_Course/Data/fcs' does not contain any valid FCS files</code></pre>
 <p>This means the FCS files aren’t in <code>Data/fcs/</code>, or don’t have the <code>.fcs</code> extension. Check Chapter 4’s folder setup.</p>
 </div>
-<div id="step-4-examine-whats-inside" class="section level3" number="6.3.4">
+<div id="step-4-examine-whats-inside" class="section level3" number="5.3.4">
 <h3>
-<span class="header-section-number">6.3.4</span> Step 4: Examine What’s Inside<a class="anchor" aria-label="anchor" href="#step-4-examine-whats-inside"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.3.4</span> Step 4: Examine What’s Inside<a class="anchor" aria-label="anchor" href="#step-4-examine-whats-inside"><i class="fas fa-link"></i></a>
 </h3>
 <p>Check which markers were measured:</p>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] "Time"         "Event_length" "Y89Di"       </span></span>
 <span><span class="co">#&gt;  [4] "Pd102Di"      "Rh103Di"      "Pd104Di"     </span></span>
@@ -185,7 +183,7 @@
 <span><span class="co">#&gt; [61] "Residual"</span></span></code></pre></div>
 <p>This shows all the channels recorded in your files - both cell measurements (Time, Event_length) and markers (the metal isotope names).</p>
 <p>Check the marker annotations:</p>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/markernames.html">markernames</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         Event_length                Y89Di </span></span>
 <span><span class="co">#&gt;       "Event_length"           "89Y_CD41" </span></span>
@@ -249,18 +247,18 @@
 <span><span class="co">#&gt;              "Width"           "Residual"</span></span></code></pre></div>
 <p>This shows which markers correspond to which channels. <code>NA</code> means no marker annotation (these are measurement channels).</p>
 </div>
-<div id="step-5-save-your-work" class="section level3" number="6.3.5">
+<div id="step-5-save-your-work" class="section level3" number="5.3.5">
 <h3>
-<span class="header-section-number">6.3.5</span> Step 5: Save Your Work<a class="anchor" aria-label="anchor" href="#step-5-save-your-work"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.3.5</span> Step 5: Save Your Work<a class="anchor" aria-label="anchor" href="#step-5-save-your-work"><i class="fas fa-link"></i></a>
 </h3>
 <p><strong>Note:</strong> Create the RDS folder first, if it doesn’t already exist:</p>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span><span class="op">)</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">FLOWSET</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><strong>What this does:</strong> Saves the flowSet as an RDS file - R’s native format for storing objects. This lets you reload the data instantly in future sessions without re-reading the FCS files.</p>
 <p><code><a href="https://rdrr.io/r/base/readRDS.html">saveRDS()</a></code> doesn’t print anything when it works, so check the file exists instead:</p>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 <p><strong>Success looks like this:</strong></p>
@@ -271,13 +269,13 @@
 <p><strong>Success check:</strong> You should now have <code>FLOWSET.rds</code> in your <code>Data/RDS/</code> folder.</p>
 </div>
 </div>
-<div id="a-deeper-dive-3" class="section level2 deeper-dive" number="6.4">
+<div id="a-deeper-dive-3" class="section level2 deeper-dive" number="5.4">
 <h2>
-<span class="header-section-number">6.4</span> A Deeper Dive<a class="anchor" aria-label="anchor" href="#a-deeper-dive-3"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4</span> A Deeper Dive<a class="anchor" aria-label="anchor" href="#a-deeper-dive-3"><i class="fas fa-link"></i></a>
 </h2>
-<div id="what-is-a-flowset" class="section level3" number="6.4.1">
+<div id="what-is-a-flowset" class="section level3" number="5.4.1">
 <h3>
-<span class="header-section-number">6.4.1</span> What is a flowSet?<a class="anchor" aria-label="anchor" href="#what-is-a-flowset"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4.1</span> What is a flowSet?<a class="anchor" aria-label="anchor" href="#what-is-a-flowset"><i class="fas fa-link"></i></a>
 </h3>
 <p>A <strong>flowSet</strong> is R’s way of organising multiple cytometry files together. Instead of working with files one at a time, a flowSet lets you:
 - Apply the same analysis to all files at once
@@ -285,9 +283,9 @@
 - Keep related files organised</p>
 <p>Think of a flowSet as a collection of samples from the same experiment.</p>
 </div>
-<div id="what-is-a-flowframe" class="section level3" number="6.4.2">
+<div id="what-is-a-flowframe" class="section level3" number="5.4.2">
 <h3>
-<span class="header-section-number">6.4.2</span> What is a flowFrame?<a class="anchor" aria-label="anchor" href="#what-is-a-flowframe"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4.2</span> What is a flowFrame?<a class="anchor" aria-label="anchor" href="#what-is-a-flowframe"><i class="fas fa-link"></i></a>
 </h3>
 <p>Each individual FCS file within a flowSet is called a <strong>flowFrame</strong>. A flowFrame contains:
 - The expression data (cell-by-marker matrix)
@@ -297,12 +295,12 @@
 - One flowSet = multiple flowFrames
 - One flowFrame = one FCS file</p>
 </div>
-<div id="the-direct-route-one-file-no-flowset" class="section level3" number="6.4.3">
+<div id="the-direct-route-one-file-no-flowset" class="section level3" number="5.4.3">
 <h3>
-<span class="header-section-number">6.4.3</span> The Direct Route: One File, No flowSet<a class="anchor" aria-label="anchor" href="#the-direct-route-one-file-no-flowset"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4.3</span> The Direct Route: One File, No flowSet<a class="anchor" aria-label="anchor" href="#the-direct-route-one-file-no-flowset"><i class="fas fa-link"></i></a>
 </h3>
 <p>The Essentials section above got you a flowFrame indirectly: read all 5 files into a flowSet with <code><a href="https://rdrr.io/pkg/flowCore/man/read.flowSet.html">read.flowSet()</a></code>, then pull one back out with <code>[[1]]</code>. That’s the right approach for this course, since every later chapter works on all your samples together. But if you only ever have one file, or you’re just exploring a single sample before deciding how to handle the rest, going through a flowSet first is unnecessary machinery. <code>flowCore</code> also lets you read one FCS file straight into a flowFrame:</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">FLOWFRAME</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/read.FCS.html">read.FCS</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"fcs"</span>, <span class="st">"2PFANASPermLIVE.fcs"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">FLOWFRAME</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "flowFrame"</span></span>
@@ -311,35 +309,35 @@
 <p><code>class(FLOWFRAME)</code> reports <code>"flowFrame"</code> directly, no flowSet ever existed in this version. Everything you’d do with <code>FLOWFRAME</code> from the Essentials section (<code><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs()</a></code>, <code><a href="https://rdrr.io/pkg/flowCore/man/markernames.html">markernames()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>) works exactly the same way here, it’s the same object type either way, just reached by a shorter path.</p>
 <p><strong>Why this course uses <code><a href="https://rdrr.io/pkg/flowCore/man/read.flowSet.html">read.flowSet()</a></code>, not <code><a href="https://rdrr.io/pkg/flowCore/man/read.FCS.html">read.FCS()</a></code>:</strong> if you go looking at <code>flowCore</code>’s own documentation, <code><a href="https://rdrr.io/pkg/flowCore/man/read.FCS.html">read.FCS()</a></code> is the more basic, foundational function, <code><a href="https://rdrr.io/pkg/flowCore/man/read.flowSet.html">read.flowSet()</a></code> actually calls <code><a href="https://rdrr.io/pkg/flowCore/man/read.FCS.html">read.FCS()</a></code> once per file internally and bundles the results together. So here is why this course defaults to the flowSet route from Chapter 5 onward rather than reading files individually: every downstream chapter, cleaning, transformation, clustering, statistics, needs to treat all 5 samples the same way at once, and <code><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply()</a></code> (the function that does that) only works on a flowSet, not on individual flowFrames. Reading one file at a time with <code><a href="https://rdrr.io/pkg/flowCore/man/read.FCS.html">read.FCS()</a></code> would mean repeating every step 5 times by hand instead of once.</p>
 </div>
-<div id="understanding-data-structures" class="section level3" number="6.4.4">
+<div id="understanding-data-structures" class="section level3" number="5.4.4">
 <h3>
-<span class="header-section-number">6.4.4</span> Understanding Data Structures<a class="anchor" aria-label="anchor" href="#understanding-data-structures"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4.4</span> Understanding Data Structures<a class="anchor" aria-label="anchor" href="#understanding-data-structures"><i class="fas fa-link"></i></a>
 </h3>
 <p>Both flowSets and flowFrames are <strong>S4 objects</strong> - a complex data structure type used by Bioconductor packages. Many basic structures in R can only hold one type of data throughout: a vector or a matrix has to be all numbers, or all text, never a mix. A data frame relaxes that a little, each column can be a different type, numbers in one, text in another, the same way an Excel sheet mixes numeric and text columns, but everything still has to fit one flat grid of rows and columns. An S4 object goes further still: it can hold pieces with genuinely different shapes side by side, not just different types within one grid. A flowFrame is a working example: it holds a matrix of cell-by-marker numbers, a separate table describing the channels and markers themselves, and a list of acquisition settings that isn’t a table at all, just named values, all inside one <code>FLOWFRAME</code> object, each piece kept in whatever shape actually fits it.</p>
 <p>You can recognise S4 objects by:
 - The <code>@</code> symbol used to access their components (though you usually shouldn’t use this directly)
 - Special functions designed to work with them (<code><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames()</a></code>, <code><a href="https://rdrr.io/r/base/colnames.html">colnames()</a></code>, <code><a href="https://rdrr.io/pkg/flowCore/man/markernames.html">markernames()</a></code>)</p>
 <p>Here’s <code>@</code> in action, purely so you can recognise it when you see it:</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">FLOWFRAME</span><span class="op">@</span><span class="va">exprs</span></span></code></pre></div>
 <p>This reaches directly into the flowFrame’s internal storage and pulls out its raw expression matrix, the same numbers <code><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs()</a></code> gives you. <code>@</code> is doing for S4 objects roughly what <code>$</code> does for data frames, pulling out a named piece by name, but for a stricter, more rigidly defined object type. The reason you’ll almost never write <code>FLOWFRAME@exprs</code> yourself is that <code>exprs(FLOWFRAME)</code> does the same job, safely, through a proper function, packages usually provide a named function for every piece you’re meant to access, so you never actually need <code>@</code> yourself.</p>
 <p>If you replace the expression data using <code>@</code> directly, R doesn’t check whether the new data still makes sense with everything else in the object:</p>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">FLOWFRAME</span><span class="op">@</span><span class="va">exprs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>  <span class="co"># wrong dimensions entirely, R accepts it anyway</span></span></code></pre></div>
 <p>Nothing errors here, even though this replacement almost certainly doesn’t match the object’s actual number of cells or channels. The object is now internally broken, but nothing tells you at that moment. The failure shows up later, somewhere else entirely, in a function that assumed the object made sense, and by then it’s disconnected from the mistake that caused it.</p>
 <p>The proper function checks first:</p>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs</a></span><span class="op">(</span><span class="va">FLOWFRAME</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>  <span class="co"># exprs() checks this against the object before allowing it</span></span></code></pre></div>
 <p>This would actually raise an error, because <code><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs()</a></code> verifies the replacement fits before accepting it, <code>@</code> never does.</p>
-<p><strong>Why this matters:</strong> Understanding that cytometry data uses specialized structures helps you know which functions to use and how to troubleshoot problems.</p>
+<p><strong>Why this matters:</strong> Understanding that cytometry data uses specialised structures helps you know which functions to use and how to troubleshoot problems.</p>
 </div>
-<div id="three-ways-to-get-a-piece-out-of-an-object" class="section level3" number="6.4.5">
+<div id="three-ways-to-get-a-piece-out-of-an-object" class="section level3" number="5.4.5">
 <h3>
-<span class="header-section-number">6.4.5</span> Three Ways to Get a Piece Out of an Object<a class="anchor" aria-label="anchor" href="#three-ways-to-get-a-piece-out-of-an-object"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4.5</span> Three Ways to Get a Piece Out of an Object<a class="anchor" aria-label="anchor" href="#three-ways-to-get-a-piece-out-of-an-object"><i class="fas fa-link"></i></a>
 </h3>
-<p>You now have <code>FLOWSET</code>, one object holding all 5 of your files together. Very often you don’t want the whole thing, you want just one file, or just a few files, or just one piece of information about it. R gives you three different tools for this, and they behave differently in ways that matter. Mixing them up is one of the most common beginner mistakes in R, so slow down here.</p>
+<p>You now have <code>FLOWSET</code>, one object holding all 5 of your files together. Very often you don’t want the whole thing, you want just one file, or just a few files, or just one piece of information about it. R gives you three different tools for this, and they behave differently. Mixing them up is one of the most common beginner mistakes in R, so it’s worth taking this section slowly.</p>
 <p><strong>Single brackets <code>[ ]</code>: take some files out, but keep them as a flowSet</strong></p>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">SUBSET</span> <span class="op">&lt;-</span> <span class="va">FLOWSET</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">SUBSET</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "flowSet"</span></span>
@@ -349,7 +347,7 @@
 <span><span class="co">#&gt; [1] 2</span></span></code></pre></div>
 <p><code>FLOWSET[c(1, 3)]</code> says “give me files 1 and 3.” What you get back is still a flowSet, just a smaller one, containing those two files. Run <code>class(SUBSET)</code> and it will still say <code>"flowSet"</code>. A useful way to picture this: imagine <code>FLOWSET</code> is a filing cabinet with 5 folders in it. <code>FLOWSET[c(1, 3)]</code> takes folders 1 and 3 out, but they’re still folders, just fewer of them, sitting in a smaller cabinet.</p>
 <p><strong>Double brackets <code>[[ ]]</code>: reach inside and take one file out on its own</strong></p>
-<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">FLOWFRAME</span> <span class="op">&lt;-</span> <span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">FLOWFRAME</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "flowFrame"</span></span>
@@ -361,24 +359,24 @@
 <p><strong>Dollar sign <code>$</code>: get one named piece of information, not by position</strong></p>
 <p>Brackets, single or double, work by position, first, third, whichever number you give them. <code>$</code> works completely differently, it works by name, on data frames specifically.</p>
 <p>This is a good moment to reconnect to something from earlier in this section: flowSet is an S4 object, and S4 objects use <code>@</code> internally, not <code>$</code>. So you’ll never write <code>FLOWSET$something</code> directly, it doesn’t work, <code>$</code> isn’t part of how flowSet is built. What you can do is ask a function to hand you back a plain data frame, and use <code>$</code> on that:</p>
-<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">SAMPLE_INFO</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/phenoData.html">pData</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">)</span></span>
 <span><span class="va">SAMPLE_INFO</span><span class="op">$</span><span class="va">name</span></span></code></pre></div>
 <p><code>pData(FLOWSET)</code> is exactly this: a function that reaches into the flowSet and hands you back an ordinary data frame describing your samples. Once you have <code>SAMPLE_INFO</code>, an actual data frame, <code>$name</code> works normally, pulling out the column called <code>name</code> by its name, not its position. You’ll meet <code>$</code> again later in this course on other data frames too, for example <code>panel$antigen</code>. The pattern to remember: <code>$</code> needs a data frame to work on, flowSets and flowFrames aren’t data frames, so you always go through a function like <code><a href="https://rdrr.io/pkg/Biobase/man/phenoData.html">pData()</a></code> first to get one.</p>
 <p>Check what you extracted with double brackets:</p>
-<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">FLOWFRAME</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "flowFrame"</span></span>
 <span><span class="co">#&gt; attr(,"package")</span></span>
 <span><span class="co">#&gt; [1] "flowCore"</span></span></code></pre></div>
 </div>
-<div id="examining-data-dimensions" class="section level3" number="6.4.6">
+<div id="examining-data-dimensions" class="section level3" number="5.4.6">
 <h3>
-<span class="header-section-number">6.4.6</span> Examining Data Dimensions<a class="anchor" aria-label="anchor" href="#examining-data-dimensions"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4.6</span> Examining Data Dimensions<a class="anchor" aria-label="anchor" href="#examining-data-dimensions"><i class="fas fa-link"></i></a>
 </h3>
 <p>A flowSet holds n flowFrames. Our <code>FLOWSET</code> holds 5, for instance. <code><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply()</a></code> applies a function to every flowFrame in a flowSet, regardless of how many there are. Think back to the filing cabinet from earlier: <code><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply()</a></code> is like sending someone down the row of folders with one instruction, “do this same task to every folder”, who then hands you back a stack of results, one per folder.</p>
 <p>Check how much data you have:</p>
-<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">FLOWFRAME</span><span class="op">)</span> <span class="co"># tells you the number or rows i.e. how many events have data recorded withing hte FlowFrame</span></span>
 <span><span class="co">#&gt; [1] 30825</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">)</span> <span class="co"># Returns "NULL" showing these types of commands expecta flowFrame, not a flowSet</span></span>
@@ -394,32 +392,32 @@
 <p><code><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply()</a></code> takes two things, a flowSet and a function, runs the function once per flowFrame inside it, and hands back all the individual answers together. <code>fsApply(FLOWSET, nrow)</code> means “open every folder, run <code><a href="https://rdrr.io/r/base/nrow.html">nrow()</a></code> on what’s inside, and bring back one answer per folder.” The function doesn’t have to be <code><a href="https://rdrr.io/r/base/nrow.html">nrow()</a></code>, <code><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply()</a></code> works with whatever function you give it, that’s why you’ll see it reused throughout this course.</p>
 <p><strong>What nrow means:</strong> “Number of rows” - since data is organised with one cell per row, this tells you cell counts.</p>
 <p>Check how many markers:</p>
-<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 61</span></span></code></pre></div>
 <p>This shows the number of columns (channels/markers) in the first file.</p>
 </div>
-<div id="understanding-channel-names" class="section level3" number="6.4.7">
+<div id="understanding-channel-names" class="section level3" number="5.4.7">
 <h3>
-<span class="header-section-number">6.4.7</span> Understanding Channel Names<a class="anchor" aria-label="anchor" href="#understanding-channel-names"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4.7</span> Understanding Channel Names<a class="anchor" aria-label="anchor" href="#understanding-channel-names"><i class="fas fa-link"></i></a>
 </h3>
 <p>Cytometry files have two naming systems:</p>
 <p><strong>Channel names</strong> (detector names):</p>
-<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">)</span></span></code></pre></div>
 <p>Shows the technical detector identifiers like “Ir191Di”</p>
 <p><strong>Marker names</strong> (biological annotations):</p>
-<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/markernames.html">markernames</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">)</span></span></code></pre></div>
 <p>Shows what was actually measured like “DNA1” or “CD235ab”</p>
 <p><strong>Why both?</strong> Channels are fixed by the instrument. Markers are what you label them during acquisition. The same channel might measure different markers in different experiments.</p>
 </div>
-<div id="accessing-expression-data" class="section level3" number="6.4.8">
+<div id="accessing-expression-data" class="section level3" number="5.4.8">
 <h3>
-<span class="header-section-number">6.4.8</span> Accessing Expression Data<a class="anchor" aria-label="anchor" href="#accessing-expression-data"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4.8</span> Accessing Expression Data<a class="anchor" aria-label="anchor" href="#accessing-expression-data"><i class="fas fa-link"></i></a>
 </h3>
 <p>The actual cell measurements are stored in the “expression matrix”:</p>
-<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs</a></span><span class="op">(</span><span class="va">FLOWFRAME</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
 <span><span class="co">#&gt;          Time Event_length    Y89Di    Pd102Di Rh103Di</span></span>
 <span><span class="co">#&gt; [1,] 3950.378           36 1.900429 0.00000000       0</span></span>
@@ -430,15 +428,15 @@
 <p>This shows the first 5 cells and first 5 channels. Each number is a measurement - the intensity detected for that marker on that cell.</p>
 <p><strong>What <code><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs()</a></code> means:</strong> “Expression data” - the core measurements from your experiment.</p>
 </div>
-<div id="keywords-and-metadata" class="section level3" number="6.4.9">
+<div id="keywords-and-metadata" class="section level3" number="5.4.9">
 <h3>
-<span class="header-section-number">6.4.9</span> Keywords and Metadata<a class="anchor" aria-label="anchor" href="#keywords-and-metadata"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4.9</span> Keywords and Metadata<a class="anchor" aria-label="anchor" href="#keywords-and-metadata"><i class="fas fa-link"></i></a>
 </h3>
 <p>FCS files store additional information as keywords:</p>
-<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/keyword-methods.html">keyword</a></span><span class="op">(</span><span class="va">FLOWFRAME</span>, <span class="st">"FILENAME"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $FILENAME</span></span>
-<span><span class="co">#&gt; [1] "/Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R/Data/fcs/2PFANASPermLIVE.fcs"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "/Users/dcarragher/Sync/CLAUDE/Analysing-Cytometry-Data-With-R/Data/fcs/2PFANASPermLIVE.fcs"</span></span></code></pre></div>
 <p>There are dozens of keywords storing information like:
 - Instrument used
 - Acquisition date
@@ -446,16 +444,16 @@
 - Software version
 - Panel information</p>
 <p>You can see all keywords (warning: very long output):</p>
-<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/keyword-methods.html">keyword</a></span><span class="op">(</span><span class="va">FLOWFRAME</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="working-with-multiple-files" class="section level3" number="6.4.10">
+<div id="working-with-multiple-files" class="section level3" number="5.4.10">
 <h3>
-<span class="header-section-number">6.4.10</span> Working with Multiple Files<a class="anchor" aria-label="anchor" href="#working-with-multiple-files"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4.10</span> Working with Multiple Files<a class="anchor" aria-label="anchor" href="#working-with-multiple-files"><i class="fas fa-link"></i></a>
 </h3>
-<p>The power of flowSets is applying operations to all files at once.</p>
+<p>flowSets let you apply operations to all files at once.</p>
 <p><strong>Get dimensions for all files:</strong></p>
-<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">FLOWSET</span>, <span class="va">dim</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                          events parameters</span></span>
 <span><span class="co">#&gt; 2PFANASPermLIVE.fcs       30825         61</span></span>
@@ -464,7 +462,7 @@
 <span><span class="co">#&gt; 4PFANoPermLIVE.fcs        57521         61</span></span>
 <span><span class="co">#&gt; 8PFANASPermLIVE.fcs       23790         61</span></span></code></pre></div>
 <p><strong>Get median marker expression:</strong></p>
-<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">FLOWSET</span>, <span class="va">each_col</span>, <span class="va">median</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                              Time Event_length Y89Di</span></span>
 <span><span class="co">#&gt; 2PFANASPermLIVE.fcs      304295.3           31     0</span></span>
@@ -480,27 +478,27 @@
 <span><span class="co">#&gt; 8PFANASPermLIVE.fcs            0 0.0000000</span></span></code></pre></div>
 <p>This calculates the median for each channel in each file. The <code>[1:5, 1:5]</code> limits output to the first 5 files and channels for readability.</p>
 </div>
-<div id="subsetting-data" class="section level3" number="6.4.11">
+<div id="subsetting-data" class="section level3" number="5.4.11">
 <h3>
-<span class="header-section-number">6.4.11</span> Subsetting Data<a class="anchor" aria-label="anchor" href="#subsetting-data"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4.11</span> Subsetting Data<a class="anchor" aria-label="anchor" href="#subsetting-data"><i class="fas fa-link"></i></a>
 </h3>
 <p>You can select specific files or channels:</p>
 <p><strong>Select specific samples:</strong></p>
-<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">SUBSET</span> <span class="op">&lt;-</span> <span class="va">FLOWSET</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">5</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">SUBSET</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 3</span></span></code></pre></div>
 <p>This creates a new flowSet with only samples 1, 3, and 5.</p>
 <p><strong>Select specific channels:</strong></p>
-<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">MARKERS_ONLY</span> <span class="op">&lt;-</span> <span class="va">FLOWSET</span><span class="op">[</span>, <span class="fl">7</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">MARKERS_ONLY</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 9</span></span></code></pre></div>
 <p>This keeps only columns 7-15 (marker channels, excluding measurement channels).</p>
 </div>
-<div id="data-structure-summary" class="section level3" number="6.4.12">
+<div id="data-structure-summary" class="section level3" number="5.4.12">
 <h3>
-<span class="header-section-number">6.4.12</span> Data Structure Summary<a class="anchor" aria-label="anchor" href="#data-structure-summary"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4.12</span> Data Structure Summary<a class="anchor" aria-label="anchor" href="#data-structure-summary"><i class="fas fa-link"></i></a>
 </h3>
 <pre><code>FLOWSET (all files together)
 ├── FLOWFRAME 1 (2PFANASPermLIVE.fcs)
@@ -512,15 +510,15 @@
 └── FLOWFRAME 5 (8PFANASPermLIVE.fcs)
     └── ...</code></pre>
 </div>
-<div id="saving-and-loading" class="section level3" number="6.4.13">
+<div id="saving-and-loading" class="section level3" number="5.4.13">
 <h3>
-<span class="header-section-number">6.4.13</span> Saving and Loading<a class="anchor" aria-label="anchor" href="#saving-and-loading"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4.13</span> Saving and Loading<a class="anchor" aria-label="anchor" href="#saving-and-loading"><i class="fas fa-link"></i></a>
 </h3>
 <p><strong>Save objects for later:</strong></p>
-<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">FLOWSET</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Load saved objects:</strong></p>
-<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Why use RDS?</strong>
 - Much faster than re-reading FCS files
@@ -528,11 +526,11 @@
 - Portable between computers
 - Smaller file size than FCS</p>
 </div>
-<div id="common-operations-summary" class="section level3" number="6.4.14">
+<div id="common-operations-summary" class="section level3" number="5.4.14">
 <h3>
-<span class="header-section-number">6.4.14</span> Common Operations Summary<a class="anchor" aria-label="anchor" href="#common-operations-summary"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4.14</span> Common Operations Summary<a class="anchor" aria-label="anchor" href="#common-operations-summary"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check what you have</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">)</span>              <span class="co"># Number of files</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html">sampleNames</a></span><span class="op">(</span><span class="va">FLOWSET</span><span class="op">)</span>         <span class="co"># File names</span></span>
@@ -548,18 +546,18 @@
 <span><span class="va">FLOWFRAME</span> <span class="op">&lt;-</span> <span class="va">FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>    <span class="co"># Extract one file</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs</a></span><span class="op">(</span><span class="va">FLOWFRAME</span><span class="op">)</span>             <span class="co"># Get expression matrix</span></span></code></pre></div>
 </div>
-<div id="troubleshooting-1" class="section level3" number="6.4.15">
+<div id="troubleshooting-1" class="section level3" number="5.4.15">
 <h3>
-<span class="header-section-number">6.4.15</span> Troubleshooting<a class="anchor" aria-label="anchor" href="#troubleshooting-1"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4.15</span> Troubleshooting<a class="anchor" aria-label="anchor" href="#troubleshooting-1"><i class="fas fa-link"></i></a>
 </h3>
 <p><strong>Problem:</strong> Error “cannot open file”<br><strong>Solution:</strong> Check your file path with <code>here("Data", "fcs")</code> and verify files exist there</p>
 <p><strong>Problem:</strong> Fewer files loaded than expected<br><strong>Solution:</strong> Make sure all FCS files are in the correct folder and have <code>.fcs</code> extension</p>
 <p><strong>Problem:</strong> <code><a href="https://rdrr.io/pkg/flowCore/man/markernames.html">markernames()</a></code> shows all <code>NA</code><br><strong>Solution:</strong> Your files may not have marker annotations - this is okay, you can still use channel names</p>
 <p><strong>Problem:</strong> Object not found<br><strong>Solution:</strong> Make sure you ran the code to create the object first</p>
 </div>
-<div id="whats-next-2" class="section level3" number="6.4.16">
+<div id="whats-next-2" class="section level3" number="5.4.16">
 <h3>
-<span class="header-section-number">6.4.16</span> What’s Next<a class="anchor" aria-label="anchor" href="#whats-next-2"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.4.16</span> What’s Next<a class="anchor" aria-label="anchor" href="#whats-next-2"><i class="fas fa-link"></i></a>
 </h3>
 <p>Now that you can load and examine cytometry data, the next chapters will show you how to:
 - Visualise the data to see populations
@@ -572,43 +570,43 @@
 </div>
 </div>
   <div class="chapter-nav">
-<div class="prev"><a href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">5</span> Chapter 4 - File Management and Data Access</a></div>
-<div class="next"><a href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">7</span> Chapter 6 - Visualising Cytometry Data</a></div>
+<div class="prev"><a href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">4</span> Chapter 4 - File Management and Data Access</a></div>
+<div class="next"><a href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">6</span> Chapter 6 - Visualising Cytometry Data</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#chapter-5---loading-cytometry-data"><span class="header-section-number">6</span> Chapter 5 - Loading Cytometry Data</a></li>
-<li><a class="nav-link" href="#what-youll-learn-1"><span class="header-section-number">6.1</span> What You’ll Learn</a></li>
+<li><a class="nav-link" href="#chapter-5---loading-cytometry-data"><span class="header-section-number">5</span> Chapter 5 - Loading Cytometry Data</a></li>
+<li><a class="nav-link" href="#what-youll-learn-1"><span class="header-section-number">5.1</span> What You’ll Learn</a></li>
 <li>
-<a class="nav-link" href="#understanding-fcs-files"><span class="header-section-number">6.2</span> Understanding FCS Files</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#where-this-courses-data-came-from"><span class="header-section-number">6.2.1</span> Where This Course’s Data Came From</a></li></ul>
+<a class="nav-link" href="#understanding-fcs-files"><span class="header-section-number">5.2</span> Understanding FCS Files</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#where-this-courses-data-came-from"><span class="header-section-number">5.2.1</span> Where This Course’s Data Came From</a></li></ul>
 </li>
 <li>
-<a class="nav-link" href="#the-essentials-3"><span class="header-section-number">6.3</span> The Essentials</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#step-1-load-required-packages"><span class="header-section-number">6.3.1</span> Step 1: Load Required Packages</a></li>
-<li><a class="nav-link" href="#step-2-load-the-course-dataset"><span class="header-section-number">6.3.2</span> Step 2: Load the Course Dataset</a></li>
-<li><a class="nav-link" href="#step-3-verify-the-data-loaded"><span class="header-section-number">6.3.3</span> Step 3: Verify the Data Loaded</a></li>
-<li><a class="nav-link" href="#step-4-examine-whats-inside"><span class="header-section-number">6.3.4</span> Step 4: Examine What’s Inside</a></li>
-<li><a class="nav-link" href="#step-5-save-your-work"><span class="header-section-number">6.3.5</span> Step 5: Save Your Work</a></li>
+<a class="nav-link" href="#the-essentials-3"><span class="header-section-number">5.3</span> The Essentials</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#step-1-load-required-packages"><span class="header-section-number">5.3.1</span> Step 1: Load Required Packages</a></li>
+<li><a class="nav-link" href="#step-2-load-the-course-dataset"><span class="header-section-number">5.3.2</span> Step 2: Load the Course Dataset</a></li>
+<li><a class="nav-link" href="#step-3-verify-the-data-loaded"><span class="header-section-number">5.3.3</span> Step 3: Verify the Data Loaded</a></li>
+<li><a class="nav-link" href="#step-4-examine-whats-inside"><span class="header-section-number">5.3.4</span> Step 4: Examine What’s Inside</a></li>
+<li><a class="nav-link" href="#step-5-save-your-work"><span class="header-section-number">5.3.5</span> Step 5: Save Your Work</a></li>
 </ul>
 </li>
 <li>
-<a class="nav-link" href="#a-deeper-dive-3"><span class="header-section-number">6.4</span> A Deeper Dive</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#what-is-a-flowset"><span class="header-section-number">6.4.1</span> What is a flowSet?</a></li>
-<li><a class="nav-link" href="#what-is-a-flowframe"><span class="header-section-number">6.4.2</span> What is a flowFrame?</a></li>
-<li><a class="nav-link" href="#the-direct-route-one-file-no-flowset"><span class="header-section-number">6.4.3</span> The Direct Route: One File, No flowSet</a></li>
-<li><a class="nav-link" href="#understanding-data-structures"><span class="header-section-number">6.4.4</span> Understanding Data Structures</a></li>
-<li><a class="nav-link" href="#three-ways-to-get-a-piece-out-of-an-object"><span class="header-section-number">6.4.5</span> Three Ways to Get a Piece Out of an Object</a></li>
-<li><a class="nav-link" href="#examining-data-dimensions"><span class="header-section-number">6.4.6</span> Examining Data Dimensions</a></li>
-<li><a class="nav-link" href="#understanding-channel-names"><span class="header-section-number">6.4.7</span> Understanding Channel Names</a></li>
-<li><a class="nav-link" href="#accessing-expression-data"><span class="header-section-number">6.4.8</span> Accessing Expression Data</a></li>
-<li><a class="nav-link" href="#keywords-and-metadata"><span class="header-section-number">6.4.9</span> Keywords and Metadata</a></li>
-<li><a class="nav-link" href="#working-with-multiple-files"><span class="header-section-number">6.4.10</span> Working with Multiple Files</a></li>
-<li><a class="nav-link" href="#subsetting-data"><span class="header-section-number">6.4.11</span> Subsetting Data</a></li>
-<li><a class="nav-link" href="#data-structure-summary"><span class="header-section-number">6.4.12</span> Data Structure Summary</a></li>
-<li><a class="nav-link" href="#saving-and-loading"><span class="header-section-number">6.4.13</span> Saving and Loading</a></li>
-<li><a class="nav-link" href="#common-operations-summary"><span class="header-section-number">6.4.14</span> Common Operations Summary</a></li>
-<li><a class="nav-link" href="#troubleshooting-1"><span class="header-section-number">6.4.15</span> Troubleshooting</a></li>
-<li><a class="nav-link" href="#whats-next-2"><span class="header-section-number">6.4.16</span> What’s Next</a></li>
+<a class="nav-link" href="#a-deeper-dive-3"><span class="header-section-number">5.4</span> A Deeper Dive</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#what-is-a-flowset"><span class="header-section-number">5.4.1</span> What is a flowSet?</a></li>
+<li><a class="nav-link" href="#what-is-a-flowframe"><span class="header-section-number">5.4.2</span> What is a flowFrame?</a></li>
+<li><a class="nav-link" href="#the-direct-route-one-file-no-flowset"><span class="header-section-number">5.4.3</span> The Direct Route: One File, No flowSet</a></li>
+<li><a class="nav-link" href="#understanding-data-structures"><span class="header-section-number">5.4.4</span> Understanding Data Structures</a></li>
+<li><a class="nav-link" href="#three-ways-to-get-a-piece-out-of-an-object"><span class="header-section-number">5.4.5</span> Three Ways to Get a Piece Out of an Object</a></li>
+<li><a class="nav-link" href="#examining-data-dimensions"><span class="header-section-number">5.4.6</span> Examining Data Dimensions</a></li>
+<li><a class="nav-link" href="#understanding-channel-names"><span class="header-section-number">5.4.7</span> Understanding Channel Names</a></li>
+<li><a class="nav-link" href="#accessing-expression-data"><span class="header-section-number">5.4.8</span> Accessing Expression Data</a></li>
+<li><a class="nav-link" href="#keywords-and-metadata"><span class="header-section-number">5.4.9</span> Keywords and Metadata</a></li>
+<li><a class="nav-link" href="#working-with-multiple-files"><span class="header-section-number">5.4.10</span> Working with Multiple Files</a></li>
+<li><a class="nav-link" href="#subsetting-data"><span class="header-section-number">5.4.11</span> Subsetting Data</a></li>
+<li><a class="nav-link" href="#data-structure-summary"><span class="header-section-number">5.4.12</span> Data Structure Summary</a></li>
+<li><a class="nav-link" href="#saving-and-loading"><span class="header-section-number">5.4.13</span> Saving and Loading</a></li>
+<li><a class="nav-link" href="#common-operations-summary"><span class="header-section-number">5.4.14</span> Common Operations Summary</a></li>
+<li><a class="nav-link" href="#troubleshooting-1"><span class="header-section-number">5.4.15</span> Troubleshooting</a></li>
+<li><a class="nav-link" href="#whats-next-2"><span class="header-section-number">5.4.16</span> What’s Next</a></li>
 </ul>
 </li>
 </ul>
@@ -627,7 +625,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-08-25.</p>
+    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-10-30.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

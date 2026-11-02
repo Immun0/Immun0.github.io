@@ -2,7 +2,7 @@
 
 ## What You'll Learn
 
-Cytometry data lives in high-dimensional space - dozens of markers measured simultaneously on each cell. Visualisation helps us see patterns, identify populations, and verify our analysis at every step. This chapter teaches you to create the plots you'll need throughout the course.
+Cytometry data lives in high-dimensional space - dozens of markers measured simultaneously on each cell. Visualisation helps us see populations and check our analysis at every step. This chapter teaches you to create the plots you'll need throughout the course.
 
 ## Understanding Cytometry Visualisation
 
@@ -15,7 +15,7 @@ Traditional cytometry analysis relies heavily on visual inspection. We look at s
 
 In R, we use the `ggcyto` package, which combines:
 - `flowCore`: Cytometry data structures
-- `ggplot2`: R's powerful plotting system
+- `ggplot2`: R's main plotting system
 
 ## The Essentials {.essentials}
 
@@ -35,9 +35,7 @@ library(ggcyto)
 #> 
 #>   vignette("flowWorkspace-Introduction", "flowWorkspace")
 library(here)
-#> Warning in readLines(f, n): line 1 appears to contain an
-#> embedded nul
-#> here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R
+#> here() starts at /Users/dcarragher/Sync/CLAUDE/Analysing-Cytometry-Data-With-R
 ```
 
 ### Step 2: Load Your Data
@@ -248,7 +246,7 @@ ggplot(FLOWSET,aes(x = Pr141Di,colour = factor(name),group = factor(name))) +
 
 This shows all samples on one plot instead of separate facets.
 
-This chunk is more involved than most of this chapter's plotting code, and that's deliberate, not a sign something's wrong. `autoplot()` and `ggcyto()` handle single samples and side-by-side facets as one-liners, but neither has a built-in shortcut for stacking every sample's distribution onto one shared axis, the overlay view FlowJo gives you natively when you tick multiple samples in its histogram tool. Getting that same overlay here means dropping down to plain `ggplot()` and `geom_freqpoly()`, and doing the colour/grouping-by-sample wiring yourself (`colour = factor(name), group = factor(name)`) rather than letting `autoplot()` do it for you.
+This chunk is more involved than most of this chapter's plotting code. That's expected. `autoplot()` and `ggcyto()` handle single samples and side-by-side facets as one-liners, but neither has a built-in shortcut for stacking every sample's distribution onto one shared axis, the overlay view FlowJo gives you natively when you tick multiple samples in its histogram tool. Getting that same overlay here means dropping down to plain `ggplot()` and `geom_freqpoly()`, and doing the colour/grouping-by-sample wiring yourself (`colour = factor(name), group = factor(name)`) rather than letting `autoplot()` do it for you.
 
 ### Customising Appearance
 
@@ -295,7 +293,7 @@ p
 ggsave(here("Figures", "dna_all_samples.png"), plot = p, width = 12, height = 8)
 ```
 
-**Go look at the file:** `ggsave()` writes the PNG to disk silently, RStudio won't pop it open for you. Find `dna_all_samples.png` in your `Figures/` folder (Finder on Mac, File Explorer on Windows) and open it directly to actually see what you saved, don't just trust that the code ran.
+**Go look at the file:** `ggsave()` writes the PNG to disk silently, RStudio won't pop it open for you. Find `dna_all_samples.png` in your `Figures/` folder (Finder on Mac, File Explorer on Windows) and open it directly to see what you saved.
 
 ### Comparing Samples Side by Side
 
@@ -402,10 +400,10 @@ autoplot(FLOWSET, x = "Sm149Di", y = "Yb172Di", bins = 128) +
 2. **Use consistent bin numbers** - Makes visual comparison easier
 3. **Save plots as you go** - Document your analysis steps
 4. **Check multiple marker combinations** - Verify data quality
-5. **Use meaningful titles** - Future you will thank present you
+5. **Use meaningful titles** - They make old plots easier to identify later
 
 ### What's Next
 
 With visualisation skills in hand, you're ready to move into the data cleaning phase, covered over the next several chapters: gating, channel matching, and artefact removal.
 
-The plots you create here will be essential for understanding every subsequent analysis step.
+You'll use these plots at every later step of the analysis.

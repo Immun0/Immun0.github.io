@@ -28,12 +28,6 @@ R is the core programming language. Without it, nothing else will work. Go to ht
 - **Mac:** Click "Download R for macOS" > choose the installer that matches your Mac (Apple silicon or Intel) > run the installer with default settings
 - **Linux:** Install through your distribution's package manager instead of the website, for example `sudo apt install r-base` on Ubuntu/Debian, or the equivalent for your distribution
 
-
-```
-#> Warning in readLines(f, n): line 1 appears to contain an
-#> embedded nul
-```
-
 <div class="figure" style="text-align: center">
 <img src="Images/Install_R_Step_1.png" alt="Download the correct R version for your operating system" width="100%" />
 <p class="caption">(\#fig:install-r-step-1)Download the correct R version for your operating system</p>
@@ -126,7 +120,7 @@ You should see a window divided into several sections (called "panes")
 <p class="caption">(\#fig:rstudio-overview)What RStudio looks like when it's set up and running</p>
 </div>
 
-In the bottom-left pane (called the "Console"), type:
+In the bottom-left pane (called the "Console"), type the line below and press Enter. For now everything gets typed straight into the Console. Chapter 4 moves you into a script, which keeps a saved copy of what you ran.
 
 
 ``` r
@@ -185,7 +179,7 @@ language       R
 version.string R version 4.6.0 (2026-04-24)
 nickname       Because it was There
 ```
-Real output, checked against an actual Mac install running current R. The exact numbers will differ depending on your R version and operating system (Mac will show `x86_64` instead of `aarch64` on an Intel Mac, for instance), what matters is that something like this prints with no error message.
+This is real output from a Mac running current R. The exact numbers will differ depending on your R version and operating system (Mac will show `x86_64` instead of `aarch64` on an Intel Mac, for instance), what matters is that something like this prints with no error message.
 
 **Problem:** If you see `Error: object 'R.version' not found` or similar, RStudio isn't finding a working R installation, go back and confirm Step 1 completed successfully.
 
@@ -225,7 +219,7 @@ writeLines('PATH="${RTOOLS42_HOME}\\usr\\bin;${PATH}"', con = "~/.Renviron")
 
 **RStudio (the IDE):** While you can run R commands directly in the basic R console, RStudio provides a much more user-friendly environment. As an Integrated Development Environment, it combines multiple tools:
 
-- A code editor with syntax highlighting (colors that make code easier to read)
+- A code editor with syntax highlighting (colours that make code easier to read)
 - The R console for running commands
 - Project organisation tools
 - An integrated help system
@@ -306,20 +300,20 @@ And a **Jobs** tab, for running scripts in the background, useful for long insta
 This installation sequence creates a stable foundation for everything that follows. Each component serves a specific purpose:
 
 1. R provides the analytical capabilities
-2. Compiler tools enable installation of specialized packages
+2. Compiler tools enable installation of specialised packages
 3. RStudio makes the whole system usable for daily work
 
 Without this proper setup, you'll encounter errors when trying to install the cytometry-specific packages we need for analysis.
 
 ### Packages Preview
-Once this environment is working, you'll install "packages" - collections of additional functions written by other researchers. A package is like an add-on that gives R new capabilities. The cytometry analysis we'll do depends on several specialized packages that extend R's basic functions.
+Once this environment is working, you'll install "packages" - collections of additional functions written by other researchers. A package is like an add-on that gives R new capabilities. The cytometry analysis we'll do depends on several specialised packages that extend R's basic functions.
 
 ### File Paths and Working Directories
-As you start using R, you'll encounter the concept of "working directories" - the folder where R looks for files by default. A working directory is like R's current location on your computer's file system. RStudio helps manage this through "Projects" which we'll set up in the next chapter.
+As you start using R, you'll encounter the concept of "working directories" - the folder where R looks for files by default. A working directory is like R's current location on your computer's file system. RStudio helps manage this through "Projects" which we'll set up in Chapter 4.
 
 Understanding file paths is crucial for cytometry analysis because you'll be loading data files and saving results. The setup we're building now will make file management much easier later.
 
 ### Next Steps
-With R, your compiler tools, and RStudio installed, you have a complete environment for cytometry analysis. The next chapter will show you how to extend R's capabilities by installing specialized packages for working with cytometry data.
+With R, your compiler tools, and RStudio installed, you have a complete environment for cytometry analysis. The next chapter will show you how to extend R's capabilities by installing specialised packages for working with cytometry data.
 
 Don't worry if some of this setup felt abstract - the purpose will become clear when we start loading actual data and creating visualisations.

@@ -11,7 +11,7 @@
 
 ## A Deeper Dive {.deeper-dive}
 
-Cleaning data is a one of the most important (and time consuming parts) of any data analysis. For flow cytometry data we do this in multiple ways, and often with multiple packages or software. In this analysis we will need to clean the data in 3 different ways
+Cleaning data is one of the most important (and time consuming parts) of any data analysis. For flow cytometry data we do this in multiple ways, and often with multiple packages or software. In this analysis we will need to clean the data in 3 different ways
 - `Gating` - Removing dead cells, debris and doublets
   - Removes confounding events
   - Makes files smaller
@@ -21,11 +21,11 @@ Cleaning data is a one of the most important (and time consuming parts) of any d
   - Removing extraneous channels that are not being used so that the analysis focuses on interesting differences between events rather than confounding ones
 - `Outlier and Acquisition Artefact Removal`
   - Removing outliers protects our analysis from the effects of extreme values
-  - Removing channel data recorded during blockages or other acquisition abberations improves data clarity and homogeneity
+  - Removing channel data recorded during blockages or other acquisition aberrations improves data clarity and homogeneity
 
 For the rest of this chapter we will gate out extraneous events using R, completing step 1 of our Data Cleaning strategy.
 
-<span class="warning"> **I highly recommend you learn to gate and export selected events in FlowJo, Cytobank or FCSExpress** </span>. What follows here is a demonstration of what is possible with R rather than a recommendation of how handle your own data.
+<span class="warning"> **I highly recommend you learn to gate and export selected events in FlowJo, Cytobank or FCSExpress** </span>. What follows here is a demonstration of what is possible with R rather than a recommendation of how to handle your own data.
 
 First let's load the packages we'll need.
 
@@ -52,14 +52,14 @@ First we'll set up a Gating Set. This is a collection of gates that we can apply
 Gates <- GatingSet(FLOWSET) # A GatingSet is a collection of gates
 ```
 
-Okay, now we have a Gating Set calles `Gates`, lets look at the structure of the default Gating Set
+Okay, now we have a Gating Set called `Gates`, let's look at the structure of the default Gating Set
 
 ``` r
 gs_get_pop_paths(Gates) # returns the gates in a GatingSet i.e. it tells you which gates are a part of the GatingSet
 #> [1] "root"
 ```
 
-As you can see, without setting any gates we only have the default gate called "root". Note, you cannot change the name of root without causing an error. Several of the commnds in the flowWorkspace package are expecting a "root" gate at the top of the gating tree or hierarchy. If you change the name of the root gate you will get an error.
+As you can see, without setting any gates we only have the default gate called "root". Note, you cannot change the name of root without causing an error. Several of the commands in the flowWorkspace package are expecting a "root" gate at the top of the gating tree or hierarchy. If you change the name of the root gate you will get an error.
 
 **Note:** these chunks are safe to actually run yourself, unlike most `eval=FALSE` examples in this book, that's exactly the point of this section, seeing the real error. They use a disposable `Demo_Gates` object instead of the real `Gates`, so running them won't break anything you need later in this chapter. The last line below is supposed to error, that's not a mistake, keep reading after it for why.
 
@@ -70,7 +70,7 @@ gs_pop_set_name(Demo_Gates, "root", "ungated") # We'll change the name of the ro
 gs_get_pop_paths(Demo_Gates) # Check the outcome is as expected
 ```
 
-Everything looks good. But if we try to use the `Gating Set` with the `root` renamed to `ungated`, lets see what happens. Let's try to add a gate to the hierarchy and then get counts of events in each gate:
+Everything looks good. But if we try to use the `Gating Set` with the `root` renamed to `ungated`, let's see what happens. Let's try to add a gate to the hierarchy and then get counts of events in each gate:
 
 
 ``` r
@@ -82,7 +82,7 @@ gs_pop_get_count_fast(Demo_Gates) # This line is the one that actually errors: f
 
 Now let's continue on gating the data for real, with `root` left exactly as it was.
 
-Lets look at the data to understand what we're dealing with. Remember, this is mass cytometry data so we're dealing with a lot of parameters. To get down to single live events we'll need to go through a gating sequence which you're not familiar with so I'll outline it here.
+Let's look at the data to understand what we're dealing with. Remember, this is mass cytometry data so we're dealing with a lot of parameters. To get down to single live events we'll need to go through a gating sequence which you're not familiar with so I'll outline it here.
 - First, we'll remove the QC beads and debris from the files.
 - Then we'll remove doublets
 - Finally we'll remove dead cells.
@@ -97,7 +97,7 @@ autoplot(FLOWSET, x = "Ir191Di", y = "Ce140Di") # We'll use autoplot() from the 
 ```
 
 <img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/Plotting start state-1.png" alt="" width="672" />
-If we just use autoplot, you can see that the data looks all "squished up on the axes. We haven't yet transformed the data using arcsinh, biexponential or similar so the data is compressed onto the axes and it's difficult to see what's going on. We'll deal with transformations in an upcoming chapter so here, I'll use a little hack to transform the visualisation. By adding the `scale_x-flowCore-fasinh()` and `scale_y-flowCore-fasinh()` functions we can transform the axes to make the data more visible (and more like we're used to).
+If we just use autoplot, you can see that the data looks all "squished up" on the axes. We haven't yet transformed the data using arcsinh, biexponential or similar so the data is compressed onto the axes and it's difficult to see what's going on. We'll deal with transformations in an upcoming chapter so here, I'll use a little hack to transform the visualisation. By adding the `scale_x_flowCore_fasinh()` and `scale_y_flowCore_fasinh()` functions we can transform the axes to make the data more visible (and more like we're used to).
 
 
 ``` r
@@ -107,7 +107,7 @@ autoplot(FLOWSET, x = "Ir191Di", y = "Ce140Di") + # We'll use autoplot from the 
 ```
 
 <img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/Plotting start state with arcsinh-1.png" alt="" width="672" />
-That's better, but the data looks "hexagonal". This is because autoplot bins the data into only 16 or 32 bins by default. All flow data is typically binned but to the amount of channels on the instrument. For 16 and 18bit machines we use today this will be over 250, 000 bins. It can be a useful visualisation to help understand the distribution of the data but it's very different to how we're used to seeing cytoemtry data. We can change this to 128 bins to make the data look more like we're used to.
+That's better, but the data looks "hexagonal". This is because autoplot bins the data into only 16 or 32 bins by default. All flow data is typically binned but to the amount of channels on the instrument. For 16 and 18bit machines we use today this will be over 250,000 bins. It can be a useful visualisation to help understand the distribution of the data but it's very different to how we're used to seeing cytometry data. We can change this to 128 bins to make the data look more like we're used to.
 
 ``` r
 autoplot(FLOWSET, x = "Ir191Di", y = "Ce140Di", bins = 128) + # We'll use autoplot from the ggcyto package to visualise the data
@@ -116,7 +116,7 @@ autoplot(FLOWSET, x = "Ir191Di", y = "Ce140Di", bins = 128) + # We'll use autopl
 ```
 
 <img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/Plotting start state with arcsinh and bins128-1.png" alt="" width="672" />
-This now looks like a cytometry plot. We have ~4 populations evident in each quadrant of the graph. Upper left is the QC beads identified by 140Ce expression. The upper right is bead-cell doublets that express the bead exclusive marker and the DNA marker 191Ir. The lower left is debris and the lower right is the cells expressing the DNA markers but not the bead marker. Now that we've seen the data and understand the gate required lets get back to our Gating Set and start to remove the confounding datapoints.
+This now looks like a cytometry plot. We have ~4 populations evident in each quadrant of the graph. Upper left is the QC beads identified by 140Ce expression. The upper right is bead-cell doublets that express the bead exclusive marker and the DNA marker 191Ir. The lower left is debris and the lower right is the cells expressing the DNA markers but not the bead marker. Now that we've seen the data and understand the gate required let's get back to our Gating Set and start to remove the confounding datapoints.
 
 
 ``` r
@@ -158,7 +158,7 @@ gs_pop_get_stats(Gates, "Non-Beads,Non-debris", type = "percent")
 #> 4:       4PFANoPermLIVE.fcs Non-Beads,Non-debris      NA
 #> 5:      8PFANASPermLIVE.fcs Non-Beads,Non-debris      NA
 
-# Finally we can check the hierarchy of the gates, recompute them to make sure the hierarchy is up to data....
+# Finally we can check the hierarchy of the gates, recompute them to make sure the hierarchy is up to date...
 gs_get_pop_paths(Gates)
 #> [1] "root"                  "/Non-Beads,Non-debris"
 recompute(Gates)
@@ -185,7 +185,7 @@ As you can see, our gate is placed almost correctly but doesn't encapsulate the 
 ``` r
 if ("/Non-Beads,Non-debris" %in% gs_get_pop_paths(Gates)) gs_pop_remove(Gates, "Non-Beads,Non-debris") # remove any leftover gate from a previous run of this chunk before re-adding
 R1 <- rectangleGate(filterId="Non-Beads,Non-debris", # Add back the gate with the new parameters
-"Ir191Di"=c(100, 20000), "Ce140Di"=c(-10, 10)) # Ce140Di reverted to 10 (the original, never-flagged-as-broken upper bound); real data only goes up to ~13.3, so 100 was excluding nothing
+"Ir191Di"=c(100, 20000), "Ce140Di"=c(-10, 10)) # real Ce140Di data only goes up to ~13.3, so an upper bound of 10 is what actually excludes the beads
 
 gs_pop_add(Gates, R1, parent = "root")
 #> [1] 2
@@ -221,7 +221,7 @@ autoplot(Gates, "Non-Beads,Non-debris") +
 # Once we're happy, we can create a new flowset with just this data in it
 NonDebris_FLOWSET <- cytoset_to_flowSet(gs_pop_get_data(Gates, "Non-Beads,Non-debris"))
 
-# Lets look at each of the samples in the new flowset for how many events are in each
+# Let's look at each of the samples in the new flowset for how many events are in each
 gs_pop_get_count_fast(Gates)
 #>                        name            Population Parent
 #>                      <char>                <char> <char>
@@ -249,19 +249,17 @@ For this first ellipse, we'll set `mean` and `.gate` from the data's own real mi
 
 
 ``` r
-autoplot(NonDebris_FLOWSET, x = "Event_length", y = "Ir191Di", bins = 48) # Event_length only takes 48 distinct values in this data, 256 bins spread that thin and looked faded
+autoplot(NonDebris_FLOWSET, x = "Event_length", y = "Ir191Di", bins = 48) # Event_length only takes 48 distinct values in this data, so 48 bins
 ```
 
 <img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/event-length-ellipse-1.png" alt="" width="672" />
 
 ``` r
 
-# Damian's exact bounds (2026-08-05), Event_length centre nudged right 10 units per Damian's request.
-
-mean_length <- c("Event_length" = 32, "Ir191Di" = 1225) # Event_length centre shifted right so xmin stays fixed at 7 while xmax rises
+mean_length <- c("Event_length" = 32, "Ir191Di" = 1225) # centre of the ellipse, one value per axis
 
 shape_length <- matrix(c(625, 0,
-                         0, 1755625), ncol = 2, dimnames = list(c("Event_length", "Ir191Di"), c("Event_length", "Ir191Di"))) # Event_length semi-axis 20 -> 25 (25^2 = 625), xmin unchanged at 7, xmax raised 47 -> 57
+                         0, 1755625), ncol = 2, dimnames = list(c("Event_length", "Ir191Di"), c("Event_length", "Ir191Di"))) # Event_length semi-axis 25 (25^2 = 625), so the ellipse runs from 7 to 57 on that axis
 
 R_length <- flowCore::ellipsoidGate(filterId = "event_length_singlets", .gate = shape_length, mean = mean_length)
 
@@ -313,7 +311,7 @@ gs_pop_get_count_fast(Gates)
 #> 10: /Non-Beads,Non-debris 11815       23201
 
 ggcyto(Gates, aes(x = "Event_length", y = "Ir191Di"), subset = "Non-Beads,Non-debris") +
-  geom_hex(bins = 48) + # matches Event_length's real 48 distinct values, 256 spread the same data too thin
+  geom_hex(bins = 48) + # matches Event_length's 48 distinct values
   geom_gate("event_length_singlets", col = "blue", fill = "red") +
   geom_stats(adjust = c(1.5, 1.5), abs = TRUE) +
   coord_cartesian(xlim = c(0, 75), ylim = c(0, 6000)) # zoomed out to comfortably show the full population and the full ellipse on a plain linear scale, nothing clipped, no transform distortion
@@ -357,16 +355,16 @@ plot_grid(as.ggplot(A1), as.ggplot(A2), ncol = 2)
 
 <img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/Compare gated to ungated-1.png" alt="" width="672" />
 
-The removal of debris and beads helps to clean up the populations. Lets continue by removing some of the doublets.
+The removal of debris and beads helps to clean up the populations. Let's continue by removing some of the doublets.
 
 
 ``` r
-#Our next gate will be a polygon gate to remove the doublets. We'll use Width and REsidual, the so-called Gaussian parameters to create
+#Our next gate will be a polygon gate to remove the doublets. We'll use Width and Residual, the so-called Gaussian parameters, to create it
 mat <- matrix(c(100,270,1000,1100,120,
                 100,920,520,170,45)
 , nrow = 5)
 
-# Rename the new matrix with the correct parameter naems for the gate
+# Rename the new matrix with the correct parameter names for the gate
 colnames(mat) <-c("Width", "Residual")
 
 # Create the gate
@@ -457,7 +455,7 @@ plot(Gates)
 <img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/plot polygon gate-1.png" alt="" width="672" />
 
 ``` r
-# Lets visualise the gat
+# Let's visualise the gate
 autoplot(Gates, "singlets1", x = "Width", y = "Residual", bins = 128)+
   scale_y_flowCore_fasinh() +
   scale_x_flowCore_fasinh()
@@ -466,7 +464,7 @@ autoplot(Gates, "singlets1", x = "Width", y = "Residual", bins = 128)+
 <img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/plot polygon gate-2.png" alt="" width="672" />
 
 ``` r
-# Gate not quite the right shape so lets try again
+# Gate not quite the right shape so let's try again
 gs_pop_remove(Gates, 'singlets1')
 
 # Create matrix of co-ords to sketch in the gate
@@ -591,8 +589,8 @@ autoplot(NonDebris_FLOWSET, x = "Ir191Di", y = "Ir193Di", bins = 256) +
 ``` r
 
 shape <- matrix(c(2045156,	3265186,
-3265186,	5815469), ncol = 2, dimnames = list(c("Ir191Di", "Ir193Di"), c("Ir191Di", "Ir193Di"))) # whole original matrix scaled by 0.25 (each semi-axis halved: variance x0.25, covariance x0.25) so the shape and rotation are identical to before, just smaller, centre unchanged
-mean <- c("Ir191Di"= 1570, "Ir193Di"=2500) # Ir191Di reverted back to 1570, Ir193Di down 500 (3000 -> 2500) per Damian, shape untouched
+3265186,	5815469), ncol = 2, dimnames = list(c("Ir191Di", "Ir193Di"), c("Ir191Di", "Ir193Di"))) # covariance matrix: the diagonal sets the ellipse's width on each axis, the off-diagonal its tilt
+mean <- c("Ir191Di"= 1570, "Ir193Di"=2500) # centre of the ellipse
 
 R3 <- flowCore::ellipsoidGate(filterId="singlets2",
 .gate = shape, mean = mean)
@@ -710,7 +708,7 @@ ggcyto(Gates, aes("191", "193"), subset = "singlets1") +
   geom_hex(bins = 256) +
   geom_gate("singlets2", col = "blue", fill = "red") +
   geom_stats(adjust = c(1.5, 1.5), abs = TRUE) +
-  coord_cartesian(xlim = c(0, 8000), ylim = c(0, 12000)) # linear scale, wide view: log10 was warping this tilted ellipse into two near-straight lines instead of a closed oval, same issue as the event_length ellipse
+  coord_cartesian(xlim = c(0, 8000), ylim = c(0, 12000)) # linear scale, wide view: a log scale warps a tilted ellipse out of shape, same as the event_length ellipse
 ```
 
 <img src="07-Data-Cleaning-1-Gating-Data_files/figure-html/plotting an ellipse gate-2.png" alt="" width="672" />
@@ -907,12 +905,12 @@ autoplot(Gates, "LIVE", bins = 128) +
 
 ``` r
 
-# Lets grab the data for the gated events; flowworkspace uses the cytoset rather than the flowSet...
+# Let's grab the data for the gated events; flowWorkspace uses the cytoset rather than the flowSet...
 LIVE_SINGLET_FLOWSET <- gs_pop_get_data(Gates, "LIVE")
 # ... so we'll convert it to a flowSet ready to use for our downstream analyses
 LIVE_SINGLET_FLOWSET <- cytoset_to_flowSet(LIVE_SINGLET_FLOWSET)
 
-# Finally lets save the LIVE_SINGLET_FLOWSET to the RDS folder so that we can use it in the next chapters
+# Finally let's save the LIVE_SINGLET_FLOWSET to the RDS folder so that we can use it in the next chapters
 saveRDS(LIVE_SINGLET_FLOWSET, here("Data","RDS", "LIVE_SINGLET_FLOWSET.rds"))
 ```
 
@@ -965,13 +963,13 @@ Finally we need to save the LIVE_SINGLET_FLOWSET to the RDS folder so that we ca
 saveRDS(LIVE_SINGLET_FLOWSET, here("Data","RDS", "LIVE_SINGLET_FLOWSET.rds"))
 ```
 
-Additionally, it might be useful to save the flowSet into individual fcs fiels again so that we can use them in other software or analyses.
+Additionally, it might be useful to save the flowSet into individual fcs files again so that we can use them in other software or analyses.
 
 ``` r
 dir.create(here("Data","fcs", "3_fcs-files_Live Singlets_R-Gated"), recursive = TRUE, showWarnings = FALSE)
 
 write.flowSet(LIVE_SINGLET_FLOWSET, here("Data","fcs", "3_fcs-files_Live Singlets_R-Gated"))
-#> [1] "/Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R/Data/fcs/3_fcs-files_Live Singlets_R-Gated"
+#> [1] "/Users/dcarragher/Sync/CLAUDE/Analysing-Cytometry-Data-With-R/Data/fcs/3_fcs-files_Live Singlets_R-Gated"
 ```
 
 <span class="warning">For data analysis it's essential to remove any confounding or extraneous events. In cytometry this means getting rid of dead cells and doublets. For high parameter analysis this is doubly important. The analysis is computationally taxing so removing irrelevant data helps speed up the analysis as well as improving its quality. </span>

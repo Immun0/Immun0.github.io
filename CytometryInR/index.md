@@ -5,7 +5,7 @@ author:
 - 'StemCore Laboratories and Flow Cytometry Core'
 - 'Ottawa Hospital Research Institute'
 - 'First edition by Damian Carragher'
-date: 'Last Revised 2026-08-25'
+date: 'Last Revised 2026-10-30'
 site: bookdown::bookdown_site
 documentclass: book
 bibliography: [book.bib, packages.bib]
@@ -19,7 +19,7 @@ csl: chicago-fullnote-bibliography.csl
 
 
 
-# Preface and Notes
+# Preface and Notes {-}
 
 Welcome to *Analysing Cytometry Data with R*
 

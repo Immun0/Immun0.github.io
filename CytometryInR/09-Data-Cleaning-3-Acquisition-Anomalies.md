@@ -13,9 +13,7 @@ Cytometry acquisition isn't always stable, clogs, voltage drift, or air bubbles 
 
 ``` r
 library(here)
-#> Warning in readLines(f, n): line 1 appears to contain an
-#> embedded nul
-#> here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R
+#> here() starts at /Users/dcarragher/Sync/CLAUDE/Analysing-Cytometry-Data-With-R
 library(flowCore)
 if(!require(PeacoQC)) BiocManager::install("PeacoQC")
 #> Loading required package: PeacoQC
@@ -183,7 +181,7 @@ Cleaning data happens in stages, and by this chapter three are done: gating to l
 
 The mechanism explains the results you'll see below. `PeacoQC`, from the same lab that built `FlowSOM`, finds density peaks per channel over time and flags events that fall too far from them. It runs two checks: an isolation tree (IT) analysis for abrupt events, and a mean-absolute-deviation (MAD) distance check. The first catches clogs and bubbles. The second catches gradual drift, signal creeping up or down across a run with no single dramatic moment.
 
-That second check is the important one, and it's what `flowCut` doesn't act on.
+That second check is the one `flowCut` doesn't act on.
 
 ### flowCut, and What Happens When You Run Both
 
@@ -254,9 +252,9 @@ COMPARISON_COUNTS
 #> 5        2.64
 ```
 
-On this course's dataset, `PeacoQC` removes roughly 17% to 36% per file while `flowCut` removes nothing at all. Both are behaving correctly, and the reason is in `PeacoQC`'s own report: its IT analysis, the abrupt-event check that is `flowCut`'s direct counterpart, removes essentially nothing either. Every event `PeacoQC` removes here comes from the MAD check, and every file in the report is flagged with an increasing or decreasing channel. The data has no clogs or bubbles. What it has is steady drift, which has no abrupt boundary for `flowCut`'s segment comparison to find.
+On this course's dataset, `PeacoQC` removes roughly 17% to 36% per file while `flowCut` removes nothing at all. Both are behaving correctly, and the reason is in `PeacoQC`'s own report: its IT analysis, the abrupt-event check that is `flowCut`'s direct counterpart, removes essentially nothing either. Every event `PeacoQC` removes here comes from the MAD check, and every file in the report is flagged with an increasing or decreasing channel. The data has no clogs or bubbles, only steady drift, which has no abrupt boundary for `flowCut`'s segment comparison to find.
 
-This is the single most useful thing in this chapter: **two respectable tools can disagree completely and both be right, because they are not asking the same question.** Always check which mechanism did the removing, not just how much came out.
+So two tools can give completely different results on the same data and both be working correctly, because they check for different things. Check which mechanism did the removing, as well as how much came out.
 
 ### Making flowCut Cut Anyway
 
@@ -285,7 +283,7 @@ data.frame(
 )
 ```
 
-On this dataset that shifts `flowCut` from removing nothing to removing about 3.7% overall, and the removals are wildly uneven: one file loses 20.85%, two lose around 2.6%, and two still lose nothing. It's a useful demonstration of how much a single default can change a result, and a reminder to read what a function's arguments actually do before trusting its output.
+On this dataset that shifts `flowCut` from removing nothing to removing about 3.7% overall, and the removals are wildly uneven: one file loses 20.85%, two lose around 2.6%, and two still lose nothing. It shows how much a single default can change a result, so read what a function's arguments do before trusting its output.
 
 ### Other Tools Exist
 
@@ -293,7 +291,7 @@ On this dataset that shifts `flowCut` from removing nothing to removing about 3.
 
 `flowAI` bins events by time in fractions of a second, converting raw time values using the FCS `$TIMESTEP` keyword. Mass cytometry files from a Helios don't carry that keyword. Without it, `flowAI` treats the raw time values as seconds, and this dataset's time channel runs to roughly 559,000, so it tries to bin a nominal 155 hour acquisition at tenth-of-a-second resolution and exhausts memory before finishing the first file.
 
-That isn't a bug in `flowAI` so much as a mismatch between a tool built for conventional flow cytometry and a mass cytometry file. It's a good illustration of a general point: cleaning tools carry assumptions about your data, and when one fails outright it's usually one of those assumptions, not your code.
+That isn't a bug in `flowAI` so much as a mismatch between a tool built for conventional flow cytometry and a mass cytometry file. Cleaning tools carry assumptions about your data, and when one fails outright it's usually one of those assumptions rather than your code.
 
 ### What's Next
 

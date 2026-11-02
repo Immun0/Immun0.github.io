@@ -13,7 +13,6 @@ fig:rstudio-plots
 fig:rstudio-help
 fig:rstudio-viewer
 fig:package-structure
-preface-and-notes
 what-this-isnt
 who-this-is-for
 why-choose-r
@@ -29,7 +28,7 @@ what-r-is
 what-youll-learn
 the-learning-path
 what-makes-this-different
-the-honest-assessment
+what-to-expect
 before-you-begin
 a-note-on-learning
 chapter-2---setting-up-an-r-environment
@@ -244,7 +243,7 @@ what-youll-learn-9
 the-essentials-12
 step-1-load-required-packages-and-data-4
 step-2-run-umap-on-all-markers
-step-2b-fix-the-axis-limits-once
+step-2b-set-the-axis-limits-once
 step-3-plot-the-all-markers-umap
 step-4-run-tsne-on-all-markers
 step-5-plot-the-all-markers-tsne

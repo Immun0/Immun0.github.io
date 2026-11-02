@@ -4,7 +4,7 @@
 
 So far you've worked with flowSet and flowFrame objects, specialised structures built for cytometry. Most further analysis, comparing conditions, plotting distributions, statistics, is easier in a plain data frame: one row per cell, one column per marker, plus sample and condition labels. This chapter converts your cleaned, transformed flowSet into that format.
 
-**Why convert at all?** Chapter 5 introduced flowSets and flowFrames as S4 objects, R's more rigid, formally-defined object system, built for packages like Bioconductor's where structure needs to be strictly enforced. A plain data frame, by contrast, is an S3 object, R's older, looser system. S3 objects are what most of R's ecosystem expects: `ggplot2`, `dplyr`, base subsetting with `[` and `$`, all assume S3-style data frames, not S4 flowSets. You can't hand a flowSet straight to `ggplot()` and get a sensible plot out, the object doesn't have rows and columns in the way `ggplot()` expects. That's not a limitation of this course's data, it's true of any flowSet. Converting to a data frame here is what makes the rest of standard R, and everything downstream in this course, usable.
+**Why convert at all?** Chapter 5 introduced flowSets and flowFrames as S4 objects, R's more rigid, formally-defined object system, built for packages like Bioconductor's where structure needs to be strictly enforced. A plain data frame, by contrast, is an S3 object, R's older, looser system. S3 objects are what most of R's ecosystem expects: `ggplot2`, `dplyr`, base subsetting with `[` and `$`, all assume S3-style data frames, not S4 flowSets. You can't hand a flowSet straight to `ggplot()` and get a sensible plot out, the object doesn't have rows and columns in the way `ggplot()` expects. That applies to any flowSet. Converting to a data frame here is what makes the rest of standard R, and everything downstream in this course, usable.
 
 ## The Essentials {.essentials}
 
@@ -13,9 +13,7 @@ So far you've worked with flowSet and flowFrame objects, specialised structures 
 
 ``` r
 library(here)
-#> Warning in readLines(f, n): line 1 appears to contain an
-#> embedded nul
-#> here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R
+#> here() starts at /Users/dcarragher/Sync/CLAUDE/Analysing-Cytometry-Data-With-R
 library(flowCore)
 library(readxl)
 library(tidyr)
@@ -72,9 +70,9 @@ saveRDS(EXPRESSION_DATA, here("Data", "RDS", "EXPRESSION_DATA.rds"))
 
 ### Step 3: Label Each Cell With Its Sample
 
-The expression matrix alone doesn't say which sample each row came from, that has to be added back in. The obvious way is to assume the metadata sheet and the flowSet are in the same order and pair them up position by position. Don't. Sample order is not a stable thing: Chapters 8 and 10 both reorder the flowSet, a file that fails QC gets dropped, a sheet gets re-sorted in Excel. Any of those and a positional pairing silently attaches the wrong labels to real cells. Join on the sample name instead, which survives all of it.
+The expression matrix alone doesn't say which sample each row came from, that has to be added back in. The obvious way is to assume the metadata sheet and the flowSet are in the same order and pair them up position by position. We won't do that, because sample order changes: Chapters 8 and 10 both reorder the flowSet, a file that fails QC gets dropped, a sheet gets re-sorted in Excel. Any of those and a positional pairing silently attaches the wrong labels to real cells. Instead we'll join on the sample name, which doesn't change when any of those things happen.
 
-The check to run is not "are these in the same order" but "are these the same five samples at all":
+So rather than checking the order, we check that both lists hold the same five samples:
 
 
 ``` r
@@ -87,7 +85,7 @@ setequal(sampleNames(ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET), metadata$sample_id)
 [1] TRUE
 ```
 
-If this returns `FALSE`, your sheet and your data disagree about which samples exist, and no amount of careful joining will fix that. Compare the two lists directly and resolve it before going further.
+If this returns `FALSE`, your sheet and your data disagree about which samples exist, and joining can't resolve that. Compare the two lists directly and resolve it before going further.
 
 Now label each cell, taking the names from the flowSet itself rather than from the sheet. The flowSet is the source of truth for which cells you actually have:
 
@@ -150,7 +148,7 @@ head(EXPRESSION_DATA_SAMPLE_ID_MELTED)
 
 ### What Positional Joining Actually Does
 
-See it fail rather than take the warning on trust, because the failure does not look like a failure. Build the labels both ways on the real data and compare.
+It's worth seeing this go wrong, because it doesn't look like it has. Build the labels both ways on the real data and compare.
 
 
 ``` r
@@ -168,7 +166,7 @@ mean(labels_by_name != labels_by_position)
 [1] 0.8
 ```
 
-Eighty per cent of the cells in the dataset carry the wrong sample name. Only the first sample survives, because position one happens to agree. Nothing errors, nothing warns.
+Eighty per cent of the cells in the dataset carry the wrong sample name. Only the first sample survives, because position one happens to agree. R gives no error and no warning.
 
 Now look at what that does to an actual result. CD34 is the marker Chapter 13 uses, so compare its median per condition under both labellings:
 
@@ -217,13 +215,13 @@ ggplot(tidyr::pivot_longer(COMPARISON, -condition,
 
 <img src="12-Extract-Expression-Data_files/figure-html/positional-join-plot-1.png" alt="" width="672" />
 
-Every number is plausible. Nothing is negative, nothing is enormous, nothing looks like a bug. The medians have simply swapped between conditions, in pairs, and the conclusion swaps with them. Joined by name, 8% PFA has the lowest CD34 and glutaraldehyde is mid-range. Joined by position, glutaraldehyde has the lowest and 8% PFA is mid-range. Both are clean results. One is fiction.
+Every number is plausible. None is negative or unusually large, so nothing looks like a bug. The medians have simply swapped between conditions, in pairs, and the conclusion swaps with them. Joined by name, 8% PFA has the lowest CD34 and glutaraldehyde is mid-range. Joined by position, glutaraldehyde has the lowest and 8% PFA is mid-range. Both look like clean results, but only the one joined by name is right.
 
-This is the failure mode to be afraid of in cytometry analysis. It does not crash, it does not warn, and it survives every plot you draw and every statistic you run, because the arithmetic is all correct. Only the labels are wrong. Join on names, and check that the two sides agree about which samples exist, every time.
+This kind of error is hard to spot in cytometry analysis. It won't crash or warn, and it carries through every plot and statistic, because the arithmetic is correct. Only the labels are wrong. So we join on names, and check that the two sides agree about which samples exist, every time.
 
 ### Why This Shape Matters
 
-`EXPRESSION_DATA_SAMPLE_ID_MELTED` (sample_id, antigen, expression, condition, one row per cell per marker) is the shape the next two chapters build on directly: ggridges density plots facet by `antigen` and colour by `condition` straight off this table, and later summary statistics group by `sample_id` or `condition` the same way. Getting this table right once means every later chapter is a `ggplot()` or `group_by()` call away, not another data-wrangling exercise.
+`EXPRESSION_DATA_SAMPLE_ID_MELTED` (sample_id, antigen, expression, condition, one row per cell per marker) is the shape the next two chapters build on directly: ggridges density plots facet by `antigen` and colour by `condition` straight off this table, and later summary statistics group by `sample_id` or `condition` the same way. Once this table is right, every later chapter starts from a `ggplot()` or `group_by()` call rather than more data wrangling.
 
 ### What's Next
 

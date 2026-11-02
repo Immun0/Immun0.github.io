@@ -23,7 +23,7 @@ Think of an FCS file as a spreadsheet where:
 
 Mass cytometers (e.g. the Helios) don't output FCS directly, their raw output is an `.IMD` file, the same format other mass spectrometers use. Someone, usually the core facility that ran your samples, converts that into the `.fcs` format this course and every other cytometry analysis tool expects.
 
-You'll also see the word "debarcoded" used throughout this course to describe the provided data. Debarcoding is what separates out multiplexed samples: rather than running each sample through the cytometer separately, several samples are tagged with a unique combination of barcodes and run together in one tube, reducing batch effects from pipetting or titration differences between separate runs. Debarcoding is the step afterward that sorts events back out into one FCS file per original sample. This is usually done for you by whoever exported the data (as it was for this course's dataset), but self-service debarcoding tools exist too, e.g. the Nolan lab's [single-cell debarcoder](https://github.com/nolanlab/single-cell-debarcoder), if you need to redo it yourself or reprocess the original acquisition.
+You'll also see the word "debarcoded" used throughout this course to describe the provided data. Debarcoding is what separates out multiplexed samples: rather than running each sample through the cytometer separately, several samples are tagged with a unique combination of barcodes and run together in one tube, reducing batch effects from pipetting or titration differences between separate runs. Debarcoding is the step afterwards that sorts events back out into one FCS file per original sample. This is usually done for you by whoever exported the data (as it was for this course's dataset), but self-service debarcoding tools exist too, e.g. the Nolan lab's [single-cell debarcoder](https://github.com/nolanlab/single-cell-debarcoder), if you need to redo it yourself or reprocess the original acquisition.
 
 ## The Essentials {.essentials}
 
@@ -33,9 +33,7 @@ You'll also see the word "debarcoded" used throughout this course to describe th
 ``` r
 library(flowCore)
 library(here)
-#> Warning in readLines(f, n): line 1 appears to contain an
-#> embedded nul
-#> here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R
+#> here() starts at /Users/dcarragher/Sync/CLAUDE/Analysing-Cytometry-Data-With-R
 ```
 
 **What these do:**
@@ -307,11 +305,11 @@ exprs(FLOWFRAME) <- matrix(1:10, nrow = 2)  # exprs() checks this against the ob
 
 This would actually raise an error, because `exprs()` verifies the replacement fits before accepting it, `@` never does.
 
-**Why this matters:** Understanding that cytometry data uses specialized structures helps you know which functions to use and how to troubleshoot problems.
+**Why this matters:** Understanding that cytometry data uses specialised structures helps you know which functions to use and how to troubleshoot problems.
 
 ### Three Ways to Get a Piece Out of an Object
 
-You now have `FLOWSET`, one object holding all 5 of your files together. Very often you don't want the whole thing, you want just one file, or just a few files, or just one piece of information about it. R gives you three different tools for this, and they behave differently in ways that matter. Mixing them up is one of the most common beginner mistakes in R, so slow down here.
+You now have `FLOWSET`, one object holding all 5 of your files together. Very often you don't want the whole thing, you want just one file, or just a few files, or just one piece of information about it. R gives you three different tools for this, and they behave differently. Mixing them up is one of the most common beginner mistakes in R, so it's worth taking this section slowly.
 
 **Single brackets `[ ]`: take some files out, but keep them as a flowSet**
 
@@ -453,7 +451,7 @@ FCS files store additional information as keywords:
 ``` r
 keyword(FLOWFRAME, "FILENAME")
 #> $FILENAME
-#> [1] "/Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R/Data/fcs/2PFANASPermLIVE.fcs"
+#> [1] "/Users/dcarragher/Sync/CLAUDE/Analysing-Cytometry-Data-With-R/Data/fcs/2PFANASPermLIVE.fcs"
 ```
 
 There are dozens of keywords storing information like:
@@ -471,7 +469,7 @@ keyword(FLOWFRAME)
 
 ### Working with Multiple Files
 
-The power of flowSets is applying operations to all files at once.
+flowSets let you apply operations to all files at once.
 
 **Get dimensions for all files:**
 

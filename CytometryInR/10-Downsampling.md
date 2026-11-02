@@ -11,9 +11,7 @@ Some downstream analyses (clustering, dimensionality reduction) get slow or unwi
 
 ``` r
 library(here)
-#> Warning in readLines(f, n): line 1 appears to contain an
-#> embedded nul
-#> here() starts at /Volumes/T31/CLAUDE/Analysing-Cytometry-Data-With-R
+#> here() starts at /Users/dcarragher/Sync/CLAUDE/Analysing-Cytometry-Data-With-R
 library(flowCore)
 
 CLEANED_FLOWSET <- readRDS(here("Data", "RDS", "CLEANED_FLOWSET.rds"))
@@ -131,7 +129,7 @@ Downsampling to a fixed number of events per file matters for two reasons: it ke
 
 ### What sampleFilter() Is Actually Doing
 
-`sampleFilter()` isn't running any special cytometry-aware logic, it's random sampling without replacement, the same thing `sample()` does on a vector of row indices. `flowCore` wraps it in a filter object so it works with `Subset()` and the rest of the flowSet machinery, but conceptually it's no different from `exprs(x)[sample(nrow(exprs(x)), 5000), ]`. So everything you already understand about random sampling, including the need to set a seed, applies here directly, and there's no hidden cytometry-specific behaviour to learn.
+`sampleFilter()` has no cytometry-specific logic. It does random sampling without replacement, the same thing `sample()` does on a vector of row indices. `flowCore` wraps it in a filter object so it works with `Subset()` and the rest of the flowSet machinery, but conceptually it's no different from `exprs(x)[sample(nrow(exprs(x)), 5000), ]`. So everything you already know about random sampling applies here, including the need to set a seed.
 
 ### The Cost of a Fixed Downsample
 
@@ -145,11 +143,11 @@ DOWNSAMPLER_SMALL <- flowCore::filter(CLEANED_FLOWSET, Downsample_filter_small)
 DOWNSAMPLED_SMALL <- Subset(CLEANED_FLOWSET, DOWNSAMPLER_SMALL)
 ```
 
-A population that made up 2% of a file's events is, on average, only about 10 cells at `size = 500`, sparse enough that it can look noisy, get missed by clustering entirely, or vanish through ordinary sampling variation from one run to the next. The same population at `size = 5000` averages around 100 cells, still small, but far more stable. There's no single correct downsample size, it's a real trade-off between speed and how much you trust your smallest populations to survive the cut.
+A population that made up 2% of a file's events is, on average, only about 10 cells at `size = 500`, sparse enough that it can look noisy, get missed by clustering entirely, or vanish through ordinary sampling variation from one run to the next. The same population at `size = 5000` averages around 100 cells, still small, but far more stable. There's no single correct downsample size. It's a trade-off between speed and how well your smallest populations survive.
 
 ### Fixed-Per-File vs Proportional Downsampling
 
-This chapter downsamples every file to the same fixed number, 5000 regardless of how many events that file started with. That's a deliberate choice, not the only valid one. It means a file that started with 8,000 live singlets and a file that started with 80,000 end up contributing equally to every downstream analysis, each file's biological signal gets the same weight, regardless of how much data actually backs it. The alternative, proportional downsampling, keeps a fixed percentage of each file rather than a fixed count, preserving each file's relative size but risking a single very large file dominating the combined analysis just by sheer numbers. Neither approach is universally correct, which one matters depends on whether you want every sample treated as an equal unit of evidence, or every event treated as an equal unit of evidence.
+This chapter downsamples every file to the same fixed number, 5000 regardless of how many events that file started with. That's a deliberate choice, not the only valid one. It means a file that started with 8,000 live singlets and a file that started with 80,000 end up contributing equally to every downstream analysis, each file's biological signal gets the same weight, regardless of how much data actually backs it. The alternative, proportional downsampling, keeps a fixed percentage of each file rather than a fixed count, preserving each file's relative size but risking a single very large file dominating the combined analysis just by sheer numbers. Neither approach is universally correct. Which one you use depends on whether you want each sample, or each event, treated as an equal unit of evidence.
 
 ### What's Next
 

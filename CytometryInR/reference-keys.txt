@@ -13,6 +13,7 @@ fig:rstudio-plots
 fig:rstudio-help
 fig:rstudio-viewer
 fig:package-structure
+fig:rstudio-run-button
 what-this-isnt
 who-this-is-for
 why-choose-r

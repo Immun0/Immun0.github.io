@@ -263,11 +263,11 @@ Rphenograph_result <- Rphenograph(Rpheno_in, k = 30) # k is nearest-neighbours h
 #> Run Rphenograph starts:
 #>   -Input data of 24207 rows and 6 columns
 #>   -k is set to 30
-#>   Finding nearest neighbors...DONE ~ 0.239 s
-#>   Compute jaccard coefficient between nearest-neighbor sets...DONE ~ 2.975 s
-#>   Build undirected graph from the weighted links...DONE ~ 0.852 s
-#>   Run louvain clustering on the graph ...DONE ~ 1.005 s
-#> Run Rphenograph DONE, totally takes 5.071s.
+#>   Finding nearest neighbors...DONE ~ 0.25 s
+#>   Compute jaccard coefficient between nearest-neighbor sets...DONE ~ 3.082 s
+#>   Build undirected graph from the weighted links...DONE ~ 0.856 s
+#>   Run louvain clustering on the graph ...DONE ~ 1.052 s
+#> Run Rphenograph DONE, totally takes 5.24s.
 #>   Return a community class
 #>   -Modularity value: 0.9102834 
 #>   -Number of clusters: 40

@@ -6,6 +6,8 @@ This chapter covers four ways to summarise and compare samples at a higher level
 
 ## The Essentials {.essentials}
 
+> **Stuck?** This chapter starts from `Data/RDS/EXPRESSION_DATA_SAMPLE_ID.rds`, made in Chapter 12. If the first chunk below errors, or Chapter 12's checkpoint didn't match, copy that file from the course data download over your own, then carry on from here. The Deeper Dive also loads `ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET.rds` from Chapter 11, and the same applies to it.
+
 ### Step 1: Load Required Packages and Data
 
 
@@ -258,34 +260,32 @@ sessionInfo()
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] sass_0.4.10         generics_0.1.4     
-#>  [3] xml2_1.6.0          digest_0.6.39      
-#>  [5] magrittr_2.0.5      evaluate_1.0.5     
-#>  [7] grid_4.6.0          bookdown_0.47      
-#>  [9] fastmap_1.2.0       cellranger_1.1.0   
-#> [11] rprojroot_2.1.1     jsonlite_2.0.0     
-#> [13] purrr_1.2.2         viridisLite_0.4.3  
-#> [15] scales_1.4.0        textshaping_1.0.5  
-#> [17] jquerylib_0.1.4     cli_3.6.6          
-#> [19] rlang_1.3.0         RProtoBufLib_2.24.0
-#> [21] Biobase_2.72.0      withr_3.0.3        
-#> [23] cachem_1.1.0        yaml_2.3.12        
-#> [25] otel_0.2.0          cytolib_2.24.0     
-#> [27] tools_4.6.0         memoise_2.0.1      
-#> [29] BiocGenerics_0.58.1 vctrs_0.7.3        
-#> [31] R6_2.6.1            matrixStats_1.5.0  
-#> [33] stats4_4.6.0        lifecycle_1.0.5    
-#> [35] S4Vectors_0.50.1    fs_2.1.0           
-#> [37] ragg_1.5.2          pkgconfig_2.0.3    
-#> [39] pillar_1.11.1       bslib_0.12.0       
-#> [41] gtable_0.3.6        glue_1.8.1         
-#> [43] Rcpp_1.1.2          systemfonts_1.3.2  
-#> [45] statmod_1.5.2       xfun_0.60          
-#> [47] tibble_3.3.1        tidyselect_1.2.1   
-#> [49] knitr_1.51          farver_2.1.2       
-#> [51] htmltools_0.5.9     labeling_0.4.3     
-#> [53] rmarkdown_2.31      compiler_4.6.0     
-#> [55] S7_0.2.2            readxl_1.5.0       
-#> [57] downlit_0.4.5
+#>  [3] digest_0.6.39       magrittr_2.0.5     
+#>  [5] evaluate_1.0.5      grid_4.6.0         
+#>  [7] bookdown_0.47       fastmap_1.2.0      
+#>  [9] cellranger_1.1.0    rprojroot_2.1.1    
+#> [11] jsonlite_2.0.0      purrr_1.2.2        
+#> [13] viridisLite_0.4.3   scales_1.4.0       
+#> [15] textshaping_1.0.5   jquerylib_0.1.4    
+#> [17] cli_3.6.6           rlang_1.3.0        
+#> [19] RProtoBufLib_2.24.0 Biobase_2.72.0     
+#> [21] withr_3.0.3         cachem_1.1.0       
+#> [23] yaml_2.3.12         otel_0.2.0         
+#> [25] cytolib_2.24.0      tools_4.6.0        
+#> [27] BiocGenerics_0.58.1 vctrs_0.7.3        
+#> [29] R6_2.6.1            matrixStats_1.5.0  
+#> [31] stats4_4.6.0        lifecycle_1.0.5    
+#> [33] S4Vectors_0.50.1    ragg_1.5.2         
+#> [35] pkgconfig_2.0.3     pillar_1.11.1      
+#> [37] bslib_0.12.0        gtable_0.3.6       
+#> [39] glue_1.8.1          Rcpp_1.1.2         
+#> [41] systemfonts_1.3.2   statmod_1.5.2      
+#> [43] xfun_0.60           tibble_3.3.1       
+#> [45] tidyselect_1.2.1    knitr_1.51         
+#> [47] farver_2.1.2        htmltools_0.5.9    
+#> [49] labeling_0.4.3      rmarkdown_2.31     
+#> [51] compiler_4.6.0      S7_0.2.2           
+#> [53] readxl_1.5.0
 ```
 
 Save this output alongside your analysis, in a script comment, a README, or a supplementary file for publication. If `FlowSOM` or `flowCore` changes behaviour in a future release, this is what tells you, or a reviewer, exactly what you ran it with.

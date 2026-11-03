@@ -1,182 +1,623 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="" xml:lang="">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 3 Chapter 3 - Packages | Analysing Cytometry Data with R</title>
-<meta name="author" content="Damian Carragher">
-<meta name="author" content="StemCore Laboratories and Flow Cytometry Core">
-<meta name="author" content="Ottawa Hospital Research Institute">
-<meta name="author" content="First edition by Damian Carragher">
-<meta name="description" content="3.1 What Are Packages? Before we install anything, let’s understand what we’re working with. A package is a collection of functions and tools that extends what R can do. Think of base R as a...">
-<meta name="generator" content="bookdown 0.47 with bs4_book()">
-<meta property="og:title" content="Chapter 3 Chapter 3 - Packages | Analysing Cytometry Data with R">
-<meta property="og:type" content="book">
-<meta property="og:description" content="3.1 What Are Packages? Before we install anything, let’s understand what we’re working with. A package is a collection of functions and tools that extends what R can do. Think of base R as a...">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 3 Chapter 3 - Packages | Analysing Cytometry Data with R">
-<meta name="twitter:description" content="3.1 What Are Packages? Before we install anything, let’s understand what we’re working with. A package is a collection of functions and tools that extends what R can do. Think of base R as a...">
-<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.12.0/transition.js"></script><script src="libs/bs3compat-0.12.0/tabs.js"></script><script src="libs/bs3compat-0.12.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
-<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
-    
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  </style>
-<link rel="stylesheet" href="style.css">
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 Chapter 3 - Packages | Analysing Cytometry Data with R</title>
+  <meta name="description" content="This is a complete introduction to analysing cytometry data with R, starting with how to set up an RStudio environment working through to producing journal quality figures" />
+  <meta name="generator" content="bookdown 0.47 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 Chapter 3 - Packages | Analysing Cytometry Data with R" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="This is a complete introduction to analysing cytometry data with R, starting with how to set up an RStudio environment working through to producing journal quality figures" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 Chapter 3 - Packages | Analysing Cytometry Data with R" />
+  
+  <meta name="twitter:description" content="This is a complete introduction to analysing cytometry data with R, starting with how to set up an RStudio environment working through to producing journal quality figures" />
+  
+
+<meta name="author" content="Damian Carragher" />
+<meta name="author" content="StemCore Laboratories and Flow Cytometry Core" />
+<meta name="author" content="Ottawa Hospital Research Institute" />
+<meta name="author" content="First edition by Damian Carragher" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="chapter-2---setting-up-an-r-environment.html"/>
+<link rel="next" href="chapter-4---file-management-and-data-access.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
 </head>
-<body data-spy="scroll" data-target="#toc">
 
-<div class="container-fluid">
-<div class="row">
-  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+<body>
 
-    <div class="d-flex align-items-start justify-content-between">
-      <h1>
-        <a href="index.html" title="">Analysing Cytometry Data with R</a>
-      </h1>
-      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
-    </div>
 
-    <div id="main-nav" class="collapse-lg">
-      <form role="search">
-        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
-</form>
 
-      <nav aria-label="Table of contents"><h2>Table of contents</h2>
-        <ul class="book-toc list-unstyled">
-<li><a class="" href="index.html">Preface and Notes</a></li>
-<li><a class="" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">1</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
-<li><a class="" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">2</span> Chapter 2 - Setting up an R environment</a></li>
-<li><a class="active" href="chapter-3---packages.html"><span class="header-section-number">3</span> Chapter 3 - Packages</a></li>
-<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">4</span> Chapter 4 - File Management and Data Access</a></li>
-<li><a class="" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">5</span> Chapter 5 - Loading Cytometry Data</a></li>
-<li><a class="" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">6</span> Chapter 6 - Visualising Cytometry Data</a></li>
-<li><a class="" href="chapter-7---gating-data.html"><span class="header-section-number">7</span> Chapter 7 - Gating Data</a></li>
-<li><a class="" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">8</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
-<li><a class="" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">9</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
-<li><a class="" href="chapter-10---downsampling.html"><span class="header-section-number">10</span> Chapter 10 - Downsampling</a></li>
-<li><a class="" href="chapter-11---data-transformation.html"><span class="header-section-number">11</span> Chapter 11 - Data Transformation</a></li>
-<li><a class="" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">12</span> Chapter 12 - Extracting Expression Data</a></li>
-<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">13</span> Chapter 13 - Full Visualisation</a></li>
-<li><a class="" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">14</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
-<li><a class="" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">15</span> Chapter 15 - Clustering and Population Discovery</a></li>
-<li><a class="" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">16</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface and Notes</a>
+<ul>
+<li class="chapter" data-level="0.1" data-path="index.html"><a href="index.html#what-this-isnt"><i class="fa fa-check"></i><b>0.1</b> What This Isn’t</a></li>
+<li class="chapter" data-level="0.2" data-path="index.html"><a href="index.html#who-this-is-for"><i class="fa fa-check"></i><b>0.2</b> Who This Is For</a></li>
+<li class="chapter" data-level="0.3" data-path="index.html"><a href="index.html#why-choose-r"><i class="fa fa-check"></i><b>0.3</b> Why Choose R?</a></li>
+<li class="chapter" data-level="0.4" data-path="index.html"><a href="index.html#what-youll-actually-accomplish"><i class="fa fa-check"></i><b>0.4</b> What You’ll Actually Accomplish</a></li>
+<li class="chapter" data-level="0.5" data-path="index.html"><a href="index.html#the-reality-check"><i class="fa fa-check"></i><b>0.5</b> The Reality Check</a></li>
+<li class="chapter" data-level="0.6" data-path="index.html"><a href="index.html#example-data-youll-master"><i class="fa fa-check"></i><b>0.6</b> Example Data You’ll Master</a></li>
+<li class="chapter" data-level="0.7" data-path="index.html"><a href="index.html#a-note-on-code"><i class="fa fa-check"></i><b>0.7</b> A Note on Code</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><i class="fa fa-check"></i><b>1</b> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#why-this-guide-exists"><i class="fa fa-check"></i><b>1.1</b> Why This Guide Exists</a></li>
+<li class="chapter" data-level="1.2" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#the-real-problems-r-solves"><i class="fa fa-check"></i><b>1.2</b> The Real Problems R Solves</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-programming-means"><i class="fa fa-check"></i><b>1.2.1</b> What Programming Means</a></li>
+<li class="chapter" data-level="1.2.2" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-r-is"><i class="fa fa-check"></i><b>1.2.2</b> What R Is</a></li>
+<li class="chapter" data-level="1.2.3" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-youll-learn"><i class="fa fa-check"></i><b>1.2.3</b> What You’ll Learn</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#the-learning-path"><i class="fa fa-check"></i><b>1.3</b> The Learning Path</a></li>
+<li class="chapter" data-level="1.4" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-makes-this-different"><i class="fa fa-check"></i><b>1.4</b> What Makes This Different</a></li>
+<li class="chapter" data-level="1.5" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-to-expect"><i class="fa fa-check"></i><b>1.5</b> What to Expect</a></li>
+<li class="chapter" data-level="1.6" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#before-you-begin"><i class="fa fa-check"></i><b>1.6</b> Before You Begin</a></li>
+<li class="chapter" data-level="1.7" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#a-note-on-learning"><i class="fa fa-check"></i><b>1.7</b> A Note on Learning</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html"><i class="fa fa-check"></i><b>2</b> Chapter 2 - Setting up an <code>R</code> environment</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#what-were-building"><i class="fa fa-check"></i><b>2.1</b> What We’re Building</a></li>
+<li class="chapter" data-level="2.2" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#version-notes"><i class="fa fa-check"></i><b>2.2</b> Version Notes</a></li>
+<li class="chapter" data-level="2.3" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#the-essentials"><i class="fa fa-check"></i><b>2.3</b> The Essentials</a></li>
+<li class="chapter" data-level="2.4" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#common-problems-and-solutions"><i class="fa fa-check"></i><b>2.4</b> Common Problems and Solutions</a></li>
+<li class="chapter" data-level="2.5" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#a-deeper-dive"><i class="fa fa-check"></i><b>2.5</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#understanding-the-components"><i class="fa fa-check"></i><b>2.5.1</b> Understanding the Components</a></li>
+<li class="chapter" data-level="2.5.2" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#the-rstudio-interface"><i class="fa fa-check"></i><b>2.5.2</b> The RStudio Interface</a></li>
+<li class="chapter" data-level="2.5.3" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#why-this-setup-process-matters"><i class="fa fa-check"></i><b>2.5.3</b> Why This Setup Process Matters</a></li>
+<li class="chapter" data-level="2.5.4" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#packages-preview"><i class="fa fa-check"></i><b>2.5.4</b> Packages Preview</a></li>
+<li class="chapter" data-level="2.5.5" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#file-paths-and-working-directories"><i class="fa fa-check"></i><b>2.5.5</b> File Paths and Working Directories</a></li>
+<li class="chapter" data-level="2.5.6" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#next-steps"><i class="fa fa-check"></i><b>2.5.6</b> Next Steps</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html"><i class="fa fa-check"></i><b>3</b> Chapter 3 - Packages</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#what-are-packages"><i class="fa fa-check"></i><b>3.1</b> What Are Packages?</a></li>
+<li class="chapter" data-level="3.2" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#where-packages-come-from"><i class="fa fa-check"></i><b>3.2</b> Where Packages Come From</a></li>
+<li class="chapter" data-level="3.3" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#version-notes-1"><i class="fa fa-check"></i><b>3.3</b> Version Notes</a></li>
+<li class="chapter" data-level="3.4" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#the-essentials-1"><i class="fa fa-check"></i><b>3.4</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#step-1-install-package-managers"><i class="fa fa-check"></i><b>3.4.1</b> Step 1: Install Package Managers</a></li>
+<li class="chapter" data-level="3.4.2" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#step-2-install-all-required-packages"><i class="fa fa-check"></i><b>3.4.2</b> Step 2: Install All Required Packages</a></li>
+<li class="chapter" data-level="3.4.3" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#step-3-verify-installation"><i class="fa fa-check"></i><b>3.4.3</b> Step 3: Verify Installation</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#a-deeper-dive-1"><i class="fa fa-check"></i><b>3.5</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#installing-without-blocking-your-console"><i class="fa fa-check"></i><b>3.5.1</b> Installing Without Blocking Your Console</a></li>
+<li class="chapter" data-level="3.5.2" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#understanding-package-installation"><i class="fa fa-check"></i><b>3.5.2</b> Understanding Package Installation</a></li>
+<li class="chapter" data-level="3.5.3" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#package-sources-in-detail"><i class="fa fa-check"></i><b>3.5.3</b> Package Sources in Detail</a></li>
+<li class="chapter" data-level="3.5.4" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#loading-packages-vs-installing-packages"><i class="fa fa-check"></i><b>3.5.4</b> Loading Packages vs Installing Packages</a></li>
+<li class="chapter" data-level="3.5.5" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#about-require-vs-library"><i class="fa fa-check"></i><b>3.5.5</b> About require() vs library()</a></li>
+<li class="chapter" data-level="3.5.6" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#understanding-our-package-collection"><i class="fa fa-check"></i><b>3.5.6</b> Understanding Our Package Collection</a></li>
+<li class="chapter" data-level="3.5.7" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#package-dependencies"><i class="fa fa-check"></i><b>3.5.7</b> Package Dependencies</a></li>
+<li class="chapter" data-level="3.5.8" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#what-a-package-actually-is-on-disk"><i class="fa fa-check"></i><b>3.5.8</b> What a Package Actually Is on Disk</a></li>
+<li class="chapter" data-level="3.5.9" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#managing-your-package-library"><i class="fa fa-check"></i><b>3.5.9</b> Managing Your Package Library</a></li>
+<li class="chapter" data-level="3.5.10" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#getting-help-with-packages"><i class="fa fa-check"></i><b>3.5.10</b> Getting Help with Packages</a></li>
+<li class="chapter" data-level="3.5.11" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#why-we-install-everything-upfront"><i class="fa fa-check"></i><b>3.5.11</b> Why We Install Everything Upfront</a></li>
+<li class="chapter" data-level="3.5.12" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#troubleshooting-installation-problems"><i class="fa fa-check"></i><b>3.5.12</b> Troubleshooting Installation Problems</a></li>
+<li class="chapter" data-level="3.5.13" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#whats-next"><i class="fa fa-check"></i><b>3.5.13</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html"><i class="fa fa-check"></i><b>4</b> Chapter 4 - File Management and Data Access</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#what-were-building-1"><i class="fa fa-check"></i><b>4.1</b> What We’re Building</a></li>
+<li class="chapter" data-level="4.2" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#version-notes-2"><i class="fa fa-check"></i><b>4.2</b> Version Notes</a></li>
+<li class="chapter" data-level="4.3" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#the-essentials-2"><i class="fa fa-check"></i><b>4.3</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-1-create-your-project-folder"><i class="fa fa-check"></i><b>4.3.1</b> Step 1: Create Your Project Folder</a></li>
+<li class="chapter" data-level="4.3.2" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-2-create-an-r-project"><i class="fa fa-check"></i><b>4.3.2</b> Step 2: Create an R Project</a></li>
+<li class="chapter" data-level="4.3.3" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-3-create-your-folder-structure-with-dir.create"><i class="fa fa-check"></i><b>4.3.3</b> Step 3: Create Your Folder Structure with dir.create()</a></li>
+<li class="chapter" data-level="4.3.4" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-4-download-this-courses-data"><i class="fa fa-check"></i><b>4.3.4</b> Step 4: Download This Course’s Data</a></li>
+<li class="chapter" data-level="4.3.5" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-5-work-in-a-script-not-the-console"><i class="fa fa-check"></i><b>4.3.5</b> Step 5: Work in a Script, Not the Console</a></li>
+<li class="chapter" data-level="4.3.6" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-6-verify-here-works"><i class="fa fa-check"></i><b>4.3.6</b> Step 6: Verify here() Works</a></li>
+<li class="chapter" data-level="4.3.7" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-7-verify-your-data"><i class="fa fa-check"></i><b>4.3.7</b> Step 7: Verify Your Data</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#a-deeper-dive-2"><i class="fa fa-check"></i><b>4.4</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#understanding-working-directories"><i class="fa fa-check"></i><b>4.4.1</b> Understanding Working Directories</a></li>
+<li class="chapter" data-level="4.4.2" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#what-r-projects-actually-do"><i class="fa fa-check"></i><b>4.4.2</b> What R Projects Actually Do</a></li>
+<li class="chapter" data-level="4.4.3" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#file-paths-in-r"><i class="fa fa-check"></i><b>4.4.3</b> File Paths in R</a></li>
+<li class="chapter" data-level="4.4.4" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#the-here-package-in-detail"><i class="fa fa-check"></i><b>4.4.4</b> The here Package in Detail</a></li>
+<li class="chapter" data-level="4.4.5" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#why-just-one-version-of-the-fcs-data"><i class="fa fa-check"></i><b>4.4.5</b> Why Just One Version of the FCS Data?</a></li>
+<li class="chapter" data-level="4.4.6" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#why-a-staged-rds-folder"><i class="fa fa-check"></i><b>4.4.6</b> Why a Staged RDS Folder?</a></li>
+<li class="chapter" data-level="4.4.7" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#file-organisation-best-practices"><i class="fa fa-check"></i><b>4.4.7</b> File Organisation Best Practices</a></li>
+<li class="chapter" data-level="4.4.8" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#creating-folders-and-files"><i class="fa fa-check"></i><b>4.4.8</b> Creating Folders and Files</a></li>
+<li class="chapter" data-level="4.4.9" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#navigating-folders-in-r"><i class="fa fa-check"></i><b>4.4.9</b> Navigating Folders in R</a></li>
+<li class="chapter" data-level="4.4.10" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#verifying-your-setup"><i class="fa fa-check"></i><b>4.4.10</b> Verifying Your Setup</a></li>
+<li class="chapter" data-level="4.4.11" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#troubleshooting"><i class="fa fa-check"></i><b>4.4.11</b> Troubleshooting</a></li>
+<li class="chapter" data-level="4.4.12" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#whats-next-1"><i class="fa fa-check"></i><b>4.4.12</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html"><i class="fa fa-check"></i><b>5</b> Chapter 5 - Loading Cytometry Data</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#what-youll-learn-1"><i class="fa fa-check"></i><b>5.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="5.2" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#understanding-fcs-files"><i class="fa fa-check"></i><b>5.2</b> Understanding FCS Files</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#where-this-courses-data-came-from"><i class="fa fa-check"></i><b>5.2.1</b> Where This Course’s Data Came From</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#the-essentials-3"><i class="fa fa-check"></i><b>5.3</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#step-1-load-required-packages"><i class="fa fa-check"></i><b>5.3.1</b> Step 1: Load Required Packages</a></li>
+<li class="chapter" data-level="5.3.2" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#step-2-load-the-course-dataset"><i class="fa fa-check"></i><b>5.3.2</b> Step 2: Load the Course Dataset</a></li>
+<li class="chapter" data-level="5.3.3" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#step-3-verify-the-data-loaded"><i class="fa fa-check"></i><b>5.3.3</b> Step 3: Verify the Data Loaded</a></li>
+<li class="chapter" data-level="5.3.4" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#step-4-examine-whats-inside"><i class="fa fa-check"></i><b>5.3.4</b> Step 4: Examine What’s Inside</a></li>
+<li class="chapter" data-level="5.3.5" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#step-5-save-your-work"><i class="fa fa-check"></i><b>5.3.5</b> Step 5: Save Your Work</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#a-deeper-dive-3"><i class="fa fa-check"></i><b>5.4</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#what-is-a-flowset"><i class="fa fa-check"></i><b>5.4.1</b> What is a flowSet?</a></li>
+<li class="chapter" data-level="5.4.2" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#what-is-a-flowframe"><i class="fa fa-check"></i><b>5.4.2</b> What is a flowFrame?</a></li>
+<li class="chapter" data-level="5.4.3" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#the-direct-route-one-file-no-flowset"><i class="fa fa-check"></i><b>5.4.3</b> The Direct Route: One File, No flowSet</a></li>
+<li class="chapter" data-level="5.4.4" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#understanding-data-structures"><i class="fa fa-check"></i><b>5.4.4</b> Understanding Data Structures</a></li>
+<li class="chapter" data-level="5.4.5" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#three-ways-to-get-a-piece-out-of-an-object"><i class="fa fa-check"></i><b>5.4.5</b> Three Ways to Get a Piece Out of an Object</a></li>
+<li class="chapter" data-level="5.4.6" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#examining-data-dimensions"><i class="fa fa-check"></i><b>5.4.6</b> Examining Data Dimensions</a></li>
+<li class="chapter" data-level="5.4.7" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#understanding-channel-names"><i class="fa fa-check"></i><b>5.4.7</b> Understanding Channel Names</a></li>
+<li class="chapter" data-level="5.4.8" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#accessing-expression-data"><i class="fa fa-check"></i><b>5.4.8</b> Accessing Expression Data</a></li>
+<li class="chapter" data-level="5.4.9" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#keywords-and-metadata"><i class="fa fa-check"></i><b>5.4.9</b> Keywords and Metadata</a></li>
+<li class="chapter" data-level="5.4.10" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#working-with-multiple-files"><i class="fa fa-check"></i><b>5.4.10</b> Working with Multiple Files</a></li>
+<li class="chapter" data-level="5.4.11" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#subsetting-data"><i class="fa fa-check"></i><b>5.4.11</b> Subsetting Data</a></li>
+<li class="chapter" data-level="5.4.12" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#data-structure-summary"><i class="fa fa-check"></i><b>5.4.12</b> Data Structure Summary</a></li>
+<li class="chapter" data-level="5.4.13" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#saving-and-loading"><i class="fa fa-check"></i><b>5.4.13</b> Saving and Loading</a></li>
+<li class="chapter" data-level="5.4.14" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#common-operations-summary"><i class="fa fa-check"></i><b>5.4.14</b> Common Operations Summary</a></li>
+<li class="chapter" data-level="5.4.15" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#troubleshooting-1"><i class="fa fa-check"></i><b>5.4.15</b> Troubleshooting</a></li>
+<li class="chapter" data-level="5.4.16" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#whats-next-2"><i class="fa fa-check"></i><b>5.4.16</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html"><i class="fa fa-check"></i><b>6</b> Chapter 6 - Visualising Cytometry Data</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#what-youll-learn-2"><i class="fa fa-check"></i><b>6.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="6.2" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#understanding-cytometry-visualisation"><i class="fa fa-check"></i><b>6.2</b> Understanding Cytometry Visualisation</a></li>
+<li class="chapter" data-level="6.3" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#the-essentials-4"><i class="fa fa-check"></i><b>6.3</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#step-1-load-required-packages-1"><i class="fa fa-check"></i><b>6.3.1</b> Step 1: Load Required Packages</a></li>
+<li class="chapter" data-level="6.3.2" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#step-2-load-your-data"><i class="fa fa-check"></i><b>6.3.2</b> Step 2: Load Your Data</a></li>
+<li class="chapter" data-level="6.3.3" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#step-3-your-first-cytometry-plot"><i class="fa fa-check"></i><b>6.3.3</b> Step 3: Your First Cytometry Plot</a></li>
+<li class="chapter" data-level="6.3.4" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#step-4-improve-the-visualisation"><i class="fa fa-check"></i><b>6.3.4</b> Step 4: Improve the Visualisation</a></li>
+<li class="chapter" data-level="6.3.5" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#step-5-plot-multiple-samples"><i class="fa fa-check"></i><b>6.3.5</b> Step 5: Plot Multiple Samples</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#a-deeper-dive-4"><i class="fa fa-check"></i><b>6.4</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#understanding-autoplot"><i class="fa fa-check"></i><b>6.4.1</b> Understanding autoplot</a></li>
+<li class="chapter" data-level="6.4.2" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#binning-and-hexagonal-plots"><i class="fa fa-check"></i><b>6.4.2</b> Binning and Hexagonal Plots</a></li>
+<li class="chapter" data-level="6.4.3" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#transformation-for-visualisation"><i class="fa fa-check"></i><b>6.4.3</b> Transformation for Visualisation</a></li>
+<li class="chapter" data-level="6.4.4" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#selecting-different-channels"><i class="fa fa-check"></i><b>6.4.4</b> Selecting Different Channels</a></li>
+<li class="chapter" data-level="6.4.5" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#single-sample-vs-multiple-samples"><i class="fa fa-check"></i><b>6.4.5</b> Single Sample vs Multiple Samples</a></li>
+<li class="chapter" data-level="6.4.6" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#controlling-facets"><i class="fa fa-check"></i><b>6.4.6</b> Controlling Facets</a></li>
+<li class="chapter" data-level="6.4.7" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#using-ggcyto-instead-of-autoplot"><i class="fa fa-check"></i><b>6.4.7</b> Using ggcyto Instead of autoplot</a></li>
+<li class="chapter" data-level="6.4.8" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#plot-types"><i class="fa fa-check"></i><b>6.4.8</b> Plot Types</a></li>
+<li class="chapter" data-level="6.4.9" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#one-dimensional-plots-histograms"><i class="fa fa-check"></i><b>6.4.9</b> One-Dimensional Plots (Histograms)</a></li>
+<li class="chapter" data-level="6.4.10" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#customising-appearance"><i class="fa fa-check"></i><b>6.4.10</b> Customising Appearance</a></li>
+<li class="chapter" data-level="6.4.11" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#saving-plots"><i class="fa fa-check"></i><b>6.4.11</b> Saving Plots</a></li>
+<li class="chapter" data-level="6.4.12" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#comparing-samples-side-by-side"><i class="fa fa-check"></i><b>6.4.12</b> Comparing Samples Side by Side</a></li>
+<li class="chapter" data-level="6.4.13" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#building-complex-plots"><i class="fa fa-check"></i><b>6.4.13</b> Building Complex Plots</a></li>
+<li class="chapter" data-level="6.4.14" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#verification-plots"><i class="fa fa-check"></i><b>6.4.14</b> Verification Plots</a></li>
+<li class="chapter" data-level="6.4.15" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#common-plot-combinations"><i class="fa fa-check"></i><b>6.4.15</b> Common Plot Combinations</a></li>
+<li class="chapter" data-level="6.4.16" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#troubleshooting-visualisation"><i class="fa fa-check"></i><b>6.4.16</b> Troubleshooting Visualisation</a></li>
+<li class="chapter" data-level="6.4.17" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#best-practices"><i class="fa fa-check"></i><b>6.4.17</b> Best Practices</a></li>
+<li class="chapter" data-level="6.4.18" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#whats-next-3"><i class="fa fa-check"></i><b>6.4.18</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html"><i class="fa fa-check"></i><b>7</b> Chapter 7 - Gating Data</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#the-essentials-5"><i class="fa fa-check"></i><b>7.1</b> The Essentials</a></li>
+<li class="chapter" data-level="7.2" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#a-deeper-dive-5"><i class="fa fa-check"></i><b>7.2</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#event-length-a-standard-first-singlet-check"><i class="fa fa-check"></i><b>7.2.1</b> Event Length: A Standard First Singlet Check</a></li>
+<li class="chapter" data-level="7.2.2" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#oval-ellipse-gates"><i class="fa fa-check"></i><b>7.2.2</b> Oval (Ellipse) Gates</a></li>
+<li class="chapter" data-level="7.2.3" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#a-better-way-fitting-the-ellipse-statistically"><i class="fa fa-check"></i><b>7.2.3</b> A Better Way: Fitting the Ellipse Statistically</a></li>
+<li class="chapter" data-level="7.2.4" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#choosing-the-time-cutoff"><i class="fa fa-check"></i><b>7.2.4</b> Choosing the Time Cutoff</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html"><i class="fa fa-check"></i><b>8</b> Chapter 8 - Cleaning Channel Names with Premessa</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#what-youll-learn-3"><i class="fa fa-check"></i><b>8.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="8.2" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#the-essentials-6"><i class="fa fa-check"></i><b>8.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-1-load-required-packages-2"><i class="fa fa-check"></i><b>8.2.1</b> Step 1: Load Required Packages</a></li>
+<li class="chapter" data-level="8.2.2" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-2-run-premessas-channel-renaming-tool"><i class="fa fa-check"></i><b>8.2.2</b> Step 2: Run premessa’s Channel-Renaming Tool</a></li>
+<li class="chapter" data-level="8.2.3" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#which-channels-to-remove-and-why"><i class="fa fa-check"></i><b>8.2.3</b> Which Channels to Remove, and Why</a></li>
+<li class="chapter" data-level="8.2.4" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-3-verify-the-pruned-files"><i class="fa fa-check"></i><b>8.2.4</b> Step 3: Verify the Pruned Files</a></li>
+<li class="chapter" data-level="8.2.5" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-4-load-the-cleaned-files-back-into-r"><i class="fa fa-check"></i><b>8.2.5</b> Step 4: Load the Cleaned Files Back into R</a></li>
+<li class="chapter" data-level="8.2.6" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-5-save-your-work-1"><i class="fa fa-check"></i><b>8.2.6</b> Step 5: Save Your Work</a></li>
+<li class="chapter" data-level="8.2.7" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-6-give-samples-readable-names"><i class="fa fa-check"></i><b>8.2.7</b> Step 6: Give Samples Readable Names</a></li>
+<li class="chapter" data-level="8.2.8" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-7-reorder-the-samples"><i class="fa fa-check"></i><b>8.2.8</b> Step 7: Reorder the Samples</a></li>
+<li class="chapter" data-level="8.2.9" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-8-rename-channels-to-include-marker-names"><i class="fa fa-check"></i><b>8.2.9</b> Step 8: Rename Channels to Include Marker Names</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#a-deeper-dive-6"><i class="fa fa-check"></i><b>8.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#see-what-channel-matching-actually-bought-you"><i class="fa fa-check"></i><b>8.3.1</b> See What Channel Matching Actually Bought You</a></li>
+<li class="chapter" data-level="8.3.2" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#a-fallback-if-ggally-isnt-available"><i class="fa fa-check"></i><b>8.3.2</b> A Fallback If GGally Isn’t Available</a></li>
+<li class="chapter" data-level="8.3.3" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#taking-your-renamed-data-back-out-of-r"><i class="fa fa-check"></i><b>8.3.3</b> Taking Your Renamed Data Back Out of R</a></li>
+<li class="chapter" data-level="8.3.4" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#whats-next-4"><i class="fa fa-check"></i><b>8.3.4</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html"><i class="fa fa-check"></i><b>9</b> Chapter 9 - Removing Acquisition Anomalies</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#what-youll-learn-4"><i class="fa fa-check"></i><b>9.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="9.2" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#the-essentials-7"><i class="fa fa-check"></i><b>9.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-1-load-required-packages-3"><i class="fa fa-check"></i><b>9.2.1</b> Step 1: Load Required Packages</a></li>
+<li class="chapter" data-level="9.2.2" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-2-load-your-data-if-needed"><i class="fa fa-check"></i><b>9.2.2</b> Step 2: Load Your Data (if needed)</a></li>
+<li class="chapter" data-level="9.2.3" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-3-clean-each-file"><i class="fa fa-check"></i><b>9.2.3</b> Step 3: Clean Each File</a></li>
+<li class="chapter" data-level="9.2.4" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-4-save-your-work"><i class="fa fa-check"></i><b>9.2.4</b> Step 4: Save Your Work</a></li>
+<li class="chapter" data-level="9.2.5" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-5-see-what-was-actually-removed"><i class="fa fa-check"></i><b>9.2.5</b> Step 5: See What Was Actually Removed</a></li>
+<li class="chapter" data-level="9.2.6" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-6-check-cell-counts-before-and-after"><i class="fa fa-check"></i><b>9.2.6</b> Step 6: Check Cell Counts Before and After</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#a-deeper-dive-7"><i class="fa fa-check"></i><b>9.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#why-peacoqc-rather-than-flowcut"><i class="fa fa-check"></i><b>9.3.1</b> Why PeacoQC Rather Than flowCut</a></li>
+<li class="chapter" data-level="9.3.2" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#flowcut-and-what-happens-when-you-run-both"><i class="fa fa-check"></i><b>9.3.2</b> flowCut, and What Happens When You Run Both</a></li>
+<li class="chapter" data-level="9.3.3" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#making-flowcut-cut-anyway"><i class="fa fa-check"></i><b>9.3.3</b> Making flowCut Cut Anyway</a></li>
+<li class="chapter" data-level="9.3.4" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#other-tools-exist"><i class="fa fa-check"></i><b>9.3.4</b> Other Tools Exist</a></li>
+<li class="chapter" data-level="9.3.5" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#whats-next-5"><i class="fa fa-check"></i><b>9.3.5</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html"><i class="fa fa-check"></i><b>10</b> Chapter 10 - Downsampling</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#what-youll-learn-5"><i class="fa fa-check"></i><b>10.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="10.2" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#the-essentials-8"><i class="fa fa-check"></i><b>10.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="10.2.1" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-1-load-required-packages-and-data"><i class="fa fa-check"></i><b>10.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="10.2.2" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-2-downsample-every-file"><i class="fa fa-check"></i><b>10.2.2</b> Step 2: Downsample Every File</a></li>
+<li class="chapter" data-level="10.2.3" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-3-verify-the-event-counts"><i class="fa fa-check"></i><b>10.2.3</b> Step 3: Verify the Event Counts</a></li>
+<li class="chapter" data-level="10.2.4" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-4-save-your-work-1"><i class="fa fa-check"></i><b>10.2.4</b> Step 4: Save Your Work</a></li>
+<li class="chapter" data-level="10.2.5" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-5-compare-event-counts-before-and-after"><i class="fa fa-check"></i><b>10.2.5</b> Step 5: Compare Event Counts Before and After</a></li>
+<li class="chapter" data-level="10.2.6" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-6-reorder-the-samples"><i class="fa fa-check"></i><b>10.2.6</b> Step 6: Reorder the Samples</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#a-deeper-dive-8"><i class="fa fa-check"></i><b>10.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#what-samplefilter-is-actually-doing"><i class="fa fa-check"></i><b>10.3.1</b> What sampleFilter() Is Actually Doing</a></li>
+<li class="chapter" data-level="10.3.2" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#the-cost-of-a-fixed-downsample"><i class="fa fa-check"></i><b>10.3.2</b> The Cost of a Fixed Downsample</a></li>
+<li class="chapter" data-level="10.3.3" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#fixed-per-file-vs-proportional-downsampling"><i class="fa fa-check"></i><b>10.3.3</b> Fixed-Per-File vs Proportional Downsampling</a></li>
+<li class="chapter" data-level="10.3.4" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#whats-next-6"><i class="fa fa-check"></i><b>10.3.4</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html"><i class="fa fa-check"></i><b>11</b> Chapter 11 - Data Transformation</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#what-youll-learn-6"><i class="fa fa-check"></i><b>11.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="11.2" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#the-essentials-9"><i class="fa fa-check"></i><b>11.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="11.2.1" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#step-1-load-required-packages-and-data-1"><i class="fa fa-check"></i><b>11.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="11.2.2" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#step-2-apply-the-arcsinh-transformation"><i class="fa fa-check"></i><b>11.2.2</b> Step 2: Apply the arcsinh Transformation</a></li>
+<li class="chapter" data-level="11.2.3" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#step-3-save-your-work"><i class="fa fa-check"></i><b>11.2.3</b> Step 3: Save Your Work</a></li>
+<li class="chapter" data-level="11.2.4" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#step-4-compare-transformed-vs-untransformed"><i class="fa fa-check"></i><b>11.2.4</b> Step 4: Compare Transformed vs Untransformed</a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#a-deeper-dive-9"><i class="fa fa-check"></i><b>11.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="11.3.1" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#what-happens-with-the-wrong-cofactor"><i class="fa fa-check"></i><b>11.3.1</b> What Happens With the Wrong Cofactor</a></li>
+<li class="chapter" data-level="11.3.2" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#other-transforms-logicle-and-biexponential"><i class="fa fa-check"></i><b>11.3.2</b> Other Transforms: Logicle and Biexponential</a></li>
+<li class="chapter" data-level="11.3.3" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#whats-next-7"><i class="fa fa-check"></i><b>11.3.3</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html"><i class="fa fa-check"></i><b>12</b> Chapter 12 - Extracting Expression Data</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#what-youll-learn-7"><i class="fa fa-check"></i><b>12.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="12.2" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#the-essentials-10"><i class="fa fa-check"></i><b>12.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="12.2.1" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#step-1-load-required-packages-and-data-2"><i class="fa fa-check"></i><b>12.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="12.2.2" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#step-2-extract-the-expression-matrix"><i class="fa fa-check"></i><b>12.2.2</b> Step 2: Extract the Expression Matrix</a></li>
+<li class="chapter" data-level="12.2.3" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#step-3-label-each-cell-with-its-sample"><i class="fa fa-check"></i><b>12.2.3</b> Step 3: Label Each Cell With Its Sample</a></li>
+<li class="chapter" data-level="12.2.4" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#step-4-build-the-combined-table"><i class="fa fa-check"></i><b>12.2.4</b> Step 4: Build the Combined Table</a></li>
+<li class="chapter" data-level="12.2.5" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#step-5-reshape-to-long-format-and-add-condition"><i class="fa fa-check"></i><b>12.2.5</b> Step 5: Reshape to Long Format and Add Condition</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#a-deeper-dive-10"><i class="fa fa-check"></i><b>12.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="12.3.1" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#what-positional-joining-actually-does"><i class="fa fa-check"></i><b>12.3.1</b> What Positional Joining Actually Does</a></li>
+<li class="chapter" data-level="12.3.2" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#why-this-shape-matters"><i class="fa fa-check"></i><b>12.3.2</b> Why This Shape Matters</a></li>
+<li class="chapter" data-level="12.3.3" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#whats-next-8"><i class="fa fa-check"></i><b>12.3.3</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html"><i class="fa fa-check"></i><b>13</b> Chapter 13 - Full Visualisation</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#what-youll-learn-8"><i class="fa fa-check"></i><b>13.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="13.2" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#the-essentials-11"><i class="fa fa-check"></i><b>13.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="13.2.1" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#step-1-load-required-packages-and-data-3"><i class="fa fa-check"></i><b>13.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="13.2.2" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#step-2-density-plot-all-markers"><i class="fa fa-check"></i><b>13.2.2</b> Step 2: Density Plot, All Markers</a></li>
+<li class="chapter" data-level="13.2.3" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#step-3-ridge-plot-all-markers"><i class="fa fa-check"></i><b>13.2.3</b> Step 3: Ridge Plot, All Markers</a></li>
+<li class="chapter" data-level="13.2.4" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#step-4-a-simpler-view-median-expression-for-one-marker"><i class="fa fa-check"></i><b>13.2.4</b> Step 4: A Simpler View, Median Expression for One Marker</a></li>
+</ul></li>
+<li class="chapter" data-level="13.3" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#a-deeper-dive-11"><i class="fa fa-check"></i><b>13.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="13.3.1" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#the-colours-dont-actually-match-each-other"><i class="fa fa-check"></i><b>13.3.1</b> The Colours Don’t Actually Match Each Other</a></li>
+<li class="chapter" data-level="13.3.2" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#building-a-shared-colour-palette"><i class="fa fa-check"></i><b>13.3.2</b> Building a Shared Colour Palette</a></li>
+<li class="chapter" data-level="13.3.3" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#whats-next-9"><i class="fa fa-check"></i><b>13.3.3</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><i class="fa fa-check"></i><b>14</b> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#what-youll-learn-9"><i class="fa fa-check"></i><b>14.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="14.2" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#the-essentials-12"><i class="fa fa-check"></i><b>14.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="14.2.1" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-1-load-required-packages-and-data-4"><i class="fa fa-check"></i><b>14.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="14.2.2" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-2-run-umap-on-all-markers"><i class="fa fa-check"></i><b>14.2.2</b> Step 2: Run UMAP on All Markers</a></li>
+<li class="chapter" data-level="14.2.3" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-2b-set-the-axis-limits-once"><i class="fa fa-check"></i><b>14.2.3</b> Step 2b: Set the Axis Limits Once</a></li>
+<li class="chapter" data-level="14.2.4" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-3-plot-the-all-markers-umap"><i class="fa fa-check"></i><b>14.2.4</b> Step 3: Plot the All-Markers UMAP</a></li>
+<li class="chapter" data-level="14.2.5" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-4-run-tsne-on-all-markers"><i class="fa fa-check"></i><b>14.2.5</b> Step 4: Run tSNE on All Markers</a></li>
+<li class="chapter" data-level="14.2.6" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-5-plot-the-all-markers-tsne"><i class="fa fa-check"></i><b>14.2.6</b> Step 5: Plot the All-Markers tSNE</a></li>
+<li class="chapter" data-level="14.2.7" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-6-choose-lineage-markers"><i class="fa fa-check"></i><b>14.2.7</b> Step 6: Choose Lineage Markers</a></li>
+<li class="chapter" data-level="14.2.8" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-7-run-umap-on-lineage-markers-only"><i class="fa fa-check"></i><b>14.2.8</b> Step 7: Run UMAP on Lineage Markers Only</a></li>
+<li class="chapter" data-level="14.2.9" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-8-plot-the-lineage-only-umap"><i class="fa fa-check"></i><b>14.2.9</b> Step 8: Plot the Lineage-Only UMAP</a></li>
+<li class="chapter" data-level="14.2.10" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-9-run-tsne-on-lineage-markers-only"><i class="fa fa-check"></i><b>14.2.10</b> Step 9: Run tSNE on Lineage Markers Only</a></li>
+<li class="chapter" data-level="14.2.11" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-10-plot-the-lineage-only-tsne"><i class="fa fa-check"></i><b>14.2.11</b> Step 10: Plot the Lineage-Only tSNE</a></li>
+</ul></li>
+<li class="chapter" data-level="14.3" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#a-deeper-dive-12"><i class="fa fa-check"></i><b>14.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="14.3.1" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#how-much-of-this-picture-is-real-change-the-seed-and-find-out"><i class="fa fa-check"></i><b>14.3.1</b> How Much of This Picture Is Real? Change the Seed and Find Out</a></li>
+<li class="chapter" data-level="14.3.2" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#what-is-this-projection-actually-separating-on"><i class="fa fa-check"></i><b>14.3.2</b> What Is This Projection Actually Separating On?</a></li>
+<li class="chapter" data-level="14.3.3" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#reading-the-projection-expression-of-every-marker"><i class="fa fa-check"></i><b>14.3.3</b> Reading the Projection: Expression of Every Marker</a></li>
+<li class="chapter" data-level="14.3.4" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#naming-regions-and-why-it-has-to-be-done-within-a-group"><i class="fa fa-check"></i><b>14.3.4</b> Naming Regions, and Why It Has to Be Done Within a Group</a></li>
+<li class="chapter" data-level="14.3.5" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#then-move-them-by-hand"><i class="fa fa-check"></i><b>14.3.5</b> Then Move Them by Hand</a></li>
+<li class="chapter" data-level="14.3.6" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#gating-the-territories-not-the-markers"><i class="fa fa-check"></i><b>14.3.6</b> Gating the Territories, Not the Markers</a></li>
+<li class="chapter" data-level="14.3.7" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#does-condition-change-the-picture"><i class="fa fa-check"></i><b>14.3.7</b> Does Condition Change the Picture?</a></li>
+<li class="chapter" data-level="14.3.8" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#every-sample-side-by-side"><i class="fa fa-check"></i><b>14.3.8</b> Every Sample Side by Side</a></li>
+<li class="chapter" data-level="14.3.9" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#plot-a-fraction-not-everything"><i class="fa fa-check"></i><b>14.3.9</b> Plot a Fraction, Not Everything</a></li>
+<li class="chapter" data-level="14.3.10" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#assembling-a-figure-rather-than-a-plot"><i class="fa fa-check"></i><b>14.3.10</b> Assembling a Figure Rather Than a Plot</a></li>
+<li class="chapter" data-level="14.3.11" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#cycling-through-the-samples"><i class="fa fa-check"></i><b>14.3.11</b> Cycling Through the Samples</a></li>
+<li class="chapter" data-level="14.3.12" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#choosing-lineage-markers-interactively"><i class="fa fa-check"></i><b>14.3.12</b> Choosing Lineage Markers Interactively</a></li>
+<li class="chapter" data-level="14.3.13" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#whats-next-10"><i class="fa fa-check"></i><b>14.3.13</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html"><i class="fa fa-check"></i><b>15</b> Chapter 15 - Clustering and Population Discovery</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#what-youll-learn-10"><i class="fa fa-check"></i><b>15.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="15.2" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#the-essentials-13"><i class="fa fa-check"></i><b>15.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="15.2.1" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-1-load-required-packages-and-data-5"><i class="fa fa-check"></i><b>15.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="15.2.2" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-2-choose-markers-to-cluster-on"><i class="fa fa-check"></i><b>15.2.2</b> Step 2: Choose Markers to Cluster On</a></li>
+<li class="chapter" data-level="15.2.3" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-3-run-flowsom"><i class="fa fa-check"></i><b>15.2.3</b> Step 3: Run FlowSOM</a></li>
+<li class="chapter" data-level="15.2.4" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-4-add-cluster-labels-and-save"><i class="fa fa-check"></i><b>15.2.4</b> Step 4: Add Cluster Labels and Save</a></li>
+<li class="chapter" data-level="15.2.5" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-5-plot-clusters-on-the-umaptsne"><i class="fa fa-check"></i><b>15.2.5</b> Step 5: Plot Clusters on the UMAP/tSNE</a></li>
+<li class="chapter" data-level="15.2.6" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-6-cluster-abundance-per-sample"><i class="fa fa-check"></i><b>15.2.6</b> Step 6: Cluster Abundance per Sample</a></li>
+</ul></li>
+<li class="chapter" data-level="15.3" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#a-deeper-dive-13"><i class="fa fa-check"></i><b>15.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="15.3.1" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#an-alternative-phenograph"><i class="fa fa-check"></i><b>15.3.1</b> An Alternative: Phenograph</a></li>
+<li class="chapter" data-level="15.3.2" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#naming-clusters-from-marker-expression-a-worked-example"><i class="fa fa-check"></i><b>15.3.2</b> Naming Clusters from Marker Expression: A Worked Example</a></li>
+<li class="chapter" data-level="15.3.3" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#whats-next-11"><i class="fa fa-check"></i><b>15.3.3</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html"><i class="fa fa-check"></i><b>16</b> Chapter 16 - Statistical Analysis and Publication Figures</a>
+<ul>
+<li class="chapter" data-level="16.1" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#what-youll-learn-11"><i class="fa fa-check"></i><b>16.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="16.2" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#the-essentials-14"><i class="fa fa-check"></i><b>16.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="16.2.1" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-1-load-required-packages-and-data-6"><i class="fa fa-check"></i><b>16.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="16.2.2" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-2-compute-median-expression-per-sample"><i class="fa fa-check"></i><b>16.2.2</b> Step 2: Compute Median Expression per Sample</a></li>
+<li class="chapter" data-level="16.2.3" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-3-mds-plot"><i class="fa fa-check"></i><b>16.2.3</b> Step 3: MDS Plot</a></li>
+<li class="chapter" data-level="16.2.4" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-4-heatmap-of-median-expression"><i class="fa fa-check"></i><b>16.2.4</b> Step 4: Heatmap of Median Expression</a></li>
+<li class="chapter" data-level="16.2.5" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-5-bubble-plot-of-median-expression"><i class="fa fa-check"></i><b>16.2.5</b> Step 5: Bubble Plot of Median Expression</a></li>
+<li class="chapter" data-level="16.2.6" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-6-non-redundancy-score-nrs"><i class="fa fa-check"></i><b>16.2.6</b> Step 6: Non-Redundancy Score (NRS)</a></li>
+<li class="chapter" data-level="16.2.7" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-7-finish-the-labels"><i class="fa fa-check"></i><b>16.2.7</b> Step 7: Finish the Labels</a></li>
+<li class="chapter" data-level="16.2.8" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-8-record-your-package-versions"><i class="fa fa-check"></i><b>16.2.8</b> Step 8: Record Your Package Versions</a></li>
+</ul></li>
+<li class="chapter" data-level="16.3" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#a-deeper-dive-14"><i class="fa fa-check"></i><b>16.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="16.3.1" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#why-the-labels-arrive-unfinished"><i class="fa fa-check"></i><b>16.3.1</b> Why the Labels Arrive Unfinished</a></li>
+<li class="chapter" data-level="16.3.2" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#beyond-sessioninfo-renv"><i class="fa fa-check"></i><b>16.3.2</b> Beyond sessionInfo(): renv</a></li>
+<li class="chapter" data-level="16.3.3" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#whats-next-12"><i class="fa fa-check"></i><b>16.3.3</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
 </ul>
 
-        <div class="book-extra">
-          
-        </div>
       </nav>
-</div>
-  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="chapter-3---packages" class="section level1" number="3">
-<h1>
-<span class="header-section-number">3</span> Chapter 3 - Packages<a class="anchor" aria-label="anchor" href="#chapter-3---packages"><i class="fas fa-link"></i></a>
-</h1>
-<div id="what-are-packages" class="section level2" number="3.1">
-<h2>
-<span class="header-section-number">3.1</span> What Are Packages?<a class="anchor" aria-label="anchor" href="#what-are-packages"><i class="fas fa-link"></i></a>
-</h2>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Analysing Cytometry Data with R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="chapter-3---packages" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Chapter 3</span> Chapter 3 - Packages<a href="chapter-3---packages.html#chapter-3---packages" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="what-are-packages" class="section level2 hasAnchor" number="3.1">
+<h2><span class="header-section-number">3.1</span> What Are Packages?<a href="chapter-3---packages.html#what-are-packages" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Before we install anything, let’s understand what we’re working with. A package is a collection of functions and tools that extends what R can do. Think of base R as a toolkit that comes with essential tools like a hammer and screwdriver. A package adds more specialised tools to that same toolkit, a plane and router for fine woodworking, for instance. The tools we’ll add throughout this course are for cytometry analysis: reading FCS files, building cytometry-style plots, and running population-discovery algorithms.</p>
 <p>When you install R, you get “base R” - the core functions for basic data manipulation and statistics. But cytometry analysis requires specialised functions for reading FCS files, creating cytometry-specific plots, and applying flow cytometry algorithms. These come in packages written by researchers who share their tools with the community.</p>
 </div>
-<div id="where-packages-come-from" class="section level2" number="3.2">
-<h2>
-<span class="header-section-number">3.2</span> Where Packages Come From<a class="anchor" aria-label="anchor" href="#where-packages-come-from"><i class="fas fa-link"></i></a>
-</h2>
+<div id="where-packages-come-from" class="section level2 hasAnchor" number="3.2">
+<h2><span class="header-section-number">3.2</span> Where Packages Come From<a href="chapter-3---packages.html#where-packages-come-from" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Packages are distributed through different repositories - online collections of software that you can download from. We’ll use three main sources:</p>
 <p><strong>CRAN (Comprehensive R Archive Network):</strong> The main repository for general-purpose R packages. These are rigorously tested and maintained. Examples include packages for data manipulation, statistical analysis, and general plotting.</p>
 <p><strong>Bioconductor:</strong> A specialised repository for biological data analysis packages. These packages often work together and use common data structures designed for biological research. Most cytometry-specific packages live here.</p>
 <p><strong>GitHub:</strong> A code sharing platform where developers publish packages that may not be on CRAN or Bioconductor yet. These can include cutting-edge methods or specialised tools for specific research needs.</p>
 <p>Each repository requires different installation methods, which we’ll learn below.</p>
 </div>
-<div id="version-notes-1" class="section level2" number="3.3">
-<h2>
-<span class="header-section-number">3.3</span> Version Notes<a class="anchor" aria-label="anchor" href="#version-notes-1"><i class="fas fa-link"></i></a>
-</h2>
-<p><strong>These instructions were tested with current CRAN and Bioconductor versions</strong><br><strong>Recommendation:</strong> Install the latest package versions available<br><strong>If you encounter installation errors:</strong> Package names and dependencies may change over time - check error messages for specific guidance</p>
+<div id="version-notes-1" class="section level2 hasAnchor" number="3.3">
+<h2><span class="header-section-number">3.3</span> Version Notes<a href="chapter-3---packages.html#version-notes-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>These instructions were tested with current CRAN and Bioconductor versions</strong><br />
+<strong>Recommendation:</strong> Install the latest package versions available<br />
+<strong>If you encounter installation errors:</strong> Package names and dependencies may change over time - check error messages for specific guidance</p>
 </div>
-<div id="the-essentials-1" class="section level2 essentials" number="3.4">
-<h2>
-<span class="header-section-number">3.4</span> The Essentials<a class="anchor" aria-label="anchor" href="#the-essentials-1"><i class="fas fa-link"></i></a>
-</h2>
+<div id="the-essentials-1" class="section level2 essentials hasAnchor" number="3.4">
+<h2><span class="header-section-number">3.4</span> The Essentials<a href="chapter-3---packages.html#the-essentials-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>To get ready for cytometry analysis, we need to install packages from all three sources. We’ll install everything now so we don’t interrupt later chapters with package management.</p>
-<div id="step-1-install-package-managers" class="section level3" number="3.4.1">
-<h3>
-<span class="header-section-number">3.4.1</span> Step 1: Install Package Managers<a class="anchor" aria-label="anchor" href="#step-1-install-package-managers"><i class="fas fa-link"></i></a>
-</h3>
+<div id="step-1-install-package-managers" class="section level3 hasAnchor" number="3.4.1">
+<h3><span class="header-section-number">3.4.1</span> Step 1: Install Package Managers<a href="chapter-3---packages.html#step-1-install-package-managers" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>First, we need tools that can install packages from Bioconductor and GitHub:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="chapter-3---packages.html#cb11-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;BiocManager&quot;</span>)</span>
+<span id="cb11-2"><a href="chapter-3---packages.html#cb11-2" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)</span></code></pre></div>
 </div>
-<div id="step-2-install-all-required-packages" class="section level3" number="3.4.2">
-<h3>
-<span class="header-section-number">3.4.2</span> Step 2: Install All Required Packages<a class="anchor" aria-label="anchor" href="#step-2-install-all-required-packages"><i class="fas fa-link"></i></a>
-</h3>
+<div id="step-2-install-all-required-packages" class="section level3 hasAnchor" number="3.4.2">
+<h3><span class="header-section-number">3.4.2</span> Step 2: Install All Required Packages<a href="chapter-3---packages.html#step-2-install-all-required-packages" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Copy and run this entire code block - it installs everything we’ll need for cytometry analysis:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Package managers (if not already installed)</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.github.io/BiocManager/">BiocManager</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/">devtools</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Core programming utilities</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://rlang.r-lib.org">rlang</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"rlang"</span><span class="op">)</span>         <span class="co"># R language utilities and C++ integration</span></span>
-<span></span>
-<span><span class="co"># Core cytometry packages - read FCS files and create cytometry plots</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"flowCore"</span><span class="op">)</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RGLab/ggcyto/issues">ggcyto</a></span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"ggcyto"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Advanced cytometry analysis - clustering and population discovery</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="http://www.r-project.org">FlowSOM</a></span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"FlowSOM"</span><span class="op">)</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">flowCut</span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"flowCut"</span><span class="op">)</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">flowWorkspace</span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"flowWorkspace"</span><span class="op">)</span> <span class="co"># GatingSet functions used in the Gating chapter</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">openCyto</span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"openCyto"</span><span class="op">)</span>           <span class="co"># estimateMedianLogicle(), used in the Transformation chapter</span></span>
-<span></span>
-<span><span class="co"># Dimensionality reduction for cytometry</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jlmelville/uwot">uwot</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"uwot"</span><span class="op">)</span>           <span class="co"># UMAP implementation</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jkrijthe/Rtsne">Rtsne</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"Rtsne"</span><span class="op">)</span>         <span class="co"># t-SNE implementation</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/teunbrand/ggh4x">ggh4x</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggh4x"</span><span class="op">)</span>         <span class="co"># facet_nested_wrap(), nested per-sample panels in the Dimensionality Reduction chapter</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mhahsler/dbscan">dbscan</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"dbscan"</span><span class="op">)</span>       <span class="co"># Density clustering, used to gate regions on a UMAP</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://ggforce.data-imaginist.com">ggforce</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggforce"</span><span class="op">)</span>     <span class="co"># geom_mark_hull(), draws those gates as outlines rather than boxes</span></span>
-<span></span>
-<span><span class="co"># Data manipulation and general visualisation</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span><span class="op">)</span>  <span class="co"># Data wrangling toolkit</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tidyr"</span><span class="op">)</span>          <span class="co"># pivot_longer(), reshaping wide tables to long. Ships inside tidyverse, listed separately because several chapters load it directly</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"cowplot"</span><span class="op">)</span>     <span class="co"># Multi-panel figures</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/ggtext/">ggtext</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggtext"</span><span class="op">)</span>       <span class="co"># Enhanced text formatting</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/ggridges/">ggridges</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggridges"</span><span class="op">)</span>   <span class="co"># Ridge/density plots for distributions</span></span>
-<span></span>
-<span><span class="co"># Colour and visualisation utilities</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">RColorBrewer</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"RColorBrewer"</span><span class="op">)</span> <span class="co"># Colour palettes</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/">viridis</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"viridis"</span><span class="op">)</span>     <span class="co"># Colourblind-friendly palettes</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://colorspace.R-Forge.R-project.org/">colorspace</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"colorspace"</span><span class="op">)</span> <span class="co"># Colour manipulation</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://scales.r-lib.org">scales</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"scales"</span><span class="op">)</span>       <span class="co"># Plot scaling</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://ggobi.github.io/ggally/">GGally</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"GGally"</span><span class="op">)</span>       <span class="co"># ggpairs() NxN marker grids, used in the Channel Names chapter</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">pheatmap</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"pheatmap"</span><span class="op">)</span>   <span class="co"># Heatmaps, used in the Statistics chapter</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://ggrepel.slowkow.com/">ggrepel</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggrepel"</span><span class="op">)</span>     <span class="co"># Non-overlapping plot labels, used in the Statistics chapter</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">grDevices</span><span class="op">)</span> <span class="co"># Graphics devices; ships with base R, no installation needed</span></span>
-<span></span>
-<span><span class="co"># Animation, used in the Dimensionality Reduction chapter</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://gganimate.com">gganimate</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"gganimate"</span><span class="op">)</span> <span class="co"># Animates a ggplot across a variable</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://r-rust.r-universe.dev/gifski">gifski</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"gifski"</span><span class="op">)</span>       <span class="co"># Renders the frames to a GIF. gganimate needs a renderer and will fail without one</span></span>
-<span></span>
-<span><span class="co"># Statistical analysis</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://bioinf.wehi.edu.au/limma/">limma</a></span><span class="op">)</span><span class="op">)</span> <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"limma"</span><span class="op">)</span>     <span class="co"># Differential expression</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://geobosh.github.io/fBasicsDoc/">fBasics</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"fBasics"</span><span class="op">)</span>     <span class="co"># Basic statistics</span></span>
-<span></span>
-<span><span class="co"># File management and data handling</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"here"</span><span class="op">)</span>           <span class="co"># Portable file paths</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://readxl.tidyverse.org">readxl</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"readxl"</span><span class="op">)</span>       <span class="co"># Read Excel files</span></span>
-<span></span>
-<span><span class="co"># Utilities and system integration</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RevolutionAnalytics/foreach">foreach</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"foreach"</span><span class="op">)</span>     <span class="co"># Parallel processing</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://rstudio.github.io/rstudioapi/">rstudioapi</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"rstudioapi"</span><span class="op">)</span>    <span class="co"># RStudio integration</span></span>
-<span></span>
-<span><span class="co"># Specialized cytometry data cleaning</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">premessa</span><span class="op">)</span><span class="op">)</span> <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install-deprecated.html">install_github</a></span><span class="op">(</span><span class="st">"ParkerICI/premessa"</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">Rphenograph</span><span class="op">)</span><span class="op">)</span> <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install-deprecated.html">install_github</a></span><span class="op">(</span><span class="st">"JinmiaoChenLab/Rphenograph"</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  <span class="co"># Clustering alternative to FlowSOM, used in the Clustering chapter</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="chapter-3---packages.html#cb12-1" tabindex="-1"></a><span class="co"># Package managers (if not already installed)</span></span>
+<span id="cb12-2"><a href="chapter-3---packages.html#cb12-2" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(BiocManager)) <span class="fu">install.packages</span>(<span class="st">&quot;BiocManager&quot;</span>)</span>
+<span id="cb12-3"><a href="chapter-3---packages.html#cb12-3" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(devtools)) <span class="fu">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)</span>
+<span id="cb12-4"><a href="chapter-3---packages.html#cb12-4" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="chapter-3---packages.html#cb12-5" tabindex="-1"></a><span class="co"># Core programming utilities</span></span>
+<span id="cb12-6"><a href="chapter-3---packages.html#cb12-6" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(rlang)) <span class="fu">install.packages</span>(<span class="st">&quot;rlang&quot;</span>)         <span class="co"># R language utilities and C++ integration</span></span>
+<span id="cb12-7"><a href="chapter-3---packages.html#cb12-7" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="chapter-3---packages.html#cb12-8" tabindex="-1"></a><span class="co"># Core cytometry packages - read FCS files and create cytometry plots</span></span>
+<span id="cb12-9"><a href="chapter-3---packages.html#cb12-9" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(flowCore)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">&quot;flowCore&quot;</span>)</span>
+<span id="cb12-10"><a href="chapter-3---packages.html#cb12-10" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(ggcyto)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">&quot;ggcyto&quot;</span>)</span>
+<span id="cb12-11"><a href="chapter-3---packages.html#cb12-11" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="chapter-3---packages.html#cb12-12" tabindex="-1"></a><span class="co"># Advanced cytometry analysis - clustering and population discovery</span></span>
+<span id="cb12-13"><a href="chapter-3---packages.html#cb12-13" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(FlowSOM)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">&quot;FlowSOM&quot;</span>)</span>
+<span id="cb12-14"><a href="chapter-3---packages.html#cb12-14" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(flowCut)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">&quot;flowCut&quot;</span>)</span>
+<span id="cb12-15"><a href="chapter-3---packages.html#cb12-15" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(flowWorkspace)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">&quot;flowWorkspace&quot;</span>) <span class="co"># GatingSet functions used in the Gating chapter</span></span>
+<span id="cb12-16"><a href="chapter-3---packages.html#cb12-16" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(openCyto)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">&quot;openCyto&quot;</span>)           <span class="co"># estimateMedianLogicle(), used in the Transformation chapter</span></span>
+<span id="cb12-17"><a href="chapter-3---packages.html#cb12-17" tabindex="-1"></a></span>
+<span id="cb12-18"><a href="chapter-3---packages.html#cb12-18" tabindex="-1"></a><span class="co"># Dimensionality reduction for cytometry</span></span>
+<span id="cb12-19"><a href="chapter-3---packages.html#cb12-19" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(uwot)) <span class="fu">install.packages</span>(<span class="st">&quot;uwot&quot;</span>)           <span class="co"># UMAP implementation</span></span>
+<span id="cb12-20"><a href="chapter-3---packages.html#cb12-20" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(Rtsne)) <span class="fu">install.packages</span>(<span class="st">&quot;Rtsne&quot;</span>)         <span class="co"># t-SNE implementation</span></span>
+<span id="cb12-21"><a href="chapter-3---packages.html#cb12-21" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(ggh4x)) <span class="fu">install.packages</span>(<span class="st">&quot;ggh4x&quot;</span>)         <span class="co"># facet_nested_wrap(), nested per-sample panels in the Dimensionality Reduction chapter</span></span>
+<span id="cb12-22"><a href="chapter-3---packages.html#cb12-22" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(dbscan)) <span class="fu">install.packages</span>(<span class="st">&quot;dbscan&quot;</span>)       <span class="co"># Density clustering, used to gate regions on a UMAP</span></span>
+<span id="cb12-23"><a href="chapter-3---packages.html#cb12-23" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(ggforce)) <span class="fu">install.packages</span>(<span class="st">&quot;ggforce&quot;</span>)     <span class="co"># geom_mark_hull(), draws those gates as outlines rather than boxes</span></span>
+<span id="cb12-24"><a href="chapter-3---packages.html#cb12-24" tabindex="-1"></a></span>
+<span id="cb12-25"><a href="chapter-3---packages.html#cb12-25" tabindex="-1"></a><span class="co"># Data manipulation and general visualisation</span></span>
+<span id="cb12-26"><a href="chapter-3---packages.html#cb12-26" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(tidyverse)) <span class="fu">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>)  <span class="co"># Data wrangling toolkit</span></span>
+<span id="cb12-27"><a href="chapter-3---packages.html#cb12-27" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(tidyr)) <span class="fu">install.packages</span>(<span class="st">&quot;tidyr&quot;</span>)          <span class="co"># pivot_longer(), reshaping wide tables to long. Ships inside tidyverse, listed separately because several chapters load it directly</span></span>
+<span id="cb12-28"><a href="chapter-3---packages.html#cb12-28" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(cowplot)) <span class="fu">install.packages</span>(<span class="st">&quot;cowplot&quot;</span>)     <span class="co"># Multi-panel figures</span></span>
+<span id="cb12-29"><a href="chapter-3---packages.html#cb12-29" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(ggtext)) <span class="fu">install.packages</span>(<span class="st">&quot;ggtext&quot;</span>)       <span class="co"># Enhanced text formatting</span></span>
+<span id="cb12-30"><a href="chapter-3---packages.html#cb12-30" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(ggridges)) <span class="fu">install.packages</span>(<span class="st">&quot;ggridges&quot;</span>)   <span class="co"># Ridge/density plots for distributions</span></span>
+<span id="cb12-31"><a href="chapter-3---packages.html#cb12-31" tabindex="-1"></a></span>
+<span id="cb12-32"><a href="chapter-3---packages.html#cb12-32" tabindex="-1"></a><span class="co"># Colour and visualisation utilities</span></span>
+<span id="cb12-33"><a href="chapter-3---packages.html#cb12-33" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(RColorBrewer)) <span class="fu">install.packages</span>(<span class="st">&quot;RColorBrewer&quot;</span>) <span class="co"># Colour palettes</span></span>
+<span id="cb12-34"><a href="chapter-3---packages.html#cb12-34" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(viridis)) <span class="fu">install.packages</span>(<span class="st">&quot;viridis&quot;</span>)     <span class="co"># Colourblind-friendly palettes</span></span>
+<span id="cb12-35"><a href="chapter-3---packages.html#cb12-35" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(colorspace)) <span class="fu">install.packages</span>(<span class="st">&quot;colorspace&quot;</span>) <span class="co"># Colour manipulation</span></span>
+<span id="cb12-36"><a href="chapter-3---packages.html#cb12-36" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(scales)) <span class="fu">install.packages</span>(<span class="st">&quot;scales&quot;</span>)       <span class="co"># Plot scaling</span></span>
+<span id="cb12-37"><a href="chapter-3---packages.html#cb12-37" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(GGally)) <span class="fu">install.packages</span>(<span class="st">&quot;GGally&quot;</span>)       <span class="co"># ggpairs() NxN marker grids, used in the Channel Names chapter</span></span>
+<span id="cb12-38"><a href="chapter-3---packages.html#cb12-38" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(pheatmap)) <span class="fu">install.packages</span>(<span class="st">&quot;pheatmap&quot;</span>)   <span class="co"># Heatmaps, used in the Statistics chapter</span></span>
+<span id="cb12-39"><a href="chapter-3---packages.html#cb12-39" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(ggrepel)) <span class="fu">install.packages</span>(<span class="st">&quot;ggrepel&quot;</span>)     <span class="co"># Non-overlapping plot labels, used in the Statistics chapter</span></span>
+<span id="cb12-40"><a href="chapter-3---packages.html#cb12-40" tabindex="-1"></a><span class="fu">library</span>(grDevices) <span class="co"># Graphics devices; ships with base R, no installation needed</span></span>
+<span id="cb12-41"><a href="chapter-3---packages.html#cb12-41" tabindex="-1"></a></span>
+<span id="cb12-42"><a href="chapter-3---packages.html#cb12-42" tabindex="-1"></a><span class="co"># Animation, used in the Dimensionality Reduction chapter</span></span>
+<span id="cb12-43"><a href="chapter-3---packages.html#cb12-43" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(gganimate)) <span class="fu">install.packages</span>(<span class="st">&quot;gganimate&quot;</span>) <span class="co"># Animates a ggplot across a variable</span></span>
+<span id="cb12-44"><a href="chapter-3---packages.html#cb12-44" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(gifski)) <span class="fu">install.packages</span>(<span class="st">&quot;gifski&quot;</span>)       <span class="co"># Renders the frames to a GIF. gganimate needs a renderer and will fail without one</span></span>
+<span id="cb12-45"><a href="chapter-3---packages.html#cb12-45" tabindex="-1"></a></span>
+<span id="cb12-46"><a href="chapter-3---packages.html#cb12-46" tabindex="-1"></a><span class="co"># Statistical analysis</span></span>
+<span id="cb12-47"><a href="chapter-3---packages.html#cb12-47" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(limma)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">&quot;limma&quot;</span>)     <span class="co"># Differential expression</span></span>
+<span id="cb12-48"><a href="chapter-3---packages.html#cb12-48" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(fBasics)) <span class="fu">install.packages</span>(<span class="st">&quot;fBasics&quot;</span>)     <span class="co"># Basic statistics</span></span>
+<span id="cb12-49"><a href="chapter-3---packages.html#cb12-49" tabindex="-1"></a></span>
+<span id="cb12-50"><a href="chapter-3---packages.html#cb12-50" tabindex="-1"></a><span class="co"># File management and data handling</span></span>
+<span id="cb12-51"><a href="chapter-3---packages.html#cb12-51" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(here)) <span class="fu">install.packages</span>(<span class="st">&quot;here&quot;</span>)           <span class="co"># Portable file paths</span></span>
+<span id="cb12-52"><a href="chapter-3---packages.html#cb12-52" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(readxl)) <span class="fu">install.packages</span>(<span class="st">&quot;readxl&quot;</span>)       <span class="co"># Read Excel files</span></span>
+<span id="cb12-53"><a href="chapter-3---packages.html#cb12-53" tabindex="-1"></a></span>
+<span id="cb12-54"><a href="chapter-3---packages.html#cb12-54" tabindex="-1"></a><span class="co"># Utilities and system integration</span></span>
+<span id="cb12-55"><a href="chapter-3---packages.html#cb12-55" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(foreach)) <span class="fu">install.packages</span>(<span class="st">&quot;foreach&quot;</span>)     <span class="co"># Parallel processing</span></span>
+<span id="cb12-56"><a href="chapter-3---packages.html#cb12-56" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(rstudioapi)) <span class="fu">install.packages</span>(<span class="st">&quot;rstudioapi&quot;</span>)    <span class="co"># RStudio integration</span></span>
+<span id="cb12-57"><a href="chapter-3---packages.html#cb12-57" tabindex="-1"></a></span>
+<span id="cb12-58"><a href="chapter-3---packages.html#cb12-58" tabindex="-1"></a><span class="co"># Specialized cytometry data cleaning</span></span>
+<span id="cb12-59"><a href="chapter-3---packages.html#cb12-59" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(premessa)) devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;ParkerICI/premessa&quot;</span>, <span class="at">force =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb12-60"><a href="chapter-3---packages.html#cb12-60" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(Rphenograph)) devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;JinmiaoChenLab/Rphenograph&quot;</span>, <span class="at">force =</span> <span class="cn">TRUE</span>)  <span class="co"># Clustering alternative to FlowSOM, used in the Clustering chapter</span></span></code></pre></div>
 <p><strong>A prompt you’ll likely see partway through:</strong> installing this many packages, several from Bioconductor, R will often pause and ask something like:</p>
 <pre><code>These packages have more recent versions available.
 Which would you like to update?
@@ -187,16 +628,13 @@ Which would you like to update?
 Enter one or more numbers, or an empty line to skip updates:</code></pre>
 <p>or the shorter <code>Update all/some/none? [a/s/n]:</code> version. This is asking about <em>dependencies</em>, packages your new install already relies on, not the packages you asked for. Typing <code>3</code> (or <code>n</code>, or just pressing Enter to skip) is the safe default, it keeps installing what you asked for without touching anything else. Updating everything can work too, but occasionally breaks compatibility between packages that were tested together at specific versions, not worth the risk partway through a long install. If you’re ever unsure, skipping updates is always the safer choice here.</p>
 </div>
-<div id="step-3-verify-installation" class="section level3" number="3.4.3">
-<h3>
-<span class="header-section-number">3.4.3</span> Step 3: Verify Installation<a class="anchor" aria-label="anchor" href="#step-3-verify-installation"><i class="fas fa-link"></i></a>
-</h3>
+<div id="step-3-verify-installation" class="section level3 hasAnchor" number="3.4.3">
+<h3><span class="header-section-number">3.4.3</span> Step 3: Verify Installation<a href="chapter-3---packages.html#step-3-verify-installation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Test that the core packages loaded successfully:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RGLab/ggcyto/issues">ggcyto</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="chapter-3---packages.html#cb14-1" tabindex="-1"></a><span class="fu">library</span>(flowCore)</span>
+<span id="cb14-2"><a href="chapter-3---packages.html#cb14-2" tabindex="-1"></a><span class="fu">library</span>(ggcyto)</span>
+<span id="cb14-3"><a href="chapter-3---packages.html#cb14-3" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb14-4"><a href="chapter-3---packages.html#cb14-4" tabindex="-1"></a><span class="fu">library</span>(here)</span></code></pre></div>
 <p><strong>Success looks like this:</strong></p>
 <pre><code>-- Attaching core tidyverse packages ------------------------ tidyverse 2.0.0 --
 v dplyr     1.1.4     v readr     2.1.5
@@ -209,88 +647,62 @@ x dplyr::filter() masks stats::filter()
 x dplyr::lag()    masks stats::lag()</code></pre>
 <p>Package “attaching” messages and even the odd “conflicts” or “masks” notice are normal, not errors, they just tell you two loaded packages both have a function with the same name.</p>
 <p><strong>Problem looks like this:</strong></p>
-<pre><code>Error in library(flowCore) : there is no package called 'flowCore'</code></pre>
+<pre><code>Error in library(flowCore) : there is no package called &#39;flowCore&#39;</code></pre>
 <p>This means the install step didn’t complete for that package. Go back to Step 2, run the install line for that specific package on its own, and check for a <code>Warning: package X is not available</code> message, that usually points to a spelling issue or a CRAN/Bioconductor mismatch.</p>
 </div>
 </div>
-<div id="a-deeper-dive-1" class="section level2 deeper-dive" number="3.5">
-<h2>
-<span class="header-section-number">3.5</span> A Deeper Dive<a class="anchor" aria-label="anchor" href="#a-deeper-dive-1"><i class="fas fa-link"></i></a>
-</h2>
-<div id="installing-without-blocking-your-console" class="section level3" number="3.5.1">
-<h3>
-<span class="header-section-number">3.5.1</span> Installing Without Blocking Your Console<a class="anchor" aria-label="anchor" href="#installing-without-blocking-your-console"><i class="fas fa-link"></i></a>
-</h3>
+<div id="a-deeper-dive-1" class="section level2 deeper-dive hasAnchor" number="3.5">
+<h2><span class="header-section-number">3.5</span> A Deeper Dive<a href="chapter-3---packages.html#a-deeper-dive-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="installing-without-blocking-your-console" class="section level3 hasAnchor" number="3.5.1">
+<h3><span class="header-section-number">3.5.1</span> Installing Without Blocking Your Console<a href="chapter-3---packages.html#installing-without-blocking-your-console" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Step 2’s install block covers a lot of packages, several from Bioconductor, which can take a while. While it runs, your R console is locked, you can’t run anything else until it finishes. RStudio’s Jobs pane gets around this, via the <code>job</code> package:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://lindeloev.github.io/job/">job</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"job"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">job</span><span class="fu">::</span><span class="fu"><a href="https://lindeloev.github.io/job/reference/job.html">job</a></span><span class="op">(</span><span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ggplot2"</span>, <span class="st">"tidyverse"</span>, <span class="st">"devtools"</span>, <span class="st">"BiocManager"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="chapter-3---packages.html#cb17-1" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(job)) <span class="fu">install.packages</span>(<span class="st">&quot;job&quot;</span>)</span>
+<span id="cb17-2"><a href="chapter-3---packages.html#cb17-2" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="chapter-3---packages.html#cb17-3" tabindex="-1"></a>job<span class="sc">::</span><span class="fu">job</span>({</span>
+<span id="cb17-4"><a href="chapter-3---packages.html#cb17-4" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&quot;ggplot2&quot;</span>, <span class="st">&quot;tidyverse&quot;</span>, <span class="st">&quot;devtools&quot;</span>, <span class="st">&quot;BiocManager&quot;</span>))</span>
+<span id="cb17-5"><a href="chapter-3---packages.html#cb17-5" tabindex="-1"></a>})</span></code></pre></div>
 <p>This runs the install in a separate background R process, RStudio’s Jobs tab (next to Console) shows its progress, and your console stays free to keep working in the meantime. It’s useful for this chapter’s long install, and for any future script that takes a while to run.</p>
 </div>
-<div id="understanding-package-installation" class="section level3" number="3.5.2">
-<h3>
-<span class="header-section-number">3.5.2</span> Understanding Package Installation<a class="anchor" aria-label="anchor" href="#understanding-package-installation"><i class="fas fa-link"></i></a>
-</h3>
+<div id="understanding-package-installation" class="section level3 hasAnchor" number="3.5.2">
+<h3><span class="header-section-number">3.5.2</span> Understanding Package Installation<a href="chapter-3---packages.html#understanding-package-installation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>When you type <code>install.packages("packagename")</code>, R downloads the package from CRAN and installs it on your computer. The package gets stored in a “library” - a folder where R keeps all installed packages.</p>
-<p>Note the quotation marks around the package name - they’re required during installation or you’ll get an error. However, when you load packages with <code><a href="https://rdrr.io/r/base/library.html">library()</a></code>, quotation marks are optional.</p>
+<p>Note the quotation marks around the package name - they’re required during installation or you’ll get an error. However, when you load packages with <code>library()</code>, quotation marks are optional.</p>
 </div>
-<div id="package-sources-in-detail" class="section level3" number="3.5.3">
-<h3>
-<span class="header-section-number">3.5.3</span> Package Sources in Detail<a class="anchor" aria-label="anchor" href="#package-sources-in-detail"><i class="fas fa-link"></i></a>
-</h3>
-<div id="cran-packages" class="section level4" number="3.5.3.1">
-<h4>
-<span class="header-section-number">3.5.3.1</span> CRAN Packages<a class="anchor" aria-label="anchor" href="#cran-packages"><i class="fas fa-link"></i></a>
-</h4>
+<div id="package-sources-in-detail" class="section level3 hasAnchor" number="3.5.3">
+<h3><span class="header-section-number">3.5.3</span> Package Sources in Detail<a href="chapter-3---packages.html#package-sources-in-detail" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="cran-packages" class="section level4 hasAnchor" number="3.5.3.1">
+<h4><span class="header-section-number">3.5.3.1</span> CRAN Packages<a href="chapter-3---packages.html#cran-packages" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The Comprehensive R Archive Network hosts over 18,000 packages. These undergo automated testing on multiple operating systems and must meet strict standards. CRAN packages are the most stable and reliable.</p>
 <p>Install with:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"packagename"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="chapter-3---packages.html#cb18-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;packagename&quot;</span>)</span></code></pre></div>
 </div>
-<div id="bioconductor-packages" class="section level4" number="3.5.3.2">
-<h4>
-<span class="header-section-number">3.5.3.2</span> Bioconductor Packages<a class="anchor" aria-label="anchor" href="#bioconductor-packages"><i class="fas fa-link"></i></a>
-</h4>
+<div id="bioconductor-packages" class="section level4 hasAnchor" number="3.5.3.2">
+<h4><span class="header-section-number">3.5.3.2</span> Bioconductor Packages<a href="chapter-3---packages.html#bioconductor-packages" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Bioconductor focuses on biological data analysis and maintains about 2,000 packages. These packages often work together using shared data structures. For example, the flowSet object we’ll use throughout this course was pioneered by Bioconductor. Like CRAN, every submission goes through extensive automated testing and manual review before acceptance, and packages are re-checked on every Bioconductor release to make sure they still work together.</p>
 <p>First install the manager:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="chapter-3---packages.html#cb19-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;BiocManager&quot;</span>)</span></code></pre></div>
 <p>Then install packages:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="st">"packagename"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="chapter-3---packages.html#cb20-1" tabindex="-1"></a>BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">&quot;packagename&quot;</span>)</span></code></pre></div>
 </div>
-<div id="github-packages" class="section level4" number="3.5.3.3">
-<h4>
-<span class="header-section-number">3.5.3.3</span> GitHub Packages<a class="anchor" aria-label="anchor" href="#github-packages"><i class="fas fa-link"></i></a>
-</h4>
+<div id="github-packages" class="section level4 hasAnchor" number="3.5.3.3">
+<h4><span class="header-section-number">3.5.3.3</span> GitHub Packages<a href="chapter-3---packages.html#github-packages" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>GitHub hosts cutting-edge packages that may not be available elsewhere. These can be less stable but provide access to the newest methods. Some packages start on GitHub before moving to CRAN or Bioconductor. Unlike CRAN and Bioconductor, there’s no centralised testing, review, or acceptance process, whether a package works, is maintained, or is safe to rely on is entirely up to the individual author. That’s the trade-off for early access to new methods.</p>
 <p>First install the devtools:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="chapter-3---packages.html#cb21-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)</span></code></pre></div>
 <p>Then install packages:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install-deprecated.html">install_github</a></span><span class="op">(</span><span class="st">"username/packagename"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="chapter-3---packages.html#cb22-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;username/packagename&quot;</span>)</span></code></pre></div>
 </div>
 </div>
-<div id="loading-packages-vs-installing-packages" class="section level3" number="3.5.4">
-<h3>
-<span class="header-section-number">3.5.4</span> Loading Packages vs Installing Packages<a class="anchor" aria-label="anchor" href="#loading-packages-vs-installing-packages"><i class="fas fa-link"></i></a>
-</h3>
+<div id="loading-packages-vs-installing-packages" class="section level3 hasAnchor" number="3.5.4">
+<h3><span class="header-section-number">3.5.4</span> Loading Packages vs Installing Packages<a href="chapter-3---packages.html#loading-packages-vs-installing-packages" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Installing a package downloads it to your computer once. Loading a package makes it available for your current R session. You need to load packages every time you start R.</p>
 <p><strong>Install once:</strong></p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"flowCore"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="chapter-3---packages.html#cb23-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;flowCore&quot;</span>)</span></code></pre></div>
 <p><strong>Load every session:</strong></p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="chapter-3---packages.html#cb24-1" tabindex="-1"></a><span class="fu">library</span>(flowCore)</span></code></pre></div>
 </div>
-<div id="about-require-vs-library" class="section level3" number="3.5.5">
-<h3>
-<span class="header-section-number">3.5.5</span> About require() vs library()<a class="anchor" aria-label="anchor" href="#about-require-vs-library"><i class="fas fa-link"></i></a>
-</h3>
+<div id="about-require-vs-library" class="section level3 hasAnchor" number="3.5.5">
+<h3><span class="header-section-number">3.5.5</span> About require() vs library()<a href="chapter-3---packages.html#about-require-vs-library" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>We use the <code>if(!require(package)) install.packages("package")</code> pattern throughout this tutorial because it’s efficient for setup scripts:</p>
 <ol style="list-style-type: decimal">
 <li>Checks if the package is already loaded</li>
@@ -298,138 +710,96 @@ x dplyr::lag()    masks stats::lag()</code></pre>
 <li>If loading fails (package not installed), installs it automatically</li>
 <li>This means you can rerun the same installation script without wasting time or bandwidth</li>
 </ol>
-<p><strong>For tutorial and setup scripts:</strong> <code><a href="https://rdrr.io/r/base/library.html">require()</a></code> is the practical choice because it handles both installation and loading efficiently.</p>
-<p><strong>For your own analysis scripts:</strong> <code><a href="https://rdrr.io/r/base/library.html">library()</a></code> is often better because it stops with a clear error message if a package is missing. This makes problems obvious so you can fix them quickly.</p>
+<p><strong>For tutorial and setup scripts:</strong> <code>require()</code> is the practical choice because it handles both installation and loading efficiently.</p>
+<p><strong>For your own analysis scripts:</strong> <code>library()</code> is often better because it stops with a clear error message if a package is missing. This makes problems obvious so you can fix them quickly.</p>
 <p><strong>Example of the difference:</strong></p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Using require() - gives warning, continues running</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">nonexistent_package</span><span class="op">)</span></span>
-<span><span class="fu">some_function</span><span class="op">(</span><span class="op">)</span>  <span class="co"># This might fail mysteriously later</span></span>
-<span></span>
-<span><span class="co"># Using library() - stops immediately with clear error  </span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">nonexistent_package</span><span class="op">)</span>  <span class="co"># Error: package not found</span></span>
-<span><span class="fu">some_function</span><span class="op">(</span><span class="op">)</span>  <span class="co"># This line never runs</span></span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="chapter-3---packages.html#cb25-1" tabindex="-1"></a><span class="co"># Using require() - gives warning, continues running</span></span>
+<span id="cb25-2"><a href="chapter-3---packages.html#cb25-2" tabindex="-1"></a><span class="fu">require</span>(nonexistent_package)</span>
+<span id="cb25-3"><a href="chapter-3---packages.html#cb25-3" tabindex="-1"></a><span class="fu">some_function</span>()  <span class="co"># This might fail mysteriously later</span></span>
+<span id="cb25-4"><a href="chapter-3---packages.html#cb25-4" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="chapter-3---packages.html#cb25-5" tabindex="-1"></a><span class="co"># Using library() - stops immediately with clear error  </span></span>
+<span id="cb25-6"><a href="chapter-3---packages.html#cb25-6" tabindex="-1"></a><span class="fu">library</span>(nonexistent_package)  <span class="co"># Error: package not found</span></span>
+<span id="cb25-7"><a href="chapter-3---packages.html#cb25-7" tabindex="-1"></a><span class="fu">some_function</span>()  <span class="co"># This line never runs</span></span></code></pre></div>
 <p><strong>Why this matters:</strong> In analysis scripts, you want to know immediately if packages are missing. In setup scripts, you want the convenience of automatic installation and efficient reruns.</p>
-<p>So we use <code><a href="https://rdrr.io/r/base/library.html">require()</a></code> in setup scripts and <code><a href="https://rdrr.io/r/base/library.html">library()</a></code> in analysis scripts.</p>
+<p>So we use <code>require()</code> in setup scripts and <code>library()</code> in analysis scripts.</p>
 </div>
-<div id="understanding-our-package-collection" class="section level3" number="3.5.6">
-<h3>
-<span class="header-section-number">3.5.6</span> Understanding Our Package Collection<a class="anchor" aria-label="anchor" href="#understanding-our-package-collection"><i class="fas fa-link"></i></a>
-</h3>
-<div id="core-cytometry-tools" class="section level4" number="3.5.6.1">
-<h4>
-<span class="header-section-number">3.5.6.1</span> Core Cytometry Tools<a class="anchor" aria-label="anchor" href="#core-cytometry-tools"><i class="fas fa-link"></i></a>
-</h4>
+<div id="understanding-our-package-collection" class="section level3 hasAnchor" number="3.5.6">
+<h3><span class="header-section-number">3.5.6</span> Understanding Our Package Collection<a href="chapter-3---packages.html#understanding-our-package-collection" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="core-cytometry-tools" class="section level4 hasAnchor" number="3.5.6.1">
+<h4><span class="header-section-number">3.5.6.1</span> Core Cytometry Tools<a href="chapter-3---packages.html#core-cytometry-tools" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <ul>
-<li>
-<code>flowCore</code>: Reads FCS files and provides basic data structures for cytometry data</li>
-<li>
-<code>ggcyto</code>: Creates publication-quality cytometry plots using familiar ggplot2 syntax</li>
-<li>
-<code>flowWorkspace</code>: <code>GatingSet</code> and related functions, used in the Gating chapter</li>
-<li>
-<code>openCyto</code>: <code><a href="https://rdrr.io/pkg/flowCore/man/estimateMedianLogicle.html">estimateMedianLogicle()</a></code>, used in the Transformation chapter’s logicle comparison</li>
+<li><code>flowCore</code>: Reads FCS files and provides basic data structures for cytometry data</li>
+<li><code>ggcyto</code>: Creates publication-quality cytometry plots using familiar ggplot2 syntax</li>
+<li><code>flowWorkspace</code>: <code>GatingSet</code> and related functions, used in the Gating chapter</li>
+<li><code>openCyto</code>: <code>estimateMedianLogicle()</code>, used in the Transformation chapter’s logicle comparison</li>
 </ul>
 </div>
-<div id="advanced-analysis" class="section level4" number="3.5.6.2">
-<h4>
-<span class="header-section-number">3.5.6.2</span> Advanced Analysis<a class="anchor" aria-label="anchor" href="#advanced-analysis"><i class="fas fa-link"></i></a>
-</h4>
+<div id="advanced-analysis" class="section level4 hasAnchor" number="3.5.6.2">
+<h4><span class="header-section-number">3.5.6.2</span> Advanced Analysis<a href="chapter-3---packages.html#advanced-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <ul>
-<li>
-<code>FlowSOM</code>: Self-organising map clustering for population discovery</li>
-<li>
-<code>flowCut</code>: Automated quality control and outlier detection</li>
-<li>
-<code>limma</code>: Statistical analysis for differential expression</li>
+<li><code>FlowSOM</code>: Self-organising map clustering for population discovery</li>
+<li><code>flowCut</code>: Automated quality control and outlier detection</li>
+<li><code>limma</code>: Statistical analysis for differential expression</li>
 </ul>
 </div>
-<div id="visualisation-and-exploration" class="section level4" number="3.5.6.3">
-<h4>
-<span class="header-section-number">3.5.6.3</span> Visualisation and Exploration<a class="anchor" aria-label="anchor" href="#visualisation-and-exploration"><i class="fas fa-link"></i></a>
-</h4>
+<div id="visualisation-and-exploration" class="section level4 hasAnchor" number="3.5.6.3">
+<h4><span class="header-section-number">3.5.6.3</span> Visualisation and Exploration<a href="chapter-3---packages.html#visualisation-and-exploration" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <ul>
-<li>
-<code>ggridges</code>: Ridge plots are particularly useful for comparing marker expression distributions between samples or treatment groups</li>
-<li>
-<code>uwot</code> and <code>Rtsne</code>: Dimensionality reduction techniques (UMAP and t-SNE) for visualising high-dimensional cytometry data in 2D</li>
-<li>
-<code>GGally</code>: <code><a href="https://ggobi.github.io/ggally/reference/ggpairs.html">ggpairs()</a></code>, used in the Channel Names chapter’s NxN marker grid</li>
-<li>
-<code>pheatmap</code> and <code>ggrepel</code>: heatmaps and non-overlapping plot labels, used in the Statistics chapter</li>
+<li><code>ggridges</code>: Ridge plots are particularly useful for comparing marker expression distributions between samples or treatment groups</li>
+<li><code>uwot</code> and <code>Rtsne</code>: Dimensionality reduction techniques (UMAP and t-SNE) for visualising high-dimensional cytometry data in 2D</li>
+<li><code>GGally</code>: <code>ggpairs()</code>, used in the Channel Names chapter’s NxN marker grid</li>
+<li><code>pheatmap</code> and <code>ggrepel</code>: heatmaps and non-overlapping plot labels, used in the Statistics chapter</li>
 </ul>
 </div>
-<div id="data-manipulation" class="section level4" number="3.5.6.4">
-<h4>
-<span class="header-section-number">3.5.6.4</span> Data Manipulation<a class="anchor" aria-label="anchor" href="#data-manipulation"><i class="fas fa-link"></i></a>
-</h4>
+<div id="data-manipulation" class="section level4 hasAnchor" number="3.5.6.4">
+<h4><span class="header-section-number">3.5.6.4</span> Data Manipulation<a href="chapter-3---packages.html#data-manipulation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <ul>
-<li>
-<code>tidyverse</code>: Modern R tools for data cleaning, transformation, and analysis</li>
-<li>
-<code>here</code>: Portable file path management that works across different computers</li>
+<li><code>tidyverse</code>: Modern R tools for data cleaning, transformation, and analysis</li>
+<li><code>here</code>: Portable file path management that works across different computers</li>
 </ul>
 </div>
 </div>
-<div id="package-dependencies" class="section level3" number="3.5.7">
-<h3>
-<span class="header-section-number">3.5.7</span> Package Dependencies<a class="anchor" aria-label="anchor" href="#package-dependencies"><i class="fas fa-link"></i></a>
-</h3>
+<div id="package-dependencies" class="section level3 hasAnchor" number="3.5.7">
+<h3><span class="header-section-number">3.5.7</span> Package Dependencies<a href="chapter-3---packages.html#package-dependencies" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Packages often depend on other packages to work. When you install a package, R automatically installs its dependencies. This is why installation sometimes takes longer than expected - R may be installing several related packages.</p>
 <p><strong>Example:</strong> When you install <code>ggcyto</code>, R also installs <code>ggplot2</code>, <code>flowCore</code>, and several other packages that <code>ggcyto</code> needs to function.</p>
 </div>
-<div id="what-a-package-actually-is-on-disk" class="section level3" number="3.5.8">
-<h3>
-<span class="header-section-number">3.5.8</span> What a Package Actually Is on Disk<a class="anchor" aria-label="anchor" href="#what-a-package-actually-is-on-disk"><i class="fas fa-link"></i></a>
-</h3>
+<div id="what-a-package-actually-is-on-disk" class="section level3 hasAnchor" number="3.5.8">
+<h3><span class="header-section-number">3.5.8</span> What a Package Actually Is on Disk<a href="chapter-3---packages.html#what-a-package-actually-is-on-disk" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>R occasionally asks which form of a package you want, for example “Do you want to install the package from Source?” A source package is just a directory of files with a specific structure, a <code>DESCRIPTION</code> file, an <code>R/</code> folder containing <code>.R</code> files, and so on:</p>
-<div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:package-structure"></span>
-<img src="Images/SourcePackageStructure.PNG" alt="On your computer, a package is just an organised set of files and folders" width="577"><p class="caption">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:package-structure"></span>
+<img src="Images/SourcePackageStructure.PNG" alt="On your computer, a package is just an organised set of files and folders" width="577" />
+<p class="caption">
 Figure 3.1: On your computer, a package is just an organised set of files and folders
 </p>
 </div>
 </div>
-<div id="managing-your-package-library" class="section level3" number="3.5.9">
-<h3>
-<span class="header-section-number">3.5.9</span> Managing Your Package Library<a class="anchor" aria-label="anchor" href="#managing-your-package-library"><i class="fas fa-link"></i></a>
-</h3>
+<div id="managing-your-package-library" class="section level3 hasAnchor" number="3.5.9">
+<h3><span class="header-section-number">3.5.9</span> Managing Your Package Library<a href="chapter-3---packages.html#managing-your-package-library" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><strong>Check what’s installed:</strong></p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="chapter-3---packages.html#cb26-1" tabindex="-1"></a><span class="fu">installed.packages</span>()</span></code></pre></div>
 <p><strong>Update all packages:</strong></p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/update.packages.html">update.packages</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="chapter-3---packages.html#cb27-1" tabindex="-1"></a><span class="fu">update.packages</span>()</span></code></pre></div>
 <p><strong>Remove a package:</strong></p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/remove.packages.html">remove.packages</a></span><span class="op">(</span><span class="st">"packagename"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="chapter-3---packages.html#cb28-1" tabindex="-1"></a><span class="fu">remove.packages</span>(<span class="st">&quot;packagename&quot;</span>)</span></code></pre></div>
 <p><strong>Find package information:</strong></p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html">packageDescription</a></span><span class="op">(</span><span class="st">"packagename"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="chapter-3---packages.html#cb29-1" tabindex="-1"></a><span class="fu">packageDescription</span>(<span class="st">&quot;packagename&quot;</span>)</span></code></pre></div>
 </div>
-<div id="getting-help-with-packages" class="section level3" number="3.5.10">
-<h3>
-<span class="header-section-number">3.5.10</span> Getting Help with Packages<a class="anchor" aria-label="anchor" href="#getting-help-with-packages"><i class="fas fa-link"></i></a>
-</h3>
+<div id="getting-help-with-packages" class="section level3 hasAnchor" number="3.5.10">
+<h3><span class="header-section-number">3.5.10</span> Getting Help with Packages<a href="chapter-3---packages.html#getting-help-with-packages" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Every package includes documentation:</p>
 <p><strong>Quick help:</strong></p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">?</span><span class="va">packagename</span></span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="chapter-3---packages.html#cb30-1" tabindex="-1"></a>?packagename</span></code></pre></div>
 <p><strong>Detailed tutorials (vignettes):</strong></p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html">browseVignettes</a></span><span class="op">(</span><span class="st">"packagename"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="chapter-3---packages.html#cb31-1" tabindex="-1"></a><span class="fu">browseVignettes</span>(<span class="st">&quot;packagename&quot;</span>)</span></code></pre></div>
 <p>Vignettes are particularly valuable - they’re tutorials written by package authors showing how to use their tools effectively.</p>
 </div>
-<div id="why-we-install-everything-upfront" class="section level3" number="3.5.11">
-<h3>
-<span class="header-section-number">3.5.11</span> Why We Install Everything Upfront<a class="anchor" aria-label="anchor" href="#why-we-install-everything-upfront"><i class="fas fa-link"></i></a>
-</h3>
+<div id="why-we-install-everything-upfront" class="section level3 hasAnchor" number="3.5.11">
+<h3><span class="header-section-number">3.5.11</span> Why We Install Everything Upfront<a href="chapter-3---packages.html#why-we-install-everything-upfront" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>This front-loaded approach means subsequent chapters won’t be interrupted by package installation. You can focus on learning analysis techniques rather than managing software.</p>
 </div>
-<div id="troubleshooting-installation-problems" class="section level3" number="3.5.12">
-<h3>
-<span class="header-section-number">3.5.12</span> Troubleshooting Installation Problems<a class="anchor" aria-label="anchor" href="#troubleshooting-installation-problems"><i class="fas fa-link"></i></a>
-</h3>
+<div id="troubleshooting-installation-problems" class="section level3 hasAnchor" number="3.5.12">
+<h3><span class="header-section-number">3.5.12</span> Troubleshooting Installation Problems<a href="chapter-3---packages.html#troubleshooting-installation-problems" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><strong>Package installation fails:</strong>
 - Check your internet connection
 - Try installing one package at a time to identify the problem
@@ -439,77 +809,77 @@ Figure 3.1: On your computer, a package is just an organised set of files and fo
 - Check for typos in the package name
 - Try reinstalling the package</p>
 <p><strong>Version conflicts:</strong>
-- Update all packages with <code><a href="https://rdrr.io/r/utils/update.packages.html">update.packages()</a></code>
+- Update all packages with <code>update.packages()</code>
 - Remove and reinstall problematic packages
 - Restart R and try again</p>
 </div>
-<div id="whats-next" class="section level3" number="3.5.13">
-<h3>
-<span class="header-section-number">3.5.13</span> What’s Next<a class="anchor" aria-label="anchor" href="#whats-next"><i class="fas fa-link"></i></a>
-</h3>
+<div id="whats-next" class="section level3 hasAnchor" number="3.5.13">
+<h3><span class="header-section-number">3.5.13</span> What’s Next<a href="chapter-3---packages.html#whats-next" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>With these packages installed, you have the tools needed for comprehensive cytometry analysis. Chapter 4 will show you how to organise your work, then Chapter 5 will show you how to load your first cytometry dataset.</p>
 
 </div>
 </div>
 </div>
-  <div class="chapter-nav">
-<div class="prev"><a href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">2</span> Chapter 2 - Setting up an R environment</a></div>
-<div class="next"><a href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">4</span> Chapter 4 - File Management and Data Access</a></div>
-</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
-    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
-      <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#chapter-3---packages"><span class="header-section-number">3</span> Chapter 3 - Packages</a></li>
-<li><a class="nav-link" href="#what-are-packages"><span class="header-section-number">3.1</span> What Are Packages?</a></li>
-<li><a class="nav-link" href="#where-packages-come-from"><span class="header-section-number">3.2</span> Where Packages Come From</a></li>
-<li><a class="nav-link" href="#version-notes-1"><span class="header-section-number">3.3</span> Version Notes</a></li>
-<li>
-<a class="nav-link" href="#the-essentials-1"><span class="header-section-number">3.4</span> The Essentials</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#step-1-install-package-managers"><span class="header-section-number">3.4.1</span> Step 1: Install Package Managers</a></li>
-<li><a class="nav-link" href="#step-2-install-all-required-packages"><span class="header-section-number">3.4.2</span> Step 2: Install All Required Packages</a></li>
-<li><a class="nav-link" href="#step-3-verify-installation"><span class="header-section-number">3.4.3</span> Step 3: Verify Installation</a></li>
-</ul>
-</li>
-<li>
-<a class="nav-link" href="#a-deeper-dive-1"><span class="header-section-number">3.5</span> A Deeper Dive</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#installing-without-blocking-your-console"><span class="header-section-number">3.5.1</span> Installing Without Blocking Your Console</a></li>
-<li><a class="nav-link" href="#understanding-package-installation"><span class="header-section-number">3.5.2</span> Understanding Package Installation</a></li>
-<li><a class="nav-link" href="#package-sources-in-detail"><span class="header-section-number">3.5.3</span> Package Sources in Detail</a></li>
-<li><a class="nav-link" href="#loading-packages-vs-installing-packages"><span class="header-section-number">3.5.4</span> Loading Packages vs Installing Packages</a></li>
-<li><a class="nav-link" href="#about-require-vs-library"><span class="header-section-number">3.5.5</span> About require() vs library()</a></li>
-<li><a class="nav-link" href="#understanding-our-package-collection"><span class="header-section-number">3.5.6</span> Understanding Our Package Collection</a></li>
-<li><a class="nav-link" href="#package-dependencies"><span class="header-section-number">3.5.7</span> Package Dependencies</a></li>
-<li><a class="nav-link" href="#what-a-package-actually-is-on-disk"><span class="header-section-number">3.5.8</span> What a Package Actually Is on Disk</a></li>
-<li><a class="nav-link" href="#managing-your-package-library"><span class="header-section-number">3.5.9</span> Managing Your Package Library</a></li>
-<li><a class="nav-link" href="#getting-help-with-packages"><span class="header-section-number">3.5.10</span> Getting Help with Packages</a></li>
-<li><a class="nav-link" href="#why-we-install-everything-upfront"><span class="header-section-number">3.5.11</span> Why We Install Everything Upfront</a></li>
-<li><a class="nav-link" href="#troubleshooting-installation-problems"><span class="header-section-number">3.5.12</span> Troubleshooting Installation Problems</a></li>
-<li><a class="nav-link" href="#whats-next"><span class="header-section-number">3.5.13</span> What’s Next</a></li>
-</ul>
-</li>
-</ul>
+            </section>
 
-      <div class="book-extra">
-        <ul class="list-unstyled">
-          
-        </ul>
-</div>
-    </nav>
-</div>
-
-</div>
-</div> <!-- .container -->
-
-<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
-
-  <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-11-02.</p>
+          </div>
+        </div>
+      </div>
+<a href="chapter-2---setting-up-an-r-environment.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="chapter-4---file-management-and-data-access.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
   </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
+});
+});
+</script>
 
-  <div class="col-12 col-md-6 mt-3">
-    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
-  </div>
-
-</div></div>
-</footer>
 </body>
+
 </html>

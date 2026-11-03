@@ -6,6 +6,8 @@ UMAP and tSNE show you structure, but they don't assign labels. This chapter run
 
 ## The Essentials {.essentials}
 
+> **Stuck?** This chapter starts from `Data/RDS/EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE.rds`, made in Chapter 14. If the first chunk below errors, or Chapter 14's checkpoint didn't match, copy that file from the course data download over your own, then carry on from here.
+
 ### Step 1: Load Required Packages and Data
 
 
@@ -263,11 +265,11 @@ Rphenograph_result <- Rphenograph(Rpheno_in, k = 30) # k is nearest-neighbours h
 #> Run Rphenograph starts:
 #>   -Input data of 24207 rows and 6 columns
 #>   -k is set to 30
-#>   Finding nearest neighbors...DONE ~ 0.25 s
-#>   Compute jaccard coefficient between nearest-neighbor sets...DONE ~ 3.082 s
-#>   Build undirected graph from the weighted links...DONE ~ 0.856 s
-#>   Run louvain clustering on the graph ...DONE ~ 1.052 s
-#> Run Rphenograph DONE, totally takes 5.24s.
+#>   Finding nearest neighbors...DONE ~ 0.229 s
+#>   Compute jaccard coefficient between nearest-neighbor sets...DONE ~ 2.715 s
+#>   Build undirected graph from the weighted links...DONE ~ 0.703 s
+#>   Run louvain clustering on the graph ...DONE ~ 0.712 s
+#> Run Rphenograph DONE, totally takes 4.359s.
 #>   Return a community class
 #>   -Modularity value: 0.9102834 
 #>   -Number of clusters: 40

@@ -8,6 +8,8 @@ So far you've worked with flowSet and flowFrame objects, specialised structures 
 
 ## The Essentials {.essentials}
 
+> **Stuck?** This chapter starts from `Data/RDS/ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET.rds`, made in Chapter 11. If the first chunk below errors, or Chapter 11's checkpoint didn't match, copy that file from the course data download over your own, then carry on from here.
+
 ### Step 1: Load Required Packages and Data
 
 
@@ -143,6 +145,25 @@ head(EXPRESSION_DATA_SAMPLE_ID_MELTED)
 ```
 
 `match()` looks up each cell's `sample_id` against the metadata sheet and pulls back the matching `condition`, this is the same join logic as `VLOOKUP` in Excel.
+
+**Check before you move on.** This reads back the file the next chapter loads and prints a few facts about it. Your numbers should match the ones printed here. If they don't, something earlier in this chapter went wrong: go back over it, or use the **Stuck?** note at the top of the next chapter.
+
+
+``` r
+CHECK <- readRDS(here::here("Data", "RDS", "EXPRESSION_DATA_SAMPLE_ID.rds"))
+dim(CHECK)              # Cells, columns
+#> [1] 25000    41
+table(CHECK$sample_id)  # Cells in each sample
+#> 
+#>  2%PFA - NAS PERM  4%PFA - NAS PERM   4%PFA - NO PERM 
+#>              5000              5000              5000 
+#>  8%PFA - NAS PERM PFA+GLUT-NAS PERM 
+#>              5000              5000
+CHECK <- readRDS(here::here("Data", "RDS", "EXPRESSION_DATA_SAMPLE_ID_MELTED.rds"))
+dim(CHECK)              # Rows, columns of the long version
+#> [1] 925000      7
+rm(CHECK)
+```
 
 ## A Deeper Dive {.deeper-dive}
 

@@ -231,6 +231,25 @@ If you see `FALSE`, the save didn't work, usually because `Data/RDS/` doesn't ex
 
 **Success check:** You should now have `FLOWSET.rds` in your `Data/RDS/` folder.
 
+**Check before you move on.** This reads back the file the next chapter loads and prints a few facts about it. Your numbers should match the ones printed here. If they don't, something earlier in this chapter went wrong: go back over it, or use the **Stuck?** note at the top of the next chapter.
+
+
+``` r
+CHECK <- readRDS(here::here("Data", "RDS", "FLOWSET.rds"))
+length(CHECK)          # Number of samples
+#> [1] 5
+fsApply(CHECK, nrow)   # Cells in each sample
+#>                           [,1]
+#> 2PFANASPermLIVE.fcs      30825
+#> 4PFA1GLUTNASPermLIVE.fcs 14171
+#> 4PFANASPermLIVE.fcs      15158
+#> 4PFANoPermLIVE.fcs       57521
+#> 8PFANASPermLIVE.fcs      23790
+ncol(CHECK[[1]])       # Number of channels
+#> [1] 61
+rm(CHECK)
+```
+
 ## A Deeper Dive {.deeper-dive}
 
 ### What is a flowSet?

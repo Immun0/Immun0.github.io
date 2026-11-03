@@ -6,6 +6,8 @@ Cytometry data has many dimensions, one per marker. Dimensionality reduction tec
 
 ## The Essentials {.essentials}
 
+> **Stuck?** This chapter starts from `Data/RDS/EXPRESSION_DATA_SAMPLE_ID.rds`, made in Chapter 12. If the first chunk below errors, or Chapter 12's checkpoint didn't match, copy that file from the course data download over your own, then carry on from here.
+
 ### Step 1: Load Required Packages and Data
 
 
@@ -77,22 +79,22 @@ One setting does quietly cancel that out. `uwot::umap()` has a `fast_sgd` argume
 ``` r
 set.seed(1234)
 EDU_umap <- umap(EXPRESSION_DATA_SAMPLE_ID[, marker_cols], n_neighbors = 15, metric = "cosine", min_dist = 0.001, verbose = TRUE)
-#> 13:02:55 UMAP embedding parameters a = 1.929 b = 0.7915
-#> 13:02:55 Converting dataframe to numerical matrix
-#> 13:02:55 Read 25000 rows and found 37 numeric columns
-#> 13:02:55 Using Annoy for neighbor search, n_neighbors = 15
-#> 13:02:55 Building Annoy index with metric = cosine, n_trees = 50
+#> 08:05:50 UMAP embedding parameters a = 1.929 b = 0.7915
+#> 08:05:50 Converting dataframe to numerical matrix
+#> 08:05:50 Read 25000 rows and found 37 numeric columns
+#> 08:05:50 Using Annoy for neighbor search, n_neighbors = 15
+#> 08:05:51 Building Annoy index with metric = cosine, n_trees = 50
 #> 0%   10   20   30   40   50   60   70   80   90   100%
 #> [----|----|----|----|----|----|----|----|----|----|
 #> **************************************************|
-#> 13:02:56 Writing NN index file to temp file /var/folders/b9/5sf7xbjx7dvf_sp2yq0ctcnc0000gq/T//RtmprNBZC8/file11c46243a5894
-#> 13:02:56 Searching Annoy index using 6 threads, search_k = 1500
-#> 13:02:57 Annoy recall = 100%
-#> 13:02:57 Commencing smooth kNN distance calibration using 6 threads with target n_neighbors = 15
-#> 13:02:57 Initializing from normalized Laplacian + noise (using RSpectra)
-#> 13:02:57 Commencing optimization for 200 epochs, with 536332 positive edges
-#> 13:02:57 Using rng type: pcg
-#> 13:03:03 Optimization finished
+#> 08:05:52 Writing NN index file to temp file /var/folders/b9/5sf7xbjx7dvf_sp2yq0ctcnc0000gq/T//Rtmp6M4amu/file158ef5e3ee18d
+#> 08:05:52 Searching Annoy index using 6 threads, search_k = 1500
+#> 08:05:52 Annoy recall = 100%
+#> 08:05:52 Commencing smooth kNN distance calibration using 6 threads with target n_neighbors = 15
+#> 08:05:53 Initializing from normalized Laplacian + noise (using RSpectra)
+#> 08:05:53 Commencing optimization for 200 epochs, with 536332 positive edges
+#> 08:05:53 Using rng type: pcg
+#> 08:05:58 Optimization finished
 EDU_umap <- as.data.frame(EDU_umap)
 colnames(EDU_umap) <- c("UMAP1", "UMAP2")
 
@@ -166,29 +168,29 @@ tsne_out <- Rtsne(tsne_in, pca = TRUE, verbose = TRUE, check_duplicates = FALSE)
 #> Building tree...
 #>  - point 10000 of 25000
 #>  - point 20000 of 25000
-#> Done in 4.58 seconds (sparsity = 0.005214)!
+#> Done in 4.66 seconds (sparsity = 0.005214)!
 #> Learning embedding...
-#> Iteration 50: error is 107.617945 (50 iterations in 1.76 seconds)
-#> Iteration 100: error is 107.494785 (50 iterations in 1.92 seconds)
-#> Iteration 150: error is 91.439048 (50 iterations in 1.62 seconds)
-#> Iteration 200: error is 87.592434 (50 iterations in 1.62 seconds)
-#> Iteration 250: error is 85.915933 (50 iterations in 1.66 seconds)
-#> Iteration 300: error is 3.724382 (50 iterations in 1.71 seconds)
-#> Iteration 350: error is 3.355635 (50 iterations in 1.51 seconds)
-#> Iteration 400: error is 3.122446 (50 iterations in 1.49 seconds)
-#> Iteration 450: error is 2.957886 (50 iterations in 1.46 seconds)
+#> Iteration 50: error is 107.617945 (50 iterations in 1.67 seconds)
+#> Iteration 100: error is 107.494785 (50 iterations in 1.70 seconds)
+#> Iteration 150: error is 91.439048 (50 iterations in 1.54 seconds)
+#> Iteration 200: error is 87.592434 (50 iterations in 1.64 seconds)
+#> Iteration 250: error is 85.915933 (50 iterations in 1.82 seconds)
+#> Iteration 300: error is 3.724382 (50 iterations in 1.50 seconds)
+#> Iteration 350: error is 3.355635 (50 iterations in 1.44 seconds)
+#> Iteration 400: error is 3.122446 (50 iterations in 1.44 seconds)
+#> Iteration 450: error is 2.957886 (50 iterations in 1.47 seconds)
 #> Iteration 500: error is 2.833609 (50 iterations in 1.53 seconds)
-#> Iteration 550: error is 2.735669 (50 iterations in 1.48 seconds)
-#> Iteration 600: error is 2.656206 (50 iterations in 1.52 seconds)
-#> Iteration 650: error is 2.590256 (50 iterations in 1.52 seconds)
-#> Iteration 700: error is 2.534433 (50 iterations in 1.51 seconds)
-#> Iteration 750: error is 2.486316 (50 iterations in 1.45 seconds)
-#> Iteration 800: error is 2.444342 (50 iterations in 1.47 seconds)
-#> Iteration 850: error is 2.407324 (50 iterations in 1.57 seconds)
-#> Iteration 900: error is 2.374716 (50 iterations in 1.54 seconds)
-#> Iteration 950: error is 2.345861 (50 iterations in 1.56 seconds)
-#> Iteration 1000: error is 2.320109 (50 iterations in 1.56 seconds)
-#> Fitting performed in 31.46 seconds.
+#> Iteration 550: error is 2.735669 (50 iterations in 1.52 seconds)
+#> Iteration 600: error is 2.656206 (50 iterations in 1.46 seconds)
+#> Iteration 650: error is 2.590256 (50 iterations in 1.44 seconds)
+#> Iteration 700: error is 2.534433 (50 iterations in 1.42 seconds)
+#> Iteration 750: error is 2.486316 (50 iterations in 1.49 seconds)
+#> Iteration 800: error is 2.444342 (50 iterations in 1.54 seconds)
+#> Iteration 850: error is 2.407324 (50 iterations in 1.51 seconds)
+#> Iteration 900: error is 2.374716 (50 iterations in 1.45 seconds)
+#> Iteration 950: error is 2.345861 (50 iterations in 1.44 seconds)
+#> Iteration 1000: error is 2.320109 (50 iterations in 1.51 seconds)
+#> Fitting performed in 30.51 seconds.
 
 EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE <- data.frame(EXPRESSION_DATA_SAMPLE_ID_UMAPPED, tsne1 = tsne_out$Y[, 1], tsne2 = tsne_out$Y[, 2])
 
@@ -244,22 +246,22 @@ Classifying markers once, in the panel file, pays off here: every later step can
 ``` r
 set.seed(1234)
 EDU_umap_lineage <- umap(EXPRESSION_DATA_SAMPLE_ID[, lineage_markers], n_neighbors = 15, metric = "cosine", min_dist = 0.001, verbose = TRUE)
-#> 13:03:44 UMAP embedding parameters a = 1.929 b = 0.7915
-#> 13:03:44 Converting dataframe to numerical matrix
-#> 13:03:44 Read 25000 rows and found 32 numeric columns
-#> 13:03:44 Using Annoy for neighbor search, n_neighbors = 15
-#> 13:03:44 Building Annoy index with metric = cosine, n_trees = 50
+#> 08:06:38 UMAP embedding parameters a = 1.929 b = 0.7915
+#> 08:06:38 Converting dataframe to numerical matrix
+#> 08:06:38 Read 25000 rows and found 32 numeric columns
+#> 08:06:38 Using Annoy for neighbor search, n_neighbors = 15
+#> 08:06:38 Building Annoy index with metric = cosine, n_trees = 50
 #> 0%   10   20   30   40   50   60   70   80   90   100%
 #> [----|----|----|----|----|----|----|----|----|----|
 #> **************************************************|
-#> 13:03:45 Writing NN index file to temp file /var/folders/b9/5sf7xbjx7dvf_sp2yq0ctcnc0000gq/T//RtmprNBZC8/file11c4646251d7
-#> 13:03:45 Searching Annoy index using 6 threads, search_k = 1500
-#> 13:03:45 Annoy recall = 100%
-#> 13:03:46 Commencing smooth kNN distance calibration using 6 threads with target n_neighbors = 15
-#> 13:03:46 Initializing from normalized Laplacian + noise (using RSpectra)
-#> 13:03:46 Commencing optimization for 200 epochs, with 539940 positive edges
-#> 13:03:46 Using rng type: pcg
-#> 13:03:52 Optimization finished
+#> 08:06:39 Writing NN index file to temp file /var/folders/b9/5sf7xbjx7dvf_sp2yq0ctcnc0000gq/T//Rtmp6M4amu/file158ef39355664
+#> 08:06:39 Searching Annoy index using 6 threads, search_k = 1500
+#> 08:06:39 Annoy recall = 100%
+#> 08:06:39 Commencing smooth kNN distance calibration using 6 threads with target n_neighbors = 15
+#> 08:06:39 Initializing from normalized Laplacian + noise (using RSpectra)
+#> 08:06:40 Commencing optimization for 200 epochs, with 539940 positive edges
+#> 08:06:40 Using rng type: pcg
+#> 08:06:45 Optimization finished
 EDU_umap_lineage <- as.data.frame(EDU_umap_lineage)
 colnames(EDU_umap_lineage) <- c("UMAP1_lineage", "UMAP2_lineage")
 
@@ -303,29 +305,29 @@ tsne_out_lineage <- Rtsne(tsne_in_lineage, pca = TRUE, verbose = TRUE, check_dup
 #> Building tree...
 #>  - point 10000 of 25000
 #>  - point 20000 of 25000
-#> Done in 3.62 seconds (sparsity = 0.005216)!
+#> Done in 3.31 seconds (sparsity = 0.005216)!
 #> Learning embedding...
-#> Iteration 50: error is 107.615936 (50 iterations in 1.70 seconds)
-#> Iteration 100: error is 107.490985 (50 iterations in 1.91 seconds)
-#> Iteration 150: error is 91.375371 (50 iterations in 1.58 seconds)
-#> Iteration 200: error is 87.218854 (50 iterations in 1.57 seconds)
-#> Iteration 250: error is 85.611740 (50 iterations in 1.54 seconds)
-#> Iteration 300: error is 3.720626 (50 iterations in 1.52 seconds)
-#> Iteration 350: error is 3.358805 (50 iterations in 1.50 seconds)
-#> Iteration 400: error is 3.136466 (50 iterations in 1.49 seconds)
-#> Iteration 450: error is 2.979606 (50 iterations in 1.49 seconds)
-#> Iteration 500: error is 2.861771 (50 iterations in 1.48 seconds)
-#> Iteration 550: error is 2.769302 (50 iterations in 1.61 seconds)
-#> Iteration 600: error is 2.693772 (50 iterations in 1.49 seconds)
-#> Iteration 650: error is 2.630995 (50 iterations in 1.49 seconds)
-#> Iteration 700: error is 2.577232 (50 iterations in 1.49 seconds)
-#> Iteration 750: error is 2.531071 (50 iterations in 1.52 seconds)
-#> Iteration 800: error is 2.490709 (50 iterations in 1.52 seconds)
-#> Iteration 850: error is 2.455517 (50 iterations in 1.60 seconds)
-#> Iteration 900: error is 2.424385 (50 iterations in 1.48 seconds)
-#> Iteration 950: error is 2.396727 (50 iterations in 1.48 seconds)
-#> Iteration 1000: error is 2.372034 (50 iterations in 1.50 seconds)
-#> Fitting performed in 30.98 seconds.
+#> Iteration 50: error is 107.615936 (50 iterations in 1.51 seconds)
+#> Iteration 100: error is 107.490985 (50 iterations in 1.78 seconds)
+#> Iteration 150: error is 91.375371 (50 iterations in 1.52 seconds)
+#> Iteration 200: error is 87.218854 (50 iterations in 1.55 seconds)
+#> Iteration 250: error is 85.611740 (50 iterations in 1.55 seconds)
+#> Iteration 300: error is 3.720626 (50 iterations in 1.51 seconds)
+#> Iteration 350: error is 3.358805 (50 iterations in 1.42 seconds)
+#> Iteration 400: error is 3.136466 (50 iterations in 1.43 seconds)
+#> Iteration 450: error is 2.979606 (50 iterations in 1.43 seconds)
+#> Iteration 500: error is 2.861771 (50 iterations in 1.57 seconds)
+#> Iteration 550: error is 2.769302 (50 iterations in 1.50 seconds)
+#> Iteration 600: error is 2.693772 (50 iterations in 1.44 seconds)
+#> Iteration 650: error is 2.630995 (50 iterations in 1.40 seconds)
+#> Iteration 700: error is 2.577232 (50 iterations in 1.40 seconds)
+#> Iteration 750: error is 2.531071 (50 iterations in 1.40 seconds)
+#> Iteration 800: error is 2.490709 (50 iterations in 1.48 seconds)
+#> Iteration 850: error is 2.455517 (50 iterations in 1.59 seconds)
+#> Iteration 900: error is 2.424385 (50 iterations in 1.45 seconds)
+#> Iteration 950: error is 2.396727 (50 iterations in 1.40 seconds)
+#> Iteration 1000: error is 2.372034 (50 iterations in 1.39 seconds)
+#> Fitting performed in 29.73 seconds.
 
 EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE_LINEAGE <- data.frame(EXPRESSION_DATA_SAMPLE_ID_UMAPPED_LINEAGE, tsne1_lineage = tsne_out_lineage$Y[, 1], tsne2_lineage = tsne_out_lineage$Y[, 2])
 
@@ -351,6 +353,18 @@ ggplot(EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE_LINEAGE, aes(x = tsne1_lineage, y 
 
 ggsave2(here("Figures", "tsne_lineage_markers.pdf"), width = 11, height = 8.5)
 ggsave2(here("Figures", "tsne_lineage_markers.png"), width = 11, height = 8.5)
+```
+
+**Check before you move on.** This reads back the file the next chapter loads and prints a few facts about it. Your numbers should match the ones printed here. If they don't, something earlier in this chapter went wrong: go back over it, or use the **Stuck?** note at the top of the next chapter.
+
+
+``` r
+CHECK <- readRDS(here::here("Data", "RDS", "EXPRESSION_DATA_SAMPLE_ID_UMAPPED_TSNE.rds"))
+dim(CHECK)                                                # Cells, columns
+#> [1] 25000    46
+c("UMAP1", "UMAP2", "tsne1", "tsne2") %in% colnames(CHECK)  # Should be four TRUEs
+#> [1] TRUE TRUE TRUE TRUE
+rm(CHECK)
 ```
 
 ## A Deeper Dive {.deeper-dive}

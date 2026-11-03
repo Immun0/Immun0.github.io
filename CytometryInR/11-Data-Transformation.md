@@ -6,6 +6,8 @@ Raw cytometry data is compressed near zero for negative populations and spread a
 
 ## The Essentials {.essentials}
 
+> **Stuck?** This chapter starts from `Data/RDS/Reordered_DOWNSAMPLED_CLEANED_FLOWSET.rds`, made in Chapter 10. If the first chunk below errors, or Chapter 10's checkpoint didn't match, copy that file from the course data download over your own, then carry on from here.
+
 ### Step 1: Load Required Packages and Data
 
 
@@ -91,6 +93,25 @@ plot_grid(as.ggplot(UNTRANSFORMED_PLOT), as.ggplot(TRANSFORMED_PLOT))
 
 ggsave2(here("Figures", "arcsinh_transform_comparison.pdf"), width = 11, height = 8.5)
 ggsave2(here("Figures", "arcsinh_transform_comparison.png"), width = 11, height = 8.5)
+```
+
+**Check before you move on.** This reads back the file the next chapter loads and prints a few facts about it. Your numbers should match the ones printed here. If they don't, something earlier in this chapter went wrong: go back over it, or use the **Stuck?** note at the top of the next chapter.
+
+
+``` r
+CHECK <- readRDS(here::here("Data", "RDS", "ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET.rds"))
+length(CHECK)          # Number of samples
+#> [1] 5
+fsApply(CHECK, nrow)   # Cells in each sample
+#>                   [,1]
+#> 2%PFA - NAS PERM  5000
+#> 8%PFA - NAS PERM  5000
+#> 4%PFA - NO PERM   5000
+#> 4%PFA - NAS PERM  5000
+#> PFA+GLUT-NAS PERM 5000
+ncol(CHECK[[1]])       # Number of channels
+#> [1] 40
+rm(CHECK)
 ```
 
 ## A Deeper Dive {.deeper-dive}

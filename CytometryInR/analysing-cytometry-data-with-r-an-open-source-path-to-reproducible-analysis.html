@@ -1,109 +1,553 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="" xml:lang="">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 1 Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis | Analysing Cytometry Data with R</title>
-<meta name="author" content="Damian Carragher">
-<meta name="author" content="StemCore Laboratories and Flow Cytometry Core">
-<meta name="author" content="Ottawa Hospital Research Institute">
-<meta name="author" content="First edition by Damian Carragher">
-<meta name="description" content="1.1 Why This Guide Exists At research institutions everywhere, cytometry is a core technology - but analysis often gets bottlenecked. FlowJo is widely used because it’s visual, intuitive, and fast...">
-<meta name="generator" content="bookdown 0.47 with bs4_book()">
-<meta property="og:title" content="Chapter 1 Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis | Analysing Cytometry Data with R">
-<meta property="og:type" content="book">
-<meta property="og:description" content="1.1 Why This Guide Exists At research institutions everywhere, cytometry is a core technology - but analysis often gets bottlenecked. FlowJo is widely used because it’s visual, intuitive, and fast...">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 1 Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis | Analysing Cytometry Data with R">
-<meta name="twitter:description" content="1.1 Why This Guide Exists At research institutions everywhere, cytometry is a core technology - but analysis often gets bottlenecked. FlowJo is widely used because it’s visual, intuitive, and fast...">
-<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.12.0/transition.js"></script><script src="libs/bs3compat-0.12.0/tabs.js"></script><script src="libs/bs3compat-0.12.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
-<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
-    
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  </style>
-<link rel="stylesheet" href="style.css">
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 1 Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis | Analysing Cytometry Data with R</title>
+  <meta name="description" content="This is a complete introduction to analysing cytometry data with R, starting with how to set up an RStudio environment working through to producing journal quality figures" />
+  <meta name="generator" content="bookdown 0.47 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 1 Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis | Analysing Cytometry Data with R" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="This is a complete introduction to analysing cytometry data with R, starting with how to set up an RStudio environment working through to producing journal quality figures" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 1 Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis | Analysing Cytometry Data with R" />
+  
+  <meta name="twitter:description" content="This is a complete introduction to analysing cytometry data with R, starting with how to set up an RStudio environment working through to producing journal quality figures" />
+  
+
+<meta name="author" content="Damian Carragher" />
+<meta name="author" content="StemCore Laboratories and Flow Cytometry Core" />
+<meta name="author" content="Ottawa Hospital Research Institute" />
+<meta name="author" content="First edition by Damian Carragher" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="chapter-2---setting-up-an-r-environment.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
 </head>
-<body data-spy="scroll" data-target="#toc">
 
-<div class="container-fluid">
-<div class="row">
-  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+<body>
 
-    <div class="d-flex align-items-start justify-content-between">
-      <h1>
-        <a href="index.html" title="">Analysing Cytometry Data with R</a>
-      </h1>
-      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
-    </div>
 
-    <div id="main-nav" class="collapse-lg">
-      <form role="search">
-        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
-</form>
 
-      <nav aria-label="Table of contents"><h2>Table of contents</h2>
-        <ul class="book-toc list-unstyled">
-<li><a class="" href="index.html">Preface and Notes</a></li>
-<li><a class="active" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">1</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
-<li><a class="" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">2</span> Chapter 2 - Setting up an R environment</a></li>
-<li><a class="" href="chapter-3---packages.html"><span class="header-section-number">3</span> Chapter 3 - Packages</a></li>
-<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">4</span> Chapter 4 - File Management and Data Access</a></li>
-<li><a class="" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">5</span> Chapter 5 - Loading Cytometry Data</a></li>
-<li><a class="" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">6</span> Chapter 6 - Visualising Cytometry Data</a></li>
-<li><a class="" href="chapter-7---gating-data.html"><span class="header-section-number">7</span> Chapter 7 - Gating Data</a></li>
-<li><a class="" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">8</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
-<li><a class="" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">9</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
-<li><a class="" href="chapter-10---downsampling.html"><span class="header-section-number">10</span> Chapter 10 - Downsampling</a></li>
-<li><a class="" href="chapter-11---data-transformation.html"><span class="header-section-number">11</span> Chapter 11 - Data Transformation</a></li>
-<li><a class="" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">12</span> Chapter 12 - Extracting Expression Data</a></li>
-<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">13</span> Chapter 13 - Full Visualisation</a></li>
-<li><a class="" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">14</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
-<li><a class="" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">15</span> Chapter 15 - Clustering and Population Discovery</a></li>
-<li><a class="" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">16</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface and Notes</a>
+<ul>
+<li class="chapter" data-level="0.1" data-path="index.html"><a href="index.html#what-this-isnt"><i class="fa fa-check"></i><b>0.1</b> What This Isn’t</a></li>
+<li class="chapter" data-level="0.2" data-path="index.html"><a href="index.html#who-this-is-for"><i class="fa fa-check"></i><b>0.2</b> Who This Is For</a></li>
+<li class="chapter" data-level="0.3" data-path="index.html"><a href="index.html#why-choose-r"><i class="fa fa-check"></i><b>0.3</b> Why Choose R?</a></li>
+<li class="chapter" data-level="0.4" data-path="index.html"><a href="index.html#what-youll-actually-accomplish"><i class="fa fa-check"></i><b>0.4</b> What You’ll Actually Accomplish</a></li>
+<li class="chapter" data-level="0.5" data-path="index.html"><a href="index.html#the-reality-check"><i class="fa fa-check"></i><b>0.5</b> The Reality Check</a></li>
+<li class="chapter" data-level="0.6" data-path="index.html"><a href="index.html#example-data-youll-master"><i class="fa fa-check"></i><b>0.6</b> Example Data You’ll Master</a></li>
+<li class="chapter" data-level="0.7" data-path="index.html"><a href="index.html#a-note-on-code"><i class="fa fa-check"></i><b>0.7</b> A Note on Code</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><i class="fa fa-check"></i><b>1</b> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#why-this-guide-exists"><i class="fa fa-check"></i><b>1.1</b> Why This Guide Exists</a></li>
+<li class="chapter" data-level="1.2" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#the-real-problems-r-solves"><i class="fa fa-check"></i><b>1.2</b> The Real Problems R Solves</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-programming-means"><i class="fa fa-check"></i><b>1.2.1</b> What Programming Means</a></li>
+<li class="chapter" data-level="1.2.2" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-r-is"><i class="fa fa-check"></i><b>1.2.2</b> What R Is</a></li>
+<li class="chapter" data-level="1.2.3" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-youll-learn"><i class="fa fa-check"></i><b>1.2.3</b> What You’ll Learn</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#the-learning-path"><i class="fa fa-check"></i><b>1.3</b> The Learning Path</a></li>
+<li class="chapter" data-level="1.4" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-makes-this-different"><i class="fa fa-check"></i><b>1.4</b> What Makes This Different</a></li>
+<li class="chapter" data-level="1.5" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-to-expect"><i class="fa fa-check"></i><b>1.5</b> What to Expect</a></li>
+<li class="chapter" data-level="1.6" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#before-you-begin"><i class="fa fa-check"></i><b>1.6</b> Before You Begin</a></li>
+<li class="chapter" data-level="1.7" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#a-note-on-learning"><i class="fa fa-check"></i><b>1.7</b> A Note on Learning</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html"><i class="fa fa-check"></i><b>2</b> Chapter 2 - Setting up an <code>R</code> environment</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#what-were-building"><i class="fa fa-check"></i><b>2.1</b> What We’re Building</a></li>
+<li class="chapter" data-level="2.2" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#version-notes"><i class="fa fa-check"></i><b>2.2</b> Version Notes</a></li>
+<li class="chapter" data-level="2.3" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#the-essentials"><i class="fa fa-check"></i><b>2.3</b> The Essentials</a></li>
+<li class="chapter" data-level="2.4" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#common-problems-and-solutions"><i class="fa fa-check"></i><b>2.4</b> Common Problems and Solutions</a></li>
+<li class="chapter" data-level="2.5" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#a-deeper-dive"><i class="fa fa-check"></i><b>2.5</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#understanding-the-components"><i class="fa fa-check"></i><b>2.5.1</b> Understanding the Components</a></li>
+<li class="chapter" data-level="2.5.2" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#the-rstudio-interface"><i class="fa fa-check"></i><b>2.5.2</b> The RStudio Interface</a></li>
+<li class="chapter" data-level="2.5.3" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#why-this-setup-process-matters"><i class="fa fa-check"></i><b>2.5.3</b> Why This Setup Process Matters</a></li>
+<li class="chapter" data-level="2.5.4" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#packages-preview"><i class="fa fa-check"></i><b>2.5.4</b> Packages Preview</a></li>
+<li class="chapter" data-level="2.5.5" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#file-paths-and-working-directories"><i class="fa fa-check"></i><b>2.5.5</b> File Paths and Working Directories</a></li>
+<li class="chapter" data-level="2.5.6" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#next-steps"><i class="fa fa-check"></i><b>2.5.6</b> Next Steps</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html"><i class="fa fa-check"></i><b>3</b> Chapter 3 - Packages</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#what-are-packages"><i class="fa fa-check"></i><b>3.1</b> What Are Packages?</a></li>
+<li class="chapter" data-level="3.2" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#where-packages-come-from"><i class="fa fa-check"></i><b>3.2</b> Where Packages Come From</a></li>
+<li class="chapter" data-level="3.3" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#version-notes-1"><i class="fa fa-check"></i><b>3.3</b> Version Notes</a></li>
+<li class="chapter" data-level="3.4" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#the-essentials-1"><i class="fa fa-check"></i><b>3.4</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#step-1-install-package-managers"><i class="fa fa-check"></i><b>3.4.1</b> Step 1: Install Package Managers</a></li>
+<li class="chapter" data-level="3.4.2" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#step-2-install-all-required-packages"><i class="fa fa-check"></i><b>3.4.2</b> Step 2: Install All Required Packages</a></li>
+<li class="chapter" data-level="3.4.3" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#step-3-verify-installation"><i class="fa fa-check"></i><b>3.4.3</b> Step 3: Verify Installation</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#a-deeper-dive-1"><i class="fa fa-check"></i><b>3.5</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#installing-without-blocking-your-console"><i class="fa fa-check"></i><b>3.5.1</b> Installing Without Blocking Your Console</a></li>
+<li class="chapter" data-level="3.5.2" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#understanding-package-installation"><i class="fa fa-check"></i><b>3.5.2</b> Understanding Package Installation</a></li>
+<li class="chapter" data-level="3.5.3" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#package-sources-in-detail"><i class="fa fa-check"></i><b>3.5.3</b> Package Sources in Detail</a></li>
+<li class="chapter" data-level="3.5.4" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#loading-packages-vs-installing-packages"><i class="fa fa-check"></i><b>3.5.4</b> Loading Packages vs Installing Packages</a></li>
+<li class="chapter" data-level="3.5.5" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#about-require-vs-library"><i class="fa fa-check"></i><b>3.5.5</b> About require() vs library()</a></li>
+<li class="chapter" data-level="3.5.6" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#understanding-our-package-collection"><i class="fa fa-check"></i><b>3.5.6</b> Understanding Our Package Collection</a></li>
+<li class="chapter" data-level="3.5.7" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#package-dependencies"><i class="fa fa-check"></i><b>3.5.7</b> Package Dependencies</a></li>
+<li class="chapter" data-level="3.5.8" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#what-a-package-actually-is-on-disk"><i class="fa fa-check"></i><b>3.5.8</b> What a Package Actually Is on Disk</a></li>
+<li class="chapter" data-level="3.5.9" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#managing-your-package-library"><i class="fa fa-check"></i><b>3.5.9</b> Managing Your Package Library</a></li>
+<li class="chapter" data-level="3.5.10" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#getting-help-with-packages"><i class="fa fa-check"></i><b>3.5.10</b> Getting Help with Packages</a></li>
+<li class="chapter" data-level="3.5.11" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#why-we-install-everything-upfront"><i class="fa fa-check"></i><b>3.5.11</b> Why We Install Everything Upfront</a></li>
+<li class="chapter" data-level="3.5.12" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#troubleshooting-installation-problems"><i class="fa fa-check"></i><b>3.5.12</b> Troubleshooting Installation Problems</a></li>
+<li class="chapter" data-level="3.5.13" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#whats-next"><i class="fa fa-check"></i><b>3.5.13</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html"><i class="fa fa-check"></i><b>4</b> Chapter 4 - File Management and Data Access</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#what-were-building-1"><i class="fa fa-check"></i><b>4.1</b> What We’re Building</a></li>
+<li class="chapter" data-level="4.2" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#version-notes-2"><i class="fa fa-check"></i><b>4.2</b> Version Notes</a></li>
+<li class="chapter" data-level="4.3" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#the-essentials-2"><i class="fa fa-check"></i><b>4.3</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-1-create-your-project-folder"><i class="fa fa-check"></i><b>4.3.1</b> Step 1: Create Your Project Folder</a></li>
+<li class="chapter" data-level="4.3.2" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-2-create-an-r-project"><i class="fa fa-check"></i><b>4.3.2</b> Step 2: Create an R Project</a></li>
+<li class="chapter" data-level="4.3.3" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-3-create-your-folder-structure-with-dir.create"><i class="fa fa-check"></i><b>4.3.3</b> Step 3: Create Your Folder Structure with dir.create()</a></li>
+<li class="chapter" data-level="4.3.4" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-4-download-this-courses-data"><i class="fa fa-check"></i><b>4.3.4</b> Step 4: Download This Course’s Data</a></li>
+<li class="chapter" data-level="4.3.5" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-5-work-in-a-script-not-the-console"><i class="fa fa-check"></i><b>4.3.5</b> Step 5: Work in a Script, Not the Console</a></li>
+<li class="chapter" data-level="4.3.6" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-6-verify-here-works"><i class="fa fa-check"></i><b>4.3.6</b> Step 6: Verify here() Works</a></li>
+<li class="chapter" data-level="4.3.7" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-7-verify-your-data"><i class="fa fa-check"></i><b>4.3.7</b> Step 7: Verify Your Data</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#a-deeper-dive-2"><i class="fa fa-check"></i><b>4.4</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#understanding-working-directories"><i class="fa fa-check"></i><b>4.4.1</b> Understanding Working Directories</a></li>
+<li class="chapter" data-level="4.4.2" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#what-r-projects-actually-do"><i class="fa fa-check"></i><b>4.4.2</b> What R Projects Actually Do</a></li>
+<li class="chapter" data-level="4.4.3" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#file-paths-in-r"><i class="fa fa-check"></i><b>4.4.3</b> File Paths in R</a></li>
+<li class="chapter" data-level="4.4.4" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#the-here-package-in-detail"><i class="fa fa-check"></i><b>4.4.4</b> The here Package in Detail</a></li>
+<li class="chapter" data-level="4.4.5" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#why-just-one-version-of-the-fcs-data"><i class="fa fa-check"></i><b>4.4.5</b> Why Just One Version of the FCS Data?</a></li>
+<li class="chapter" data-level="4.4.6" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#why-a-staged-rds-folder"><i class="fa fa-check"></i><b>4.4.6</b> Why a Staged RDS Folder?</a></li>
+<li class="chapter" data-level="4.4.7" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#file-organisation-best-practices"><i class="fa fa-check"></i><b>4.4.7</b> File Organisation Best Practices</a></li>
+<li class="chapter" data-level="4.4.8" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#creating-folders-and-files"><i class="fa fa-check"></i><b>4.4.8</b> Creating Folders and Files</a></li>
+<li class="chapter" data-level="4.4.9" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#navigating-folders-in-r"><i class="fa fa-check"></i><b>4.4.9</b> Navigating Folders in R</a></li>
+<li class="chapter" data-level="4.4.10" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#verifying-your-setup"><i class="fa fa-check"></i><b>4.4.10</b> Verifying Your Setup</a></li>
+<li class="chapter" data-level="4.4.11" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#troubleshooting"><i class="fa fa-check"></i><b>4.4.11</b> Troubleshooting</a></li>
+<li class="chapter" data-level="4.4.12" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#whats-next-1"><i class="fa fa-check"></i><b>4.4.12</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html"><i class="fa fa-check"></i><b>5</b> Chapter 5 - Loading Cytometry Data</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#what-youll-learn-1"><i class="fa fa-check"></i><b>5.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="5.2" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#understanding-fcs-files"><i class="fa fa-check"></i><b>5.2</b> Understanding FCS Files</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#where-this-courses-data-came-from"><i class="fa fa-check"></i><b>5.2.1</b> Where This Course’s Data Came From</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#the-essentials-3"><i class="fa fa-check"></i><b>5.3</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#step-1-load-required-packages"><i class="fa fa-check"></i><b>5.3.1</b> Step 1: Load Required Packages</a></li>
+<li class="chapter" data-level="5.3.2" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#step-2-load-the-course-dataset"><i class="fa fa-check"></i><b>5.3.2</b> Step 2: Load the Course Dataset</a></li>
+<li class="chapter" data-level="5.3.3" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#step-3-verify-the-data-loaded"><i class="fa fa-check"></i><b>5.3.3</b> Step 3: Verify the Data Loaded</a></li>
+<li class="chapter" data-level="5.3.4" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#step-4-examine-whats-inside"><i class="fa fa-check"></i><b>5.3.4</b> Step 4: Examine What’s Inside</a></li>
+<li class="chapter" data-level="5.3.5" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#step-5-save-your-work"><i class="fa fa-check"></i><b>5.3.5</b> Step 5: Save Your Work</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#a-deeper-dive-3"><i class="fa fa-check"></i><b>5.4</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#what-is-a-flowset"><i class="fa fa-check"></i><b>5.4.1</b> What is a flowSet?</a></li>
+<li class="chapter" data-level="5.4.2" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#what-is-a-flowframe"><i class="fa fa-check"></i><b>5.4.2</b> What is a flowFrame?</a></li>
+<li class="chapter" data-level="5.4.3" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#the-direct-route-one-file-no-flowset"><i class="fa fa-check"></i><b>5.4.3</b> The Direct Route: One File, No flowSet</a></li>
+<li class="chapter" data-level="5.4.4" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#understanding-data-structures"><i class="fa fa-check"></i><b>5.4.4</b> Understanding Data Structures</a></li>
+<li class="chapter" data-level="5.4.5" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#three-ways-to-get-a-piece-out-of-an-object"><i class="fa fa-check"></i><b>5.4.5</b> Three Ways to Get a Piece Out of an Object</a></li>
+<li class="chapter" data-level="5.4.6" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#examining-data-dimensions"><i class="fa fa-check"></i><b>5.4.6</b> Examining Data Dimensions</a></li>
+<li class="chapter" data-level="5.4.7" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#understanding-channel-names"><i class="fa fa-check"></i><b>5.4.7</b> Understanding Channel Names</a></li>
+<li class="chapter" data-level="5.4.8" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#accessing-expression-data"><i class="fa fa-check"></i><b>5.4.8</b> Accessing Expression Data</a></li>
+<li class="chapter" data-level="5.4.9" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#keywords-and-metadata"><i class="fa fa-check"></i><b>5.4.9</b> Keywords and Metadata</a></li>
+<li class="chapter" data-level="5.4.10" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#working-with-multiple-files"><i class="fa fa-check"></i><b>5.4.10</b> Working with Multiple Files</a></li>
+<li class="chapter" data-level="5.4.11" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#subsetting-data"><i class="fa fa-check"></i><b>5.4.11</b> Subsetting Data</a></li>
+<li class="chapter" data-level="5.4.12" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#data-structure-summary"><i class="fa fa-check"></i><b>5.4.12</b> Data Structure Summary</a></li>
+<li class="chapter" data-level="5.4.13" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#saving-and-loading"><i class="fa fa-check"></i><b>5.4.13</b> Saving and Loading</a></li>
+<li class="chapter" data-level="5.4.14" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#common-operations-summary"><i class="fa fa-check"></i><b>5.4.14</b> Common Operations Summary</a></li>
+<li class="chapter" data-level="5.4.15" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#troubleshooting-1"><i class="fa fa-check"></i><b>5.4.15</b> Troubleshooting</a></li>
+<li class="chapter" data-level="5.4.16" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#whats-next-2"><i class="fa fa-check"></i><b>5.4.16</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html"><i class="fa fa-check"></i><b>6</b> Chapter 6 - Visualising Cytometry Data</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#what-youll-learn-2"><i class="fa fa-check"></i><b>6.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="6.2" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#understanding-cytometry-visualisation"><i class="fa fa-check"></i><b>6.2</b> Understanding Cytometry Visualisation</a></li>
+<li class="chapter" data-level="6.3" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#the-essentials-4"><i class="fa fa-check"></i><b>6.3</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#step-1-load-required-packages-1"><i class="fa fa-check"></i><b>6.3.1</b> Step 1: Load Required Packages</a></li>
+<li class="chapter" data-level="6.3.2" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#step-2-load-your-data"><i class="fa fa-check"></i><b>6.3.2</b> Step 2: Load Your Data</a></li>
+<li class="chapter" data-level="6.3.3" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#step-3-your-first-cytometry-plot"><i class="fa fa-check"></i><b>6.3.3</b> Step 3: Your First Cytometry Plot</a></li>
+<li class="chapter" data-level="6.3.4" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#step-4-improve-the-visualisation"><i class="fa fa-check"></i><b>6.3.4</b> Step 4: Improve the Visualisation</a></li>
+<li class="chapter" data-level="6.3.5" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#step-5-plot-multiple-samples"><i class="fa fa-check"></i><b>6.3.5</b> Step 5: Plot Multiple Samples</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#a-deeper-dive-4"><i class="fa fa-check"></i><b>6.4</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#understanding-autoplot"><i class="fa fa-check"></i><b>6.4.1</b> Understanding autoplot</a></li>
+<li class="chapter" data-level="6.4.2" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#binning-and-hexagonal-plots"><i class="fa fa-check"></i><b>6.4.2</b> Binning and Hexagonal Plots</a></li>
+<li class="chapter" data-level="6.4.3" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#transformation-for-visualisation"><i class="fa fa-check"></i><b>6.4.3</b> Transformation for Visualisation</a></li>
+<li class="chapter" data-level="6.4.4" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#selecting-different-channels"><i class="fa fa-check"></i><b>6.4.4</b> Selecting Different Channels</a></li>
+<li class="chapter" data-level="6.4.5" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#single-sample-vs-multiple-samples"><i class="fa fa-check"></i><b>6.4.5</b> Single Sample vs Multiple Samples</a></li>
+<li class="chapter" data-level="6.4.6" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#controlling-facets"><i class="fa fa-check"></i><b>6.4.6</b> Controlling Facets</a></li>
+<li class="chapter" data-level="6.4.7" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#using-ggcyto-instead-of-autoplot"><i class="fa fa-check"></i><b>6.4.7</b> Using ggcyto Instead of autoplot</a></li>
+<li class="chapter" data-level="6.4.8" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#plot-types"><i class="fa fa-check"></i><b>6.4.8</b> Plot Types</a></li>
+<li class="chapter" data-level="6.4.9" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#one-dimensional-plots-histograms"><i class="fa fa-check"></i><b>6.4.9</b> One-Dimensional Plots (Histograms)</a></li>
+<li class="chapter" data-level="6.4.10" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#customising-appearance"><i class="fa fa-check"></i><b>6.4.10</b> Customising Appearance</a></li>
+<li class="chapter" data-level="6.4.11" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#saving-plots"><i class="fa fa-check"></i><b>6.4.11</b> Saving Plots</a></li>
+<li class="chapter" data-level="6.4.12" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#comparing-samples-side-by-side"><i class="fa fa-check"></i><b>6.4.12</b> Comparing Samples Side by Side</a></li>
+<li class="chapter" data-level="6.4.13" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#building-complex-plots"><i class="fa fa-check"></i><b>6.4.13</b> Building Complex Plots</a></li>
+<li class="chapter" data-level="6.4.14" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#verification-plots"><i class="fa fa-check"></i><b>6.4.14</b> Verification Plots</a></li>
+<li class="chapter" data-level="6.4.15" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#common-plot-combinations"><i class="fa fa-check"></i><b>6.4.15</b> Common Plot Combinations</a></li>
+<li class="chapter" data-level="6.4.16" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#troubleshooting-visualisation"><i class="fa fa-check"></i><b>6.4.16</b> Troubleshooting Visualisation</a></li>
+<li class="chapter" data-level="6.4.17" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#best-practices"><i class="fa fa-check"></i><b>6.4.17</b> Best Practices</a></li>
+<li class="chapter" data-level="6.4.18" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#whats-next-3"><i class="fa fa-check"></i><b>6.4.18</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html"><i class="fa fa-check"></i><b>7</b> Chapter 7 - Gating Data</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#the-essentials-5"><i class="fa fa-check"></i><b>7.1</b> The Essentials</a></li>
+<li class="chapter" data-level="7.2" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#a-deeper-dive-5"><i class="fa fa-check"></i><b>7.2</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#event-length-a-standard-first-singlet-check"><i class="fa fa-check"></i><b>7.2.1</b> Event Length: A Standard First Singlet Check</a></li>
+<li class="chapter" data-level="7.2.2" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#oval-ellipse-gates"><i class="fa fa-check"></i><b>7.2.2</b> Oval (Ellipse) Gates</a></li>
+<li class="chapter" data-level="7.2.3" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#a-better-way-fitting-the-ellipse-statistically"><i class="fa fa-check"></i><b>7.2.3</b> A Better Way: Fitting the Ellipse Statistically</a></li>
+<li class="chapter" data-level="7.2.4" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#choosing-the-time-cutoff"><i class="fa fa-check"></i><b>7.2.4</b> Choosing the Time Cutoff</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html"><i class="fa fa-check"></i><b>8</b> Chapter 8 - Cleaning Channel Names with Premessa</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#what-youll-learn-3"><i class="fa fa-check"></i><b>8.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="8.2" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#the-essentials-6"><i class="fa fa-check"></i><b>8.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-1-load-required-packages-2"><i class="fa fa-check"></i><b>8.2.1</b> Step 1: Load Required Packages</a></li>
+<li class="chapter" data-level="8.2.2" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-2-run-premessas-channel-renaming-tool"><i class="fa fa-check"></i><b>8.2.2</b> Step 2: Run premessa’s Channel-Renaming Tool</a></li>
+<li class="chapter" data-level="8.2.3" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#which-channels-to-remove-and-why"><i class="fa fa-check"></i><b>8.2.3</b> Which Channels to Remove, and Why</a></li>
+<li class="chapter" data-level="8.2.4" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-3-verify-the-pruned-files"><i class="fa fa-check"></i><b>8.2.4</b> Step 3: Verify the Pruned Files</a></li>
+<li class="chapter" data-level="8.2.5" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-4-load-the-cleaned-files-back-into-r"><i class="fa fa-check"></i><b>8.2.5</b> Step 4: Load the Cleaned Files Back into R</a></li>
+<li class="chapter" data-level="8.2.6" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-5-save-your-work-1"><i class="fa fa-check"></i><b>8.2.6</b> Step 5: Save Your Work</a></li>
+<li class="chapter" data-level="8.2.7" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-6-give-samples-readable-names"><i class="fa fa-check"></i><b>8.2.7</b> Step 6: Give Samples Readable Names</a></li>
+<li class="chapter" data-level="8.2.8" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-7-reorder-the-samples"><i class="fa fa-check"></i><b>8.2.8</b> Step 7: Reorder the Samples</a></li>
+<li class="chapter" data-level="8.2.9" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-8-rename-channels-to-include-marker-names"><i class="fa fa-check"></i><b>8.2.9</b> Step 8: Rename Channels to Include Marker Names</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#a-deeper-dive-6"><i class="fa fa-check"></i><b>8.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#see-what-channel-matching-actually-bought-you"><i class="fa fa-check"></i><b>8.3.1</b> See What Channel Matching Actually Bought You</a></li>
+<li class="chapter" data-level="8.3.2" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#a-fallback-if-ggally-isnt-available"><i class="fa fa-check"></i><b>8.3.2</b> A Fallback If GGally Isn’t Available</a></li>
+<li class="chapter" data-level="8.3.3" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#taking-your-renamed-data-back-out-of-r"><i class="fa fa-check"></i><b>8.3.3</b> Taking Your Renamed Data Back Out of R</a></li>
+<li class="chapter" data-level="8.3.4" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#whats-next-4"><i class="fa fa-check"></i><b>8.3.4</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html"><i class="fa fa-check"></i><b>9</b> Chapter 9 - Removing Acquisition Anomalies</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#what-youll-learn-4"><i class="fa fa-check"></i><b>9.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="9.2" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#the-essentials-7"><i class="fa fa-check"></i><b>9.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-1-load-required-packages-3"><i class="fa fa-check"></i><b>9.2.1</b> Step 1: Load Required Packages</a></li>
+<li class="chapter" data-level="9.2.2" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-2-load-your-data-if-needed"><i class="fa fa-check"></i><b>9.2.2</b> Step 2: Load Your Data (if needed)</a></li>
+<li class="chapter" data-level="9.2.3" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-3-clean-each-file"><i class="fa fa-check"></i><b>9.2.3</b> Step 3: Clean Each File</a></li>
+<li class="chapter" data-level="9.2.4" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-4-save-your-work"><i class="fa fa-check"></i><b>9.2.4</b> Step 4: Save Your Work</a></li>
+<li class="chapter" data-level="9.2.5" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-5-see-what-was-actually-removed"><i class="fa fa-check"></i><b>9.2.5</b> Step 5: See What Was Actually Removed</a></li>
+<li class="chapter" data-level="9.2.6" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-6-check-cell-counts-before-and-after"><i class="fa fa-check"></i><b>9.2.6</b> Step 6: Check Cell Counts Before and After</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#a-deeper-dive-7"><i class="fa fa-check"></i><b>9.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#why-peacoqc-rather-than-flowcut"><i class="fa fa-check"></i><b>9.3.1</b> Why PeacoQC Rather Than flowCut</a></li>
+<li class="chapter" data-level="9.3.2" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#flowcut-and-what-happens-when-you-run-both"><i class="fa fa-check"></i><b>9.3.2</b> flowCut, and What Happens When You Run Both</a></li>
+<li class="chapter" data-level="9.3.3" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#making-flowcut-cut-anyway"><i class="fa fa-check"></i><b>9.3.3</b> Making flowCut Cut Anyway</a></li>
+<li class="chapter" data-level="9.3.4" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#other-tools-exist"><i class="fa fa-check"></i><b>9.3.4</b> Other Tools Exist</a></li>
+<li class="chapter" data-level="9.3.5" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#whats-next-5"><i class="fa fa-check"></i><b>9.3.5</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html"><i class="fa fa-check"></i><b>10</b> Chapter 10 - Downsampling</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#what-youll-learn-5"><i class="fa fa-check"></i><b>10.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="10.2" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#the-essentials-8"><i class="fa fa-check"></i><b>10.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="10.2.1" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-1-load-required-packages-and-data"><i class="fa fa-check"></i><b>10.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="10.2.2" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-2-downsample-every-file"><i class="fa fa-check"></i><b>10.2.2</b> Step 2: Downsample Every File</a></li>
+<li class="chapter" data-level="10.2.3" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-3-verify-the-event-counts"><i class="fa fa-check"></i><b>10.2.3</b> Step 3: Verify the Event Counts</a></li>
+<li class="chapter" data-level="10.2.4" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-4-save-your-work-1"><i class="fa fa-check"></i><b>10.2.4</b> Step 4: Save Your Work</a></li>
+<li class="chapter" data-level="10.2.5" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-5-compare-event-counts-before-and-after"><i class="fa fa-check"></i><b>10.2.5</b> Step 5: Compare Event Counts Before and After</a></li>
+<li class="chapter" data-level="10.2.6" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-6-reorder-the-samples"><i class="fa fa-check"></i><b>10.2.6</b> Step 6: Reorder the Samples</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#a-deeper-dive-8"><i class="fa fa-check"></i><b>10.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#what-samplefilter-is-actually-doing"><i class="fa fa-check"></i><b>10.3.1</b> What sampleFilter() Is Actually Doing</a></li>
+<li class="chapter" data-level="10.3.2" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#the-cost-of-a-fixed-downsample"><i class="fa fa-check"></i><b>10.3.2</b> The Cost of a Fixed Downsample</a></li>
+<li class="chapter" data-level="10.3.3" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#fixed-per-file-vs-proportional-downsampling"><i class="fa fa-check"></i><b>10.3.3</b> Fixed-Per-File vs Proportional Downsampling</a></li>
+<li class="chapter" data-level="10.3.4" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#whats-next-6"><i class="fa fa-check"></i><b>10.3.4</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html"><i class="fa fa-check"></i><b>11</b> Chapter 11 - Data Transformation</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#what-youll-learn-6"><i class="fa fa-check"></i><b>11.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="11.2" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#the-essentials-9"><i class="fa fa-check"></i><b>11.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="11.2.1" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#step-1-load-required-packages-and-data-1"><i class="fa fa-check"></i><b>11.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="11.2.2" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#step-2-apply-the-arcsinh-transformation"><i class="fa fa-check"></i><b>11.2.2</b> Step 2: Apply the arcsinh Transformation</a></li>
+<li class="chapter" data-level="11.2.3" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#step-3-save-your-work"><i class="fa fa-check"></i><b>11.2.3</b> Step 3: Save Your Work</a></li>
+<li class="chapter" data-level="11.2.4" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#step-4-compare-transformed-vs-untransformed"><i class="fa fa-check"></i><b>11.2.4</b> Step 4: Compare Transformed vs Untransformed</a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#a-deeper-dive-9"><i class="fa fa-check"></i><b>11.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="11.3.1" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#what-happens-with-the-wrong-cofactor"><i class="fa fa-check"></i><b>11.3.1</b> What Happens With the Wrong Cofactor</a></li>
+<li class="chapter" data-level="11.3.2" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#other-transforms-logicle-and-biexponential"><i class="fa fa-check"></i><b>11.3.2</b> Other Transforms: Logicle and Biexponential</a></li>
+<li class="chapter" data-level="11.3.3" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#whats-next-7"><i class="fa fa-check"></i><b>11.3.3</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html"><i class="fa fa-check"></i><b>12</b> Chapter 12 - Extracting Expression Data</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#what-youll-learn-7"><i class="fa fa-check"></i><b>12.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="12.2" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#the-essentials-10"><i class="fa fa-check"></i><b>12.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="12.2.1" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#step-1-load-required-packages-and-data-2"><i class="fa fa-check"></i><b>12.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="12.2.2" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#step-2-extract-the-expression-matrix"><i class="fa fa-check"></i><b>12.2.2</b> Step 2: Extract the Expression Matrix</a></li>
+<li class="chapter" data-level="12.2.3" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#step-3-label-each-cell-with-its-sample"><i class="fa fa-check"></i><b>12.2.3</b> Step 3: Label Each Cell With Its Sample</a></li>
+<li class="chapter" data-level="12.2.4" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#step-4-build-the-combined-table"><i class="fa fa-check"></i><b>12.2.4</b> Step 4: Build the Combined Table</a></li>
+<li class="chapter" data-level="12.2.5" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#step-5-reshape-to-long-format-and-add-condition"><i class="fa fa-check"></i><b>12.2.5</b> Step 5: Reshape to Long Format and Add Condition</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#a-deeper-dive-10"><i class="fa fa-check"></i><b>12.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="12.3.1" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#what-positional-joining-actually-does"><i class="fa fa-check"></i><b>12.3.1</b> What Positional Joining Actually Does</a></li>
+<li class="chapter" data-level="12.3.2" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#why-this-shape-matters"><i class="fa fa-check"></i><b>12.3.2</b> Why This Shape Matters</a></li>
+<li class="chapter" data-level="12.3.3" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#whats-next-8"><i class="fa fa-check"></i><b>12.3.3</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html"><i class="fa fa-check"></i><b>13</b> Chapter 13 - Full Visualisation</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#what-youll-learn-8"><i class="fa fa-check"></i><b>13.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="13.2" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#the-essentials-11"><i class="fa fa-check"></i><b>13.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="13.2.1" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#step-1-load-required-packages-and-data-3"><i class="fa fa-check"></i><b>13.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="13.2.2" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#step-2-density-plot-all-markers"><i class="fa fa-check"></i><b>13.2.2</b> Step 2: Density Plot, All Markers</a></li>
+<li class="chapter" data-level="13.2.3" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#step-3-ridge-plot-all-markers"><i class="fa fa-check"></i><b>13.2.3</b> Step 3: Ridge Plot, All Markers</a></li>
+<li class="chapter" data-level="13.2.4" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#step-4-a-simpler-view-median-expression-for-one-marker"><i class="fa fa-check"></i><b>13.2.4</b> Step 4: A Simpler View, Median Expression for One Marker</a></li>
+</ul></li>
+<li class="chapter" data-level="13.3" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#a-deeper-dive-11"><i class="fa fa-check"></i><b>13.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="13.3.1" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#the-colours-dont-actually-match-each-other"><i class="fa fa-check"></i><b>13.3.1</b> The Colours Don’t Actually Match Each Other</a></li>
+<li class="chapter" data-level="13.3.2" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#building-a-shared-colour-palette"><i class="fa fa-check"></i><b>13.3.2</b> Building a Shared Colour Palette</a></li>
+<li class="chapter" data-level="13.3.3" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#whats-next-9"><i class="fa fa-check"></i><b>13.3.3</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><i class="fa fa-check"></i><b>14</b> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#what-youll-learn-9"><i class="fa fa-check"></i><b>14.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="14.2" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#the-essentials-12"><i class="fa fa-check"></i><b>14.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="14.2.1" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-1-load-required-packages-and-data-4"><i class="fa fa-check"></i><b>14.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="14.2.2" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-2-run-umap-on-all-markers"><i class="fa fa-check"></i><b>14.2.2</b> Step 2: Run UMAP on All Markers</a></li>
+<li class="chapter" data-level="14.2.3" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-2b-set-the-axis-limits-once"><i class="fa fa-check"></i><b>14.2.3</b> Step 2b: Set the Axis Limits Once</a></li>
+<li class="chapter" data-level="14.2.4" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-3-plot-the-all-markers-umap"><i class="fa fa-check"></i><b>14.2.4</b> Step 3: Plot the All-Markers UMAP</a></li>
+<li class="chapter" data-level="14.2.5" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-4-run-tsne-on-all-markers"><i class="fa fa-check"></i><b>14.2.5</b> Step 4: Run tSNE on All Markers</a></li>
+<li class="chapter" data-level="14.2.6" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-5-plot-the-all-markers-tsne"><i class="fa fa-check"></i><b>14.2.6</b> Step 5: Plot the All-Markers tSNE</a></li>
+<li class="chapter" data-level="14.2.7" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-6-choose-lineage-markers"><i class="fa fa-check"></i><b>14.2.7</b> Step 6: Choose Lineage Markers</a></li>
+<li class="chapter" data-level="14.2.8" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-7-run-umap-on-lineage-markers-only"><i class="fa fa-check"></i><b>14.2.8</b> Step 7: Run UMAP on Lineage Markers Only</a></li>
+<li class="chapter" data-level="14.2.9" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-8-plot-the-lineage-only-umap"><i class="fa fa-check"></i><b>14.2.9</b> Step 8: Plot the Lineage-Only UMAP</a></li>
+<li class="chapter" data-level="14.2.10" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-9-run-tsne-on-lineage-markers-only"><i class="fa fa-check"></i><b>14.2.10</b> Step 9: Run tSNE on Lineage Markers Only</a></li>
+<li class="chapter" data-level="14.2.11" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-10-plot-the-lineage-only-tsne"><i class="fa fa-check"></i><b>14.2.11</b> Step 10: Plot the Lineage-Only tSNE</a></li>
+</ul></li>
+<li class="chapter" data-level="14.3" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#a-deeper-dive-12"><i class="fa fa-check"></i><b>14.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="14.3.1" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#how-much-of-this-picture-is-real-change-the-seed-and-find-out"><i class="fa fa-check"></i><b>14.3.1</b> How Much of This Picture Is Real? Change the Seed and Find Out</a></li>
+<li class="chapter" data-level="14.3.2" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#what-is-this-projection-actually-separating-on"><i class="fa fa-check"></i><b>14.3.2</b> What Is This Projection Actually Separating On?</a></li>
+<li class="chapter" data-level="14.3.3" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#reading-the-projection-expression-of-every-marker"><i class="fa fa-check"></i><b>14.3.3</b> Reading the Projection: Expression of Every Marker</a></li>
+<li class="chapter" data-level="14.3.4" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#naming-regions-and-why-it-has-to-be-done-within-a-group"><i class="fa fa-check"></i><b>14.3.4</b> Naming Regions, and Why It Has to Be Done Within a Group</a></li>
+<li class="chapter" data-level="14.3.5" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#then-move-them-by-hand"><i class="fa fa-check"></i><b>14.3.5</b> Then Move Them by Hand</a></li>
+<li class="chapter" data-level="14.3.6" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#gating-the-territories-not-the-markers"><i class="fa fa-check"></i><b>14.3.6</b> Gating the Territories, Not the Markers</a></li>
+<li class="chapter" data-level="14.3.7" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#does-condition-change-the-picture"><i class="fa fa-check"></i><b>14.3.7</b> Does Condition Change the Picture?</a></li>
+<li class="chapter" data-level="14.3.8" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#every-sample-side-by-side"><i class="fa fa-check"></i><b>14.3.8</b> Every Sample Side by Side</a></li>
+<li class="chapter" data-level="14.3.9" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#plot-a-fraction-not-everything"><i class="fa fa-check"></i><b>14.3.9</b> Plot a Fraction, Not Everything</a></li>
+<li class="chapter" data-level="14.3.10" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#assembling-a-figure-rather-than-a-plot"><i class="fa fa-check"></i><b>14.3.10</b> Assembling a Figure Rather Than a Plot</a></li>
+<li class="chapter" data-level="14.3.11" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#cycling-through-the-samples"><i class="fa fa-check"></i><b>14.3.11</b> Cycling Through the Samples</a></li>
+<li class="chapter" data-level="14.3.12" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#choosing-lineage-markers-interactively"><i class="fa fa-check"></i><b>14.3.12</b> Choosing Lineage Markers Interactively</a></li>
+<li class="chapter" data-level="14.3.13" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#whats-next-10"><i class="fa fa-check"></i><b>14.3.13</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html"><i class="fa fa-check"></i><b>15</b> Chapter 15 - Clustering and Population Discovery</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#what-youll-learn-10"><i class="fa fa-check"></i><b>15.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="15.2" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#the-essentials-13"><i class="fa fa-check"></i><b>15.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="15.2.1" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-1-load-required-packages-and-data-5"><i class="fa fa-check"></i><b>15.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="15.2.2" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-2-choose-markers-to-cluster-on"><i class="fa fa-check"></i><b>15.2.2</b> Step 2: Choose Markers to Cluster On</a></li>
+<li class="chapter" data-level="15.2.3" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-3-run-flowsom"><i class="fa fa-check"></i><b>15.2.3</b> Step 3: Run FlowSOM</a></li>
+<li class="chapter" data-level="15.2.4" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-4-add-cluster-labels-and-save"><i class="fa fa-check"></i><b>15.2.4</b> Step 4: Add Cluster Labels and Save</a></li>
+<li class="chapter" data-level="15.2.5" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-5-plot-clusters-on-the-umaptsne"><i class="fa fa-check"></i><b>15.2.5</b> Step 5: Plot Clusters on the UMAP/tSNE</a></li>
+<li class="chapter" data-level="15.2.6" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-6-cluster-abundance-per-sample"><i class="fa fa-check"></i><b>15.2.6</b> Step 6: Cluster Abundance per Sample</a></li>
+</ul></li>
+<li class="chapter" data-level="15.3" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#a-deeper-dive-13"><i class="fa fa-check"></i><b>15.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="15.3.1" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#an-alternative-phenograph"><i class="fa fa-check"></i><b>15.3.1</b> An Alternative: Phenograph</a></li>
+<li class="chapter" data-level="15.3.2" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#naming-clusters-from-marker-expression-a-worked-example"><i class="fa fa-check"></i><b>15.3.2</b> Naming Clusters from Marker Expression: A Worked Example</a></li>
+<li class="chapter" data-level="15.3.3" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#whats-next-11"><i class="fa fa-check"></i><b>15.3.3</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html"><i class="fa fa-check"></i><b>16</b> Chapter 16 - Statistical Analysis and Publication Figures</a>
+<ul>
+<li class="chapter" data-level="16.1" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#what-youll-learn-11"><i class="fa fa-check"></i><b>16.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="16.2" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#the-essentials-14"><i class="fa fa-check"></i><b>16.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="16.2.1" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-1-load-required-packages-and-data-6"><i class="fa fa-check"></i><b>16.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="16.2.2" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-2-compute-median-expression-per-sample"><i class="fa fa-check"></i><b>16.2.2</b> Step 2: Compute Median Expression per Sample</a></li>
+<li class="chapter" data-level="16.2.3" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-3-mds-plot"><i class="fa fa-check"></i><b>16.2.3</b> Step 3: MDS Plot</a></li>
+<li class="chapter" data-level="16.2.4" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-4-heatmap-of-median-expression"><i class="fa fa-check"></i><b>16.2.4</b> Step 4: Heatmap of Median Expression</a></li>
+<li class="chapter" data-level="16.2.5" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-5-bubble-plot-of-median-expression"><i class="fa fa-check"></i><b>16.2.5</b> Step 5: Bubble Plot of Median Expression</a></li>
+<li class="chapter" data-level="16.2.6" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-6-non-redundancy-score-nrs"><i class="fa fa-check"></i><b>16.2.6</b> Step 6: Non-Redundancy Score (NRS)</a></li>
+<li class="chapter" data-level="16.2.7" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-7-finish-the-labels"><i class="fa fa-check"></i><b>16.2.7</b> Step 7: Finish the Labels</a></li>
+<li class="chapter" data-level="16.2.8" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-8-record-your-package-versions"><i class="fa fa-check"></i><b>16.2.8</b> Step 8: Record Your Package Versions</a></li>
+</ul></li>
+<li class="chapter" data-level="16.3" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#a-deeper-dive-14"><i class="fa fa-check"></i><b>16.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="16.3.1" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#why-the-labels-arrive-unfinished"><i class="fa fa-check"></i><b>16.3.1</b> Why the Labels Arrive Unfinished</a></li>
+<li class="chapter" data-level="16.3.2" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#beyond-sessioninfo-renv"><i class="fa fa-check"></i><b>16.3.2</b> Beyond sessionInfo(): renv</a></li>
+<li class="chapter" data-level="16.3.3" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#whats-next-12"><i class="fa fa-check"></i><b>16.3.3</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
 </ul>
 
-        <div class="book-extra">
-          
-        </div>
       </nav>
-</div>
-  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis" class="section level1" number="1">
-<h1>
-<span class="header-section-number">1</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis<a class="anchor" aria-label="anchor" href="#analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis"><i class="fas fa-link"></i></a>
-</h1>
-<div id="why-this-guide-exists" class="section level2" number="1.1">
-<h2>
-<span class="header-section-number">1.1</span> Why This Guide Exists<a class="anchor" aria-label="anchor" href="#why-this-guide-exists"><i class="fas fa-link"></i></a>
-</h2>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Analysing Cytometry Data with R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number">Chapter 1</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis<a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="why-this-guide-exists" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> Why This Guide Exists<a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#why-this-guide-exists" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>At research institutions everywhere, cytometry is a core technology - but analysis often gets bottlenecked. FlowJo is widely used because it’s visual, intuitive, and fast for exploring data. But when you need to process dozens of samples with identical analysis, or when you want to try methods that aren’t available in commercial software, you need different tools.</p>
 <p>This guide exists to teach you those tools.</p>
 </div>
-<div id="the-real-problems-r-solves" class="section level2" number="1.2">
-<h2>
-<span class="header-section-number">1.2</span> The Real Problems R Solves<a class="anchor" aria-label="anchor" href="#the-real-problems-r-solves"><i class="fas fa-link"></i></a>
-</h2>
+<div id="the-real-problems-r-solves" class="section level2 hasAnchor" number="1.2">
+<h2><span class="header-section-number">1.2</span> The Real Problems R Solves<a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#the-real-problems-r-solves" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p><strong>The 50-sample problem:</strong> You have 50 samples that need identical gating, population analysis, and statistical comparisons. In FlowJo, that means one workspace holding dozens of files, which gets slow to browse and easy to lose track of. In R, that’s one script applied to all samples.</p>
 <p><strong>The cutting-edge problem:</strong> A new clustering algorithm gets published. It appears as an R package within weeks, but takes years to appear in commercial software - if it ever does.</p>
 <p><strong>The budget problem</strong>: FlowJo licenses cost a few hundred dollars per year for academic use, more for commercial licenses. For students, postdocs, or researchers at institutions with tight budgets, R provides a complete alternative at no cost.</p>
 <p><strong>The sharing problem:</strong> You want to share your exact analysis methods with collaborators. With FlowJo, you share screenshots and approximate descriptions. With R, you share the actual code.</p>
-<div id="what-programming-means" class="section level3" number="1.2.1">
-<h3>
-<span class="header-section-number">1.2.1</span> What Programming Means<a class="anchor" aria-label="anchor" href="#what-programming-means"><i class="fas fa-link"></i></a>
-</h3>
+<div id="what-programming-means" class="section level3 hasAnchor" number="1.2.1">
+<h3><span class="header-section-number">1.2.1</span> What Programming Means<a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-programming-means" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Before we go further, let’s clarify what “programming” actually means, since this guide assumes you’ve never done it.
 Programming is writing instructions for computers in a language they understand. Instead of clicking buttons, you type commands. Instead of remembering what you clicked, the computer remembers the commands you wrote.</p>
 <p><strong>Example:</strong> Instead of clicking through FlowJo menus to create a plot, you write:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">autoplot</span><span class="op">(</span><span class="va">FLOWSET</span>, x <span class="op">=</span> <span class="st">"CD34"</span>, y <span class="op">=</span> <span class="st">"CD38"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#cb1-1" tabindex="-1"></a><span class="fu">autoplot</span>(FLOWSET, <span class="at">x =</span> <span class="st">&quot;CD34&quot;</span>, <span class="at">y =</span> <span class="st">&quot;CD38&quot;</span>)</span></code></pre></div>
 <p>The advantage isn’t obvious when you’re learning, but it becomes powerful when you need to create 50 identical plots or when you want to modify something slightly across an entire analysis.</p>
 </div>
-<div id="what-r-is" class="section level3" number="1.2.2">
-<h3>
-<span class="header-section-number">1.2.2</span> What R Is<a class="anchor" aria-label="anchor" href="#what-r-is"><i class="fas fa-link"></i></a>
-</h3>
+<div id="what-r-is" class="section level3 hasAnchor" number="1.2.2">
+<h3><span class="header-section-number">1.2.2</span> What R Is<a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-r-is" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>R is a programming language designed for data analysis. It was created by statisticians, for statisticians, which means it excels at the kinds of tasks cytometry analysis requires: data manipulation, visualisation, and statistical testing.
 Key concepts:</p>
 <p><strong>Language:</strong> A set of rules for writing instructions computers can follow</p>
@@ -111,10 +555,8 @@ Key concepts:</p>
 <p><strong>Package system:</strong> Extensions that add new capabilities</p>
 <p><strong>Community:</strong> Thousands of researchers contributing methods and tools</p>
 </div>
-<div id="what-youll-learn" class="section level3" number="1.2.3">
-<h3>
-<span class="header-section-number">1.2.3</span> What You’ll Learn<a class="anchor" aria-label="anchor" href="#what-youll-learn"><i class="fas fa-link"></i></a>
-</h3>
+<div id="what-youll-learn" class="section level3 hasAnchor" number="1.2.3">
+<h3><span class="header-section-number">1.2.3</span> What You’ll Learn<a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-youll-learn" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>This guide teaches you to use R specifically for cytometry analysis. You won’t become a general programmer, but you’ll be able to do things that are difficult or impossible with commercial software.</p>
 <p><strong>By Chapter 5:</strong> You’ll load cytometry data into R</p>
 <p><strong>By Chapter 6:</strong> You’ll create your first cytometry plots</p>
@@ -123,10 +565,8 @@ Key concepts:</p>
 <p><strong>By the end:</strong> You’ll have reproducible workflows, and publication-quality figures, you can apply to new experiments</p>
 </div>
 </div>
-<div id="the-learning-path" class="section level2" number="1.3">
-<h2>
-<span class="header-section-number">1.3</span> The Learning Path<a class="anchor" aria-label="anchor" href="#the-learning-path"><i class="fas fa-link"></i></a>
-</h2>
+<div id="the-learning-path" class="section level2 hasAnchor" number="1.3">
+<h2><span class="header-section-number">1.3</span> The Learning Path<a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#the-learning-path" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <ul>
 <li>Chapters 2-4: Get R working and set up your project and data structure</li>
 <li>Chapter 5: Load your first cytometry data</li>
@@ -142,29 +582,23 @@ Key concepts:</p>
 </ul>
 <p>Each chapter builds on previous concepts. The early chapters may feel slow, but they establish foundations that make advanced analysis possible.</p>
 </div>
-<div id="what-makes-this-different" class="section level2" number="1.4">
-<h2>
-<span class="header-section-number">1.4</span> What Makes This Different<a class="anchor" aria-label="anchor" href="#what-makes-this-different"><i class="fas fa-link"></i></a>
-</h2>
+<div id="what-makes-this-different" class="section level2 hasAnchor" number="1.4">
+<h2><span class="header-section-number">1.4</span> What Makes This Different<a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-makes-this-different" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Most R tutorials assume programming experience or rush through fundamentals. This guide assumes you know cytometry but treats programming as completely new territory.</p>
 <p>Two-track approach:</p>
 <p><span class="essentials"><strong>Essentials:</strong></span> Working code that gets results quickly</p>
 <p><span class="deeper-dive"><strong>Deeper Dive:</strong></span> Understanding and customisation options</p>
 <p>Use Essentials if you want immediate results. Read Deeper Dive when you want to understand why something works or how to modify it.</p>
 </div>
-<div id="what-to-expect" class="section level2" number="1.5">
-<h2>
-<span class="header-section-number">1.5</span> What to Expect<a class="anchor" aria-label="anchor" href="#what-to-expect"><i class="fas fa-link"></i></a>
-</h2>
+<div id="what-to-expect" class="section level2 hasAnchor" number="1.5">
+<h2><span class="header-section-number">1.5</span> What to Expect<a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-to-expect" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Learning R requires effort. The first few chapters involve setup and learning new vocabulary. But it pays off quickly. By Chapter 15, you’ll be running clustering analysis that would take hours, or simply isn’t possible, in FlowJo.
 When R wins: Batch processing, new methods, reproducible analysis, integration with other data types
 When FlowJo wins: Interactive exploration, manual gating, immediate visual feedback
 So keep FlowJo for those jobs and use R for the others. This guide teaches you when and how to use R.</p>
 </div>
-<div id="before-you-begin" class="section level2" number="1.6">
-<h2>
-<span class="header-section-number">1.6</span> Before You Begin<a class="anchor" aria-label="anchor" href="#before-you-begin"><i class="fas fa-link"></i></a>
-</h2>
+<div id="before-you-begin" class="section level2 hasAnchor" number="1.6">
+<h2><span class="header-section-number">1.6</span> Before You Begin<a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#before-you-begin" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>This guide uses a real dataset provided for you, so everyone works from identical data and gets identical results to check against. You can substitute your own FCS files at any point once you’re comfortable with the workflow, Chapter 4 covers both options.</p>
 <p>The next chapter gets R installed and working on your computer. You don’t need any programming experience - just some patience with the setup.</p>
 <p><strong>What you’ll need:</strong></p>
@@ -174,60 +608,74 @@ So keep FlowJo for those jobs and use R for the others. This guide teaches you w
 <li>Willingness to type commands instead of clicking buttons</li>
 </ul>
 </div>
-<div id="a-note-on-learning" class="section level2" number="1.7">
-<h2>
-<span class="header-section-number">1.7</span> A Note on Learning<a class="anchor" aria-label="anchor" href="#a-note-on-learning"><i class="fas fa-link"></i></a>
-</h2>
+<div id="a-note-on-learning" class="section level2 hasAnchor" number="1.7">
+<h2><span class="header-section-number">1.7</span> A Note on Learning<a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#a-note-on-learning" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Programming feels different from other learning. You’ll get error messages and outputs you didn’t expect. That’s normal, and it gets better. Every programmer, experts included, deals with the same thing.
 The key is building understanding gradually. Each chapter introduces a few new concepts and shows how they connect to what you already know. By the end, you’ll be able to analyse your cytometry data in ways you couldn’t before.
 The next chapter gets R installed and introduces the programming environment we’ll use throughout this course.</p>
 
 </div>
 </div>
-  <div class="chapter-nav">
-<div class="prev"><a href="index.html">Preface and Notes</a></div>
-<div class="next"><a href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">2</span> Chapter 2 - Setting up an R environment</a></div>
-</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
-    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
-      <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis"><span class="header-section-number">1</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
-<li><a class="nav-link" href="#why-this-guide-exists"><span class="header-section-number">1.1</span> Why This Guide Exists</a></li>
-<li>
-<a class="nav-link" href="#the-real-problems-r-solves"><span class="header-section-number">1.2</span> The Real Problems R Solves</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#what-programming-means"><span class="header-section-number">1.2.1</span> What Programming Means</a></li>
-<li><a class="nav-link" href="#what-r-is"><span class="header-section-number">1.2.2</span> What R Is</a></li>
-<li><a class="nav-link" href="#what-youll-learn"><span class="header-section-number">1.2.3</span> What You’ll Learn</a></li>
-</ul>
-</li>
-<li><a class="nav-link" href="#the-learning-path"><span class="header-section-number">1.3</span> The Learning Path</a></li>
-<li><a class="nav-link" href="#what-makes-this-different"><span class="header-section-number">1.4</span> What Makes This Different</a></li>
-<li><a class="nav-link" href="#what-to-expect"><span class="header-section-number">1.5</span> What to Expect</a></li>
-<li><a class="nav-link" href="#before-you-begin"><span class="header-section-number">1.6</span> Before You Begin</a></li>
-<li><a class="nav-link" href="#a-note-on-learning"><span class="header-section-number">1.7</span> A Note on Learning</a></li>
-</ul>
+            </section>
 
-      <div class="book-extra">
-        <ul class="list-unstyled">
-          
-        </ul>
-</div>
-    </nav>
-</div>
-
-</div>
-</div> <!-- .container -->
-
-<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
-
-  <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-11-02.</p>
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="chapter-2---setting-up-an-r-environment.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
   </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
+});
+});
+</script>
 
-  <div class="col-12 col-md-6 mt-3">
-    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
-  </div>
-
-</div></div>
-</footer>
 </body>
+
 </html>

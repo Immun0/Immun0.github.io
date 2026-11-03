@@ -1,340 +1,793 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="" xml:lang="">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 11 Chapter 11 - Data Transformation | Analysing Cytometry Data with R</title>
-<meta name="author" content="Damian Carragher">
-<meta name="author" content="StemCore Laboratories and Flow Cytometry Core">
-<meta name="author" content="Ottawa Hospital Research Institute">
-<meta name="author" content="First edition by Damian Carragher">
-<meta name="description" content="11.1 What You’ll Learn Raw cytometry data is compressed near zero for negative populations and spread across orders of magnitude for positive ones. This chapter applies an arcsinh transformation,...">
-<meta name="generator" content="bookdown 0.47 with bs4_book()">
-<meta property="og:title" content="Chapter 11 Chapter 11 - Data Transformation | Analysing Cytometry Data with R">
-<meta property="og:type" content="book">
-<meta property="og:description" content="11.1 What You’ll Learn Raw cytometry data is compressed near zero for negative populations and spread across orders of magnitude for positive ones. This chapter applies an arcsinh transformation,...">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 11 Chapter 11 - Data Transformation | Analysing Cytometry Data with R">
-<meta name="twitter:description" content="11.1 What You’ll Learn Raw cytometry data is compressed near zero for negative populations and spread across orders of magnitude for positive ones. This chapter applies an arcsinh transformation,...">
-<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.12.0/transition.js"></script><script src="libs/bs3compat-0.12.0/tabs.js"></script><script src="libs/bs3compat-0.12.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
-<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
-    
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  </style>
-<link rel="stylesheet" href="style.css">
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 11 Chapter 11 - Data Transformation | Analysing Cytometry Data with R</title>
+  <meta name="description" content="This is a complete introduction to analysing cytometry data with R, starting with how to set up an RStudio environment working through to producing journal quality figures" />
+  <meta name="generator" content="bookdown 0.47 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 11 Chapter 11 - Data Transformation | Analysing Cytometry Data with R" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="This is a complete introduction to analysing cytometry data with R, starting with how to set up an RStudio environment working through to producing journal quality figures" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 11 Chapter 11 - Data Transformation | Analysing Cytometry Data with R" />
+  
+  <meta name="twitter:description" content="This is a complete introduction to analysing cytometry data with R, starting with how to set up an RStudio environment working through to producing journal quality figures" />
+  
+
+<meta name="author" content="Damian Carragher" />
+<meta name="author" content="StemCore Laboratories and Flow Cytometry Core" />
+<meta name="author" content="Ottawa Hospital Research Institute" />
+<meta name="author" content="First edition by Damian Carragher" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="chapter-10---downsampling.html"/>
+<link rel="next" href="chapter-12---extracting-expression-data.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
 </head>
-<body data-spy="scroll" data-target="#toc">
 
-<div class="container-fluid">
-<div class="row">
-  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+<body>
 
-    <div class="d-flex align-items-start justify-content-between">
-      <h1>
-        <a href="index.html" title="">Analysing Cytometry Data with R</a>
-      </h1>
-      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
-    </div>
 
-    <div id="main-nav" class="collapse-lg">
-      <form role="search">
-        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
-</form>
 
-      <nav aria-label="Table of contents"><h2>Table of contents</h2>
-        <ul class="book-toc list-unstyled">
-<li><a class="" href="index.html">Preface and Notes</a></li>
-<li><a class="" href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><span class="header-section-number">1</span> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a></li>
-<li><a class="" href="chapter-2---setting-up-an-r-environment.html"><span class="header-section-number">2</span> Chapter 2 - Setting up an R environment</a></li>
-<li><a class="" href="chapter-3---packages.html"><span class="header-section-number">3</span> Chapter 3 - Packages</a></li>
-<li><a class="" href="chapter-4---file-management-and-data-access.html"><span class="header-section-number">4</span> Chapter 4 - File Management and Data Access</a></li>
-<li><a class="" href="chapter-5---loading-cytometry-data.html"><span class="header-section-number">5</span> Chapter 5 - Loading Cytometry Data</a></li>
-<li><a class="" href="chapter-6---visualising-cytometry-data.html"><span class="header-section-number">6</span> Chapter 6 - Visualising Cytometry Data</a></li>
-<li><a class="" href="chapter-7---gating-data.html"><span class="header-section-number">7</span> Chapter 7 - Gating Data</a></li>
-<li><a class="" href="chapter-8---cleaning-channel-names-with-premessa.html"><span class="header-section-number">8</span> Chapter 8 - Cleaning Channel Names with Premessa</a></li>
-<li><a class="" href="chapter-9---removing-acquisition-anomalies.html"><span class="header-section-number">9</span> Chapter 9 - Removing Acquisition Anomalies</a></li>
-<li><a class="" href="chapter-10---downsampling.html"><span class="header-section-number">10</span> Chapter 10 - Downsampling</a></li>
-<li><a class="active" href="chapter-11---data-transformation.html"><span class="header-section-number">11</span> Chapter 11 - Data Transformation</a></li>
-<li><a class="" href="chapter-12---extracting-expression-data.html"><span class="header-section-number">12</span> Chapter 12 - Extracting Expression Data</a></li>
-<li><a class="" href="chapter-13---full-visualisation.html"><span class="header-section-number">13</span> Chapter 13 - Full Visualisation</a></li>
-<li><a class="" href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><span class="header-section-number">14</span> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a></li>
-<li><a class="" href="chapter-15---clustering-and-population-discovery.html"><span class="header-section-number">15</span> Chapter 15 - Clustering and Population Discovery</a></li>
-<li><a class="" href="chapter-16---statistical-analysis-and-publication-figures.html"><span class="header-section-number">16</span> Chapter 16 - Statistical Analysis and Publication Figures</a></li>
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface and Notes</a>
+<ul>
+<li class="chapter" data-level="0.1" data-path="index.html"><a href="index.html#what-this-isnt"><i class="fa fa-check"></i><b>0.1</b> What This Isn’t</a></li>
+<li class="chapter" data-level="0.2" data-path="index.html"><a href="index.html#who-this-is-for"><i class="fa fa-check"></i><b>0.2</b> Who This Is For</a></li>
+<li class="chapter" data-level="0.3" data-path="index.html"><a href="index.html#why-choose-r"><i class="fa fa-check"></i><b>0.3</b> Why Choose R?</a></li>
+<li class="chapter" data-level="0.4" data-path="index.html"><a href="index.html#what-youll-actually-accomplish"><i class="fa fa-check"></i><b>0.4</b> What You’ll Actually Accomplish</a></li>
+<li class="chapter" data-level="0.5" data-path="index.html"><a href="index.html#the-reality-check"><i class="fa fa-check"></i><b>0.5</b> The Reality Check</a></li>
+<li class="chapter" data-level="0.6" data-path="index.html"><a href="index.html#example-data-youll-master"><i class="fa fa-check"></i><b>0.6</b> Example Data You’ll Master</a></li>
+<li class="chapter" data-level="0.7" data-path="index.html"><a href="index.html#a-note-on-code"><i class="fa fa-check"></i><b>0.7</b> A Note on Code</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><i class="fa fa-check"></i><b>1</b> Analysing Cytometry Data with R: An Open-Source Path to Reproducible Analysis</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#why-this-guide-exists"><i class="fa fa-check"></i><b>1.1</b> Why This Guide Exists</a></li>
+<li class="chapter" data-level="1.2" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#the-real-problems-r-solves"><i class="fa fa-check"></i><b>1.2</b> The Real Problems R Solves</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-programming-means"><i class="fa fa-check"></i><b>1.2.1</b> What Programming Means</a></li>
+<li class="chapter" data-level="1.2.2" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-r-is"><i class="fa fa-check"></i><b>1.2.2</b> What R Is</a></li>
+<li class="chapter" data-level="1.2.3" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-youll-learn"><i class="fa fa-check"></i><b>1.2.3</b> What You’ll Learn</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#the-learning-path"><i class="fa fa-check"></i><b>1.3</b> The Learning Path</a></li>
+<li class="chapter" data-level="1.4" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-makes-this-different"><i class="fa fa-check"></i><b>1.4</b> What Makes This Different</a></li>
+<li class="chapter" data-level="1.5" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#what-to-expect"><i class="fa fa-check"></i><b>1.5</b> What to Expect</a></li>
+<li class="chapter" data-level="1.6" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#before-you-begin"><i class="fa fa-check"></i><b>1.6</b> Before You Begin</a></li>
+<li class="chapter" data-level="1.7" data-path="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html"><a href="analysing-cytometry-data-with-r-an-open-source-path-to-reproducible-analysis.html#a-note-on-learning"><i class="fa fa-check"></i><b>1.7</b> A Note on Learning</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html"><i class="fa fa-check"></i><b>2</b> Chapter 2 - Setting up an <code>R</code> environment</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#what-were-building"><i class="fa fa-check"></i><b>2.1</b> What We’re Building</a></li>
+<li class="chapter" data-level="2.2" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#version-notes"><i class="fa fa-check"></i><b>2.2</b> Version Notes</a></li>
+<li class="chapter" data-level="2.3" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#the-essentials"><i class="fa fa-check"></i><b>2.3</b> The Essentials</a></li>
+<li class="chapter" data-level="2.4" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#common-problems-and-solutions"><i class="fa fa-check"></i><b>2.4</b> Common Problems and Solutions</a></li>
+<li class="chapter" data-level="2.5" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#a-deeper-dive"><i class="fa fa-check"></i><b>2.5</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#understanding-the-components"><i class="fa fa-check"></i><b>2.5.1</b> Understanding the Components</a></li>
+<li class="chapter" data-level="2.5.2" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#the-rstudio-interface"><i class="fa fa-check"></i><b>2.5.2</b> The RStudio Interface</a></li>
+<li class="chapter" data-level="2.5.3" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#why-this-setup-process-matters"><i class="fa fa-check"></i><b>2.5.3</b> Why This Setup Process Matters</a></li>
+<li class="chapter" data-level="2.5.4" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#packages-preview"><i class="fa fa-check"></i><b>2.5.4</b> Packages Preview</a></li>
+<li class="chapter" data-level="2.5.5" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#file-paths-and-working-directories"><i class="fa fa-check"></i><b>2.5.5</b> File Paths and Working Directories</a></li>
+<li class="chapter" data-level="2.5.6" data-path="chapter-2---setting-up-an-r-environment.html"><a href="chapter-2---setting-up-an-r-environment.html#next-steps"><i class="fa fa-check"></i><b>2.5.6</b> Next Steps</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html"><i class="fa fa-check"></i><b>3</b> Chapter 3 - Packages</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#what-are-packages"><i class="fa fa-check"></i><b>3.1</b> What Are Packages?</a></li>
+<li class="chapter" data-level="3.2" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#where-packages-come-from"><i class="fa fa-check"></i><b>3.2</b> Where Packages Come From</a></li>
+<li class="chapter" data-level="3.3" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#version-notes-1"><i class="fa fa-check"></i><b>3.3</b> Version Notes</a></li>
+<li class="chapter" data-level="3.4" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#the-essentials-1"><i class="fa fa-check"></i><b>3.4</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#step-1-install-package-managers"><i class="fa fa-check"></i><b>3.4.1</b> Step 1: Install Package Managers</a></li>
+<li class="chapter" data-level="3.4.2" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#step-2-install-all-required-packages"><i class="fa fa-check"></i><b>3.4.2</b> Step 2: Install All Required Packages</a></li>
+<li class="chapter" data-level="3.4.3" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#step-3-verify-installation"><i class="fa fa-check"></i><b>3.4.3</b> Step 3: Verify Installation</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#a-deeper-dive-1"><i class="fa fa-check"></i><b>3.5</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#installing-without-blocking-your-console"><i class="fa fa-check"></i><b>3.5.1</b> Installing Without Blocking Your Console</a></li>
+<li class="chapter" data-level="3.5.2" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#understanding-package-installation"><i class="fa fa-check"></i><b>3.5.2</b> Understanding Package Installation</a></li>
+<li class="chapter" data-level="3.5.3" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#package-sources-in-detail"><i class="fa fa-check"></i><b>3.5.3</b> Package Sources in Detail</a></li>
+<li class="chapter" data-level="3.5.4" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#loading-packages-vs-installing-packages"><i class="fa fa-check"></i><b>3.5.4</b> Loading Packages vs Installing Packages</a></li>
+<li class="chapter" data-level="3.5.5" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#about-require-vs-library"><i class="fa fa-check"></i><b>3.5.5</b> About require() vs library()</a></li>
+<li class="chapter" data-level="3.5.6" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#understanding-our-package-collection"><i class="fa fa-check"></i><b>3.5.6</b> Understanding Our Package Collection</a></li>
+<li class="chapter" data-level="3.5.7" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#package-dependencies"><i class="fa fa-check"></i><b>3.5.7</b> Package Dependencies</a></li>
+<li class="chapter" data-level="3.5.8" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#what-a-package-actually-is-on-disk"><i class="fa fa-check"></i><b>3.5.8</b> What a Package Actually Is on Disk</a></li>
+<li class="chapter" data-level="3.5.9" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#managing-your-package-library"><i class="fa fa-check"></i><b>3.5.9</b> Managing Your Package Library</a></li>
+<li class="chapter" data-level="3.5.10" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#getting-help-with-packages"><i class="fa fa-check"></i><b>3.5.10</b> Getting Help with Packages</a></li>
+<li class="chapter" data-level="3.5.11" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#why-we-install-everything-upfront"><i class="fa fa-check"></i><b>3.5.11</b> Why We Install Everything Upfront</a></li>
+<li class="chapter" data-level="3.5.12" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#troubleshooting-installation-problems"><i class="fa fa-check"></i><b>3.5.12</b> Troubleshooting Installation Problems</a></li>
+<li class="chapter" data-level="3.5.13" data-path="chapter-3---packages.html"><a href="chapter-3---packages.html#whats-next"><i class="fa fa-check"></i><b>3.5.13</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html"><i class="fa fa-check"></i><b>4</b> Chapter 4 - File Management and Data Access</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#what-were-building-1"><i class="fa fa-check"></i><b>4.1</b> What We’re Building</a></li>
+<li class="chapter" data-level="4.2" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#version-notes-2"><i class="fa fa-check"></i><b>4.2</b> Version Notes</a></li>
+<li class="chapter" data-level="4.3" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#the-essentials-2"><i class="fa fa-check"></i><b>4.3</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-1-create-your-project-folder"><i class="fa fa-check"></i><b>4.3.1</b> Step 1: Create Your Project Folder</a></li>
+<li class="chapter" data-level="4.3.2" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-2-create-an-r-project"><i class="fa fa-check"></i><b>4.3.2</b> Step 2: Create an R Project</a></li>
+<li class="chapter" data-level="4.3.3" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-3-create-your-folder-structure-with-dir.create"><i class="fa fa-check"></i><b>4.3.3</b> Step 3: Create Your Folder Structure with dir.create()</a></li>
+<li class="chapter" data-level="4.3.4" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-4-download-this-courses-data"><i class="fa fa-check"></i><b>4.3.4</b> Step 4: Download This Course’s Data</a></li>
+<li class="chapter" data-level="4.3.5" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-5-work-in-a-script-not-the-console"><i class="fa fa-check"></i><b>4.3.5</b> Step 5: Work in a Script, Not the Console</a></li>
+<li class="chapter" data-level="4.3.6" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-6-verify-here-works"><i class="fa fa-check"></i><b>4.3.6</b> Step 6: Verify here() Works</a></li>
+<li class="chapter" data-level="4.3.7" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#step-7-verify-your-data"><i class="fa fa-check"></i><b>4.3.7</b> Step 7: Verify Your Data</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#a-deeper-dive-2"><i class="fa fa-check"></i><b>4.4</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#understanding-working-directories"><i class="fa fa-check"></i><b>4.4.1</b> Understanding Working Directories</a></li>
+<li class="chapter" data-level="4.4.2" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#what-r-projects-actually-do"><i class="fa fa-check"></i><b>4.4.2</b> What R Projects Actually Do</a></li>
+<li class="chapter" data-level="4.4.3" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#file-paths-in-r"><i class="fa fa-check"></i><b>4.4.3</b> File Paths in R</a></li>
+<li class="chapter" data-level="4.4.4" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#the-here-package-in-detail"><i class="fa fa-check"></i><b>4.4.4</b> The here Package in Detail</a></li>
+<li class="chapter" data-level="4.4.5" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#why-just-one-version-of-the-fcs-data"><i class="fa fa-check"></i><b>4.4.5</b> Why Just One Version of the FCS Data?</a></li>
+<li class="chapter" data-level="4.4.6" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#why-a-staged-rds-folder"><i class="fa fa-check"></i><b>4.4.6</b> Why a Staged RDS Folder?</a></li>
+<li class="chapter" data-level="4.4.7" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#file-organisation-best-practices"><i class="fa fa-check"></i><b>4.4.7</b> File Organisation Best Practices</a></li>
+<li class="chapter" data-level="4.4.8" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#creating-folders-and-files"><i class="fa fa-check"></i><b>4.4.8</b> Creating Folders and Files</a></li>
+<li class="chapter" data-level="4.4.9" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#navigating-folders-in-r"><i class="fa fa-check"></i><b>4.4.9</b> Navigating Folders in R</a></li>
+<li class="chapter" data-level="4.4.10" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#verifying-your-setup"><i class="fa fa-check"></i><b>4.4.10</b> Verifying Your Setup</a></li>
+<li class="chapter" data-level="4.4.11" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#troubleshooting"><i class="fa fa-check"></i><b>4.4.11</b> Troubleshooting</a></li>
+<li class="chapter" data-level="4.4.12" data-path="chapter-4---file-management-and-data-access.html"><a href="chapter-4---file-management-and-data-access.html#whats-next-1"><i class="fa fa-check"></i><b>4.4.12</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html"><i class="fa fa-check"></i><b>5</b> Chapter 5 - Loading Cytometry Data</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#what-youll-learn-1"><i class="fa fa-check"></i><b>5.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="5.2" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#understanding-fcs-files"><i class="fa fa-check"></i><b>5.2</b> Understanding FCS Files</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#where-this-courses-data-came-from"><i class="fa fa-check"></i><b>5.2.1</b> Where This Course’s Data Came From</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#the-essentials-3"><i class="fa fa-check"></i><b>5.3</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#step-1-load-required-packages"><i class="fa fa-check"></i><b>5.3.1</b> Step 1: Load Required Packages</a></li>
+<li class="chapter" data-level="5.3.2" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#step-2-load-the-course-dataset"><i class="fa fa-check"></i><b>5.3.2</b> Step 2: Load the Course Dataset</a></li>
+<li class="chapter" data-level="5.3.3" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#step-3-verify-the-data-loaded"><i class="fa fa-check"></i><b>5.3.3</b> Step 3: Verify the Data Loaded</a></li>
+<li class="chapter" data-level="5.3.4" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#step-4-examine-whats-inside"><i class="fa fa-check"></i><b>5.3.4</b> Step 4: Examine What’s Inside</a></li>
+<li class="chapter" data-level="5.3.5" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#step-5-save-your-work"><i class="fa fa-check"></i><b>5.3.5</b> Step 5: Save Your Work</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#a-deeper-dive-3"><i class="fa fa-check"></i><b>5.4</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#what-is-a-flowset"><i class="fa fa-check"></i><b>5.4.1</b> What is a flowSet?</a></li>
+<li class="chapter" data-level="5.4.2" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#what-is-a-flowframe"><i class="fa fa-check"></i><b>5.4.2</b> What is a flowFrame?</a></li>
+<li class="chapter" data-level="5.4.3" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#the-direct-route-one-file-no-flowset"><i class="fa fa-check"></i><b>5.4.3</b> The Direct Route: One File, No flowSet</a></li>
+<li class="chapter" data-level="5.4.4" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#understanding-data-structures"><i class="fa fa-check"></i><b>5.4.4</b> Understanding Data Structures</a></li>
+<li class="chapter" data-level="5.4.5" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#three-ways-to-get-a-piece-out-of-an-object"><i class="fa fa-check"></i><b>5.4.5</b> Three Ways to Get a Piece Out of an Object</a></li>
+<li class="chapter" data-level="5.4.6" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#examining-data-dimensions"><i class="fa fa-check"></i><b>5.4.6</b> Examining Data Dimensions</a></li>
+<li class="chapter" data-level="5.4.7" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#understanding-channel-names"><i class="fa fa-check"></i><b>5.4.7</b> Understanding Channel Names</a></li>
+<li class="chapter" data-level="5.4.8" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#accessing-expression-data"><i class="fa fa-check"></i><b>5.4.8</b> Accessing Expression Data</a></li>
+<li class="chapter" data-level="5.4.9" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#keywords-and-metadata"><i class="fa fa-check"></i><b>5.4.9</b> Keywords and Metadata</a></li>
+<li class="chapter" data-level="5.4.10" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#working-with-multiple-files"><i class="fa fa-check"></i><b>5.4.10</b> Working with Multiple Files</a></li>
+<li class="chapter" data-level="5.4.11" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#subsetting-data"><i class="fa fa-check"></i><b>5.4.11</b> Subsetting Data</a></li>
+<li class="chapter" data-level="5.4.12" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#data-structure-summary"><i class="fa fa-check"></i><b>5.4.12</b> Data Structure Summary</a></li>
+<li class="chapter" data-level="5.4.13" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#saving-and-loading"><i class="fa fa-check"></i><b>5.4.13</b> Saving and Loading</a></li>
+<li class="chapter" data-level="5.4.14" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#common-operations-summary"><i class="fa fa-check"></i><b>5.4.14</b> Common Operations Summary</a></li>
+<li class="chapter" data-level="5.4.15" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#troubleshooting-1"><i class="fa fa-check"></i><b>5.4.15</b> Troubleshooting</a></li>
+<li class="chapter" data-level="5.4.16" data-path="chapter-5---loading-cytometry-data.html"><a href="chapter-5---loading-cytometry-data.html#whats-next-2"><i class="fa fa-check"></i><b>5.4.16</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html"><i class="fa fa-check"></i><b>6</b> Chapter 6 - Visualising Cytometry Data</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#what-youll-learn-2"><i class="fa fa-check"></i><b>6.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="6.2" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#understanding-cytometry-visualisation"><i class="fa fa-check"></i><b>6.2</b> Understanding Cytometry Visualisation</a></li>
+<li class="chapter" data-level="6.3" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#the-essentials-4"><i class="fa fa-check"></i><b>6.3</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#step-1-load-required-packages-1"><i class="fa fa-check"></i><b>6.3.1</b> Step 1: Load Required Packages</a></li>
+<li class="chapter" data-level="6.3.2" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#step-2-load-your-data"><i class="fa fa-check"></i><b>6.3.2</b> Step 2: Load Your Data</a></li>
+<li class="chapter" data-level="6.3.3" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#step-3-your-first-cytometry-plot"><i class="fa fa-check"></i><b>6.3.3</b> Step 3: Your First Cytometry Plot</a></li>
+<li class="chapter" data-level="6.3.4" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#step-4-improve-the-visualisation"><i class="fa fa-check"></i><b>6.3.4</b> Step 4: Improve the Visualisation</a></li>
+<li class="chapter" data-level="6.3.5" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#step-5-plot-multiple-samples"><i class="fa fa-check"></i><b>6.3.5</b> Step 5: Plot Multiple Samples</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#a-deeper-dive-4"><i class="fa fa-check"></i><b>6.4</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#understanding-autoplot"><i class="fa fa-check"></i><b>6.4.1</b> Understanding autoplot</a></li>
+<li class="chapter" data-level="6.4.2" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#binning-and-hexagonal-plots"><i class="fa fa-check"></i><b>6.4.2</b> Binning and Hexagonal Plots</a></li>
+<li class="chapter" data-level="6.4.3" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#transformation-for-visualisation"><i class="fa fa-check"></i><b>6.4.3</b> Transformation for Visualisation</a></li>
+<li class="chapter" data-level="6.4.4" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#selecting-different-channels"><i class="fa fa-check"></i><b>6.4.4</b> Selecting Different Channels</a></li>
+<li class="chapter" data-level="6.4.5" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#single-sample-vs-multiple-samples"><i class="fa fa-check"></i><b>6.4.5</b> Single Sample vs Multiple Samples</a></li>
+<li class="chapter" data-level="6.4.6" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#controlling-facets"><i class="fa fa-check"></i><b>6.4.6</b> Controlling Facets</a></li>
+<li class="chapter" data-level="6.4.7" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#using-ggcyto-instead-of-autoplot"><i class="fa fa-check"></i><b>6.4.7</b> Using ggcyto Instead of autoplot</a></li>
+<li class="chapter" data-level="6.4.8" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#plot-types"><i class="fa fa-check"></i><b>6.4.8</b> Plot Types</a></li>
+<li class="chapter" data-level="6.4.9" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#one-dimensional-plots-histograms"><i class="fa fa-check"></i><b>6.4.9</b> One-Dimensional Plots (Histograms)</a></li>
+<li class="chapter" data-level="6.4.10" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#customising-appearance"><i class="fa fa-check"></i><b>6.4.10</b> Customising Appearance</a></li>
+<li class="chapter" data-level="6.4.11" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#saving-plots"><i class="fa fa-check"></i><b>6.4.11</b> Saving Plots</a></li>
+<li class="chapter" data-level="6.4.12" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#comparing-samples-side-by-side"><i class="fa fa-check"></i><b>6.4.12</b> Comparing Samples Side by Side</a></li>
+<li class="chapter" data-level="6.4.13" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#building-complex-plots"><i class="fa fa-check"></i><b>6.4.13</b> Building Complex Plots</a></li>
+<li class="chapter" data-level="6.4.14" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#verification-plots"><i class="fa fa-check"></i><b>6.4.14</b> Verification Plots</a></li>
+<li class="chapter" data-level="6.4.15" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#common-plot-combinations"><i class="fa fa-check"></i><b>6.4.15</b> Common Plot Combinations</a></li>
+<li class="chapter" data-level="6.4.16" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#troubleshooting-visualisation"><i class="fa fa-check"></i><b>6.4.16</b> Troubleshooting Visualisation</a></li>
+<li class="chapter" data-level="6.4.17" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#best-practices"><i class="fa fa-check"></i><b>6.4.17</b> Best Practices</a></li>
+<li class="chapter" data-level="6.4.18" data-path="chapter-6---visualising-cytometry-data.html"><a href="chapter-6---visualising-cytometry-data.html#whats-next-3"><i class="fa fa-check"></i><b>6.4.18</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html"><i class="fa fa-check"></i><b>7</b> Chapter 7 - Gating Data</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#the-essentials-5"><i class="fa fa-check"></i><b>7.1</b> The Essentials</a></li>
+<li class="chapter" data-level="7.2" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#a-deeper-dive-5"><i class="fa fa-check"></i><b>7.2</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#event-length-a-standard-first-singlet-check"><i class="fa fa-check"></i><b>7.2.1</b> Event Length: A Standard First Singlet Check</a></li>
+<li class="chapter" data-level="7.2.2" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#oval-ellipse-gates"><i class="fa fa-check"></i><b>7.2.2</b> Oval (Ellipse) Gates</a></li>
+<li class="chapter" data-level="7.2.3" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#a-better-way-fitting-the-ellipse-statistically"><i class="fa fa-check"></i><b>7.2.3</b> A Better Way: Fitting the Ellipse Statistically</a></li>
+<li class="chapter" data-level="7.2.4" data-path="chapter-7---gating-data.html"><a href="chapter-7---gating-data.html#choosing-the-time-cutoff"><i class="fa fa-check"></i><b>7.2.4</b> Choosing the Time Cutoff</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html"><i class="fa fa-check"></i><b>8</b> Chapter 8 - Cleaning Channel Names with Premessa</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#what-youll-learn-3"><i class="fa fa-check"></i><b>8.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="8.2" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#the-essentials-6"><i class="fa fa-check"></i><b>8.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-1-load-required-packages-2"><i class="fa fa-check"></i><b>8.2.1</b> Step 1: Load Required Packages</a></li>
+<li class="chapter" data-level="8.2.2" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-2-run-premessas-channel-renaming-tool"><i class="fa fa-check"></i><b>8.2.2</b> Step 2: Run premessa’s Channel-Renaming Tool</a></li>
+<li class="chapter" data-level="8.2.3" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#which-channels-to-remove-and-why"><i class="fa fa-check"></i><b>8.2.3</b> Which Channels to Remove, and Why</a></li>
+<li class="chapter" data-level="8.2.4" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-3-verify-the-pruned-files"><i class="fa fa-check"></i><b>8.2.4</b> Step 3: Verify the Pruned Files</a></li>
+<li class="chapter" data-level="8.2.5" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-4-load-the-cleaned-files-back-into-r"><i class="fa fa-check"></i><b>8.2.5</b> Step 4: Load the Cleaned Files Back into R</a></li>
+<li class="chapter" data-level="8.2.6" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-5-save-your-work-1"><i class="fa fa-check"></i><b>8.2.6</b> Step 5: Save Your Work</a></li>
+<li class="chapter" data-level="8.2.7" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-6-give-samples-readable-names"><i class="fa fa-check"></i><b>8.2.7</b> Step 6: Give Samples Readable Names</a></li>
+<li class="chapter" data-level="8.2.8" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-7-reorder-the-samples"><i class="fa fa-check"></i><b>8.2.8</b> Step 7: Reorder the Samples</a></li>
+<li class="chapter" data-level="8.2.9" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#step-8-rename-channels-to-include-marker-names"><i class="fa fa-check"></i><b>8.2.9</b> Step 8: Rename Channels to Include Marker Names</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#a-deeper-dive-6"><i class="fa fa-check"></i><b>8.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#see-what-channel-matching-actually-bought-you"><i class="fa fa-check"></i><b>8.3.1</b> See What Channel Matching Actually Bought You</a></li>
+<li class="chapter" data-level="8.3.2" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#a-fallback-if-ggally-isnt-available"><i class="fa fa-check"></i><b>8.3.2</b> A Fallback If GGally Isn’t Available</a></li>
+<li class="chapter" data-level="8.3.3" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#taking-your-renamed-data-back-out-of-r"><i class="fa fa-check"></i><b>8.3.3</b> Taking Your Renamed Data Back Out of R</a></li>
+<li class="chapter" data-level="8.3.4" data-path="chapter-8---cleaning-channel-names-with-premessa.html"><a href="chapter-8---cleaning-channel-names-with-premessa.html#whats-next-4"><i class="fa fa-check"></i><b>8.3.4</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html"><i class="fa fa-check"></i><b>9</b> Chapter 9 - Removing Acquisition Anomalies</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#what-youll-learn-4"><i class="fa fa-check"></i><b>9.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="9.2" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#the-essentials-7"><i class="fa fa-check"></i><b>9.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-1-load-required-packages-3"><i class="fa fa-check"></i><b>9.2.1</b> Step 1: Load Required Packages</a></li>
+<li class="chapter" data-level="9.2.2" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-2-load-your-data-if-needed"><i class="fa fa-check"></i><b>9.2.2</b> Step 2: Load Your Data (if needed)</a></li>
+<li class="chapter" data-level="9.2.3" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-3-clean-each-file"><i class="fa fa-check"></i><b>9.2.3</b> Step 3: Clean Each File</a></li>
+<li class="chapter" data-level="9.2.4" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-4-save-your-work"><i class="fa fa-check"></i><b>9.2.4</b> Step 4: Save Your Work</a></li>
+<li class="chapter" data-level="9.2.5" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-5-see-what-was-actually-removed"><i class="fa fa-check"></i><b>9.2.5</b> Step 5: See What Was Actually Removed</a></li>
+<li class="chapter" data-level="9.2.6" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#step-6-check-cell-counts-before-and-after"><i class="fa fa-check"></i><b>9.2.6</b> Step 6: Check Cell Counts Before and After</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#a-deeper-dive-7"><i class="fa fa-check"></i><b>9.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#why-peacoqc-rather-than-flowcut"><i class="fa fa-check"></i><b>9.3.1</b> Why PeacoQC Rather Than flowCut</a></li>
+<li class="chapter" data-level="9.3.2" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#flowcut-and-what-happens-when-you-run-both"><i class="fa fa-check"></i><b>9.3.2</b> flowCut, and What Happens When You Run Both</a></li>
+<li class="chapter" data-level="9.3.3" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#making-flowcut-cut-anyway"><i class="fa fa-check"></i><b>9.3.3</b> Making flowCut Cut Anyway</a></li>
+<li class="chapter" data-level="9.3.4" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#other-tools-exist"><i class="fa fa-check"></i><b>9.3.4</b> Other Tools Exist</a></li>
+<li class="chapter" data-level="9.3.5" data-path="chapter-9---removing-acquisition-anomalies.html"><a href="chapter-9---removing-acquisition-anomalies.html#whats-next-5"><i class="fa fa-check"></i><b>9.3.5</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html"><i class="fa fa-check"></i><b>10</b> Chapter 10 - Downsampling</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#what-youll-learn-5"><i class="fa fa-check"></i><b>10.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="10.2" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#the-essentials-8"><i class="fa fa-check"></i><b>10.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="10.2.1" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-1-load-required-packages-and-data"><i class="fa fa-check"></i><b>10.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="10.2.2" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-2-downsample-every-file"><i class="fa fa-check"></i><b>10.2.2</b> Step 2: Downsample Every File</a></li>
+<li class="chapter" data-level="10.2.3" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-3-verify-the-event-counts"><i class="fa fa-check"></i><b>10.2.3</b> Step 3: Verify the Event Counts</a></li>
+<li class="chapter" data-level="10.2.4" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-4-save-your-work-1"><i class="fa fa-check"></i><b>10.2.4</b> Step 4: Save Your Work</a></li>
+<li class="chapter" data-level="10.2.5" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-5-compare-event-counts-before-and-after"><i class="fa fa-check"></i><b>10.2.5</b> Step 5: Compare Event Counts Before and After</a></li>
+<li class="chapter" data-level="10.2.6" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#step-6-reorder-the-samples"><i class="fa fa-check"></i><b>10.2.6</b> Step 6: Reorder the Samples</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#a-deeper-dive-8"><i class="fa fa-check"></i><b>10.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#what-samplefilter-is-actually-doing"><i class="fa fa-check"></i><b>10.3.1</b> What sampleFilter() Is Actually Doing</a></li>
+<li class="chapter" data-level="10.3.2" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#the-cost-of-a-fixed-downsample"><i class="fa fa-check"></i><b>10.3.2</b> The Cost of a Fixed Downsample</a></li>
+<li class="chapter" data-level="10.3.3" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#fixed-per-file-vs-proportional-downsampling"><i class="fa fa-check"></i><b>10.3.3</b> Fixed-Per-File vs Proportional Downsampling</a></li>
+<li class="chapter" data-level="10.3.4" data-path="chapter-10---downsampling.html"><a href="chapter-10---downsampling.html#whats-next-6"><i class="fa fa-check"></i><b>10.3.4</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html"><i class="fa fa-check"></i><b>11</b> Chapter 11 - Data Transformation</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#what-youll-learn-6"><i class="fa fa-check"></i><b>11.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="11.2" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#the-essentials-9"><i class="fa fa-check"></i><b>11.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="11.2.1" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#step-1-load-required-packages-and-data-1"><i class="fa fa-check"></i><b>11.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="11.2.2" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#step-2-apply-the-arcsinh-transformation"><i class="fa fa-check"></i><b>11.2.2</b> Step 2: Apply the arcsinh Transformation</a></li>
+<li class="chapter" data-level="11.2.3" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#step-3-save-your-work"><i class="fa fa-check"></i><b>11.2.3</b> Step 3: Save Your Work</a></li>
+<li class="chapter" data-level="11.2.4" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#step-4-compare-transformed-vs-untransformed"><i class="fa fa-check"></i><b>11.2.4</b> Step 4: Compare Transformed vs Untransformed</a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#a-deeper-dive-9"><i class="fa fa-check"></i><b>11.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="11.3.1" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#what-happens-with-the-wrong-cofactor"><i class="fa fa-check"></i><b>11.3.1</b> What Happens With the Wrong Cofactor</a></li>
+<li class="chapter" data-level="11.3.2" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#other-transforms-logicle-and-biexponential"><i class="fa fa-check"></i><b>11.3.2</b> Other Transforms: Logicle and Biexponential</a></li>
+<li class="chapter" data-level="11.3.3" data-path="chapter-11---data-transformation.html"><a href="chapter-11---data-transformation.html#whats-next-7"><i class="fa fa-check"></i><b>11.3.3</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html"><i class="fa fa-check"></i><b>12</b> Chapter 12 - Extracting Expression Data</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#what-youll-learn-7"><i class="fa fa-check"></i><b>12.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="12.2" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#the-essentials-10"><i class="fa fa-check"></i><b>12.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="12.2.1" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#step-1-load-required-packages-and-data-2"><i class="fa fa-check"></i><b>12.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="12.2.2" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#step-2-extract-the-expression-matrix"><i class="fa fa-check"></i><b>12.2.2</b> Step 2: Extract the Expression Matrix</a></li>
+<li class="chapter" data-level="12.2.3" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#step-3-label-each-cell-with-its-sample"><i class="fa fa-check"></i><b>12.2.3</b> Step 3: Label Each Cell With Its Sample</a></li>
+<li class="chapter" data-level="12.2.4" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#step-4-build-the-combined-table"><i class="fa fa-check"></i><b>12.2.4</b> Step 4: Build the Combined Table</a></li>
+<li class="chapter" data-level="12.2.5" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#step-5-reshape-to-long-format-and-add-condition"><i class="fa fa-check"></i><b>12.2.5</b> Step 5: Reshape to Long Format and Add Condition</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#a-deeper-dive-10"><i class="fa fa-check"></i><b>12.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="12.3.1" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#what-positional-joining-actually-does"><i class="fa fa-check"></i><b>12.3.1</b> What Positional Joining Actually Does</a></li>
+<li class="chapter" data-level="12.3.2" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#why-this-shape-matters"><i class="fa fa-check"></i><b>12.3.2</b> Why This Shape Matters</a></li>
+<li class="chapter" data-level="12.3.3" data-path="chapter-12---extracting-expression-data.html"><a href="chapter-12---extracting-expression-data.html#whats-next-8"><i class="fa fa-check"></i><b>12.3.3</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html"><i class="fa fa-check"></i><b>13</b> Chapter 13 - Full Visualisation</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#what-youll-learn-8"><i class="fa fa-check"></i><b>13.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="13.2" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#the-essentials-11"><i class="fa fa-check"></i><b>13.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="13.2.1" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#step-1-load-required-packages-and-data-3"><i class="fa fa-check"></i><b>13.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="13.2.2" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#step-2-density-plot-all-markers"><i class="fa fa-check"></i><b>13.2.2</b> Step 2: Density Plot, All Markers</a></li>
+<li class="chapter" data-level="13.2.3" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#step-3-ridge-plot-all-markers"><i class="fa fa-check"></i><b>13.2.3</b> Step 3: Ridge Plot, All Markers</a></li>
+<li class="chapter" data-level="13.2.4" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#step-4-a-simpler-view-median-expression-for-one-marker"><i class="fa fa-check"></i><b>13.2.4</b> Step 4: A Simpler View, Median Expression for One Marker</a></li>
+</ul></li>
+<li class="chapter" data-level="13.3" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#a-deeper-dive-11"><i class="fa fa-check"></i><b>13.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="13.3.1" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#the-colours-dont-actually-match-each-other"><i class="fa fa-check"></i><b>13.3.1</b> The Colours Don’t Actually Match Each Other</a></li>
+<li class="chapter" data-level="13.3.2" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#building-a-shared-colour-palette"><i class="fa fa-check"></i><b>13.3.2</b> Building a Shared Colour Palette</a></li>
+<li class="chapter" data-level="13.3.3" data-path="chapter-13---full-visualisation.html"><a href="chapter-13---full-visualisation.html#whats-next-9"><i class="fa fa-check"></i><b>13.3.3</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html"><i class="fa fa-check"></i><b>14</b> Chapter 14 - Dimensionality Reduction (UMAP and tSNE)</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#what-youll-learn-9"><i class="fa fa-check"></i><b>14.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="14.2" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#the-essentials-12"><i class="fa fa-check"></i><b>14.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="14.2.1" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-1-load-required-packages-and-data-4"><i class="fa fa-check"></i><b>14.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="14.2.2" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-2-run-umap-on-all-markers"><i class="fa fa-check"></i><b>14.2.2</b> Step 2: Run UMAP on All Markers</a></li>
+<li class="chapter" data-level="14.2.3" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-2b-set-the-axis-limits-once"><i class="fa fa-check"></i><b>14.2.3</b> Step 2b: Set the Axis Limits Once</a></li>
+<li class="chapter" data-level="14.2.4" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-3-plot-the-all-markers-umap"><i class="fa fa-check"></i><b>14.2.4</b> Step 3: Plot the All-Markers UMAP</a></li>
+<li class="chapter" data-level="14.2.5" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-4-run-tsne-on-all-markers"><i class="fa fa-check"></i><b>14.2.5</b> Step 4: Run tSNE on All Markers</a></li>
+<li class="chapter" data-level="14.2.6" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-5-plot-the-all-markers-tsne"><i class="fa fa-check"></i><b>14.2.6</b> Step 5: Plot the All-Markers tSNE</a></li>
+<li class="chapter" data-level="14.2.7" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-6-choose-lineage-markers"><i class="fa fa-check"></i><b>14.2.7</b> Step 6: Choose Lineage Markers</a></li>
+<li class="chapter" data-level="14.2.8" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-7-run-umap-on-lineage-markers-only"><i class="fa fa-check"></i><b>14.2.8</b> Step 7: Run UMAP on Lineage Markers Only</a></li>
+<li class="chapter" data-level="14.2.9" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-8-plot-the-lineage-only-umap"><i class="fa fa-check"></i><b>14.2.9</b> Step 8: Plot the Lineage-Only UMAP</a></li>
+<li class="chapter" data-level="14.2.10" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-9-run-tsne-on-lineage-markers-only"><i class="fa fa-check"></i><b>14.2.10</b> Step 9: Run tSNE on Lineage Markers Only</a></li>
+<li class="chapter" data-level="14.2.11" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#step-10-plot-the-lineage-only-tsne"><i class="fa fa-check"></i><b>14.2.11</b> Step 10: Plot the Lineage-Only tSNE</a></li>
+</ul></li>
+<li class="chapter" data-level="14.3" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#a-deeper-dive-12"><i class="fa fa-check"></i><b>14.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="14.3.1" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#how-much-of-this-picture-is-real-change-the-seed-and-find-out"><i class="fa fa-check"></i><b>14.3.1</b> How Much of This Picture Is Real? Change the Seed and Find Out</a></li>
+<li class="chapter" data-level="14.3.2" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#what-is-this-projection-actually-separating-on"><i class="fa fa-check"></i><b>14.3.2</b> What Is This Projection Actually Separating On?</a></li>
+<li class="chapter" data-level="14.3.3" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#reading-the-projection-expression-of-every-marker"><i class="fa fa-check"></i><b>14.3.3</b> Reading the Projection: Expression of Every Marker</a></li>
+<li class="chapter" data-level="14.3.4" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#naming-regions-and-why-it-has-to-be-done-within-a-group"><i class="fa fa-check"></i><b>14.3.4</b> Naming Regions, and Why It Has to Be Done Within a Group</a></li>
+<li class="chapter" data-level="14.3.5" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#then-move-them-by-hand"><i class="fa fa-check"></i><b>14.3.5</b> Then Move Them by Hand</a></li>
+<li class="chapter" data-level="14.3.6" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#gating-the-territories-not-the-markers"><i class="fa fa-check"></i><b>14.3.6</b> Gating the Territories, Not the Markers</a></li>
+<li class="chapter" data-level="14.3.7" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#does-condition-change-the-picture"><i class="fa fa-check"></i><b>14.3.7</b> Does Condition Change the Picture?</a></li>
+<li class="chapter" data-level="14.3.8" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#every-sample-side-by-side"><i class="fa fa-check"></i><b>14.3.8</b> Every Sample Side by Side</a></li>
+<li class="chapter" data-level="14.3.9" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#plot-a-fraction-not-everything"><i class="fa fa-check"></i><b>14.3.9</b> Plot a Fraction, Not Everything</a></li>
+<li class="chapter" data-level="14.3.10" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#assembling-a-figure-rather-than-a-plot"><i class="fa fa-check"></i><b>14.3.10</b> Assembling a Figure Rather Than a Plot</a></li>
+<li class="chapter" data-level="14.3.11" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#cycling-through-the-samples"><i class="fa fa-check"></i><b>14.3.11</b> Cycling Through the Samples</a></li>
+<li class="chapter" data-level="14.3.12" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#choosing-lineage-markers-interactively"><i class="fa fa-check"></i><b>14.3.12</b> Choosing Lineage Markers Interactively</a></li>
+<li class="chapter" data-level="14.3.13" data-path="chapter-14---dimensionality-reduction-umap-and-tsne.html"><a href="chapter-14---dimensionality-reduction-umap-and-tsne.html#whats-next-10"><i class="fa fa-check"></i><b>14.3.13</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html"><i class="fa fa-check"></i><b>15</b> Chapter 15 - Clustering and Population Discovery</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#what-youll-learn-10"><i class="fa fa-check"></i><b>15.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="15.2" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#the-essentials-13"><i class="fa fa-check"></i><b>15.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="15.2.1" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-1-load-required-packages-and-data-5"><i class="fa fa-check"></i><b>15.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="15.2.2" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-2-choose-markers-to-cluster-on"><i class="fa fa-check"></i><b>15.2.2</b> Step 2: Choose Markers to Cluster On</a></li>
+<li class="chapter" data-level="15.2.3" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-3-run-flowsom"><i class="fa fa-check"></i><b>15.2.3</b> Step 3: Run FlowSOM</a></li>
+<li class="chapter" data-level="15.2.4" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-4-add-cluster-labels-and-save"><i class="fa fa-check"></i><b>15.2.4</b> Step 4: Add Cluster Labels and Save</a></li>
+<li class="chapter" data-level="15.2.5" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-5-plot-clusters-on-the-umaptsne"><i class="fa fa-check"></i><b>15.2.5</b> Step 5: Plot Clusters on the UMAP/tSNE</a></li>
+<li class="chapter" data-level="15.2.6" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#step-6-cluster-abundance-per-sample"><i class="fa fa-check"></i><b>15.2.6</b> Step 6: Cluster Abundance per Sample</a></li>
+</ul></li>
+<li class="chapter" data-level="15.3" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#a-deeper-dive-13"><i class="fa fa-check"></i><b>15.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="15.3.1" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#an-alternative-phenograph"><i class="fa fa-check"></i><b>15.3.1</b> An Alternative: Phenograph</a></li>
+<li class="chapter" data-level="15.3.2" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#naming-clusters-from-marker-expression-a-worked-example"><i class="fa fa-check"></i><b>15.3.2</b> Naming Clusters from Marker Expression: A Worked Example</a></li>
+<li class="chapter" data-level="15.3.3" data-path="chapter-15---clustering-and-population-discovery.html"><a href="chapter-15---clustering-and-population-discovery.html#whats-next-11"><i class="fa fa-check"></i><b>15.3.3</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html"><i class="fa fa-check"></i><b>16</b> Chapter 16 - Statistical Analysis and Publication Figures</a>
+<ul>
+<li class="chapter" data-level="16.1" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#what-youll-learn-11"><i class="fa fa-check"></i><b>16.1</b> What You’ll Learn</a></li>
+<li class="chapter" data-level="16.2" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#the-essentials-14"><i class="fa fa-check"></i><b>16.2</b> The Essentials</a>
+<ul>
+<li class="chapter" data-level="16.2.1" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-1-load-required-packages-and-data-6"><i class="fa fa-check"></i><b>16.2.1</b> Step 1: Load Required Packages and Data</a></li>
+<li class="chapter" data-level="16.2.2" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-2-compute-median-expression-per-sample"><i class="fa fa-check"></i><b>16.2.2</b> Step 2: Compute Median Expression per Sample</a></li>
+<li class="chapter" data-level="16.2.3" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-3-mds-plot"><i class="fa fa-check"></i><b>16.2.3</b> Step 3: MDS Plot</a></li>
+<li class="chapter" data-level="16.2.4" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-4-heatmap-of-median-expression"><i class="fa fa-check"></i><b>16.2.4</b> Step 4: Heatmap of Median Expression</a></li>
+<li class="chapter" data-level="16.2.5" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-5-bubble-plot-of-median-expression"><i class="fa fa-check"></i><b>16.2.5</b> Step 5: Bubble Plot of Median Expression</a></li>
+<li class="chapter" data-level="16.2.6" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-6-non-redundancy-score-nrs"><i class="fa fa-check"></i><b>16.2.6</b> Step 6: Non-Redundancy Score (NRS)</a></li>
+<li class="chapter" data-level="16.2.7" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-7-finish-the-labels"><i class="fa fa-check"></i><b>16.2.7</b> Step 7: Finish the Labels</a></li>
+<li class="chapter" data-level="16.2.8" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#step-8-record-your-package-versions"><i class="fa fa-check"></i><b>16.2.8</b> Step 8: Record Your Package Versions</a></li>
+</ul></li>
+<li class="chapter" data-level="16.3" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#a-deeper-dive-14"><i class="fa fa-check"></i><b>16.3</b> A Deeper Dive</a>
+<ul>
+<li class="chapter" data-level="16.3.1" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#why-the-labels-arrive-unfinished"><i class="fa fa-check"></i><b>16.3.1</b> Why the Labels Arrive Unfinished</a></li>
+<li class="chapter" data-level="16.3.2" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#beyond-sessioninfo-renv"><i class="fa fa-check"></i><b>16.3.2</b> Beyond sessionInfo(): renv</a></li>
+<li class="chapter" data-level="16.3.3" data-path="chapter-16---statistical-analysis-and-publication-figures.html"><a href="chapter-16---statistical-analysis-and-publication-figures.html#whats-next-12"><i class="fa fa-check"></i><b>16.3.3</b> What’s Next</a></li>
+</ul></li>
+</ul></li>
 </ul>
 
-        <div class="book-extra">
-          
-        </div>
       </nav>
-</div>
-  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="chapter-11---data-transformation" class="section level1" number="11">
-<h1>
-<span class="header-section-number">11</span> Chapter 11 - Data Transformation<a class="anchor" aria-label="anchor" href="#chapter-11---data-transformation"><i class="fas fa-link"></i></a>
-</h1>
-<div id="what-youll-learn-6" class="section level2" number="11.1">
-<h2>
-<span class="header-section-number">11.1</span> What You’ll Learn<a class="anchor" aria-label="anchor" href="#what-youll-learn-6"><i class="fas fa-link"></i></a>
-</h2>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Analysing Cytometry Data with R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="chapter-11---data-transformation" class="section level1 hasAnchor" number="11">
+<h1><span class="header-section-number">Chapter 11</span> Chapter 11 - Data Transformation<a href="chapter-11---data-transformation.html#chapter-11---data-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="what-youll-learn-6" class="section level2 hasAnchor" number="11.1">
+<h2><span class="header-section-number">11.1</span> What You’ll Learn<a href="chapter-11---data-transformation.html#what-youll-learn-6" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Raw cytometry data is compressed near zero for negative populations and spread across orders of magnitude for positive ones. This chapter applies an arcsinh transformation, making the data usable for visualisation, dimensionality reduction, and clustering.</p>
 </div>
-<div id="the-essentials-9" class="section level2 essentials" number="11.2">
-<h2>
-<span class="header-section-number">11.2</span> The Essentials<a class="anchor" aria-label="anchor" href="#the-essentials-9"><i class="fas fa-link"></i></a>
-</h2>
-<div id="step-1-load-required-packages-and-data-1" class="section level3" number="11.2.1">
-<h3>
-<span class="header-section-number">11.2.1</span> Step 1: Load Required Packages and Data<a class="anchor" aria-label="anchor" href="#step-1-load-required-packages-and-data-1"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb199"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; here() starts at /Users/dcarragher/Sync/CLAUDE/Analysing-Cytometry-Data-With-R</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"Reordered_DOWNSAMPLED_CLEANED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div id="the-essentials-9" class="section level2 essentials hasAnchor" number="11.2">
+<h2><span class="header-section-number">11.2</span> The Essentials<a href="chapter-11---data-transformation.html#the-essentials-9" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<blockquote>
+<p><strong>Stuck?</strong> This chapter starts from <code>Data/RDS/Reordered_DOWNSAMPLED_CLEANED_FLOWSET.rds</code>, made in Chapter 10. If the first chunk below errors, or Chapter 10’s checkpoint didn’t match, copy that file from the course data download over your own, then carry on from here.</p>
+</blockquote>
+<div id="step-1-load-required-packages-and-data-1" class="section level3 hasAnchor" number="11.2.1">
+<h3><span class="header-section-number">11.2.1</span> Step 1: Load Required Packages and Data<a href="chapter-11---data-transformation.html#step-1-load-required-packages-and-data-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb203-1"><a href="chapter-11---data-transformation.html#cb203-1" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb203-2"><a href="chapter-11---data-transformation.html#cb203-2" tabindex="-1"></a><span class="co">#&gt; here() starts at /Users/dcarragher/Sync/CLAUDE/Analysing-Cytometry-Data-With-R</span></span>
+<span id="cb203-3"><a href="chapter-11---data-transformation.html#cb203-3" tabindex="-1"></a><span class="fu">library</span>(flowCore)</span>
+<span id="cb203-4"><a href="chapter-11---data-transformation.html#cb203-4" tabindex="-1"></a></span>
+<span id="cb203-5"><a href="chapter-11---data-transformation.html#cb203-5" tabindex="-1"></a>Reordered_DOWNSAMPLED_CLEANED_FLOWSET <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="st">&quot;Data&quot;</span>, <span class="st">&quot;RDS&quot;</span>, <span class="st">&quot;Reordered_DOWNSAMPLED_CLEANED_FLOWSET.rds&quot;</span>))</span></code></pre></div>
 </div>
-<div id="step-2-apply-the-arcsinh-transformation" class="section level3" number="11.2.2">
-<h3>
-<span class="header-section-number">11.2.2</span> Step 2: Apply the arcsinh Transformation<a class="anchor" aria-label="anchor" href="#step-2-apply-the-arcsinh-transformation"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb200"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">cofactor</span> <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">expr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span>  <span class="va">expr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">asinh</a></span><span class="op">(</span><span class="va">expr</span> <span class="op">/</span> <span class="va">cofactor</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">expr</span></span>
-<span>  <span class="va">x</span></span>
-<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<div id="step-2-apply-the-arcsinh-transformation" class="section level3 hasAnchor" number="11.2.2">
+<h3><span class="header-section-number">11.2.2</span> Step 2: Apply the arcsinh Transformation<a href="chapter-11---data-transformation.html#step-2-apply-the-arcsinh-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb204"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb204-1"><a href="chapter-11---data-transformation.html#cb204-1" tabindex="-1"></a>ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET <span class="ot">&lt;-</span> <span class="fu">fsApply</span>(Reordered_DOWNSAMPLED_CLEANED_FLOWSET, <span class="cf">function</span>(x, <span class="at">cofactor =</span> <span class="dv">5</span>) {</span>
+<span id="cb204-2"><a href="chapter-11---data-transformation.html#cb204-2" tabindex="-1"></a>  expr <span class="ot">&lt;-</span> <span class="fu">exprs</span>(x)</span>
+<span id="cb204-3"><a href="chapter-11---data-transformation.html#cb204-3" tabindex="-1"></a>  expr <span class="ot">&lt;-</span> <span class="fu">asinh</span>(expr <span class="sc">/</span> cofactor)</span>
+<span id="cb204-4"><a href="chapter-11---data-transformation.html#cb204-4" tabindex="-1"></a>  <span class="fu">exprs</span>(x) <span class="ot">&lt;-</span> expr</span>
+<span id="cb204-5"><a href="chapter-11---data-transformation.html#cb204-5" tabindex="-1"></a>  x</span>
+<span id="cb204-6"><a href="chapter-11---data-transformation.html#cb204-6" tabindex="-1"></a>})</span></code></pre></div>
 <p><code>cofactor = 5</code> is the standard scale factor for mass cytometry (CyTOF) data. Conventional/spectral flow cytometry typically uses a much larger cofactor, around 150, since the dynamic range and noise characteristics are different.</p>
 </div>
-<div id="step-3-save-your-work" class="section level3" number="11.2.3">
-<h3>
-<span class="header-section-number">11.2.3</span> Step 3: Save Your Work<a class="anchor" aria-label="anchor" href="#step-3-save-your-work"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb201"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb202"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="st">"RDS"</span>, <span class="st">"ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET.rds"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<div id="step-3-save-your-work" class="section level3 hasAnchor" number="11.2.3">
+<h3><span class="header-section-number">11.2.3</span> Step 3: Save Your Work<a href="chapter-11---data-transformation.html#step-3-save-your-work" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb205"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb205-1"><a href="chapter-11---data-transformation.html#cb205-1" tabindex="-1"></a><span class="fu">saveRDS</span>(ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET, <span class="fu">here</span>(<span class="st">&quot;Data&quot;</span>, <span class="st">&quot;RDS&quot;</span>, <span class="st">&quot;ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET.rds&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb206"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb206-1"><a href="chapter-11---data-transformation.html#cb206-1" tabindex="-1"></a><span class="fu">file.exists</span>(<span class="fu">here</span>(<span class="st">&quot;Data&quot;</span>, <span class="st">&quot;RDS&quot;</span>, <span class="st">&quot;ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET.rds&quot;</span>))</span>
+<span id="cb206-2"><a href="chapter-11---data-transformation.html#cb206-2" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 <p><strong>Success looks like this:</strong></p>
 <pre><code>[1] TRUE</code></pre>
 </div>
-<div id="step-4-compare-transformed-vs-untransformed" class="section level3" number="11.2.4">
-<h3>
-<span class="header-section-number">11.2.4</span> Step 4: Compare Transformed vs Untransformed<a class="anchor" aria-label="anchor" href="#step-4-compare-transformed-vs-untransformed"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb204"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RGLab/ggcyto/issues">ggcyto</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: ggplot2</span></span>
-<span><span class="co">#&gt; Loading required package: ncdfFlow</span></span>
-<span><span class="co">#&gt; Loading required package: BH</span></span>
-<span><span class="co">#&gt; Loading required package: flowWorkspace</span></span>
-<span><span class="co">#&gt; As part of improvements to flowWorkspace, some behavior of</span></span>
-<span><span class="co">#&gt; GatingSet objects has changed. For details, please read the section</span></span>
-<span><span class="co">#&gt; titled "The cytoframe and cytoset classes" in the package vignette:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   vignette("flowWorkspace-Introduction", "flowWorkspace")</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># `bins = 40`, not the 128 used earlier in the book, because Chapter 10 downsampled</span></span>
-<span><span class="co"># every file to 5000 events. 128 bins carves the plot into roughly 16000 hex cells,</span></span>
-<span><span class="co"># which leaves most cells holding a single event and nothing for the density colour</span></span>
-<span><span class="co"># scale to show. Earlier chapters plot 18000 to 24000 events per sample, where 128</span></span>
-<span><span class="co"># is fine. Fewer events means fewer, larger bins.</span></span>
-<span><span class="va">UNTRANSFORMED_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">name</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Untransformed"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">TRANSFORMED_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">name</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"arcsinh transformed"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">UNTRANSFORMED_PLOT</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">TRANSFORMED_PLOT</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="11-Data-Transformation_files/figure-html/compare-transform-1.png" alt="" width="672"></div>
-<div class="sourceCode" id="cb205"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"arcsinh_transform_comparison.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"arcsinh_transform_comparison.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+<div id="step-4-compare-transformed-vs-untransformed" class="section level3 hasAnchor" number="11.2.4">
+<h3><span class="header-section-number">11.2.4</span> Step 4: Compare Transformed vs Untransformed<a href="chapter-11---data-transformation.html#step-4-compare-transformed-vs-untransformed" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb208"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb208-1"><a href="chapter-11---data-transformation.html#cb208-1" tabindex="-1"></a><span class="fu">library</span>(ggcyto)</span>
+<span id="cb208-2"><a href="chapter-11---data-transformation.html#cb208-2" tabindex="-1"></a><span class="co">#&gt; Loading required package: ggplot2</span></span>
+<span id="cb208-3"><a href="chapter-11---data-transformation.html#cb208-3" tabindex="-1"></a><span class="co">#&gt; Loading required package: ncdfFlow</span></span>
+<span id="cb208-4"><a href="chapter-11---data-transformation.html#cb208-4" tabindex="-1"></a><span class="co">#&gt; Loading required package: BH</span></span>
+<span id="cb208-5"><a href="chapter-11---data-transformation.html#cb208-5" tabindex="-1"></a><span class="co">#&gt; Loading required package: flowWorkspace</span></span>
+<span id="cb208-6"><a href="chapter-11---data-transformation.html#cb208-6" tabindex="-1"></a><span class="co">#&gt; As part of improvements to flowWorkspace, some behavior of</span></span>
+<span id="cb208-7"><a href="chapter-11---data-transformation.html#cb208-7" tabindex="-1"></a><span class="co">#&gt; GatingSet objects has changed. For details, please read the section</span></span>
+<span id="cb208-8"><a href="chapter-11---data-transformation.html#cb208-8" tabindex="-1"></a><span class="co">#&gt; titled &quot;The cytoframe and cytoset classes&quot; in the package vignette:</span></span>
+<span id="cb208-9"><a href="chapter-11---data-transformation.html#cb208-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb208-10"><a href="chapter-11---data-transformation.html#cb208-10" tabindex="-1"></a><span class="co">#&gt;   vignette(&quot;flowWorkspace-Introduction&quot;, &quot;flowWorkspace&quot;)</span></span>
+<span id="cb208-11"><a href="chapter-11---data-transformation.html#cb208-11" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span>
+<span id="cb208-12"><a href="chapter-11---data-transformation.html#cb208-12" tabindex="-1"></a></span>
+<span id="cb208-13"><a href="chapter-11---data-transformation.html#cb208-13" tabindex="-1"></a><span class="co"># `bins = 40`, not the 128 used earlier in the book, because Chapter 10 downsampled</span></span>
+<span id="cb208-14"><a href="chapter-11---data-transformation.html#cb208-14" tabindex="-1"></a><span class="co"># every file to 5000 events. 128 bins carves the plot into roughly 16000 hex cells,</span></span>
+<span id="cb208-15"><a href="chapter-11---data-transformation.html#cb208-15" tabindex="-1"></a><span class="co"># which leaves most cells holding a single event and nothing for the density colour</span></span>
+<span id="cb208-16"><a href="chapter-11---data-transformation.html#cb208-16" tabindex="-1"></a><span class="co"># scale to show. Earlier chapters plot 18000 to 24000 events per sample, where 128</span></span>
+<span id="cb208-17"><a href="chapter-11---data-transformation.html#cb208-17" tabindex="-1"></a><span class="co"># is fine. Fewer events means fewer, larger bins.</span></span>
+<span id="cb208-18"><a href="chapter-11---data-transformation.html#cb208-18" tabindex="-1"></a>UNTRANSFORMED_PLOT <span class="ot">&lt;-</span> <span class="fu">ggcyto</span>(Reordered_DOWNSAMPLED_CLEANED_FLOWSET, <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;Sm149Di_CD34&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Yb172Di_CD38&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb208-19"><a href="chapter-11---data-transformation.html#cb208-19" tabindex="-1"></a>  <span class="fu">geom_hex</span>(<span class="at">bins =</span> <span class="dv">40</span>) <span class="sc">+</span></span>
+<span id="cb208-20"><a href="chapter-11---data-transformation.html#cb208-20" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>name) <span class="sc">+</span></span>
+<span id="cb208-21"><a href="chapter-11---data-transformation.html#cb208-21" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Untransformed&quot;</span>) <span class="sc">+</span></span>
+<span id="cb208-22"><a href="chapter-11---data-transformation.html#cb208-22" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
+<span id="cb208-23"><a href="chapter-11---data-transformation.html#cb208-23" tabindex="-1"></a></span>
+<span id="cb208-24"><a href="chapter-11---data-transformation.html#cb208-24" tabindex="-1"></a>TRANSFORMED_PLOT <span class="ot">&lt;-</span> <span class="fu">ggcyto</span>(ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET, <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;Sm149Di_CD34&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Yb172Di_CD38&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb208-25"><a href="chapter-11---data-transformation.html#cb208-25" tabindex="-1"></a>  <span class="fu">geom_hex</span>(<span class="at">bins =</span> <span class="dv">40</span>) <span class="sc">+</span></span>
+<span id="cb208-26"><a href="chapter-11---data-transformation.html#cb208-26" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>name) <span class="sc">+</span></span>
+<span id="cb208-27"><a href="chapter-11---data-transformation.html#cb208-27" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;arcsinh transformed&quot;</span>) <span class="sc">+</span></span>
+<span id="cb208-28"><a href="chapter-11---data-transformation.html#cb208-28" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
+<span id="cb208-29"><a href="chapter-11---data-transformation.html#cb208-29" tabindex="-1"></a></span>
+<span id="cb208-30"><a href="chapter-11---data-transformation.html#cb208-30" tabindex="-1"></a><span class="fu">plot_grid</span>(<span class="fu">as.ggplot</span>(UNTRANSFORMED_PLOT), <span class="fu">as.ggplot</span>(TRANSFORMED_PLOT))</span></code></pre></div>
+<p><img src="11-Data-Transformation_files/figure-html/compare-transform-1.png" alt="" width="672" /></p>
+<div class="sourceCode" id="cb209"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb209-1"><a href="chapter-11---data-transformation.html#cb209-1" tabindex="-1"></a></span>
+<span id="cb209-2"><a href="chapter-11---data-transformation.html#cb209-2" tabindex="-1"></a><span class="fu">ggsave2</span>(<span class="fu">here</span>(<span class="st">&quot;Figures&quot;</span>, <span class="st">&quot;arcsinh_transform_comparison.pdf&quot;</span>), <span class="at">width =</span> <span class="dv">11</span>, <span class="at">height =</span> <span class="fl">8.5</span>)</span>
+<span id="cb209-3"><a href="chapter-11---data-transformation.html#cb209-3" tabindex="-1"></a><span class="fu">ggsave2</span>(<span class="fu">here</span>(<span class="st">&quot;Figures&quot;</span>, <span class="st">&quot;arcsinh_transform_comparison.png&quot;</span>), <span class="at">width =</span> <span class="dv">11</span>, <span class="at">height =</span> <span class="fl">8.5</span>)</span></code></pre></div>
+<p><strong>Check before you move on.</strong> This reads back the file the next chapter loads and prints a few facts about it. Your numbers should match the ones printed here. If they don’t, something earlier in this chapter went wrong: go back over it, or use the <strong>Stuck?</strong> note at the top of the next chapter.</p>
+<div class="sourceCode" id="cb210"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb210-1"><a href="chapter-11---data-transformation.html#cb210-1" tabindex="-1"></a>CHECK <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;Data&quot;</span>, <span class="st">&quot;RDS&quot;</span>, <span class="st">&quot;ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET.rds&quot;</span>))</span>
+<span id="cb210-2"><a href="chapter-11---data-transformation.html#cb210-2" tabindex="-1"></a><span class="fu">length</span>(CHECK)          <span class="co"># Number of samples</span></span>
+<span id="cb210-3"><a href="chapter-11---data-transformation.html#cb210-3" tabindex="-1"></a><span class="co">#&gt; [1] 5</span></span>
+<span id="cb210-4"><a href="chapter-11---data-transformation.html#cb210-4" tabindex="-1"></a><span class="fu">fsApply</span>(CHECK, nrow)   <span class="co"># Cells in each sample</span></span>
+<span id="cb210-5"><a href="chapter-11---data-transformation.html#cb210-5" tabindex="-1"></a><span class="co">#&gt;                   [,1]</span></span>
+<span id="cb210-6"><a href="chapter-11---data-transformation.html#cb210-6" tabindex="-1"></a><span class="co">#&gt; 2%PFA - NAS PERM  5000</span></span>
+<span id="cb210-7"><a href="chapter-11---data-transformation.html#cb210-7" tabindex="-1"></a><span class="co">#&gt; 8%PFA - NAS PERM  5000</span></span>
+<span id="cb210-8"><a href="chapter-11---data-transformation.html#cb210-8" tabindex="-1"></a><span class="co">#&gt; 4%PFA - NO PERM   5000</span></span>
+<span id="cb210-9"><a href="chapter-11---data-transformation.html#cb210-9" tabindex="-1"></a><span class="co">#&gt; 4%PFA - NAS PERM  5000</span></span>
+<span id="cb210-10"><a href="chapter-11---data-transformation.html#cb210-10" tabindex="-1"></a><span class="co">#&gt; PFA+GLUT-NAS PERM 5000</span></span>
+<span id="cb210-11"><a href="chapter-11---data-transformation.html#cb210-11" tabindex="-1"></a><span class="fu">ncol</span>(CHECK[[<span class="dv">1</span>]])       <span class="co"># Number of channels</span></span>
+<span id="cb210-12"><a href="chapter-11---data-transformation.html#cb210-12" tabindex="-1"></a><span class="co">#&gt; [1] 40</span></span>
+<span id="cb210-13"><a href="chapter-11---data-transformation.html#cb210-13" tabindex="-1"></a><span class="fu">rm</span>(CHECK)</span></code></pre></div>
 </div>
 </div>
-<div id="a-deeper-dive-9" class="section level2 deeper-dive" number="11.3">
-<h2>
-<span class="header-section-number">11.3</span> A Deeper Dive<a class="anchor" aria-label="anchor" href="#a-deeper-dive-9"><i class="fas fa-link"></i></a>
-</h2>
+<div id="a-deeper-dive-9" class="section level2 deeper-dive hasAnchor" number="11.3">
+<h2><span class="header-section-number">11.3</span> A Deeper Dive<a href="chapter-11---data-transformation.html#a-deeper-dive-9" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Why arcsinh rather than log10? Log transforms can’t handle zero or negative values, which mass cytometry data genuinely has (background-subtracted signal can go slightly negative). Arcsinh behaves like a log transform for large values but stays well-defined through zero and into negative numbers, which is why it’s the standard choice for CyTOF data specifically.</p>
 <p>There’s a common workaround, adding a small pseudocount before taking the log (<code>log10(x + pseudocount)</code>), which does dodge the zero/negative problem. It’s a real technique, but it doesn’t make log10 the better choice here: the pseudocount is an arbitrary tuning value with no principled way to set it for a given dataset, unlike arcsinh’s cofactor, which has an established, defensible value for a given cytometry platform. Arcsinh solves the same problem without introducing a new arbitrary parameter.</p>
-<div id="what-happens-with-the-wrong-cofactor" class="section level3" number="11.3.1">
-<h3>
-<span class="header-section-number">11.3.1</span> What Happens With the Wrong Cofactor<a class="anchor" aria-label="anchor" href="#what-happens-with-the-wrong-cofactor"><i class="fas fa-link"></i></a>
-</h3>
+<div id="what-happens-with-the-wrong-cofactor" class="section level3 hasAnchor" number="11.3.1">
+<h3><span class="header-section-number">11.3.1</span> What Happens With the Wrong Cofactor<a href="chapter-11---data-transformation.html#what-happens-with-the-wrong-cofactor" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Using the wrong cofactor visibly distorts the data. <code>cofactor = 5</code> is correct for mass cytometry; <code>cofactor = 150</code> is correct for conventional/spectral flow cytometry. Applying flow’s cofactor to mass cytometry data (or vice versa) shows why that number matters:</p>
-<div class="sourceCode" id="cb206"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">WRONG_COFACTOR_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/fsApply.html">fsApply</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">cofactor</span> <span class="op">=</span> <span class="fl">150</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">expr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span>  <span class="va">expr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">asinh</a></span><span class="op">(</span><span class="va">expr</span> <span class="op">/</span> <span class="va">cofactor</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html">exprs</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">expr</span></span>
-<span>  <span class="va">x</span></span>
-<span><span class="op">}</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">CORRECT_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">name</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"cofactor = 5 (correct for mass cytometry)"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">WRONG_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">WRONG_COFACTOR_FLOWSET</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">name</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"cofactor = 150 (correct for flow, wrong here)"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">CORRECT_PLOT</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">WRONG_PLOT</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="11-Data-Transformation_files/figure-html/wrong-cofactor-demo-1.png" alt="" width="672"></div>
-<div class="sourceCode" id="cb207"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"cofactor_comparison.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"cofactor_comparison.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">11</span>, height <span class="op">=</span> <span class="fl">8.5</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb211-1"><a href="chapter-11---data-transformation.html#cb211-1" tabindex="-1"></a>WRONG_COFACTOR_FLOWSET <span class="ot">&lt;-</span> <span class="fu">fsApply</span>(Reordered_DOWNSAMPLED_CLEANED_FLOWSET, <span class="cf">function</span>(x, <span class="at">cofactor =</span> <span class="dv">150</span>) {</span>
+<span id="cb211-2"><a href="chapter-11---data-transformation.html#cb211-2" tabindex="-1"></a>  expr <span class="ot">&lt;-</span> <span class="fu">exprs</span>(x)</span>
+<span id="cb211-3"><a href="chapter-11---data-transformation.html#cb211-3" tabindex="-1"></a>  expr <span class="ot">&lt;-</span> <span class="fu">asinh</span>(expr <span class="sc">/</span> cofactor)</span>
+<span id="cb211-4"><a href="chapter-11---data-transformation.html#cb211-4" tabindex="-1"></a>  <span class="fu">exprs</span>(x) <span class="ot">&lt;-</span> expr</span>
+<span id="cb211-5"><a href="chapter-11---data-transformation.html#cb211-5" tabindex="-1"></a>  x</span>
+<span id="cb211-6"><a href="chapter-11---data-transformation.html#cb211-6" tabindex="-1"></a>})</span>
+<span id="cb211-7"><a href="chapter-11---data-transformation.html#cb211-7" tabindex="-1"></a></span>
+<span id="cb211-8"><a href="chapter-11---data-transformation.html#cb211-8" tabindex="-1"></a>CORRECT_PLOT <span class="ot">&lt;-</span> <span class="fu">ggcyto</span>(ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET, <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;Sm149Di_CD34&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Yb172Di_CD38&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb211-9"><a href="chapter-11---data-transformation.html#cb211-9" tabindex="-1"></a>  <span class="fu">geom_hex</span>(<span class="at">bins =</span> <span class="dv">40</span>) <span class="sc">+</span></span>
+<span id="cb211-10"><a href="chapter-11---data-transformation.html#cb211-10" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>name) <span class="sc">+</span></span>
+<span id="cb211-11"><a href="chapter-11---data-transformation.html#cb211-11" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;cofactor = 5 (correct for mass cytometry)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb211-12"><a href="chapter-11---data-transformation.html#cb211-12" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
+<span id="cb211-13"><a href="chapter-11---data-transformation.html#cb211-13" tabindex="-1"></a></span>
+<span id="cb211-14"><a href="chapter-11---data-transformation.html#cb211-14" tabindex="-1"></a>WRONG_PLOT <span class="ot">&lt;-</span> <span class="fu">ggcyto</span>(WRONG_COFACTOR_FLOWSET, <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;Sm149Di_CD34&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Yb172Di_CD38&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb211-15"><a href="chapter-11---data-transformation.html#cb211-15" tabindex="-1"></a>  <span class="fu">geom_hex</span>(<span class="at">bins =</span> <span class="dv">40</span>) <span class="sc">+</span></span>
+<span id="cb211-16"><a href="chapter-11---data-transformation.html#cb211-16" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>name) <span class="sc">+</span></span>
+<span id="cb211-17"><a href="chapter-11---data-transformation.html#cb211-17" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;cofactor = 150 (correct for flow, wrong here)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb211-18"><a href="chapter-11---data-transformation.html#cb211-18" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
+<span id="cb211-19"><a href="chapter-11---data-transformation.html#cb211-19" tabindex="-1"></a></span>
+<span id="cb211-20"><a href="chapter-11---data-transformation.html#cb211-20" tabindex="-1"></a><span class="fu">plot_grid</span>(<span class="fu">as.ggplot</span>(CORRECT_PLOT), <span class="fu">as.ggplot</span>(WRONG_PLOT))</span></code></pre></div>
+<p><img src="11-Data-Transformation_files/figure-html/wrong-cofactor-demo-1.png" alt="" width="672" /></p>
+<div class="sourceCode" id="cb212"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb212-1"><a href="chapter-11---data-transformation.html#cb212-1" tabindex="-1"></a></span>
+<span id="cb212-2"><a href="chapter-11---data-transformation.html#cb212-2" tabindex="-1"></a><span class="fu">ggsave2</span>(<span class="fu">here</span>(<span class="st">&quot;Figures&quot;</span>, <span class="st">&quot;cofactor_comparison.pdf&quot;</span>), <span class="at">width =</span> <span class="dv">11</span>, <span class="at">height =</span> <span class="fl">8.5</span>)</span>
+<span id="cb212-3"><a href="chapter-11---data-transformation.html#cb212-3" tabindex="-1"></a><span class="fu">ggsave2</span>(<span class="fu">here</span>(<span class="st">&quot;Figures&quot;</span>, <span class="st">&quot;cofactor_comparison.png&quot;</span>), <span class="at">width =</span> <span class="dv">11</span>, <span class="at">height =</span> <span class="fl">8.5</span>)</span></code></pre></div>
 <p>Too large a cofactor under-transforms mass cytometry data, populations stay compressed near the origin, closer to how the raw, untransformed plot looked in Step 4, because the divisor is too big relative to the actual signal range. The right cofactor depends on the instrument’s dynamic range and noise characteristics, and one picked for the wrong platform brings back the compression problem the transformation is meant to remove. It’s worth trying other values yourself (1, 20, 500) on this same data to see the full range of distortion.</p>
 </div>
-<div id="other-transforms-logicle-and-biexponential" class="section level3" number="11.3.2">
-<h3>
-<span class="header-section-number">11.3.2</span> Other Transforms: Logicle and Biexponential<a class="anchor" aria-label="anchor" href="#other-transforms-logicle-and-biexponential"><i class="fas fa-link"></i></a>
-</h3>
+<div id="other-transforms-logicle-and-biexponential" class="section level3 hasAnchor" number="11.3.2">
+<h3><span class="header-section-number">11.3.2</span> Other Transforms: Logicle and Biexponential<a href="chapter-11---data-transformation.html#other-transforms-logicle-and-biexponential" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Arcsinh isn’t the only transform built for compressed, wide-dynamic-range cytometry data, <code>logicle</code> and <code>biexponential</code> are the other two you’ll see most often, both from conventional flow cytometry rather than CyTOF specifically. Let’s see what they do to the same data. Both also have more than one way to set their parameters, so we’ll compare two of each:</p>
-<div class="sourceCode" id="cb208"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">flowCore</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">openCyto</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">channels_to_transform</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Sm149Di_CD34"</span>, <span class="st">"Yb172Di_CD38"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Logicle, fit A: parameters estimated from a single sample</span></span>
-<span><span class="va">logicle_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/logicleTransform.html">estimateLogicle</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, channels <span class="op">=</span> <span class="va">channels_to_transform</span><span class="op">)</span></span>
-<span><span class="va">LOGICLE_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/transform.html">transform</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="va">logicle_params</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Logicle, fit B: parameters estimated across the whole flowSet, using the median of each channel's negative population</span></span>
-<span><span class="va">logicle_median_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/estimateMedianLogicle.html">estimateMedianLogicle</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, channels <span class="op">=</span> <span class="va">channels_to_transform</span><span class="op">)</span></span>
-<span><span class="va">LOGICLE_MEDIAN_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/transform.html">transform</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="va">logicle_median_params</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Biexponential, fit A: flowCore's own defaults</span></span>
-<span><span class="va">biexp_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/transformList-class.html">transformList</a></span><span class="op">(</span><span class="va">channels_to_transform</span>, <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/biexponentialTransform.html">biexponentialTransform</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">BIEXP_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/transform.html">transform</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="va">biexp_list</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Biexponential, fit B: explicit width parameter (w = 5)</span></span>
-<span><span class="va">biexp_list_w5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/transformList-class.html">transformList</a></span><span class="op">(</span><span class="va">channels_to_transform</span>, <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/biexponentialTransform.html">biexponentialTransform</a></span><span class="op">(</span><span class="st">"biexpTransformW5"</span>, w <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">BIEXP_W5_FLOWSET</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flowCore/man/transform.html">transform</a></span><span class="op">(</span><span class="va">Reordered_DOWNSAMPLED_CLEANED_FLOWSET</span>, <span class="va">biexp_list_w5</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># One sample is enough for this figure. It compares transforms, not samples, and</span></span>
-<span><span class="co"># Step 4 above already shows all five. Plotting the whole flowSet here puts five</span></span>
-<span><span class="co"># facets inside each of five panels, twenty five scatters in one figure, and every</span></span>
-<span><span class="co"># one of them is too small to read. Sample 1 is also the sample the single-sample</span></span>
-<span><span class="co"># logicle fit was estimated from, so this is a like-for-like comparison.</span></span>
-<span><span class="va">SAMPLE</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
-<span></span>
-<span><span class="co"># `bins` is set well below the usual 128 here on purpose. Chapter 10 downsampled</span></span>
-<span><span class="co"># every file to 5000 events, and 128 bins carves the plot into roughly 16000 hex</span></span>
-<span><span class="co"># cells, so almost every occupied hex holds a single event and the density colour</span></span>
-<span><span class="co"># scale has nothing to show. Fewer, larger hexes put enough events in each cell for</span></span>
-<span><span class="co"># the dense core to actually read as dense.</span></span>
-<span><span class="va">ARCSINH_ONE_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET</span><span class="op">[[</span><span class="va">SAMPLE</span><span class="op">]</span><span class="op">]</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"arcsinh, cofactor 5"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">LOGICLE_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">LOGICLE_FLOWSET</span><span class="op">[[</span><span class="va">SAMPLE</span><span class="op">]</span><span class="op">]</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"logicle, single-sample fit"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">LOGICLE_MEDIAN_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">LOGICLE_MEDIAN_FLOWSET</span><span class="op">[[</span><span class="va">SAMPLE</span><span class="op">]</span><span class="op">]</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"logicle, whole-flowSet median fit"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">BIEXP_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">BIEXP_FLOWSET</span><span class="op">[[</span><span class="va">SAMPLE</span><span class="op">]</span><span class="op">]</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"biexponential, defaults"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">BIEXP_W5_PLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/ggcyto.html">ggcyto</a></span><span class="op">(</span><span class="va">BIEXP_W5_FLOWSET</span><span class="op">[[</span><span class="va">SAMPLE</span><span class="op">]</span><span class="op">]</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Sm149Di_CD34"</span>, y <span class="op">=</span> <span class="st">"Yb172Di_CD38"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_hex.html">geom_hex</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"biexponential, w = 5"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">ARCSINH_ONE_PLOT</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">LOGICLE_PLOT</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">LOGICLE_MEDIAN_PLOT</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">BIEXP_PLOT</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ggcyto/man/as.ggplot.html">as.ggplot</a></span><span class="op">(</span><span class="va">BIEXP_W5_PLOT</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="11-Data-Transformation_files/figure-html/other-transforms-1.png" alt="" width="672"></div>
-<div class="sourceCode" id="cb209"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"transform_type_comparison.pdf"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">20</span>, height <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/ggsave2.html">ggsave2</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"Figures"</span>, <span class="st">"transform_type_comparison.png"</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">20</span>, height <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb213-1"><a href="chapter-11---data-transformation.html#cb213-1" tabindex="-1"></a><span class="fu">library</span>(flowCore)</span>
+<span id="cb213-2"><a href="chapter-11---data-transformation.html#cb213-2" tabindex="-1"></a><span class="fu">library</span>(openCyto)</span>
+<span id="cb213-3"><a href="chapter-11---data-transformation.html#cb213-3" tabindex="-1"></a></span>
+<span id="cb213-4"><a href="chapter-11---data-transformation.html#cb213-4" tabindex="-1"></a>channels_to_transform <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Sm149Di_CD34&quot;</span>, <span class="st">&quot;Yb172Di_CD38&quot;</span>)</span>
+<span id="cb213-5"><a href="chapter-11---data-transformation.html#cb213-5" tabindex="-1"></a></span>
+<span id="cb213-6"><a href="chapter-11---data-transformation.html#cb213-6" tabindex="-1"></a><span class="co"># Logicle, fit A: parameters estimated from a single sample</span></span>
+<span id="cb213-7"><a href="chapter-11---data-transformation.html#cb213-7" tabindex="-1"></a>logicle_params <span class="ot">&lt;-</span> <span class="fu">estimateLogicle</span>(Reordered_DOWNSAMPLED_CLEANED_FLOWSET[[<span class="dv">1</span>]], <span class="at">channels =</span> channels_to_transform)</span>
+<span id="cb213-8"><a href="chapter-11---data-transformation.html#cb213-8" tabindex="-1"></a>LOGICLE_FLOWSET <span class="ot">&lt;-</span> <span class="fu">transform</span>(Reordered_DOWNSAMPLED_CLEANED_FLOWSET, logicle_params)</span>
+<span id="cb213-9"><a href="chapter-11---data-transformation.html#cb213-9" tabindex="-1"></a></span>
+<span id="cb213-10"><a href="chapter-11---data-transformation.html#cb213-10" tabindex="-1"></a><span class="co"># Logicle, fit B: parameters estimated across the whole flowSet, using the median of each channel&#39;s negative population</span></span>
+<span id="cb213-11"><a href="chapter-11---data-transformation.html#cb213-11" tabindex="-1"></a>logicle_median_params <span class="ot">&lt;-</span> <span class="fu">estimateMedianLogicle</span>(Reordered_DOWNSAMPLED_CLEANED_FLOWSET, <span class="at">channels =</span> channels_to_transform)</span>
+<span id="cb213-12"><a href="chapter-11---data-transformation.html#cb213-12" tabindex="-1"></a>LOGICLE_MEDIAN_FLOWSET <span class="ot">&lt;-</span> <span class="fu">transform</span>(Reordered_DOWNSAMPLED_CLEANED_FLOWSET, logicle_median_params)</span>
+<span id="cb213-13"><a href="chapter-11---data-transformation.html#cb213-13" tabindex="-1"></a></span>
+<span id="cb213-14"><a href="chapter-11---data-transformation.html#cb213-14" tabindex="-1"></a><span class="co"># Biexponential, fit A: flowCore&#39;s own defaults</span></span>
+<span id="cb213-15"><a href="chapter-11---data-transformation.html#cb213-15" tabindex="-1"></a>biexp_list <span class="ot">&lt;-</span> <span class="fu">transformList</span>(channels_to_transform, <span class="fu">biexponentialTransform</span>())</span>
+<span id="cb213-16"><a href="chapter-11---data-transformation.html#cb213-16" tabindex="-1"></a>BIEXP_FLOWSET <span class="ot">&lt;-</span> <span class="fu">transform</span>(Reordered_DOWNSAMPLED_CLEANED_FLOWSET, biexp_list)</span>
+<span id="cb213-17"><a href="chapter-11---data-transformation.html#cb213-17" tabindex="-1"></a></span>
+<span id="cb213-18"><a href="chapter-11---data-transformation.html#cb213-18" tabindex="-1"></a><span class="co"># Biexponential, fit B: explicit width parameter (w = 5)</span></span>
+<span id="cb213-19"><a href="chapter-11---data-transformation.html#cb213-19" tabindex="-1"></a>biexp_list_w5 <span class="ot">&lt;-</span> <span class="fu">transformList</span>(channels_to_transform, <span class="fu">biexponentialTransform</span>(<span class="st">&quot;biexpTransformW5&quot;</span>, <span class="at">w =</span> <span class="dv">5</span>))</span>
+<span id="cb213-20"><a href="chapter-11---data-transformation.html#cb213-20" tabindex="-1"></a>BIEXP_W5_FLOWSET <span class="ot">&lt;-</span> <span class="fu">transform</span>(Reordered_DOWNSAMPLED_CLEANED_FLOWSET, biexp_list_w5)</span>
+<span id="cb213-21"><a href="chapter-11---data-transformation.html#cb213-21" tabindex="-1"></a></span>
+<span id="cb213-22"><a href="chapter-11---data-transformation.html#cb213-22" tabindex="-1"></a><span class="co"># One sample is enough for this figure. It compares transforms, not samples, and</span></span>
+<span id="cb213-23"><a href="chapter-11---data-transformation.html#cb213-23" tabindex="-1"></a><span class="co"># Step 4 above already shows all five. Plotting the whole flowSet here puts five</span></span>
+<span id="cb213-24"><a href="chapter-11---data-transformation.html#cb213-24" tabindex="-1"></a><span class="co"># facets inside each of five panels, twenty five scatters in one figure, and every</span></span>
+<span id="cb213-25"><a href="chapter-11---data-transformation.html#cb213-25" tabindex="-1"></a><span class="co"># one of them is too small to read. Sample 1 is also the sample the single-sample</span></span>
+<span id="cb213-26"><a href="chapter-11---data-transformation.html#cb213-26" tabindex="-1"></a><span class="co"># logicle fit was estimated from, so this is a like-for-like comparison.</span></span>
+<span id="cb213-27"><a href="chapter-11---data-transformation.html#cb213-27" tabindex="-1"></a>SAMPLE <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb213-28"><a href="chapter-11---data-transformation.html#cb213-28" tabindex="-1"></a></span>
+<span id="cb213-29"><a href="chapter-11---data-transformation.html#cb213-29" tabindex="-1"></a><span class="co"># `bins` is set well below the usual 128 here on purpose. Chapter 10 downsampled</span></span>
+<span id="cb213-30"><a href="chapter-11---data-transformation.html#cb213-30" tabindex="-1"></a><span class="co"># every file to 5000 events, and 128 bins carves the plot into roughly 16000 hex</span></span>
+<span id="cb213-31"><a href="chapter-11---data-transformation.html#cb213-31" tabindex="-1"></a><span class="co"># cells, so almost every occupied hex holds a single event and the density colour</span></span>
+<span id="cb213-32"><a href="chapter-11---data-transformation.html#cb213-32" tabindex="-1"></a><span class="co"># scale has nothing to show. Fewer, larger hexes put enough events in each cell for</span></span>
+<span id="cb213-33"><a href="chapter-11---data-transformation.html#cb213-33" tabindex="-1"></a><span class="co"># the dense core to actually read as dense.</span></span>
+<span id="cb213-34"><a href="chapter-11---data-transformation.html#cb213-34" tabindex="-1"></a>ARCSINH_ONE_PLOT <span class="ot">&lt;-</span> <span class="fu">ggcyto</span>(ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET[[SAMPLE]], <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;Sm149Di_CD34&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Yb172Di_CD38&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb213-35"><a href="chapter-11---data-transformation.html#cb213-35" tabindex="-1"></a>  <span class="fu">geom_hex</span>(<span class="at">bins =</span> <span class="dv">40</span>) <span class="sc">+</span></span>
+<span id="cb213-36"><a href="chapter-11---data-transformation.html#cb213-36" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;arcsinh, cofactor 5&quot;</span>) <span class="sc">+</span></span>
+<span id="cb213-37"><a href="chapter-11---data-transformation.html#cb213-37" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
+<span id="cb213-38"><a href="chapter-11---data-transformation.html#cb213-38" tabindex="-1"></a></span>
+<span id="cb213-39"><a href="chapter-11---data-transformation.html#cb213-39" tabindex="-1"></a>LOGICLE_PLOT <span class="ot">&lt;-</span> <span class="fu">ggcyto</span>(LOGICLE_FLOWSET[[SAMPLE]], <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;Sm149Di_CD34&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Yb172Di_CD38&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb213-40"><a href="chapter-11---data-transformation.html#cb213-40" tabindex="-1"></a>  <span class="fu">geom_hex</span>(<span class="at">bins =</span> <span class="dv">40</span>) <span class="sc">+</span></span>
+<span id="cb213-41"><a href="chapter-11---data-transformation.html#cb213-41" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;logicle, single-sample fit&quot;</span>) <span class="sc">+</span></span>
+<span id="cb213-42"><a href="chapter-11---data-transformation.html#cb213-42" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
+<span id="cb213-43"><a href="chapter-11---data-transformation.html#cb213-43" tabindex="-1"></a></span>
+<span id="cb213-44"><a href="chapter-11---data-transformation.html#cb213-44" tabindex="-1"></a>LOGICLE_MEDIAN_PLOT <span class="ot">&lt;-</span> <span class="fu">ggcyto</span>(LOGICLE_MEDIAN_FLOWSET[[SAMPLE]], <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;Sm149Di_CD34&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Yb172Di_CD38&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb213-45"><a href="chapter-11---data-transformation.html#cb213-45" tabindex="-1"></a>  <span class="fu">geom_hex</span>(<span class="at">bins =</span> <span class="dv">40</span>) <span class="sc">+</span></span>
+<span id="cb213-46"><a href="chapter-11---data-transformation.html#cb213-46" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;logicle, whole-flowSet median fit&quot;</span>) <span class="sc">+</span></span>
+<span id="cb213-47"><a href="chapter-11---data-transformation.html#cb213-47" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
+<span id="cb213-48"><a href="chapter-11---data-transformation.html#cb213-48" tabindex="-1"></a></span>
+<span id="cb213-49"><a href="chapter-11---data-transformation.html#cb213-49" tabindex="-1"></a>BIEXP_PLOT <span class="ot">&lt;-</span> <span class="fu">ggcyto</span>(BIEXP_FLOWSET[[SAMPLE]], <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;Sm149Di_CD34&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Yb172Di_CD38&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb213-50"><a href="chapter-11---data-transformation.html#cb213-50" tabindex="-1"></a>  <span class="fu">geom_hex</span>(<span class="at">bins =</span> <span class="dv">40</span>) <span class="sc">+</span></span>
+<span id="cb213-51"><a href="chapter-11---data-transformation.html#cb213-51" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;biexponential, defaults&quot;</span>) <span class="sc">+</span></span>
+<span id="cb213-52"><a href="chapter-11---data-transformation.html#cb213-52" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
+<span id="cb213-53"><a href="chapter-11---data-transformation.html#cb213-53" tabindex="-1"></a></span>
+<span id="cb213-54"><a href="chapter-11---data-transformation.html#cb213-54" tabindex="-1"></a>BIEXP_W5_PLOT <span class="ot">&lt;-</span> <span class="fu">ggcyto</span>(BIEXP_W5_FLOWSET[[SAMPLE]], <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;Sm149Di_CD34&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Yb172Di_CD38&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb213-55"><a href="chapter-11---data-transformation.html#cb213-55" tabindex="-1"></a>  <span class="fu">geom_hex</span>(<span class="at">bins =</span> <span class="dv">40</span>) <span class="sc">+</span></span>
+<span id="cb213-56"><a href="chapter-11---data-transformation.html#cb213-56" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;biexponential, w = 5&quot;</span>) <span class="sc">+</span></span>
+<span id="cb213-57"><a href="chapter-11---data-transformation.html#cb213-57" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
+<span id="cb213-58"><a href="chapter-11---data-transformation.html#cb213-58" tabindex="-1"></a></span>
+<span id="cb213-59"><a href="chapter-11---data-transformation.html#cb213-59" tabindex="-1"></a><span class="fu">plot_grid</span>(<span class="fu">as.ggplot</span>(ARCSINH_ONE_PLOT), <span class="fu">as.ggplot</span>(LOGICLE_PLOT), <span class="fu">as.ggplot</span>(LOGICLE_MEDIAN_PLOT),</span>
+<span id="cb213-60"><a href="chapter-11---data-transformation.html#cb213-60" tabindex="-1"></a>  <span class="fu">as.ggplot</span>(BIEXP_PLOT), <span class="fu">as.ggplot</span>(BIEXP_W5_PLOT), <span class="at">ncol =</span> <span class="dv">5</span>)</span></code></pre></div>
+<p><img src="11-Data-Transformation_files/figure-html/other-transforms-1.png" alt="" width="672" /></p>
+<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="chapter-11---data-transformation.html#cb214-1" tabindex="-1"></a></span>
+<span id="cb214-2"><a href="chapter-11---data-transformation.html#cb214-2" tabindex="-1"></a><span class="fu">ggsave2</span>(<span class="fu">here</span>(<span class="st">&quot;Figures&quot;</span>, <span class="st">&quot;transform_type_comparison.pdf&quot;</span>), <span class="at">width =</span> <span class="dv">20</span>, <span class="at">height =</span> <span class="dv">5</span>)</span>
+<span id="cb214-3"><a href="chapter-11---data-transformation.html#cb214-3" tabindex="-1"></a><span class="fu">ggsave2</span>(<span class="fu">here</span>(<span class="st">&quot;Figures&quot;</span>, <span class="st">&quot;transform_type_comparison.png&quot;</span>), <span class="at">width =</span> <span class="dv">20</span>, <span class="at">height =</span> <span class="dv">5</span>)</span></code></pre></div>
 <p>There are two choices being compared here.</p>
-<p>For logicle: <code><a href="https://rdrr.io/pkg/flowCore/man/logicleTransform.html">estimateLogicle()</a></code> fits parameters to a single flowFrame, here the first sample in the set, then applies that one fit to every sample. <code><a href="https://rdrr.io/pkg/flowCore/man/estimateMedianLogicle.html">estimateMedianLogicle()</a></code> (from <code>openCyto</code>) instead fits across the whole flowSet at once, using the median of each channel’s negative population over all samples. The single-sample version is doing less work and trusting that sample 1 is representative of the rest, the whole-set version is the more defensible choice when samples might differ in background or offset, which is the more usual case with multiple files from different conditions, as here.</p>
-<p>For biexponential: <code><a href="https://rdrr.io/pkg/flowCore/man/biexponentialTransform.html">biexponentialTransform()</a></code> with no arguments runs on <code>flowCore</code>’s built-in defaults. Setting <code>w</code> explicitly (<code>w = 5</code>) sets the width of the linear region around zero, in asymptotic decades, rather than leaving it at whatever the default assumes. A wider linear region pulls more of the near-zero, noisy signal into a straight line instead of compressing it logarithmically, which matters more the noisier your negative population is.</p>
+<p>For logicle: <code>estimateLogicle()</code> fits parameters to a single flowFrame, here the first sample in the set, then applies that one fit to every sample. <code>estimateMedianLogicle()</code> (from <code>openCyto</code>) instead fits across the whole flowSet at once, using the median of each channel’s negative population over all samples. The single-sample version is doing less work and trusting that sample 1 is representative of the rest, the whole-set version is the more defensible choice when samples might differ in background or offset, which is the more usual case with multiple files from different conditions, as here.</p>
+<p>For biexponential: <code>biexponentialTransform()</code> with no arguments runs on <code>flowCore</code>’s built-in defaults. Setting <code>w</code> explicitly (<code>w = 5</code>) sets the width of the linear region around zero, in asymptotic decades, rather than leaving it at whatever the default assumes. A wider linear region pulls more of the near-zero, noisy signal into a straight line instead of compressing it logarithmically, which matters more the noisier your negative population is.</p>
 <p>What that <code>w</code> parameter is actually controlling: biexponential is a piecewise function, not one formula applied everywhere. Near zero, where log-style transforms compress and distort noisy negative/low signal, it behaves close to linear, an ordinary straight line, avoiding the zero/negative problem the same way arcsinh does. Further from zero, where the signal is large and log-scale spread actually helps, it switches over to behaving exponentially. <code>w</code> sets how wide that near-zero linear region is before the exponential part takes over, a small <code>w</code> switches to exponential behaviour quickly, a large <code>w</code> keeps more of the range linear. This is the same underlying idea arcsinh and logicle both use, linear near zero, log-like further out, just a different specific formula for the transition between the two.</p>
 <p>Both logicle transforms and both biexponential transforms were designed around conventional flow cytometry’s signal and noise characteristics, not CyTOF’s, which is why arcsinh with a mass-cytometry cofactor stays the standard choice for this kind of data. Run on this dataset, the two logicle panels come out near identical, and the two biexponential panels share a shape while sitting on different ranges, the defaults spanning roughly 0 to 8 and <code>w = 5</code> roughly 5 to 12.5. On this data, the choice of transform made more difference than how its parameters were fitted.</p>
 <p><strong>Note:</strong> the whole-flowSet logicle fit and the <code>w = 5</code> biexponential parameter come from an earlier, unpublished draft chapter (<code>Draft Chapters/09-Data-Transformation.Rmd</code>) that used real course data at the time it was written, which is why they are better-grounded starting points than bare defaults.</p>
 </div>
-<div id="whats-next-7" class="section level3" number="11.3.3">
-<h3>
-<span class="header-section-number">11.3.3</span> What’s Next<a class="anchor" aria-label="anchor" href="#whats-next-7"><i class="fas fa-link"></i></a>
-</h3>
+<div id="whats-next-7" class="section level3 hasAnchor" number="11.3.3">
+<h3><span class="header-section-number">11.3.3</span> What’s Next<a href="chapter-11---data-transformation.html#whats-next-7" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>With <code>ARCSINH_DOWNSAMPLED_CLEANED_FLOWSET.rds</code> saved, the next chapter extracts the expression data into a simpler table format and applies dimensionality reduction (UMAP and tSNE).</p>
 
 </div>
 </div>
 </div>
-  <div class="chapter-nav">
-<div class="prev"><a href="chapter-10---downsampling.html"><span class="header-section-number">10</span> Chapter 10 - Downsampling</a></div>
-<div class="next"><a href="chapter-12---extracting-expression-data.html"><span class="header-section-number">12</span> Chapter 12 - Extracting Expression Data</a></div>
-</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
-    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
-      <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#chapter-11---data-transformation"><span class="header-section-number">11</span> Chapter 11 - Data Transformation</a></li>
-<li><a class="nav-link" href="#what-youll-learn-6"><span class="header-section-number">11.1</span> What You’ll Learn</a></li>
-<li>
-<a class="nav-link" href="#the-essentials-9"><span class="header-section-number">11.2</span> The Essentials</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#step-1-load-required-packages-and-data-1"><span class="header-section-number">11.2.1</span> Step 1: Load Required Packages and Data</a></li>
-<li><a class="nav-link" href="#step-2-apply-the-arcsinh-transformation"><span class="header-section-number">11.2.2</span> Step 2: Apply the arcsinh Transformation</a></li>
-<li><a class="nav-link" href="#step-3-save-your-work"><span class="header-section-number">11.2.3</span> Step 3: Save Your Work</a></li>
-<li><a class="nav-link" href="#step-4-compare-transformed-vs-untransformed"><span class="header-section-number">11.2.4</span> Step 4: Compare Transformed vs Untransformed</a></li>
-</ul>
-</li>
-<li>
-<a class="nav-link" href="#a-deeper-dive-9"><span class="header-section-number">11.3</span> A Deeper Dive</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#what-happens-with-the-wrong-cofactor"><span class="header-section-number">11.3.1</span> What Happens With the Wrong Cofactor</a></li>
-<li><a class="nav-link" href="#other-transforms-logicle-and-biexponential"><span class="header-section-number">11.3.2</span> Other Transforms: Logicle and Biexponential</a></li>
-<li><a class="nav-link" href="#whats-next-7"><span class="header-section-number">11.3.3</span> What’s Next</a></li>
-</ul>
-</li>
-</ul>
+            </section>
 
-      <div class="book-extra">
-        <ul class="list-unstyled">
-          
-        </ul>
-</div>
-    </nav>
-</div>
-
-</div>
-</div> <!-- .container -->
-
-<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
-
-  <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Analysing Cytometry Data with R</strong>" was written by Damian Carragher, StemCore Laboratories and Flow Cytometry Core, Ottawa Hospital Research Institute, First edition by Damian Carragher. It was last built on Last Revised 2026-11-02.</p>
+          </div>
+        </div>
+      </div>
+<a href="chapter-10---downsampling.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="chapter-12---extracting-expression-data.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
   </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
+});
+});
+</script>
 
-  <div class="col-12 col-md-6 mt-3">
-    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
-  </div>
-
-</div></div>
-</footer>
 </body>
+
 </html>

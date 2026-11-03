@@ -235,6 +235,25 @@ Every later chapter now sees channels like `Y89Di_CD41` instead of `Y89Di`, plot
 
 This is the file every later chapter actually reads, `Reordered_RENAMED_FLOWSET.rds`, not `RENAMED_FLOWSET.rds`.
 
+**Check before you move on.** This reads back the file the next chapter loads and prints a few facts about it. Your numbers should match the ones printed here. If they don't, something earlier in this chapter went wrong: go back over it, or use the **Stuck?** note at the top of the next chapter.
+
+
+``` r
+CHECK <- readRDS(here::here("Data", "RDS", "Reordered_RENAMED_FLOWSET.rds"))
+length(CHECK)          # Number of samples
+#> [1] 5
+fsApply(CHECK, nrow)   # Cells in each sample
+#>                    [,1]
+#> 2%PFA - NAS PERM  30825
+#> 4%PFA - NAS PERM  15158
+#> 8%PFA - NAS PERM  23790
+#> PFA+GLUT-NAS PERM 14171
+#> 4%PFA - NO PERM   57521
+ncol(CHECK[[1]])       # Number of channels
+#> [1] 39
+rm(CHECK)
+```
+
 ## A Deeper Dive {.deeper-dive}
 
 Cleaning data is a large part of cytometry analysis, and it happens in stages. The FCS files you loaded in Chapter 5 have already been gated to live singlets before you ever received them, removing dead cells and doublets, so that part of the cleaning is done for you. `premessa` is the first cleaning step you perform yourself in this course:

@@ -6,6 +6,8 @@ Chapter 6 covered the basics of plotting cytometry data. This chapter goes furth
 
 ## The Essentials {.essentials}
 
+> **Stuck?** This chapter starts from `Data/RDS/EXPRESSION_DATA_SAMPLE_ID_MELTED.rds`, made in Chapter 12. If the first chunk below errors, or Chapter 12's checkpoint didn't match, copy that file from the course data download over your own, then carry on from here.
+
 ### Step 1: Load Required Packages and Data
 
 

@@ -8,6 +8,8 @@ Cytometry acquisition isn't always stable, clogs, voltage drift, or air bubbles 
 
 ## The Essentials {.essentials}
 
+> **Stuck?** This chapter starts from `Data/RDS/Reordered_RENAMED_FLOWSET.rds`, made in Chapter 8. If the first chunk below errors, or Chapter 8's checkpoint didn't match, copy that file from the course data download over your own, then carry on from here.
+
 ### Step 1: Load Required Packages
 
 
@@ -170,6 +172,25 @@ ggsave2(here("Figures", "cleaning_counts_before_after.png"), width = 11, height 
 Both panels are forced onto the same y axis with `limits = c(0, Y_MAX)`. Without that, `ggplot` scales each panel to its own data, so the "after" panel stretches its bars back up to fill the space and a 25% loss looks like almost nothing. Any before-and-after bar chart needs this, and it's an easy thing to miss because each panel looks perfectly reasonable on its own.
 
 A sample that drops far more than the others is worth investigating in its `PeacoQC` diagnostic plot before continuing. It might mean rough acquisition, or it might mean that sample drifted more than the rest, which is a different problem with different consequences.
+
+**Check before you move on.** This reads back the file the next chapter loads and prints a few facts about it. Your numbers should match the ones printed here. If they don't, something earlier in this chapter went wrong: go back over it, or use the **Stuck?** note at the top of the next chapter.
+
+
+``` r
+CHECK <- readRDS(here::here("Data", "RDS", "CLEANED_FLOWSET.rds"))
+length(CHECK)          # Number of samples
+#> [1] 5
+fsApply(CHECK, nrow)   # Cells in each sample
+#>                    [,1]
+#> 2%PFA - NAS PERM  25575
+#> 4%PFA - NAS PERM  11250
+#> 8%PFA - NAS PERM  18250
+#> PFA+GLUT-NAS PERM  9000
+#> 4%PFA - NO PERM   46250
+ncol(CHECK[[1]])       # Number of channels
+#> [1] 40
+rm(CHECK)
+```
 
 ## A Deeper Dive {.deeper-dive}
 

@@ -27,6 +27,8 @@ For the rest of this chapter we will gate out extraneous events using R, complet
 
 <span class="warning"> **I highly recommend you learn to gate and export selected events in FlowJo, Cytobank or FCSExpress** </span>. What follows here is a demonstration of what is possible with R rather than a recommendation of how to handle your own data.
 
+> **Stuck?** This chapter starts from `Data/RDS/FLOWSET.rds`, made in Chapter 5. If the first chunk below errors, or Chapter 5's checkpoint didn't match, copy that file from the course data download over your own, then carry on from here.
+
 First let's load the packages we'll need.
 
 ``` r

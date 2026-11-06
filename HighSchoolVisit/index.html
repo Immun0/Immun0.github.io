@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Taking a Gene Out | Core Principles</title>
+<meta name="description" content="An animated walk from one stem cell to reading DNA and taking a gene out, written for high school students.">
+<script defer src="../js/sitebar.js" data-section="genomics"></script>
+<style>
+:root{--bg:#0a1015;--panel:#111a21;--panel2:#0d151b;--line:#24343f;--fg:#e9f0f3;--muted:#8aa0ac;--accent:#9be7ff;
+--display:"Avenir Next Condensed","Bahnschrift Condensed","Roboto Condensed","Arial Narrow",sans-serif;
+--body:system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);overflow:hidden;font-family:var(--body)}
+.app{height:100vh;display:flex;flex-direction:column;gap:6px;padding:8px 12px}
+.tabs{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin:0;padding:0;list-style:none;flex:none}
+.tabs button{width:100%;text-align:left;padding:4px 6px 5px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--line);border-radius:3px;color:var(--muted);cursor:pointer;font-family:var(--display);font-size:clamp(14px,1.18vw,22px);font-weight:600;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tabs button.done{border-top-color:var(--muted);color:var(--fg)}
+.tabs button[aria-current]{border-top-color:var(--accent);color:var(--fg);background:#15232c}
+.caption{flex:none;display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:20px;align-items:center;padding:6px 16px;min-height:66px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:3px}
+.big{font-family:var(--display);font-weight:700;font-size:clamp(26px,2.5vw,44px);line-height:1.02;max-width:34vw}
+.txt{margin:0;font-size:clamp(16px,1.3vw,23px);line-height:1.25}
+.cmp{margin:2px 0 0;font-size:clamp(15px,1.15vw,20px);line-height:1.2;color:var(--accent)}
+.stage{flex:1;min-height:0;position:relative;background:var(--panel2);border:1px solid var(--line);border-radius:5px;overflow:hidden;cursor:pointer}
+canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.bar{flex:none;display:flex;gap:8px;align-items:center}
+.bar button{font-family:var(--display);text-transform:uppercase;letter-spacing:.08em;font-weight:600;font-size:15px;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:5px 14px;cursor:pointer}
+.bar button.primary{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar button:disabled{opacity:.35;cursor:default}
+.count{margin-left:auto;font-family:var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-size:15px}
+.app{height:calc(100vh - 48px)}
+.say{flex:none;margin:0;padding:6px 16px;min-height:4.2em;font-size:clamp(15px,1.15vw,20px);line-height:1.35;background:var(--panel);border:1px solid var(--line);border-radius:3px}
+@media(max-width:768px){html,body{height:auto;overflow:auto}.app{height:auto;min-height:100vh}.tabs{grid-template-columns:repeat(4,minmax(0,1fr))}.tabs button{font-size:12px;padding:3px 4px}.caption{grid-template-columns:1fr;gap:2px;padding:6px 10px}.big{max-width:none;font-size:24px}.stage{flex:none;aspect-ratio:1600/680}.count{font-size:13px}.bar button{padding:8px 12px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <ol class="tabs" id="tabs"></ol>
+  <div class="caption" aria-live="polite">
+    <div class="big" id="big"></div>
+    <div><p class="txt" id="txt"></p><p class="cmp" id="cmp"></p></div>
+  </div>
+  <div class="stage" id="stage"><canvas id="c" aria-label="Animated diagram: from a person to a cell, to the book of DNA, a paragraph cut out, and the check inside the sequencer"></canvas></div>
+  <p class="say" id="say" aria-live="polite"></p>
+  <div class="bar">
+    <button id="back" type="button">&larr; Back</button>
+    <button id="play" type="button">Pause</button>
+    <button id="next" type="button" class="primary">Next &rarr;</button>
+    <span class="count" id="count"></span>
+  </div>
+</div>
+<script>
+(()=>{
+const SAY=["You are made of trillions of cells.", "Almost every one of them is reading from an instruction manual.", "Look inside one cell. The nucleus is its control centre.", "Out of the nucleus comes the instruction manual: your DNA. Long, but surprisingly short to create you.", "You began as one cell, carrying the whole book.", "They can make every kind of cell in the body, and each new cell gets the whole book.", "A stem cell has not chosen its courses yet. Then cells specialise, just as you take different courses at school or university, some in art, some in science. Skin, muscle, nerve, bone. Same book, different parts.", "If this manual were in English, it might say: how to build a nerve cell.", "One paragraph is one instruction. In your body, that paragraph is called a gene.", "So how would you read it? The real writing is far too small to see. Imagine you cannot see this page at all.", "We cannot see the writing, so let us start with a puzzle. Nothing to do with DNA yet, just a plain sentence. The machine uses the same trick.", "Sequencing means finding the order. Here is a sentence, hidden in boxes. We cannot see it. But someone can repeat it to us.", "Here are the rules. Someone repeats the sentence from the start. At a random moment, a stop is called. We get only the last word they reached, and its number. Then they start again from the beginning.", "It is repeated from the start, and stopped at random. Stop! We hear only the last word, and how many words they got to: CAT, word 2.", "Repeat it again, stopped somewhere else: ON, word 4. And again. Every repeat gives us one more word and its number.", "What do we need besides the word? Its number, which is how far that repeat got. Sort them, short to long.", "Read down the last words: the cat sat on the mat. You just sequenced a sentence.", "But it is not in English. The whole thing is written with four letters: A, T, G and C. Computers manage with two digits, 0 and 1.", "The same letters in a different order make a different instruction.", "In these letters, one paragraph is still a gene.", "Now the real thing. Take one line of the book and shrink it to what is really there: a chain, one bead for each letter. Like the boxes, we cannot see it. The beads cannot shout their names.", "To read it we use a sequencer, a closed box. You cannot see what happens in there, so let us open it.", "Same trick as the sentence. Here this figure stands for the copying, repeating the chain. The guard stands for chance: nobody decides where the stop falls.", "It walks from the start, repeating the chain one letter at a time. When DNA is repeated, we call it copying. These letters have no dye, so we cannot see which they are.", "The guard stops it, completely at random.", "The letter added at the stop carries a fluorescent dye, so it glows. It is the only one we can see, just like hearing only the last word.", "Every copy starts in the same place. Only the stop is different. Again and again, until there is a copy stopping at every letter.", "Now we have copies of every length, all mixed up.", "We repeat it millions of times. One glowing bead is too faint to see; millions together are bright enough. Put them in order of length and they make a staircase.", "This is how we do it. They go into a thin tube filled with gel, and electricity pulls them through. The gel is a tangled mesh. Small is fast, big is slow. So the gel puts them in order: first out is letter 1, next is letter 2. At the end, a light makes each colour glow.", "Colour by colour, the order we could not see appears.", "Here is what the light saw: shortest to longest, a staircase, just like your sentence. Read the glowing letters in order and you have the whole chain.", "Put what we read next to the book. Every letter matches. We have read it.", "Now a researcher comes to us with stem cells. They want to know what one paragraph does.", "To find out what a gene does, researchers remove it from the cells. That is called a knockout.", "So they take it out. Scissors cut the paragraph out of the book.", "They bring the cells back, and we read it again, the same way.", "This time it does not line up. The start matches, the end matches, and the paragraph between them is gone.", "Here is what we read, as the machine shows it. On the real instrument, it looks like this.", "Back to the manual. What if a paragraph goes missing? Think of a detective story.", "Sometimes nothing happens. That paragraph only described the house. Nice to know, but the story still works.", "Sometimes the story falls apart. That paragraph held the clues to how the killer was caught, or who the killer is, and now you never find out.", "Scientists do this for real, one gene at a time, to find out which ones matter when people get ill.", "Every cell carries the same book.", "Sequencing reads the order of the letters.", "A knockout removes a gene, to learn what it does.", "Reading it again shows it has gone, so now we can watch what changes."];
+const COL={bg:'#0a1015',panel:'#111a21',panel2:'#0d151b',line:'#24343f',fg:'#e9f0f3',muted:'#8aa0ac',accent:'#9be7ff',page:'#1b2933',
+  A:'#58f08a',T:'#ff6b6b',C:'#4aa8ff',G:'#ffc24b',bad:'#ff6b6b'};
+const DISPLAY='"Avenir Next Condensed","Bahnschrift Condensed","Roboto Condensed","Arial Narrow",sans-serif';
+const MONO='ui-monospace,Menlo,Consolas,monospace';
+const $=id=>document.getElementById(id);
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const ease=x=>{x=clamp(x);return x*x*(3-2*x);};
+const lerp=(a,b,u)=>a+(b-a)*u;
+let seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
+
+/* the invented teaching sequence: expected = before + paragraph + after */
+const BEFORE='ATGC',PARA='GATTAC',AFTER='CAGT',READ=(BEFORE+PARA).slice(0,8),READ2=BEFORE+AFTER,EXPECT=BEFORE+PARA+AFTER;
+
+const GAP=1300,VW=1600,VH=680;
+const ST={person:0,tissue:1,cell:2,line:3,book:4,order:5,box:6,walk:7,race:8,comp:9,why:10,end:11};
+const TABS=['1 You','2 From one stem cell','3 The manual','4 What is sequencing?','5 Four letters','6 Reading the book','7 The researcher','8 Why it matters'];
+const HEAD=['You run on instructions','From one stem cell to every cell','The manual','What is sequencing?','Four letters, one message','Reading the book','A researcher brings stem cells','Switch it off, see what changes'];
+const CMP=['','','','','','','','',''];
+const STEPS=[
+ {tab:0,st:'person',txt:'You'},
+ {tab:0,st:'tissue',txt:'Trillions of cells'},
+ {tab:1,st:'cell',txt:'The control centre'},
+ {tab:1,st:'cell',txt:'The manual: your DNA'},
+ {tab:1,st:'line',x:1,id:'one',txt:'You began as one cell'},
+ {tab:1,st:'line',txt:'Stem cells make every kind of cell'},
+ {tab:1,st:'line',txt:'They specialise: different parts of the book'},
+ {tab:2,st:'book',x:1,txt:'If it were in English'},
+ {tab:4,st:'book',id:'notEng',cut:1,txt:'It is not in English: four letters'},
+ {tab:4,st:'book',txt:'Order changes the meaning'},
+ {tab:4,st:'book',txt:'One paragraph, one gene'},
+ {tab:2,st:'book',drop:1,txt:'How would you read it?'},
+ {tab:6,st:'book',x:1,id:'res',cut:1,txt:'What does this paragraph do?'},
+ {tab:6,st:'book',txt:'Cut it out'},
+ {tab:6,st:'book',drop:1,txt:'The book closes up'},
+ {tab:6,st:'comp',x:1,id:'again',cut:1,lgo:21,txt:'Read it again'},
+ {tab:5,st:'box',id:'box',lgo:13,cue:['Hidden','in boxes'],txt:'Into the sequencer'},
+ {tab:3,st:'order',txt:'Sequencing: finding the order'},
+ {tab:3,st:'order',x:1,txt:'Stop! The last word, and its number'},
+ {tab:3,st:'order',x:1,txt:'Every repeat, one more word and number'},
+ {tab:3,st:'order',x:1,txt:'How far did each repeat get?'},
+ {tab:3,st:'order',x:1,txt:'Read down the last words'},
+ {tab:5,st:'order',x:1,id:'chain',cue:['Hidden','in boxes'],txt:'Now the real thing: a chain'},
+ {tab:5,st:'walk',x:1,id:'intro',cue:['Repeat it,','stop at random'],txt:'Repeat it, and stop at random'},
+ {tab:5,st:'walk',id:'w0',cue:['Repeat it'],txt:'Repeat it, letter by letter'},
+ {tab:5,st:'walk',x:1,cue:['Stopped','at random'],txt:'A random stop'},
+ {tab:5,st:'walk',x:1,cue:['Only the','last word'],txt:'The last letter glows'},
+ {tab:5,st:'walk',drop:1,txt:'A different stop'},
+ {tab:5,st:'walk',drop:1,txt:'Same start, different stop'},
+ {tab:5,st:'walk',cue:['Repeat, stop','somewhere else'],txt:'Again and again: a stop at every letter'},
+ {tab:5,st:'walk',cue:['Every length,','mixed up'],txt:'All mixed up'},
+ {tab:5,st:'walk',cue:['Repeat it','millions of times'],txt:'Millions of copies'},
+ {tab:5,st:'race',cue:['The gel does','the counting'],txt:'The gel does the counting'},
+ {tab:5,st:'race',cue:['Read the','last words'],txt:'The order appears'},
+ {tab:5,st:'race',x:1,id:'stair',cue:['Short to long'],txt:'Short to long: a staircase'},
+ {tab:5,st:'race',x:1,id:'match',cue:['The whole','sentence'],txt:'It matches the book'},
+ {tab:6,st:'comp',txt:'Paragraph gone'},
+ {tab:6,st:'comp',txt:'The trace'},
+ {tab:7,st:'why',txt:'Sometimes nothing happens'},
+ {tab:7,st:'why',txt:'Sometimes it falls apart'},
+ {tab:7,st:'why',txt:'Switch it off, see what changes'},
+ {tab:7,st:'end',txt:'What we did'},
+ {tab:7,st:'end',txt:'What we did'},
+ {tab:7,st:'end',txt:'What we did'},
+ {tab:7,st:'end',txt:'What we did'}
+];
+const POSB=id=>STEPS.findIndex(q=>q.id===id);
+let lgc=-1;STEPS.forEach(q=>{if(!q.x)lgc++;q.lg=q.lgo??lgc;});
+for(let i=STEPS.length-1;i>=0;i--)if(STEPS[i].drop)STEPS.splice(i,1);
+{const a=STEPS.findIndex(q=>q.id==='res');const M=STEPS.splice(a,3);const b=STEPS.findIndex(q=>q.id==='match');STEPS.splice(b+1,0,...M);}
+{const a=POSB('box');const M=STEPS.splice(a,1);STEPS.splice(POSB('intro'),0,...M);}
+{const E=POSB('notEng');const M=STEPS.splice(E,3);STEPS.splice(POSB('chain'),0,...M);const en=STEPS.findIndex(q=>q.txt==='If it were in English'),lg=STEPS[en].lg;STEPS.splice(en+1,0,{tab:2,st:'book',id:'enGene',lg,txt:'One paragraph, one gene'},{tab:2,st:'book',id:'enRead',lg,txt:'How would you read it?'});}
+{const r=POSB('res');STEPS.splice(r+1,0,{tab:6,st:'book',id:'ko',lg:STEPS[r].lg,txt:'A knockout'});const w=STEPS.findIndex(q=>q.txt==='Sometimes nothing happens');STEPS.splice(w,0,{tab:7,st:'why',id:'whyQ',lg:STEPS[w-1].lg,txt:'Back to the manual'});}
+{const a=STEPS.findIndex(q=>q.st==='order'),lg=STEPS[a].lg;STEPS.splice(a+1,0,{tab:3,st:'order',id:'rules',lg,txt:'How the puzzle works'});STEPS.splice(a,0,{tab:3,st:'order',id:'puz',lg,txt:'First, a puzzle'});}
+const ORD0=STEPS.findIndex(q=>q.txt==='Sequencing: finding the order');let pos=0;const POS=id=>STEPS.findIndex(q=>q.id===id);
+const camFor=i=>({x:ST[STEPS[i].st]*GAP,y:0,z:1});
+
+let step=0,t=0,clock=0,playing=true,cam=camFor(0),camFrom=cam,camTo=cam,camT=1,camDelay=0;
+const P=(k,d=1,dl=0)=>step>k?1:step<k?0:ease((t-dl)/d);
+const Seen=k=>step>=k;
+
+/* canvas */
+const cv=$('c'),ctx=cv.getContext('2d');let W=1,H=1,DPR=1,fit=1;
+function resize(){const r=$('stage').getBoundingClientRect();DPR=Math.min(2,devicePixelRatio||1);W=r.width;H=r.height;cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);fit=Math.min(W/VW,H/VH);}
+addEventListener('resize',resize);if(window.ResizeObserver)new ResizeObserver(resize).observe($('stage'));
+
+/* helpers */
+function A(a,fn){ctx.save();ctx.globalAlpha*=a;fn();ctx.restore();}
+function text(s,x,y,{size=26,color=COL.fg,align='left',weight=600,font=DISPLAY}={}){ctx.font=`${weight} ${size}px ${font}`;ctx.fillStyle=color;ctx.textAlign=align;ctx.textBaseline='middle';ctx.fillText(s,x,y);}
+function line(x1,y1,x2,y2,col=COL.muted,w=2,dash){ctx.save();ctx.strokeStyle=col;ctx.lineWidth=w;if(dash)ctx.setLineDash(dash);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore();}
+function circ(x,y,r,fill,stroke,w=2){ctx.beginPath();ctx.arc(x,y,r,0,6.2832);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=w;ctx.stroke();}}
+function rect(x,y,w,h,fill,stroke,lw=2,r=4){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke();}}
+/* a label with a pointer to the thing it names */
+function label(s,x,y,tx,ty,opt={}){const align=opt.align||(tx>x?'left':'right');text(s,x,y,{...opt,align});
+  ctx.font=`600 ${opt.size||26}px ${DISPLAY}`;const w=ctx.measureText(s).width;const sx=align==='left'?(tx>x?x+w+8:x-8):(tx<x?x-w-8:x+8);
+  line(sx,y,tx,ty,COL.accent,1.5);circ(tx,ty,4,COL.accent);}
+function letter(ch,x,y,size=30,col){text(ch,x,y,{size,color:col||COL[ch],align:'center',weight:700,font:MONO});}
+function glow(x,y,r,col,a){const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,col);g.addColorStop(1,'rgba(0,0,0,0)');ctx.save();ctx.globalAlpha*=a;ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,6.2832);ctx.fill();ctx.restore();}
+
+/* an open book; lit = row to tint on the right page */
+const PAPER='#efe8d8',INK={A:'#1f8a4c',T:'#c8323c',G:'#a86f00',C:'#2460c8'};
+function openBook(x,y,w,h){const hw=w/2,hh=h/2,sag=h*.04;
+  rect(x-hw-w*.02,y-hh-h*.02,w*1.04,h*1.09,'#1f5f73','#3f8ea6',1.5,Math.max(2,w*.012));
+  for(const[o,c]of[[.03,'#b9b2a3'],[.015,'#d6cfbf'],[0,PAPER]])for(const q of[-1,1]){
+    ctx.beginPath();ctx.moveTo(x,y-hh+sag+h*o);ctx.quadraticCurveTo(x+q*hw*.5,y-hh-sag+h*o,x+q*hw,y-hh+h*o);ctx.lineTo(x+q*hw,y+hh+h*o);ctx.quadraticCurveTo(x+q*hw*.5,y+hh-sag+h*o,x,y+hh+sag+h*o);ctx.closePath();ctx.fillStyle=c;ctx.fill();}
+  const g=ctx.createLinearGradient(x-w*.09,0,x+w*.09,0);g.addColorStop(0,'rgba(60,50,30,0)');g.addColorStop(.5,'rgba(60,50,30,.4)');g.addColorStop(1,'rgba(60,50,30,0)');
+  ctx.fillStyle=g;ctx.fillRect(x-w*.09,y-hh+sag*.4,w*.18,h);
+  line(x,y-hh+sag,x,y+hh+sag,'rgba(60,50,30,.6)',Math.max(1,w*.003));
+}
+function book(x,y,w,h,{rows=6,lit=null,litCol=COL.A}={}){
+  const hw=w/2,hh=h/2;openBook(x,y,w,h);
+  for(const side of[0,1])for(let r=0;r<rows;r++){
+    if(r===2&&!side)continue;
+    const ry=y-hh+h*(r+.9)/(rows+.6),x0=side?x+w*.06:x-hw+w*.05;
+    const on=side&&lit===r;line(x0,ry,x0+hw*(.8-((r*7+side*3)%4)*.05),ry,on?litCol:'rgba(70,70,70,.55)',on?Math.max(3,h/26):Math.max(1.5,h/70));
+  }
+}
+
+/* ---------- 1 person ---------- */
+const LIMBS=[[0,-125,0,55,150],[-82,-145,-128,70,44],[82,-145,128,70,44],[-38,60,-48,285,60],[38,60,48,285,60],[0,-195,0,-150,40]];
+const specks=[];for(const[x1,y1,x2,y2,w]of LIMBS)for(let i=0;i<w*.8;i++){const u=rnd(),o=(rnd()-.5)*w*.7;specks.push({x:lerp(x1,x2,u)+o,y:lerp(y1,y2,u),p:rnd()*6.28});}
+function person(){
+  ctx.lineCap='round';
+  for(const[c,ex]of[[COL.muted,3],[COL.panel,0]]){
+    for(const[x1,y1,x2,y2,w]of LIMBS)line(x1,y1,x2,y2,c,w+ex);
+    circ(0,-250,58+ex/2,c);
+  }
+  ctx.lineCap='butt';
+  for(const s of specks)circ(s.x+Math.sin(clock+s.p)*3,s.y+Math.cos(clock*.8+s.p)*3,2.4,'rgba(155,231,255,.5)');
+  label('Eyes',-340,-250,-24,-258);
+  label('Heartbeat',260,-110,30,-90,{align:'left'});
+  label('Height',-340,170,-58,170);
+  label('How you heal',260,80,120,60,{align:'left'});
+}
+/* ---------- 2 tissue ---------- */
+const TCELLS=[];for(let r=-4;r<=4;r++)for(let q=-4;q<=4;q++){const x=q*88+r*44,y=r*76;if(Math.hypot(x,y)<300)TCELLS.push({x,y,p:rnd()*6.28});}
+function miniBook(x,y,w,c=COL.fg){const h=w*.7;rect(x-w/2,y-h/2,w/2-1,h,c,null,1,1);rect(x+1,y-h/2,w/2-1,h,c,null,1,1);}
+function tissue(){
+  ctx.save();ctx.beginPath();ctx.arc(0,0,300,0,6.2832);ctx.clip();
+  for(const c of TCELLS){const x=c.x+Math.sin(clock*.7+c.p)*3,y=c.y+Math.cos(clock*.6+c.p)*3;
+    circ(x,y,40,'rgba(155,231,255,.08)','rgba(233,240,243,.7)',1.5);circ(x,y,20,'rgba(138,160,172,.3)');}
+  ctx.restore();circ(0,0,300,null,COL.accent,2);
+  label('Trillions of cells',-340,-250,-215,-190,{align:'right'});
+  label('A full copy in',350,-60,172,-20,{align:'left'});
+  text('almost every one',350,-28);
+}
+/* ---------- 3 cell ---------- */
+function blob(x,y,r,amp,n=8){ctx.beginPath();for(let i=0;i<=72;i++){const a=i/72*6.2832,rr=r+Math.sin(a*3+clock*.8)*amp+Math.sin(a*n-clock*.5)*amp*.4;const X=x+Math.cos(a)*rr,Y=y+Math.sin(a)*rr;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);}ctx.closePath();}
+const ORG=Array.from({length:26},()=>{const a=rnd()*6.28,r=165+rnd()*105;return{x:Math.cos(a)*r,y:Math.sin(a)*r};});
+function cell(){
+  const nx=-280;
+  blob(nx,0,290,7);ctx.fillStyle='rgba(155,231,255,.07)';ctx.fill();ctx.strokeStyle=COL.fg;ctx.lineWidth=2;ctx.stroke();
+  for(const o of ORG)circ(nx+o.x,o.y,5,'rgba(138,160,172,.55)');
+  circ(nx,0,130,'rgba(155,231,255,.12)',COL.accent,2.5);
+  ctx.save();ctx.beginPath();ctx.arc(nx,0,124,0,6.2832);ctx.clip();
+  for(let k=0;k<4;k++){ctx.beginPath();for(let i=0;i<=80;i++){const u=i/80,x=nx-120+240*u,y=Math.sin(u*9+k*1.7+clock*.5)*(30+k*14)+(k-1.5)*28;i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.strokeStyle='rgba(233,240,243,.6)';ctx.lineWidth=2;ctx.stroke();}
+  ctx.restore();
+  label('Nucleus: the control centre',60,-300,-210,-108,{align:'left'});
+  const u=P(3,1.6);
+  if(u>0){const bx=lerp(nx,320,u),by=lerp(0,-20,u),s=lerp(.06,1,u);
+    if(u<1)glow(nx,0,170,COL.accent,.5*(1-u));
+    book(bx,by,500*s,340*s,{rows:6});
+    const v=P(3,.8,1.5);
+    A(v,()=>{text('Your DNA',320,-222,{size:36,align:'center',weight:700,color:COL.accent});
+      text('about 3.2 billion letters',320,196,{size:30,align:'center'});
+      text('about 20,000 to 25,000 paragraphs',320,236,{size:30,align:'center'});});
+  }
+}
+/* ---------- 4 lineage ---------- */
+const LY=[-235,-80,80,235],LN=['Skin','Muscle','Nerve','Bone'],LROW=[0,2,3,5];
+function plainCell(x,y,r){const k=r/290;blob(x,y,r,r*.024);ctx.fillStyle='rgba(155,231,255,.07)';ctx.fill();ctx.strokeStyle=COL.fg;ctx.lineWidth=2;ctx.stroke();
+  for(const o of ORG)circ(x+o.x*k,y+o.y*k,Math.max(1.5,5*k),'rgba(138,160,172,.55)');
+  const n=r*.45;circ(x,y,n,'rgba(155,231,255,.12)',COL.accent,2);
+  ctx.save();ctx.beginPath();ctx.arc(x,y,n*.95,0,6.2832);ctx.clip();
+  for(let q=0;q<4;q++){ctx.beginPath();for(let i=0;i<=40;i++){const u=i/40,X=x-n+2*n*u,Y=y+Math.sin(u*9+q*1.7+clock*.5)*n*(.23+q*.1)+(q-1.5)*n*.21;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);}ctx.strokeStyle='rgba(233,240,243,.6)';ctx.lineWidth=1.5;ctx.stroke();}
+  ctx.restore();}
+const TCOL=['#f2a6b8','#ff8a6b','#b89bff','#e8dcc0'];
+const tint=(h,a)=>{const n=parseInt(h.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;};
+function nuc(x,y,r,c,bk){circ(x,y,r,tint(c,.5),c,2);}
+function typed(i,x,y){const c=TCOL[i],fill=tint(c,.22);
+  if(i===0){for(let r=0;r<2;r++)for(let k=0;k<5;k++){const X=x-136+k*68+(r?34:0)-17,Y=y-32+r*64;
+      ctx.beginPath();for(let q=0;q<6;q++){const a=q/6*6.2832+.52;ctx[q?'lineTo':'moveTo'](X+Math.cos(a)*38,Y+Math.sin(a)*37);}ctx.closePath();ctx.fillStyle=fill;ctx.fill();ctx.strokeStyle=c;ctx.lineWidth=2;ctx.stroke();
+      nuc(X,Y,r===0&&k===2?18:12,c,r===0&&k===2);}}
+  if(i===1){ctx.beginPath();ctx.moveTo(x-165,y);ctx.bezierCurveTo(x-90,y-52,x+90,y-52,x+165,y);ctx.bezierCurveTo(x+90,y+52,x-90,y+52,x-165,y);ctx.closePath();ctx.fillStyle=fill;ctx.fill();ctx.save();ctx.clip();
+      for(let k=-22;k<=22;k++)line(x+k*7,y-50,x+k*7,y+50,tint(c,k%2?.3:.65),2);ctx.restore();ctx.strokeStyle=c;ctx.lineWidth=2.5;ctx.stroke();
+      for(const dx of[-90,-30,30,90]){ctx.save();ctx.translate(x+dx,y);ctx.scale(1,.72);nuc(0,0,dx===-30?20:14,c,dx===-30);ctx.restore();}}
+  if(i===2){const bx=x-105;ctx.lineCap='round';
+      for(let k=0;k<7;k++){const a=k/7*6.2832+.45;if(Math.abs(a-6.28)<.45)continue;const ex=bx+Math.cos(a)*50,ey=y+Math.sin(a)*50;line(bx,y,ex,ey,c,4);for(const s of[-.45,.45])line(ex,ey,ex+Math.cos(a+s)*24,ey+Math.sin(a+s)*24,c,2);}
+      ctx.strokeStyle=c;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(bx,y);ctx.bezierCurveTo(bx+80,y-34,bx+160,y+34,bx+232,y);ctx.stroke();
+      for(const a of[-.6,-.2,.2,.6])line(bx+232,y,bx+232+Math.cos(a)*38,y+Math.sin(a)*38,c,2.5);ctx.lineCap='butt';
+      circ(bx,y,36,tint(c,.3),c,2.5);nuc(bx,y,20,c,true);}
+  if(i===3){ctx.beginPath();for(let q=0;q<=40;q++){const a=q/40*6.2832,r=1+.08*Math.sin(a*5);const X=x+Math.cos(a)*165*r,Y=y+Math.sin(a)*60*r;q?ctx.lineTo(X,Y):ctx.moveTo(X,Y);}ctx.closePath();ctx.fillStyle=fill;ctx.fill();ctx.strokeStyle=c;ctx.lineWidth=3;ctx.stroke();
+      for(let k=0;k<14;k++){const a=k/14*6.2832,R=46+k%3*12;line(x+Math.cos(a)*40,y+Math.sin(a)*22,x+Math.cos(a)*(R*2.2),y+Math.sin(a)*Math.min(52,R),tint(c,.8),1.5);}
+      ctx.beginPath();ctx.ellipse(x,y,46,28,0,0,6.2832);ctx.fillStyle=COL.panel2;ctx.fill();ctx.strokeStyle=c;ctx.lineWidth=2;ctx.stroke();nuc(x,y,19,c,true);}
+}
+function lineage(){
+  const u=step<4?0:P(4,3.2),v=P(5,1.2);
+  plainCell(-520,0,70);text('Stem cell',-520,105,{align:'center'});
+  if(pos===POS('one'))A(ease(t/.8),()=>{book(-240,0,190,110);text('One cell, the whole book',-380,170,{size:34,weight:700,align:'center',color:COL.accent});});
+  const a=ease(u*2),b=ease(u*2-1);
+  for(let i=0;i<4;i++){
+    const mx=-210,my=i<2?-150:150;
+    const x=b>0?lerp(mx,90,b):lerp(-520,mx,a),y=b>0?lerp(my,LY[i],b):lerp(0,my,a);
+    if(u>0){line(-520,0,mx,my,'rgba(138,160,172,.35)',1.5);if(b>0)line(mx,my,x,y,'rgba(138,160,172,.35)',1.5);}
+    if(u>0&&v<1)A(1-v,()=>plainCell(x,y,lerp(70,48,u)));
+    if(v>0)A(v,()=>{typed(i,x,y);text(LN[i],300,y,{size:34,weight:700,color:TCOL[i]});text(LN[i]+' chapter',605,y,{size:24,color:TCOL[i]});});
+    if(b>0){const lit=step>=5?LROW[i]:null;book(500,y,190,96,{rows:6,lit,litCol:['#c8557a','#d0512e','#7a55d0','#8a6a1a'][i]});}
+  }
+}
+/* ---------- 5 the book, letters on the pages ---------- */
+const BW=940,BH=560,RH=38;
+const LSTR=['  TGACC TAGGCAT','GATTACGC TAGCTA','AGCTT GACATCGA','TCAGGATC CTAGA','CATTGC','','  GGTACC ATGTCA','CATTAGTC GAATC','ACTGA TCGGATTG','GTCCA TGAGCTAA','TTGAC CATGGCT','ACGTGA',''];
+const RSTR=['  CTAGG ATCCGTA','TTGAC AGCTAGCA','GTCAGC AATGCTT','CCATG','','  GATTAC TGCAA','GGTCA TTACGCA','TAGCC','','  CAGTA CGGCTAG','TAGCC ATGATCAT','GCATT GAACGTCA','TTAGC'];
+const CW=25,GENE=[5,6,7];
+function pageRow(s,x,y,size,a){for(let i=0;i<s.length;i++)if(s[i]!==' ')A(a,()=>letter(s[i],x+i*CW,y,size,INK[s[i]]));}
+function bigBook(){const s0=step;if(pos<POS('notEng'))step=5;else if(pos<POS('res'))step=Math.min(step,8);bookScene();step=s0;}
+function bookScene(){
+  const c=0,fall=step===10?ease((t-2)/1.6):step>10?1:0,bx=-BW/2+40,rx=30;
+  const show=P(6,1.4);
+  openBook(0,0,BW,BH);
+  const ry=r=>-BH/2+44+r*RH;
+  for(let r=0;r<13;r++){
+    if(show>0){pageRow(LSTR[r],bx,ry(r),24,show);
+      if(GENE.includes(r))continue;
+      pageRow(RSTR[r],rx+10,ry(r)+(r>7?-4*RH*c:0),24,show);}
+  }
+  if(show<1)A(1-show,()=>{const ENG=[[bx,'How to build','a nerve cell',['Grow a long thin arm.','Reach out to the next cell.','Pass signals along.']],[rx+24,'How to build','a muscle cell',['Pack in fibres.','Line them all up.','Pull together.']]];
+    for(const[x,a,b,L]of ENG){text(a,x,-190,{size:40,weight:700,color:'#2b2b2b'});text(b,x,-142,{size:40,weight:700,color:'#2b2b2b'});L.forEach((l,i)=>text(l,x,-60+i*56,{size:28,color:'#2b2b2b'}));}});
+  if(pos===POS('enGene')||pos===POS('enRead'))A(pos===POS('enGene')?ease(t/.8):1,()=>{rect(rx+8,-28,360,48,'rgba(255,194,75,.25)',INK.G,2.5);label('One paragraph: one gene',490,-4,rx+368,-4,{size:24,align:'left'});});
+  if(pos===POS('enRead')){A(ease(t/.8),()=>{text('?',548,120,{size:64,weight:700,color:COL.G,align:'center'});});A(ease((t-.8)/.6),()=>{text('The real writing is',bx,130,{size:30,weight:700,color:'#2b2b2b'});text('far too small to see.',bx,170,{size:30,weight:700,color:'#2b2b2b'});text('Imagine you cannot see it.',bx,214,{size:28,color:'#2b2b2b'});});}
+  const v=P(7,.8);
+  if(v>0&&step<9)A(v,()=>{for(const r of[1,7])rect(bx-12,ry(r)-19,CW*6,38,null,r===1?INK.G:INK.C,2.5);
+    label('One instruction',-740,ry(1),bx-12,ry(1),{size:24,align:'left'});
+    label('A different one',-740,ry(7),bx-12,ry(7),{size:24,align:'left'});});
+  /* the paragraph strip */
+  const w=P(8,.8),sx=rx-4,sy=ry(5)-24,sw=BW/2-52,sh=RH*2+48;
+  if(fall<1){ctx.save();
+    ctx.translate(fall*300,fall*fall*520);ctx.rotate(fall*.5);ctx.globalAlpha*=1-fall*fall;
+    ctx.beginPath();const J=7;
+    for(let i=0;i<=20;i++)ctx[i?'lineTo':'moveTo'](sx+sw*i/20,sy+(i%2?J*fall:0));
+    for(let i=20;i>=0;i--)ctx.lineTo(sx+sw*i/20,sy+sh+(i%2?-J*fall:0));ctx.closePath();
+    if(fall>0){ctx.fillStyle=PAPER;ctx.fill();}
+    if(w>0){ctx.fillStyle=`rgba(255,194,75,${.3*w})`;ctx.fill();ctx.strokeStyle=INK.G;ctx.lineWidth=2.5;ctx.stroke();}
+    if(show>0)for(const r of GENE)pageRow(RSTR[r],rx+10,ry(r),24,show);
+    ctx.restore();}
+  if(w>0&&fall<.1&&step<10)A(w,()=>{label('One paragraph: one gene',490,ry(5)-30,sx+sw-30,sy,{size:24,align:'left'});
+    });
+  const q=0;
+  if(pos===POS('res')){ctx.save();ctx.translate(590,120);ctx.scale(2.2,2.2);kid(0,0,.6);ctx.restore();text('Researcher',590,235,{size:30,weight:700,align:'center'});plainCell(690,110,44);text('Stem cells',690,175,{size:22,align:'center'});}
+  if(pos===POS('ko'))A(ease(t/.6),()=>{rect(-520,262,1040,70,COL.panel,COL.accent,2,8);text('Knockout: take a gene out to see what it does',0,297,{size:36,weight:700,align:'center',color:COL.accent});});
+  if(q>0)A(q,()=>{text('?',548,ry(7)+90,{size:64,weight:700,color:COL.G,align:'center'});});
+  if(step===10&&t<2.2){const u=clamp(t/1.8),phase=u<.5,prog=phase?u*2:(u-.5)*2;const px=phase?lerp(sx,sx+sw,prog):lerp(sx+sw,sx,prog),py=phase?sy:sy+sh;
+    scissors(px,py,.08+Math.abs(Math.sin(clock*5))*.24,phase?0:Math.PI);}
+}
+function scissors(x,y,o,head=0){ctx.save();ctx.translate(x,y);ctx.rotate(head);ctx.lineCap='round';
+  for(const q of[-1,1]){ctx.save();ctx.rotate(q*o);
+    ctx.beginPath();ctx.moveTo(150,0);ctx.lineTo(0,q*-13);ctx.lineTo(-10,q*9);ctx.closePath();ctx.fillStyle='#dfe7ea';ctx.fill();ctx.strokeStyle='#5d6f7a';ctx.lineWidth=2;ctx.stroke();
+    line(-4,0,-50,-q*14,COL.T,9);
+    ctx.beginPath();ctx.ellipse(-84,-q*26,38,24,-q*.25,0,6.2832);ctx.strokeStyle=COL.T;ctx.lineWidth=9;ctx.stroke();
+    ctx.restore();}
+  circ(0,0,6,'#5d6f7a','#dfe7ea',2);ctx.lineCap='butt';ctx.restore();}
+/* ---------- 6 the box ---------- */
+function box(){
+  const open=P(13,1),x=-510,y=-285,w=1020,h=540,dx=x+40,dyT=y+84,dw=650,dh=h-130;
+  rect(x+70,y+h-2,90,18,'#55656f');rect(x+w-160,y+h-2,90,18,'#55656f');
+  rect(x,y,w,h,'#d5dcdf','#8aa0ac',2.5,18);
+  rect(x,y,w,70,'#b9c4c9',null,0,18);
+  text('SEQUENCER',x+44,y+36,{size:38,weight:700,color:'#33434d'});
+  circ(x+w-50,y+36,10,'#35c46b','#22303a',2);if(step===12)glow(x+w-50,y+36,30,'#35c46b',.4+.3*Math.sin(clock*4));
+  /* the door */
+  rect(dx-6,dyT-6,dw+12,dh+12,'#8aa0ac',null);
+  rect(dx,dyT,dw,dh,COL.panel2,COL.accent,1.5);
+  if(open>0)A(open,()=>glow(dx+dw/2,dyT+dh/2,380,COL.accent,.35));
+  const up=-dh*open;ctx.save();ctx.beginPath();ctx.rect(dx,dyT,dw,dh);ctx.clip();
+  rect(dx,dyT+up,dw,dh,'#26343e','#55656f',2);
+  rect(dx+60,dyT+60+up,dw-120,dh-160,'#141e25','#55656f',2,6);
+  rect(dx+dw/2-70,dyT+dh-58+up,140,16,'#8aa0ac',null,0,8);
+  ctx.restore();
+  /* the screen */
+  const sx=x+730,sy=y+94,sw=250,sh=165,CC=[COL.A,COL.T,COL.G,COL.C];
+  rect(sx,sy,sw,sh,'#0e161c','#55656f',3,6);
+  ctx.save();ctx.beginPath();ctx.rect(sx+6,sy+6,sw-12,sh-12);ctx.clip();
+  for(let i=0;i<8;i++){const cx=sx+24+i*29,hg=50+((i*37)%5)*16;ctx.beginPath();for(let k=-20;k<=20;k+=2){const X=cx+k,Y=sy+sh-14-hg*Math.exp(-(k*k)/70);k===-20?ctx.moveTo(X,Y):ctx.lineTo(X,Y);}ctx.strokeStyle=CC[i%4];ctx.lineWidth=2;ctx.stroke();}
+  ctx.restore();
+  /* sample drawer and buttons */
+  rect(sx,sy+195,sw,64,'#b9c4c9','#8aa0ac',2,6);rect(sx+50,sy+218,sw-100,12,'#55656f',null,0,6);text('Samples',sx+sw/2,sy+246,{size:18,align:'center',color:'#33434d'});
+  for(let i=0;i<3;i++)circ(sx+50+i*75,sy+300,15,'#8aa0ac','#55656f',2);
+  text('You cannot see what happens in here',0,y+h+48,{size:36,align:'center',color:COL.accent,weight:700});
+  if(step===12){const u=P(12,2.4,.7);for(let i=0;i<READ.length;i++){const k=clamp(u*1.5-i*.07),xx=lerp(-760+i*26,dx+dw/2-60+i*12,k),yy=lerp(0,0,k)-Math.sin(k*3.14)*60;
+    A(1-ease((k-.85)/.15),()=>letter(READ[i],xx,yy,32));}}
+}
+/* ---------- the order of things ---------- */
+function chain(x,y,n,sp,r=20,last=null){line(x,y,x+(n-1)*sp,y,COL.muted,3);for(let i=0;i<n;i++){const L=last&&i===n-1;if(L)glow(x+i*sp,y,r*3,last,.9);circ(x+i*sp,y,r,L?last:'#32424e',COL.muted,1.5);}}
+const WORDS=['THE','CAT','SAT','ON','THE','MAT'],WC={THE:COL.G,CAT:COL.C,SAT:COL.A,ON:COL.T,MAT:'#b89bff'},WX=[0,80,160,240,300,380];
+const WBX=i=>-540+WX[i]*1.5,WW=i=>WORDS[i].length*23+32,HEAR=[1,3,5,0,4,2],ROW=r=>-165+r*62,BOXY=-232;
+function sweep(to,u){rect(WBX(0)-16,BOXY-24,(WBX(to)+WW(to)-WBX(0))*u,48,'rgba(155,231,255,.28)',null,0,4);}
+function figures(up){if(up<=.5)return;ctx.save();ctx.translate(430,-110);ctx.beginPath();for(let i=0;i<8;i++){const q=i/8*6.2832+.39;ctx[i?'lineTo':'moveTo'](Math.cos(q)*72,Math.sin(q)*72);}ctx.closePath();ctx.fillStyle='#d33';ctx.fill();ctx.strokeStyle=COL.fg;ctx.lineWidth=3;ctx.stroke();ctx.restore();text('STOP',430,-110,{size:44,weight:700,align:'center',color:'#fff'});}
+function order(){
+  const sub=step===13?clamp(pos-ORD0-(pos>POS('rules')?1:0),0,5):0,tt=pos>POSB('chain')?99:t;
+  if(pos===POS('puz')){A(ease(tt/.6),()=>text('We cannot see the writing',0,-60,{size:44,weight:700,align:'center'}));A(ease((tt-1)/.6),()=>text('So first, a puzzle',0,20,{size:44,weight:700,align:'center',color:COL.accent}));return;}
+  if(sub===5){const m=ease((tt-1.8)/1.2);
+    A(m,()=>chain(-315,-20,8,90,26));
+    A(1-ease((tt-3)/1),()=>{A(1-m,()=>rect(-370,-62,740,84,PAPER,null,0,6));for(let i=0;i<8;i++)letter(READ[i],-315+i*90,-20,lerp(44,30,m),m>.5?COL.fg:INK[READ[i]]);});
+    A(ease(tt-.2),()=>text('One line of the book',0,-180,{size:36,weight:700,align:'center',color:COL.accent}));
+    A(ease(tt-3.2),()=>text('One bead = one letter',0,90,{size:38,weight:700,align:'center'}));
+    return;}
+  A(ease(tt*2),()=>text('Sequencing: finding the order',0,-322,{size:36,weight:700,align:'center',color:COL.accent}));
+  WORDS.forEach((w,i)=>{rect(WBX(i)-16,BOXY-24,WW(i),48,'#22303a',COL.muted,1.5,4);if(sub>=1)text(String(i+1),WBX(i)+WW(i)/2-16,BOXY-42,{size:24,align:'center',color:COL.muted});
+    const o=sub===4?ease((tt-i*.9)/.4):0;if(o>0)A(o,()=>text(w,WBX(i),BOXY,{size:34,weight:700,color:WC[w],font:MONO}));});
+  if(pos===POS('rules')){['Someone repeats the sentence from the start','At a random moment: STOP','We get only the last word, and its number','Then they start again from the beginning'].forEach((s,i)=>A(ease((tt-.3-i*1.1)/.6),()=>{circ(-440,-110+i*76,24,COL.accent);text(String(i+1),-440,-110+i*76,{size:30,weight:700,align:'center',color:COL.bg});text(s,-395,-110+i*76,{size:38,weight:600});}));return;}
+  if(sub===0){A(ease((tt-1)/.6),()=>text('We cannot see the sentence',-230,-120,{size:40,weight:700,align:'center'}));
+    A(ease((tt-2.6)/.6),()=>text('But someone can repeat it to us',-230,-50,{size:36,align:'center',color:COL.accent}));
+    return;}
+  let heard=6,up=0;
+  if(sub===1){const u=clamp(tt/1.6);sweep(HEAR[0],u);up=u>=1?1:0;heard=tt>1.9?1:0;figures(up,true,u<1);
+    A(ease((tt-2)/.5),()=>text('We hear the last word, and its number',0,250,{size:38,weight:700,align:'center'}));
+    A(ease((tt-3.6)/.5),()=>text(WORDS[HEAR[0]]+' is word '+(HEAR[0]+1),-300,ROW(0),{size:34,color:COL.accent}));}
+  if(sub===2){const c=Math.min(4,Math.floor(tt/1.3)),u=clamp((tt-c*1.3)/1),done=tt>=6.5;if(!done)sweep(HEAR[c+1],u);up=!done&&u>=1?1:0;heard=done?6:1+c+(u>=1?1:0);figures(up,true,!done&&u<1);
+    A(ease((tt-6.6)/.6),()=>text('Every repeat: one more word, and its number',0,250,{size:38,weight:700,align:'center'}));}
+  if(sub===3)A(1-ease(tt/.6),()=>figures(0));
+  const grow=sub===3?ease((tt-2.4)/1.2):sub>3?1:0,sort=sub===3?ease((tt-3.8)/1.4):sub>3?1:0;
+  for(let q=0;q<heard;q++){const L=HEAR[q],w=WORDS[L],y=lerp(ROW(q),ROW(L),sort),x=lerp(-540,WBX(L),grow),k=sub===4?Math.floor(tt/.9):-1;
+    if(grow>0)A(grow,()=>{rect(-556,y-26,WBX(L)+WW(L)+556-8,52,COL.panel,COL.line,1.5,4);for(let i=0;i<L;i++)rect(WBX(i),y-10,70,20,'#2a3843',null,0,4);});
+    glow(x+30,y,70,WC[w],k===L?.9:.45);text(w,x,y,{size:38,weight:700,color:WC[w],font:MONO});if(sub<3)text(String(L+1),x+120,y,{size:32,weight:700,color:COL.fg});}
+  if(sub===3){A(ease(tt*2),()=>text('The number is how far each repeat got',0,250,{size:38,weight:700,align:'center'}));
+    A(ease((tt-5.2)/.6),()=>text('Short to long',430,60,{size:40,weight:700,align:'center',color:COL.accent}));}
+  if(sub===4)A(ease((tt-6)/.7),()=>text('You just sequenced a sentence',0,250,{size:40,weight:700,align:'center',color:COL.accent}));
+}
+/* the sentence they worked out stays beside the machine */
+function sidePanel(){const q=STEPS[pos];if(q.tab!==5)return;
+  const X=cam.x+612,Y=-130,first=STEPS.findIndex(s=>s.tab===5);
+  A(pos===first?ease(t/.8):1,()=>{rect(X,Y,178,310,COL.panel,COL.line,1.5,6);
+    text('Your sentence',X+12,Y+22,{size:21,color:COL.muted});
+    WORDS.forEach((w,L)=>{const y=Y+56+L*26;for(let i=0;i<L;i++)rect(X+12+i*19,y-5,15,10,'#2a3843',null,0,2);text(w,X+12+L*19,y,{size:18,weight:700,color:WC[w],font:MONO});});
+    (q.cue||[]).forEach((c,i)=>text(c,X+12,Y+232+i*30,{size:22,weight:700,color:COL.accent}));});
+}
+/* ---------- 7 the walk ---------- */
+const SX=i=>-490+i*140,SY=-250,CY=j=>-80+j*44,BX=i=>-150+i*50;
+const ORDER=[6,2,4,7,1,5,8,3];
+function kid(x,y,bob){ctx.lineCap='round';const b=Math.sin(bob)*3;circ(x,y-48+b,13,COL.panel,COL.fg,2.5);line(x,y-34+b,x,y-8,COL.fg,3);
+  line(x,y-8,x-9-Math.sin(bob)*6,y+14,COL.fg,3);line(x,y-8,x+9+Math.sin(bob)*6,y+14,COL.fg,3);line(x,y-26+b,x+16,y-14,COL.fg,3);line(x,y-26+b,x-14,y-14,COL.fg,3);ctx.lineCap='butt';}
+function guard(x,y,up){ctx.lineCap='round';circ(x,y-48,13,COL.panel,COL.G,2.5);line(x,y-34,x,y-8,COL.G,3);line(x,y-8,x-9,y+14,COL.G,3);line(x,y-8,x+9,y+14,COL.G,3);ctx.lineCap='butt';
+  const a=lerp(1.2,-.7,up),hx=x+Math.cos(a)*36,hy=y-30+Math.sin(a)*36;line(x,y-28,hx,hy,COL.G,3);const sr=up>.5?29:15,sd=up>.5?22:-4;
+  ctx.beginPath();for(let i=0;i<8;i++){const q=i/8*6.2832+.39;ctx[i?'lineTo':'moveTo'](hx+Math.cos(q)*sr,hy-sd+Math.sin(q)*sr);}ctx.closePath();ctx.fillStyle=up>.5?'#d33':'#622';ctx.fill();ctx.strokeStyle=COL.fg;ctx.lineWidth=1.5;ctx.stroke();
+  if(up>.5)text('STOP',hx,hy-21,{size:17,align:'center',weight:700,color:'#fff'});}
+function bead(i,L,x,y,lit){if(i===L-1){if(lit)glow(x,y,74+12*Math.sin(clock*5),COL[READ[i]],.95);circ(x,y,20,COL[READ[i]]);letter(READ[i],x,y,23,COL.bg);}else circ(x,y,17,'#32424e',COL.muted,1.5);}
+function run(j){const L=ORDER[j],slow=j<3,st=slow?14+j:17;
+  if(j===0&&step===14){const sb=pos-POS('w0');
+    if(sb===0){const kp=Math.min(t/.75,L-2);return{L,g:Math.floor(kp+.001)+1,d:0,kid:kp,up:0};}
+    if(sb===1)return{L,g:L,d:0,kid:L-1,up:clamp(t/.4),dark:1};
+    return{L,g:L,d:ease((t-2.2)/1),kid:L-1,up:1};}
+  if(step<st)return null;if(step>st)return{L,g:L,d:1,kid:L-1,up:1};
+  const tt=slow?t:t-(j-3)*1.4;if(tt<0)return null;
+  const w=slow?.75*L:.7,q=clamp(tt/w),kp=q*(L-1);
+  return{L,g:Math.floor(kp+.001)+1,kid:kp,up:q>=.97?1:0,d:slow?ease((tt-w-1.2)/1):ease((tt-w-.15)/.45),q};}
+function walk(){
+  rect(-600,-330,1200,655,null,'rgba(155,231,255,.2)',1.5,8);
+  text('INSIDE THE BOX',-580,302,{size:22,color:COL.accent});
+  const many=P(19,1.8),sort=P(19,1.6,2.2);
+  A(1-many,()=>{chain(SX(0),SY+44,8,140,20);
+    text('What the book said',SX(0)-36,-158,{size:22,color:COL.muted});
+    for(let i=0;i<8;i++){rect(SX(i)-36,-146,72,40,COL.panel,COL.line,1.5);letter(EXPECT[i],SX(i),-126,26);}
+    text('\u2026',560,-126,{size:34,align:'center',color:COL.muted});
+    A(1-P(13,.1)+P(13,.8,.6),()=>text('Our chain',-570,-318,{size:26,color:COL.muted}));
+    let cur=step<14?-1:step<17?step-14:Math.min(7,3+Math.floor(t/1.4));if(step>17)cur=7;
+    const r=cur>=0?run(cur):null;
+    if(pos!==POS('intro')){const kx=SX(0)+(r?r.kid:0)*140;guard(kx+62,SY+5,r?r.up:0);kid(kx,SY+6,(r?r.kid:0)*6);}});
+  if(pos===POS('intro')){ctx.save();ctx.translate(-260,130);ctx.scale(2.4,2.4);kid(0,0,.6);ctx.restore();ctx.save();ctx.translate(240,130);ctx.scale(2.4,2.4);guard(0,0,1);ctx.restore();
+    text('Repeats',-260,240,{size:36,weight:700,align:'center'});text('Chance',240,240,{size:36,weight:700,align:'center',color:COL.G});}
+    if(step>=19&&many>0)for(let k=9;k>=1;k--)A(many*(1-k/11)*.8,()=>{for(let L=1;L<=8;L++)for(let i=0;i<L;i++){const x=BX(i)+k*20,y=lerp(CY(ORDER.indexOf(L)),CY(L-1),sort)-k*11;if(i===L-1){circ(x,y,17,COL[READ[i]]);}else circ(x,y,15,'#2a3843');}});
+  ORDER.forEach((L,j)=>{const r=run(j);if(!r)return;const ry=lerp(CY(j),CY(L-1),sort);
+    for(let i=0;i<r.g;i++){const x=lerp(SX(i),BX(i),r.d),y=lerp(SY+44,ry,r.d);if(r.dark&&i===L-1)circ(x,y,17,'#32424e',COL.muted,1.5);else bead(i,L,x,y,r.g===L);if(r.d<.01)circ(x,y,24,null,COL.accent,3);}});
+  if(pos>=POS('w0')+2)A((pos===POS('w0')+2?ease((t-3.4)/.6):1)*(1-many),()=>{const ty=step>=18?lerp(CY(0),CY(4),sort):CY(0);label('No dye: unseen',-570,CY(4),BX(0)-18,ty,{align:'left'});if(pos>POS('w0')+1)text('Last letter: glows',-570,CY(6));});
+  if(pos===POS('w0'))A(ease((t-1.2)/.6),()=>text('When DNA is repeated, we call it copying',0,120,{size:38,weight:700,align:'center',color:COL.accent}));
+  if(step>=14&&step<=17&&pos>POS('w0'))A(P(14,.6,.3),()=>text('Random stop',420,-20,{size:42,weight:700,align:'center',color:COL.G}));
+  if(step===18)A(P(18,.8),()=>text('All mixed up',480,250,{size:36,weight:700,align:'center',color:COL.accent}));
+  if(many>0)A(many,()=>{text('Millions of copies',-570,0,{size:40,weight:700,color:COL.accent});text('of every length',-570,44,{size:40,weight:700,color:COL.accent});text('Together, they glow',-570,110,{size:30});text('bright enough to see',-570,146,{size:30});});
+}
+/* ---------- 8 the race ---------- */
+const LX=300,TY=-170,TIME=n=>1.1+n*1.6;
+function gelInset(){const x0=-260,w=520,y0=90,h=84;
+  rect(x0,y0,w,h,COL.panel,COL.line,1.5,6);
+  ctx.save();ctx.beginPath();ctx.rect(x0,y0,w,h);ctx.clip();
+  for(let x=x0-80;x<x0+w;x+=22){line(x,y0,x+80,y0+h,'rgba(155,231,255,.2)',1.2);line(x+80,y0,x,y0+h,'rgba(155,231,255,.2)',1.2);}
+  const xs=x0+((clock*240)%(w+50))-25,xl=x0+((clock*50)%(w+140))-20,yl=y0+60+Math.sin(clock*7)*3;
+  rect(xs-24,y0+20,24,6,'#7f95a1',null,0,3);circ(xs,y0+23,7,COL.A);
+  rect(xl-110,yl-3,110,6,'#7f95a1',null,0,3);circ(xl,yl,7,COL.T);
+  ctx.restore();
+  text('Small: fast',x0-16,y0+23,{size:26,align:'right'});text('Big: slow',x0-16,y0+60,{size:26,align:'right'});
+}
+function matchUp(){const u=ease(t/.5);A(u,()=>{rect(-720,-335,1440,670,COL.panel2,null,0,0);
+    const x0=-315,sp=90;text('What the book said',x0-60,-98,{size:28,color:COL.muted,align:'right'});text('What we read',x0-60,112,{size:28,color:COL.muted,align:'right'});text('…',x0+8*sp-20,-98,{size:40,color:COL.muted});text('…',x0+8*sp-20,112,{size:40,color:COL.muted});
+    for(let i=0;i<8;i++){const x=x0+i*sp;rect(x-38,-140,76,84,COL.panel,COL.line,1.5);letter(EXPECT[i],x,-98,40);rect(x-38,70,76,84,COL.panel,COL.line,1.5);letter(READ[i],x,112,40);
+      A(ease((t-.8-i*.3)/.3),()=>{line(x,-50,x,62,'#35c46b',3);});}
+    A(ease(t-3.6),()=>text('Every letter matches',0,240,{size:44,weight:700,align:'center',color:'#35c46b'}));});}
+function race(){
+  gelInset();
+  text('Small is fast. Big is slow.',0,-20,{size:44,weight:700,align:'center',color:COL.accent});text('So the gel puts them in order',0,36,{size:32,weight:700,align:'center',color:COL.G});
+  rect(-620,TY-22,1240,44,'rgba(155,231,255,.06)',COL.muted,1.5,22);
+  text('Thin tube filled with gel',-610,TY-52);
+  text('\u2212',-650,TY,{size:44,weight:700,align:'center',color:COL.muted});text('+',650,TY,{size:44,weight:700,align:'center',color:COL.muted});
+  ctx.save();ctx.beginPath();ctx.roundRect(-620,TY-22,1240,44,22);ctx.clip();
+  for(let x=-660;x<640;x+=20){line(x,TY-22,x+44,TY+22,'rgba(155,231,255,.18)',1);line(x+44,TY-22,x,TY+22,'rgba(155,231,255,.18)',1);}
+  const T=step===20?t:step>20?99:0;
+  for(let n=8;n>=1;n--){const x=lerp(-620,LX,T/TIME(n)),len=n*18;
+    for(const o of[-12,0,12]){rect(x-len+Math.abs(o)*.6,TY+o-3,len,6,'#4a5c68',null,0,3);circ(x+Math.abs(o)*.6,TY+o,6,COL[READ[n-1]]);}}
+  ctx.restore();
+  for(let n=1;n<=8;n++){const dt=T-TIME(n);if(dt>0&&dt<.45)glow(LX,TY,110,COL[READ[n-1]],1-dt/.45);}
+  ctx.fillStyle='rgba(155,231,255,.25)';ctx.beginPath();ctx.moveTo(LX-7,-320);ctx.lineTo(LX+7,-320);ctx.lineTo(LX+3,TY+20);ctx.lineTo(LX-3,TY+20);ctx.fill();
+  label('A light makes each colour glow',-160,-280,LX-6,-250,{align:'left'});
+    text('Our chain',-345,-95,{size:28,color:COL.muted,align:'right'});
+  line(-305,-95,-305+7*88,-95,COL.muted,3);
+  for(let n=1;n<=8;n++){const x=-305+(n-1)*88,y=-95;
+    circ(x,y,26,'#32424e',COL.muted,1.5);
+    if(T>TIME(n)){const v=P(21,.5,(n-1)*.28);
+      circ(x,y,26,COL[READ[n-1]]);A(v,()=>letter(READ[n-1],x,y,30,COL.bg));}
+  }
+  if(pos===POS('stair'))staircase();
+  if(pos===POS('match'))matchUp();
+}
+function staircase(){const u=ease(t/.5);A(u,()=>{rect(-720,-335,1440,670,COL.panel2,null,0,0);
+    const x0=-280,y0=-260,sp=70;
+    for(let L=1;L<=8;L++){const a=ease((t-.6-(L-1)*.5)/.6);const sx=-305+(L-1)*88,sy=-95;for(let i=0;i<L;i++){const x=x0+i*sp,y=y0+(L-1)*sp;if(i===L-1){const bx=lerp(sx,x,a),by=lerp(sy,y,a);glow(bx,by,48,COL[READ[i]],.6);circ(bx,by,27,COL[READ[i]]);letter(READ[i],bx,by,27,COL.bg);}else A(a,()=>circ(x,y,23,'#32424e',COL.muted,1.5));}}
+    A(ease(t-5.2),()=>text('Read the glow, short to long',0,312,{size:32,weight:700,align:'center',color:COL.accent}));});}
+/* ---------- 9 comparison ---------- */
+const CX=i=>-507+i*78;
+function comp(){A(1-P(23,.6),compTop);compTrace();}
+function compTop(){
+  text('What the book said',CX(0)-35,-295,{size:28,color:COL.muted});
+  text('What we read',CX(0)-35,-145,{size:28,color:COL.muted});
+  const m=P(22,.8,2),slide=P(22,1.4,.6);
+  for(let i=0;i<14;i++){const gone=i>=4&&i<=9;rect(CX(i)-35,-268,70,74,gone&&m>0?`rgba(255,110,110,${.22*m})`:COL.panel,gone&&m>0?COL.bad:COL.line,1.5);letter(EXPECT[i],CX(i),-231,38);}
+  for(let i=0;i<8;i++){const a=i<4?CX(i):lerp(CX(i),CX(i+6),slide);rect(a-35,-118,70,74,COL.panel,COL.line,1.5);letter(READ2[i],a,-81,38);}
+  if(m>0)A(m,()=>{for(let i=4;i<=9;i++){ctx.save();ctx.setLineDash([7,6]);rect(CX(i)-35,-118,70,74,null,COL.bad,1.5);ctx.restore();}
+    text('The paragraph is gone',(CX(0)+CX(13))/2,-14,{size:30,weight:700,align:'center',color:COL.bad});});
+}
+function compTrace(){
+  const u=P(23,2.6);
+  if(u>0){const x0=-400,w=800,y0=300;ctx.save();ctx.translate(0,-230);ctx.scale(1.25,1.25);
+    line(x0,y0,x0+w,y0,COL.muted,1.5);
+    ctx.save();ctx.beginPath();ctx.rect(x0,-20,w*u,y0+22);ctx.clip();
+    for(let i=0;i<8;i++){const cx=x0+50+i*100,hg=150+((i*37)%5)*16;ctx.beginPath();for(let k=-56;k<=56;k+=3){const X=cx+k,Y=y0-hg*Math.exp(-(k*k)/500);k===-56?ctx.moveTo(X,Y):ctx.lineTo(X,Y);}ctx.strokeStyle=COL[READ2[i]];ctx.lineWidth=3;ctx.stroke();letter(READ2[i],cx,y0-hg-20,26);}
+    ctx.restore();
+    ctx.restore();A(P(23,.8,.2),()=>{text('What we read, as the machine shows it',0,-270,{size:36,weight:700,align:'center',color:COL.accent});text('A drawing of a trace',0,210,{size:28,align:'center',color:COL.muted});});}
+}
+/* ---------- 10 why ---------- */
+const RY=(y,i)=>y-170+340*.08+i*340*.13;
+function why(){
+  if(pos===POS('whyQ')){book(0,-60,440,270);text('Back to the manual',0,130,{size:44,weight:700,align:'center',color:COL.accent});text('What if a paragraph goes missing? Think of a detective story.',0,190,{size:32,align:'center'});return;}
+  if(step>=27&&camT>=1)return;
+  const a=P(24,1),b=P(25,1);
+  A(Seen(24)?1:.3,()=>{const x=-310,y=-70;
+    text('Sometimes nothing happens',x,-292,{size:36,weight:700,align:'center'});
+    rect(x-230,y-170,460,340,COL.page,COL.muted,1.5);
+    for(let i=0;i<7;i++){if(i===3)continue;line(x-184,RY(y,i),x-184+368*(1-(i%3)*.08),RY(y,i),'rgba(138,160,172,.55)',3);}
+    A(ease(a*2-1),()=>{line(x-184,RY(y,3),x+150,RY(y,3),COL.A,2.5,[7,6]);});
+    A(a,()=>{text('It only described the house',x,136,{size:30,align:'center',color:COL.A});text('Nice to know. The story still works',x,172,{size:30,align:'center',color:COL.A});});});
+  A(Seen(25)?1:0,()=>{const x=310,y=-70;
+    text('Sometimes the story falls apart',x,-292,{size:36,weight:700,align:'center'});
+    rect(x-230,y-170,460,340,COL.page,COL.muted,1.5);
+    for(let i=0;i<7;i++){const ly=RY(y,i),w=368;
+      if(i<3)line(x-184,ly,x-184+w*(1-(i%3)*.08),ly,'rgba(138,160,172,.55)',3);
+      else A(1-b*.6,()=>{ctx.save();ctx.translate(x,ly+b*(i-2)*6);ctx.rotate(b*(i%2?1:-1)*(.08+i*.03));line(-184,0,184,0,'rgba(138,160,172,.55)',3);ctx.restore();});}
+    A(b,()=>{text('?',x+150,y+95,{size:100,weight:700,align:'center',color:COL.T});text('It held the clues to the killer',x,136,{size:30,align:'center',color:COL.T});text('You never find out who did it',x,172,{size:30,align:'center',color:COL.T});});});
+  A(P(26,1),()=>text('Switch a gene off. See what changes. Learn what it does.',0,262,{size:42,weight:700,align:'center',color:COL.accent}));
+}
+
+/* ---------- 11 four sentences ---------- */
+function recap(){
+  const PXS=[-540,-180,180,540];let PX=0;
+  const pic=[y=>{plainCell(PX-75,y,58);book(PX+65,y,120,76);},
+   y=>{book(PX,y,170,104);ctx.save();ctx.translate(PX+30,y-14);ctx.scale(.45,.45);scissors(0,0,.3);ctx.restore();},
+   y=>{for(let L=1;L<=5;L++)for(let i=0;i<L;i++){const x=PX-60+i*28,yy=y-58+(L-1)*28;i===L-1?circ(x,yy,12,COL[READ[i]]):circ(x,yy,10,'#32424e',COL.muted,1);}},
+   y=>{openBook(PX,y,170,104);for(let q=0;q<5;q++){if(q===2)continue;line(PX+12,y-34+q*16,PX+72,y-34+q*16,'rgba(70,70,70,.55)',2);line(PX-72,y-34+q*16,PX-12,y-34+q*16,'rgba(70,70,70,.55)',2);}
+     ctx.save();ctx.setLineDash([5,4]);rect(PX+8,y-8,68,18,null,INK.T,2);ctx.restore();}];
+  ctx.save();ctx.scale(1.5,1.5);const CAP=[['Same book','in every cell'],['Sequencing reads','the order'],['A knockout','removes a gene'],['Reading again','shows it has gone']],OD=[0,2,1,3];for(let i=0;i<4;i++)A(P(27+i,.7),()=>{PX=PXS[i]*(i?.667:.72);pic[OD[i]](0);CAP[i].forEach((l,j)=>text(l,PX,86+j*26,{size:20,weight:700,align:'center'}));});ctx.restore();
+}
+
+const DRAW=[person,tissue,cell,lineage,bigBook,order,box,walk,race,comp,why,recap];
+function leader(){
+  /* the zoom lines that tie each station to the next */
+  const fadeL=.5*(1-ease(camT));if(step>=1&&fadeL>0)A(fadeL,()=>{line(30,-92,GAP-30,-298,COL.accent,1.5,[6,6]);line(30,-28,GAP-30,298,COL.accent,1.5,[6,6]);circ(30,-60,32,null,COL.accent,1.5);});
+  if(step>=2&&fadeL>0)A(fadeL,()=>{line(GAP+90,-26,2*GAP-290,-290,COL.accent,1.5,[6,6]);line(GAP+90,26,2*GAP-290,290,COL.accent,1.5,[6,6]);circ(GAP+88,0,26,null,COL.accent,1.5);});
+}
+function frame(){
+  ctx.setTransform(DPR,0,0,DPR,0,0);ctx.fillStyle=COL.panel2;ctx.fillRect(0,0,W,H);
+  ctx.translate(W/2,H/2);ctx.scale(fit*cam.z,fit*cam.z);ctx.translate(-cam.x,-cam.y);
+  leader();
+  for(let i=0;i<DRAW.length;i++){const sx=i*GAP,d=Math.abs(cam.x-sx);if(d>1500)continue;
+    const a=d<300?1:Math.max(0,1-(d-300)/500);
+    ctx.save();ctx.translate(sx,0);ctx.globalAlpha=a;DRAW[i]();ctx.restore();}
+  sidePanel();
+}
+/* ---------- step control ---------- */
+const tabsEl=$('tabs');
+TABS.forEach((n,i)=>{const li=document.createElement('li'),b=document.createElement('button');b.type='button';b.textContent=n;b.addEventListener('click',()=>{go(STEPS.findIndex(s=>s.tab===i));b.blur();});li.appendChild(b);tabsEl.appendChild(li);});
+function go(i){
+  i=clamp(i,0,STEPS.length-1);const forward=i===pos+1;
+  if(i===pos&&inited)return;
+  inited=true;setPlay(true);pos=i;step=STEPS[i].lg;t=0;camFrom={...cam};camTo=camFor(i);camT=0;if(STEPS[i].cut){camFrom=camTo;camT=1;}camDelay=forward?(STEPS[i].delay||0):0;
+  const s=STEPS[i];
+  [...tabsEl.querySelectorAll('button')].forEach((b,j)=>{b.removeAttribute('aria-current');if(j===s.tab)b.setAttribute('aria-current','step');b.classList.toggle('done',j<s.tab);});
+  $('big').textContent=HEAD[s.tab];$('txt').textContent=s.txt;$('cmp').textContent=CMP[s.tab];$('say').textContent=SAY[i];
+  $('back').disabled=i===0;$('next').disabled=i===STEPS.length-1;$('count').textContent=`Step ${i+1} of ${STEPS.length}`;
+}
+let inited=false;
+$('next').onclick=e=>{go(pos+1);e.currentTarget.blur();};
+$('back').onclick=e=>{go(pos-1);e.currentTarget.blur();};
+const setPlay=v=>{playing=v;$('play').textContent=v?'Pause':'Play';};
+$('play').onclick=e=>{setPlay(!playing);e.currentTarget.blur();};
+$('stage').addEventListener('click',()=>go(pos+1));
+addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();go(pos+1);}
+  else if(e.key==='ArrowLeft'){e.preventDefault();go(pos-1);}
+  else if(e.key==='p'||e.key==='P')setPlay(!playing);
+});
+let last=performance.now();
+function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;
+  if(playing){t+=dt;clock+=dt;}
+  camT=clamp(camT+(camDelay>0?0:dt/1.1));camDelay=Math.max(0,camDelay-dt);
+  const u=ease(camT),dip=1-.1*Math.sin(u*3.1416)*(camFrom.x!==camTo.x?1:0);
+  cam={x:lerp(camFrom.x,camTo.x,u),y:lerp(camFrom.y,camTo.y,u),z:lerp(camFrom.z,camTo.z,u)*dip};
+  frame();requestAnimationFrame(loop);}
+resize();go(0);requestAnimationFrame(loop);
+window.__anim={go,get step(){return pos},setT:v=>{t=v;camT=1;camDelay=0;cam=camFor(pos);},n:STEPS.length};
+})();
+</script>
+</body>
+</html>

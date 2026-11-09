@@ -1,0 +1,470 @@
+<!doctype html><html><head><meta charset=utf8><meta name="author" content="Fernando Ortiz"><meta name="creator" content="Fernando Ortiz"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Flow Cytometer in Motion</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<style>
+/* Layout: a guided story. Step bar on top, one big caption, then a single canvas where the machine (left) feeds the graph (right).
+   Deliberately single dark theme: the laser and the glow read best on a dark instrument panel, and it projects well. */
+:root{
+  --bg:#0a1015;
+  --panel:#111a21;
+  --panel2:#0d151b;
+  --line:#24343f;
+  --fg:#e9f0f3;
+  --muted:#8aa0ac;
+  --laser:#22c3ff;
+  --green:#58f08a;
+  --pink:#ff5fa8;
+  --sheath:#16384c;
+  --display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);text-transform:uppercase;letter-spacing:.14em;font-size:13px;font-weight:600;color:var(--laser);margin:0}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,4vw,42px);line-height:1;margin:4px 0 0;text-wrap:balance}
+.steps{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:0;padding:0;list-style:none}
+@media (max-width:700px){.steps{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.steps button{width:100%;text-align:left;display:flex;flex-direction:column;gap:2px;padding:8px 10px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--line);border-radius:3px;color:var(--muted);cursor:pointer;font-family:var(--display);min-width:0}
+.steps .n{font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.steps .t{font-size:17px;font-weight:600;color:inherit;line-height:1.15}
+.steps button.done{border-top-color:var(--muted);color:var(--fg)}
+.steps button[aria-current="step"]{border-top-color:var(--laser);color:var(--fg);background:#15232c}
+.steps button[aria-current="step"] .n{color:var(--laser)}
+.caption{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 18px;align-items:baseline;padding:14px 18px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--laser);border-radius:3px}
+.caption .big{font-family:var(--display);font-size:clamp(24px,3vw,32px);font-weight:700;line-height:1.05;white-space:nowrap}
+.caption p{margin:0;font-size:clamp(16px,1.7vw,19px);max-width:70ch}
+@media (max-width:700px){.caption{grid-template-columns:minmax(0,1fr)}}
+.stagebox{background:var(--panel2);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+canvas{display:block;width:100%;height:auto;aspect-ratio:1000/560}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.group{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button.ctl{font-family:var(--display);text-transform:uppercase;letter-spacing:.08em;font-weight:600;font-size:15px;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:9px 16px;cursor:pointer}
+button.ctl.primary{background:var(--laser);border-color:var(--laser);color:var(--bg)}
+button.ctl[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--bg)}
+button.ctl:disabled{opacity:.35;cursor:default}
+button:hover:not(:disabled){filter:brightness(1.15)}
+button:focus-visible{outline:2px solid var(--laser);outline-offset:2px}
+.count{font-family:var(--display);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+.count b{color:var(--fg);font-size:18px;margin-left:6px}
+.note{color:var(--muted);font-size:14px;margin:0;max-width:80ch}
+/* full screen: everything fits one screen, the drawing grows to fill the space left */
+body.present .wrap{max-width:none;height:100vh;height:100dvh;box-sizing:border-box;padding-block:12px;gap:10px}
+body.present .eyebrow,body.present .note{display:none}
+body.present .stagebox{flex:1 1 0;min-height:0;display:flex;align-items:center;justify-content:center;background:var(--bg);border:0}
+body.present canvas{aspect-ratio:auto}
+</style>
+
+<div class="wrap">
+  <div>
+    <p class="eyebrow">Flow cytometry for beginners</p>
+    <h1>How a flow cytometer looks at one cell at a time</h1>
+  </div>
+
+  <ol class="steps" id="steps"></ol>
+
+  <div class="caption" aria-live="polite">
+    <div class="big" id="capTitle"></div>
+    <p id="capText"></p>
+  </div>
+
+  <div class="stagebox">
+    <canvas id="stage" aria-label="Animated diagram of a flow cytometer: cells line up, pass a laser, detectors take readings, and each cell becomes a dot on a graph"></canvas>
+  </div>
+
+  <div class="bar">
+    <div class="group">
+      <button class="ctl" id="back" type="button">← Back</button>
+      <button class="ctl" id="play" type="button">Pause</button>
+      <button class="ctl primary" id="next" type="button">Next →</button>
+    </div>
+    <div class="group">
+      <button class="ctl" id="dye" type="button" aria-pressed="true" hidden>Dye: on</button>
+      <span class="count">Cells counted<b id="count">0</b></span>
+      <button class="ctl" id="fs" type="button">Full screen</button>
+    </div>
+  </div>
+  <p class="note">The cells are white blood cells. A real machine checks thousands of cells every second; this one is slowed down so you can follow along.</p>
+</div>
+
+<script>
+(()=>{
+const rs=getComputedStyle(document.documentElement);
+const tok=k=>rs.getPropertyValue(k).trim();
+const C={bg:tok('--bg'),panel:tok('--panel'),panel2:tok('--panel2'),line:tok('--line'),fg:tok('--fg'),muted:tok('--muted'),laser:tok('--laser'),green:tok('--green'),pink:tok('--pink'),sheath:tok('--sheath')};
+const rgba=(h,a)=>{const n=parseInt(h.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${Math.max(0,Math.min(1,a))})`;};
+const FONT='"Barlow Condensed","Arial Narrow",sans-serif';
+const gn=()=>{let u=0;while(!u)u=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*Math.random());};
+const cl=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const lg=v=>Math.log10(Math.max(1,v));
+const $=id=>document.getElementById(id);
+
+/* ---------- the story ---------- */
+const CH=[
+  {t:'Line up',      big:'Cells line up',       txt:'Moving water squeezes the cells into a thin stream, so they pass in single file, like cars merging into one lane.', speed:0.7, gap:0.55},
+  {t:'Laser',        big:'A laser shines',      txt:'Each cell crosses a blue laser beam, one at a time. Watch each cell light up as it goes through.', speed:0.5, gap:0.9},
+  {t:'Scatter',      big:'Light scatters',      txt:'When laser light hits a cell, it scatters in many directions, like car headlights in fog. Forward scatter (FSC) is light that bends a little and keeps going ahead: bigger cells make more. Side scatter (SSC) is light bounced out sideways by the bits inside the cell: grainier cells make more.', speed:0.35, gap:1.2},
+  {t:'One dot',      big:'One cell = one dot',  txt:'The two scatter readings become a dot on the graph. More forward scatter (bigger cell): the dot goes further right. More side scatter (grainier cell): the dot goes higher.', speed:0.4, gap:1.1},
+  {t:'Groups',       big:'Groups appear',       txt:'After many cells, similar cells land in the same spot. Each group is a different kind of white blood cell, and we can count them.', speed:2.6, gap:0.16},
+  {t:'Glowing dye',  big:'Glowing dye',         txt:'Scientists add a dye that sticks only to one kind of cell. The dye soaks up blue laser light and glows green, like a highlighter under a blacklight. Glowing cells become green dots.', speed:1.6, gap:0.3},
+  {t:'Two dyes',     big:'Two dyes, two colors', txt:'Now we add two dyes: green anti-CD3 sticks to T cells and pink anti-CD19 sticks to B cells. The same blue laser makes both glow, and a second mirror splits green from pink so each color has its own detector. The graph now plots green glow against pink glow, so each cell type lands in its own corner. Sorting cells by their surface markers like this is called phenotyping.', speed:1.6, gap:0.3},
+];
+const INTRO={channel:0,laser:1,size:2,grainy:2,graph:3,groups:4,glow:5,pink:6};
+let ch=0;
+
+/* ---------- geometry (logical 1000 x 560) ---------- */
+const W=1000,H=560,cx=150,YT=46,YB=176,HW0=62,HW1=11,NY=78,YI=300,YEND=H+14;
+function hw(y){if(y<=YT)return HW0;if(y>=YB)return HW1;const t=(y-YT)/(YB-YT),s=t*t*(3-2*t);return HW0+(HW1-HW0)*s;}
+const HWN=hw(NY);
+const vel=y=>50*Math.pow(HWN/hw(Math.max(y,NY)),0.55);
+const xOf=c=>cx+c.off*hw(c.y)/HWN;
+/* forward path: straight along the laser. side path: collected off to the side by a lens, then mirrors send it up to detectors */
+const BLK=290; // blocker in front of the FSC detector
+const FSCB={x:312,y:YI-24,w:76,h:48};
+const LENS={x:220,y:392};LENS.ang=Math.atan2(LENS.y-YI,LENS.x-cx);
+const BEND={x:270,y:452},PY=452,M1=318,M2=428,M3=538;
+const SSCB={x:M1-38,y:358,w:76,h:50},GLB={x:M2-38,y:358,w:76,h:50},PKB={x:M3-38,y:358,w:76,h:50};
+const DET={size:{x:FSCB.x,y:YI}};
+const MW=100;
+const MET={size:{x:FSCB.x+FSCB.w+16,y:YI-7},grainy:{x:M1-50,y:500},glow:{x:M2-50,y:500},pink:{x:M3-50,y:500}};
+let parts=[];
+function emit(x,y,a,speed,life,col,lim){parts.push({x,y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,life,max:life,col,lim,d:0,fwd:col===C.fg});}
+function toward(n,x,y,fn){while(n>0){if(Math.random()<n)fn();n-=1;}}
+function scatterLight(dt){
+  if(ch<INTRO.size)return;
+  const lensD=Math.hypot(LENS.x-cx,LENS.y-YI);
+  for(const c of cells){
+    const d=c.y-YI,k=Math.exp(-d*d/60);if(k<0.25)continue;
+    const x=xOf(c),y=c.y,boost=ch===INTRO.size?1.6:1;
+    // forward scatter: bent only a little, keeps going ahead (more for bigger cells)
+    toward(k*(c.fsc/1023)*260*boost*dt,x,y,()=>{const s=Math.random()<0.5?-1:1;emit(x,y,s*(0.06+Math.random()*0.15),320,0.55,C.fg,FSCB.x-x);});
+    // side scatter: bounced off sideways by the grains inside (more for grainier cells)
+    toward(k*Math.pow(c.ssc/1023,1.3)*320*boost*dt,x,y,()=>{
+      if(Math.random()<0.5)emit(x,y,LENS.ang+(Math.random()-0.5)*0.35,300,0.7,C.laser,lensD);
+      else{const s=Math.random()<0.5?-1:1;emit(x,y,s*(0.55+Math.random()*2.0),300,0.5,C.laser,1e9);}
+    });
+    // green glow from the dye goes out in every direction
+    if(glowOn()&&c.tag)toward(k*200*dt,x,y,()=>{
+      if(Math.random()<0.5)emit(x,y,LENS.ang+(Math.random()-0.5)*0.35,300,0.7,C.green,lensD);
+      else emit(x,y,Math.random()*6.283,300,0.45,C.green,1e9);
+    });
+    if(pinkOn()&&c.pink)toward(k*200*dt,x,y,()=>{
+      if(Math.random()<0.5)emit(x,y,LENS.ang+(Math.random()-0.5)*0.35,300,0.7,C.pink,lensD);
+      else emit(x,y,Math.random()*6.283,300,0.45,C.pink,1e9);
+    });
+  }
+}
+function moveLight(dt){
+  for(const p of parts){const sx=p.vx*dt,sy=p.vy*dt;p.x+=sx;p.y+=sy;p.d+=Math.hypot(sx,sy);p.life-=dt;
+    if(p.d>=p.lim)p.life=0;
+    if(p.fwd&&p.x>=BLK&&p.x<=BLK+7&&Math.abs(p.y-YI)<8)p.life=0;}
+  parts=parts.filter(p=>p.life>0);
+}
+const G={x:660,y:56,w:310,h:410};
+
+/* ---------- state ---------- */
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let cells=[],simT=0,spawnIn=0,playing=!reduce,dye=true;
+let cur={f:0,s:0,g:0,p:0},hold={f:-1,s:-1,g:-1,p:-1,t:0},events=[],flyers=[],latest=null;
+
+function makeCell(){
+  const c={y:NY,off:(Math.random()*2-1)*12,rec:false};
+  const r=Math.random(),n1=gn(),n2=gn();
+  if(r<0.5){c.type='lymph';c.r=5.5;c.fsc=300+n1*30;c.ssc=125+n2*22;const q=Math.random();c.tag=q<0.6;c.pink=q>=0.6&&q<0.85;}
+  else if(r<0.62){c.type='mono';c.r=8;c.fsc=520+n1*38;c.ssc=330+n2*40;c.tag=false;}
+  else{c.type='gran';c.r=7.5;c.fsc=640+n1*45;c.ssc=700+n2*55;c.tag=false;}
+  c.pink=!!c.pink;c.fsc=cl(c.fsc,8,1015);c.ssc=cl(c.ssc,8,1015);
+  c.glow=c.tag?Math.pow(10,3.1+gn()*0.15):Math.pow(10,0.8+gn()*0.2);
+  c.pglow=c.pink?Math.pow(10,3.1+gn()*0.15):Math.pow(10,0.8+gn()*0.2);
+  c.rot=Math.random()*6.283;
+  c.gr=Array.from({length:7},()=>[Math.random()*6.283,0.2+Math.random()*0.6]);
+  return c;
+}
+const glowOn=()=>ch>=INTRO.glow&&dye;
+const glowOf=c=>glowOn()?c.glow:Math.pow(10,0.8);
+const pinkOn=()=>ch>=INTRO.pink&&dye;
+const pinkOf=c=>pinkOn()?c.pglow:Math.pow(10,0.8);
+
+function update(sd){
+  spawnIn-=sd;
+  const last=cells[cells.length-1];
+  if(spawnIn<=0&&(!last||last.y>NY+18)){cells.push(makeCell());const g=CH[ch].gap;spawnIn=g*0.6+(-Math.log(1-Math.random()))*g*0.4;}
+  for(const c of cells){c.y+=vel(c.y)*sd;if(!c.rec&&c.y>=YI){c.rec=true;record(c);}}
+  cells=cells.filter(c=>c.y<YEND);
+  let f=0,s=0,g=0,pk=0;
+  for(const c of cells){const d=c.y-YI;if(d>-30&&d<30){const k=Math.exp(-d*d/60);f+=k*c.fsc/1023;s+=k*c.ssc/1023;g+=k*lg(glowOf(c))/4;pk+=k*lg(pinkOf(c))/4;}}
+  cur={f:Math.min(1,f),s:Math.min(1,s),g:Math.min(1,g),p:Math.min(1,pk)};
+}
+function record(c){
+  if(ch<INTRO.size)return;
+  hold={f:c.fsc/1023,s:c.ssc/1023,g:lg(glowOf(c))/4,p:lg(pinkOf(c))/4,t:performance.now()};
+  if(ch<INTRO.graph)return;
+  const e={fsc:cl(c.fsc+gn()*6,1,1022),ssc:cl(c.ssc+gn()*6,1,1022),green:glowOn()&&c.tag,pink:pinkOn()&&c.pink,type:c.type};
+  // two-dye step: the graph switches to green glow (x) against pink glow (y)
+  if(ch>=INTRO.pink){e.fsc=cl(lg(glowOf(c))/4*1023+gn()*14,1,1022);e.ssc=cl(lg(pinkOf(c))/4*1023+gn()*14,1,1022);}
+  const slow=ch===INTRO.graph;
+  flyers.push({e,t0:performance.now(),dur:slow?1100:450});
+}
+function land(e){
+  if(events.length>4000)clearGraph();
+  events.push(e);latest={e,t:performance.now()};plotDot(e);
+  $('count').textContent=events.length.toLocaleString();
+}
+
+/* ---------- drawing helpers ---------- */
+const stage=$('stage'),ctx=stage.getContext('2d');let S=1;
+const off=document.createElement('canvas');
+function txt(t,x,y,{size=14,color=C.muted,align='left',weight=600,upper=true}={}){
+  ctx.font=`${weight} ${size}px ${FONT}`;ctx.fillStyle=color;ctx.textAlign=align;ctx.textBaseline='alphabetic';
+  if('letterSpacing' in ctx)ctx.letterSpacing=upper?'1.2px':'0px';
+  ctx.fillText(upper?t.toUpperCase():t,x,y);
+  if('letterSpacing' in ctx)ctx.letterSpacing='0px';
+}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.roundRect?ctx.roundRect(x,y,w,h,r):ctx.rect(x,y,w,h);}
+const seen=id=>ch>=INTRO[id];
+const isNew=id=>ch===INTRO[id];
+function alphaFor(id){return seen(id)?1:0.08;}
+function pulseBox(x,y,w,h){const p=0.5+0.5*Math.sin(performance.now()/260);ctx.save();ctx.strokeStyle=rgba(C.laser,0.35+0.5*p);ctx.lineWidth=2;ctx.setLineDash([6,5]);rr(x-6,y-6,w+12,h+12,8);ctx.stroke();ctx.restore();}
+function gx(fsc){return G.x+fsc/1023*G.w;}
+function gy(ssc){return G.y+G.h*(1-ssc/1023);}
+function dotColor(e){return e.green?rgba(C.green,0.85):e.pink?rgba(C.pink,0.85):rgba(C.fg,0.55);}
+function plotDot(e){const c=off.getContext('2d');c.setTransform(S,0,0,S,0,0);c.fillStyle=dotColor(e);c.beginPath();c.arc(gx(e.fsc),gy(e.ssc),2,0,6.283);c.fill();}
+function clearGraph(){events=[];flyers=[];latest=null;const c=off.getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,off.width,off.height);$('count').textContent='0';}
+
+function draw(now){
+  ctx.setTransform(S,0,0,S,0,0);
+  ctx.globalAlpha=1;ctx.fillStyle=C.panel2;ctx.fillRect(0,0,W,H);
+
+  /* ---- channel ---- */
+  ctx.globalAlpha=1;
+  const wall=s=>{const p=[];for(let y=YT-30;y<=H;y+=4)p.push([cx+s*hw(y),y]);return p;};
+  const L=wall(-1),R=wall(1);
+  ctx.beginPath();L.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));for(let i=R.length-1;i>=0;i--)ctx.lineTo(R[i][0],R[i][1]);ctx.closePath();
+  ctx.fillStyle=C.sheath;ctx.fill();
+  ctx.strokeStyle=rgba(C.muted,0.7);ctx.lineWidth=1.5;[L,R].forEach(P=>{ctx.beginPath();P.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();});
+  ctx.save();ctx.setLineDash([6,10]);ctx.lineDashOffset=-simT*60;ctx.strokeStyle=rgba(C.fg,0.14);ctx.lineWidth=1;
+  for(const f of[-0.75,-0.45,0.45,0.75]){ctx.beginPath();for(let y=YT-26;y<=H;y+=4){const x=cx+f*hw(y);y===YT-26?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.stroke();}ctx.restore();
+  ctx.beginPath();ctx.moveTo(cx-17,0);ctx.lineTo(cx+17,0);ctx.lineTo(cx+14,NY);ctx.lineTo(cx-14,NY);ctx.closePath();ctx.fillStyle=C.panel;ctx.fill();ctx.strokeStyle=rgba(C.muted,0.8);ctx.stroke();
+  if(ch===0){
+    txt('Cells go in',cx+26,20,{color:C.fg});
+    txt('Water',cx+HW0+12,YT+4,{color:C.fg});
+    txt('Squeezed into',cx+22,214,{color:C.fg});txt('single file',cx+22,232,{color:C.fg});
+    // arrows pointing at the narrowing
+    ctx.strokeStyle=rgba(C.laser,0.8);ctx.lineWidth=2;for(const s of[-1,1]){const y=130;ctx.beginPath();ctx.moveTo(cx+s*(HW0+28),y);ctx.lineTo(cx+s*(hw(y)+6),y);ctx.stroke();ctx.beginPath();ctx.moveTo(cx+s*(hw(y)+6),y);ctx.lineTo(cx+s*(hw(y)+14),y-5);ctx.lineTo(cx+s*(hw(y)+14),y+5);ctx.closePath();ctx.fillStyle=rgba(C.laser,0.8);ctx.fill();}
+  }
+
+  /* ---- laser ---- */
+  ctx.globalAlpha=alphaFor('laser');
+  rr(10,YI-22,84,44,4);ctx.fillStyle=C.panel;ctx.fill();ctx.strokeStyle=rgba(C.laser,0.8);ctx.lineWidth=1.5;ctx.stroke();
+  txt('Laser',52,YI+6,{size:16,color:C.fg,align:'center',weight:700});
+  const beamEnd=seen('size')?BLK:DET.size.x;
+  ctx.save();ctx.shadowColor=C.laser;ctx.shadowBlur=12;ctx.fillStyle=rgba(C.laser,0.9);ctx.fillRect(94,YI-1.6,beamEnd-94,3.2);ctx.restore();
+  if(isNew('laser'))pulseBox(10,YI-22,84,44);
+  ctx.globalAlpha=1;
+  /* scattered light */
+  for(const p of parts){ctx.fillStyle=rgba(p.col,cl(p.life/p.max)*0.95);ctx.beginPath();ctx.arc(p.x,p.y,1.8,0,6.283);ctx.fill();}
+  /* blocker */
+  ctx.globalAlpha=alphaFor('size');
+  ctx.fillStyle='#000';ctx.fillRect(BLK,YI-8,7,16);ctx.strokeStyle=rgba(C.muted,0.8);ctx.lineWidth=1;ctx.strokeRect(BLK,YI-8,7,16);
+  if(ch===INTRO.size){txt('Blocker stops the',BLK+3,YI+30,{size:12,align:'center',upper:false,color:C.fg});txt('laser beam itself',BLK+3,YI+44,{size:12,align:'center',upper:false,color:C.fg});
+    txt('Light scatters here',cx+22,YI-34,{color:C.fg});}
+  ctx.globalAlpha=1;
+
+  /* ---- detectors, light paths and meters ---- */
+  const glowLine=(pts,col,a,w=3)=>{if(a<0.03)return;ctx.save();ctx.strokeStyle=rgba(col,a);ctx.lineWidth=w;ctx.shadowColor=rgba(col,a);ctx.shadowBlur=14;ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);for(const p of pts.slice(1))ctx.lineTo(p[0],p[1]);ctx.stroke();ctx.restore();};
+  const dashed=pts=>{ctx.save();ctx.setLineDash([3,6]);ctx.strokeStyle=rgba(C.muted,0.45);ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);for(const p of pts.slice(1))ctx.lineTo(p[0],p[1]);ctx.stroke();ctx.restore();};
+  const box=(b,l1,l2,col,val)=>{rr(b.x,b.y,b.w,b.h,4);ctx.fillStyle=C.panel;ctx.fill();if(val>0.04){ctx.fillStyle=rgba(col,val*0.5);ctx.fill();}ctx.strokeStyle=rgba(col,0.9);ctx.lineWidth=1.5;ctx.stroke();
+    txt(l1,b.x+b.w/2,b.y+b.h/2+1,{size:17,color:C.fg,align:'center',weight:700});txt(l2,b.x+b.w/2,b.y+b.h/2+16,{size:11,color:C.muted,align:'center'});};
+  const meter=(m,col,val,holdV,label,on)=>{const mx=m.x,my=m.y;
+    txt(label,mx,my-7,{size:12,color:C.muted,upper:false});
+    ctx.fillStyle=rgba(C.muted,0.18);ctx.fillRect(mx,my,MW,14);
+    if(on){ctx.fillStyle=rgba(col,0.9);ctx.fillRect(mx,my,MW*cl(val),14);
+      if(holdV>=0){const a=cl(1-(performance.now()-hold.t)/2600,0.35,1);const hx=mx+MW*cl(holdV);ctx.fillStyle=rgba(col,a);ctx.beginPath();ctx.moveTo(hx,my+16);ctx.lineTo(hx-5,my+24);ctx.lineTo(hx+5,my+24);ctx.closePath();ctx.fill();ctx.fillRect(hx-1,my-3,2,20);}}
+    ctx.strokeStyle=rgba(C.muted,0.4);ctx.lineWidth=1;ctx.strokeRect(mx,my,MW,14);
+    txt('low',mx,my+36,{size:11});txt('high',mx+MW,my+36,{size:11,align:'right'});};
+  const on3=seen('size'),fA=on3?cur.f:0,sA=on3?cur.s:0,gA=glowOn()?cl((cur.g-0.2)/0.6):0,pA=pinkOn()?cl((cur.p-0.2)/0.6):0;
+
+  // forward: FSC detector straight ahead on the laser line
+  ctx.globalAlpha=alphaFor('size');
+  box(FSCB,'FSC','forward',C.fg,fA);
+  meter(MET.size,C.fg,fA,hold.f,'Forward scatter: how big',on3);
+  if(isNew('size'))pulseBox(FSCB.x,FSCB.y,MET.size.x+MW-FSCB.x,FSCB.h);
+
+  // side: lens off to the side, then a mirror sends it up to the SSC detector
+  ctx.globalAlpha=alphaFor('grainy');
+  const sidePts=[[cx,YI],[LENS.x,LENS.y],[BEND.x,BEND.y],[M1,PY]];
+  dashed(sidePts);dashed([[M1,PY],[M1,SSCB.y+SSCB.h]]);
+  glowLine(sidePts.slice(1),C.laser,sA);glowLine([[M1,PY],[M1,SSCB.y+SSCB.h]],C.laser,sA);
+  glowLine(sidePts.slice(1),C.green,gA*0.9,2);glowLine(sidePts.slice(1),C.pink,pA*0.9,2);
+  ctx.save();ctx.translate(LENS.x,LENS.y);ctx.rotate(LENS.ang);ctx.beginPath();ctx.ellipse(0,0,7,27,0,0,6.283);ctx.fillStyle=rgba(C.laser,0.14);ctx.fill();ctx.strokeStyle=rgba(C.fg,0.75);ctx.lineWidth=1.5;ctx.stroke();ctx.restore();
+  ctx.strokeStyle=rgba(C.fg,0.85);ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(M1-13,PY+13);ctx.lineTo(M1+13,PY-13);ctx.stroke();
+  box(SSCB,'SSC','side',C.laser,sA);
+  meter(MET.grainy,C.laser,sA,hold.s,'SSC: how grainy',on3);
+  if(ch===INTRO.size||ch===INTRO.graph){
+    txt('Collection lens',cx-18,LENS.y-2,{size:13,color:C.fg,align:'right'});
+    txt('gathers light',cx-18,LENS.y+14,{size:12,align:'right',upper:false});
+    txt('that went sideways',cx-18,LENS.y+28,{size:12,align:'right',upper:false});
+    txt('Mirror',M1+18,PY+20,{size:12,upper:true});
+  }
+  if(isNew('grainy'))pulseBox(SSCB.x,SSCB.y,SSCB.w,SSCB.h);
+
+  // glow: the first mirror lets green through to a second mirror and the green detector
+  ctx.globalAlpha=alphaFor('glow');
+  dashed([[M1,PY],[M2,PY],[M2,GLB.y+GLB.h]]);
+  glowLine([[M1,PY],[M2,PY],[M2,GLB.y+GLB.h]],C.green,gA);glowLine([[M1,PY],[M2,PY]],C.pink,pA,2);
+  ctx.strokeStyle=rgba(C.muted,0.9);ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(M2-13,PY+13);ctx.lineTo(M2+13,PY-13);ctx.stroke();
+  box(GLB,'Green','glow',C.green,gA);
+  meter(MET.glow,C.green,gA,glowOn()?(hold.g-0.2)/0.6:-1,'Green: CD3',glowOn());
+  if(ch===INTRO.glow)txt('blue ↑ green →',M1+16,PY-10,{size:13,color:C.fg,upper:false});
+  if(isNew('glow'))pulseBox(GLB.x,GLB.y,GLB.w,GLB.h);
+
+  // pink: the second mirror sends green up and lets pink through to a third detector
+  ctx.globalAlpha=alphaFor('pink');
+  dashed([[M2,PY],[M3,PY],[M3,PKB.y+PKB.h]]);
+  glowLine([[M2,PY],[M3,PY],[M3,PKB.y+PKB.h]],C.pink,pA);
+  ctx.strokeStyle=rgba(C.muted,0.9);ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(M3-13,PY+13);ctx.lineTo(M3+13,PY-13);ctx.stroke();
+  box(PKB,'Pink','glow',C.pink,pA);
+  meter(MET.pink,C.pink,pA,pinkOn()?(hold.p-0.2)/0.6:-1,'Pink: CD19',pinkOn());
+  if(ch===INTRO.pink)txt('green ↑ pink →',M2+16,PY-10,{size:13,color:C.fg,upper:false});
+  if(isNew('pink'))pulseBox(PKB.x,PKB.y,PKB.w,PKB.h);
+  ctx.globalAlpha=1;
+
+  /* ---- cells ---- */
+  for(const c of cells){
+    const x=xOf(c),y=c.y,d=y-YI,k=Math.exp(-d*d/60),r=c.r;
+    if(seen('laser')&&k>0.02){
+      let col=C.laser,a=k*0.6;
+      if(glowOn()&&c.tag){col=C.green;a=k;}
+      if(pinkOn()&&c.pink){col=C.pink;a=k;}
+      const g=ctx.createRadialGradient(x,y,r*0.5,x,y,r*4.4);g.addColorStop(0,rgba(col,a));g.addColorStop(1,rgba(col,0));
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r*4.4,0,6.283);ctx.fill();
+    }
+    ctx.beginPath();ctx.arc(x,y,r,0,6.283);ctx.fillStyle=rgba(C.fg,0.14);ctx.fill();
+    ctx.strokeStyle=glowOn()&&c.tag&&y>YI?rgba(C.green,0.9):pinkOn()&&c.pink&&y>YI?rgba(C.pink,0.9):rgba(C.fg,0.85);ctx.lineWidth=1.2;ctx.stroke();
+    ctx.fillStyle=rgba(C.muted,0.8);
+    if(c.type==='lymph'){ctx.beginPath();ctx.arc(x,y,r*0.66,0,6.283);ctx.fill();}
+    else if(c.type==='mono'){ctx.save();ctx.translate(x,y);ctx.rotate(c.rot);ctx.beginPath();ctx.ellipse(1.2,0,r*0.5,r*0.34,0,0,6.283);ctx.fill();ctx.restore();}
+    else{for(let i=0;i<3;i++){const a=c.rot+i*2.1;ctx.beginPath();ctx.arc(x+Math.cos(a)*r*0.4,y+Math.sin(a)*r*0.4,r*0.24,0,6.283);ctx.fill();}
+      ctx.fillStyle=rgba(C.fg,0.75);for(const[a,f]of c.gr){ctx.beginPath();ctx.arc(x+Math.cos(a)*r*f,y+Math.sin(a)*r*f,0.8,0,6.283);ctx.fill();}}
+  }
+  if(ch===1)txt('Each cell lights up here',cx+22,YI-12,{color:C.fg});
+
+  /* ---- graph ---- */
+  ctx.globalAlpha=alphaFor('graph');
+  rr(G.x-58,G.y-40,G.w+80,G.h+96,6);ctx.fillStyle=C.panel;ctx.fill();
+  txt('Each dot is one cell',G.x,G.y-14,{size:16,color:C.fg});
+  ctx.fillStyle=C.panel2;ctx.fillRect(G.x,G.y,G.w,G.h);
+  ctx.strokeStyle=rgba(C.muted,0.12);ctx.lineWidth=1;for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(G.x+G.w*i/4,G.y);ctx.lineTo(G.x+G.w*i/4,G.y+G.h);ctx.moveTo(G.x,G.y+G.h*i/4);ctx.lineTo(G.x+G.w,G.y+G.h*i/4);ctx.stroke();}
+  ctx.strokeStyle=rgba(C.muted,0.6);ctx.strokeRect(G.x,G.y,G.w,G.h);
+  const two=ch>=INTRO.pink;
+  txt(two?'More green glow →':'Bigger cell →',G.x+G.w/2,G.y+G.h+28,{size:15,color:two?C.green:C.fg,align:'center'});
+  txt(two?'(anti-CD3 dye: T cells)':'(more forward scatter)',G.x+G.w/2,G.y+G.h+46,{size:13,align:'center',upper:false});
+  ctx.save();ctx.translate(G.x-22,G.y+G.h/2);ctx.rotate(-Math.PI/2);txt(two?'More pink glow →':'Grainier cell →',0,0,{size:15,color:two?C.pink:C.laser,align:'center'});ctx.restore();
+  ctx.save();ctx.translate(G.x-6,G.y+G.h/2);ctx.rotate(-Math.PI/2);txt(two?'(anti-CD19 dye: B cells)':'(more side scatter)',0,0,{size:13,align:'center',upper:false});ctx.restore();
+  ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(off,0,0);ctx.setTransform(S,0,0,S,0,0);
+  if(isNew('graph'))pulseBox(G.x-58,G.y-40,G.w+80,G.h+96);
+
+  // latest dot crosshair (step 4) links readings to position
+  if(latest&&ch>=INTRO.graph){
+    const age=(now-latest.t)/1000,e=latest.e,x=gx(e.fsc),y=gy(e.ssc);
+    const a=ch===INTRO.graph?1:cl(1-age/0.8);
+    if(a>0){
+      ctx.save();ctx.setLineDash([4,4]);ctx.lineWidth=1.5;
+      ctx.strokeStyle=rgba(C.fg,a*0.8);ctx.beginPath();ctx.moveTo(x,G.y+G.h);ctx.lineTo(x,y);ctx.stroke();
+      ctx.strokeStyle=rgba(C.laser,a*0.9);ctx.beginPath();ctx.moveTo(G.x,y);ctx.lineTo(x,y);ctx.stroke();ctx.restore();
+      ctx.beginPath();ctx.arc(x,y,4+ (ch===INTRO.graph?2*Math.sin(now/200):0),0,6.283);ctx.strokeStyle=rgba(C.fg,a);ctx.lineWidth=2;ctx.stroke();
+    }
+  }
+  // flying dots
+  for(const f of flyers){
+    const t=cl((now-f.t0)/f.dur),e=f.t;
+    const sx=MET.size.x+MW+10,sy=YI,tx=gx(f.e.fsc),ty=gy(f.e.ssc);
+    const qx=(sx+tx)/2,qy=Math.min(sy,ty)-60;
+    const u=1-t,x=u*u*sx+2*u*t*qx+t*t*tx,y=u*u*sy+2*u*t*qy+t*t*ty;
+    ctx.beginPath();ctx.arc(x,y,4,0,6.283);ctx.fillStyle=f.e.green?C.green:f.e.pink?C.pink:C.fg;ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=10;ctx.fill();ctx.shadowBlur=0;
+  }
+  // group labels
+  if(ch>=INTRO.pink&&events.length>30){
+    const gate=(x0,x1,y0,y1,t,s,col)=>{ctx.save();ctx.setLineDash([6,5]);ctx.strokeStyle=rgba(col,0.85);ctx.lineWidth=1.5;rr(gx(x0),gy(y1),gx(x1)-gx(x0),gy(y0)-gy(y1),6);ctx.stroke();ctx.restore();
+      txt(t,gx(x0)+6,gy(y1)-20,{size:15,color:col});txt(s,gx(x0)+6,gy(y1)-5,{size:13,upper:false});};
+    gate(640,960,90,330,'T cells','green only',C.green);
+    gate(90,330,640,960,'B cells','pink only',C.pink);
+    gate(90,330,90,330,'No dye','other cells',C.fg);
+  }
+  else if(seen('groups')&&events.length>30){
+    const lab=(t,s,fx,fy,dx,dy)=>{txt(t,gx(fx)+dx,gy(fy)+dy,{size:15,color:C.fg});txt(s,gx(fx)+dx,gy(fy)+dy+16,{size:13,upper:false});};
+    lab('Lymphocytes','small, smooth',300,125,22,-14);
+    lab('Monocytes','medium',520,330,22,4);
+    lab('Granulocytes','big, grainy',640,700,-88,-62);
+  }
+  if(ch===INTRO.glow&&events.length>10){
+    ctx.fillStyle=C.green;ctx.beginPath();ctx.arc(G.x+12,G.y+18,5,0,6.283);ctx.fill();
+    txt(dye?'Green dot = cell with dye (T cell)':'No dye added: nothing glows',G.x+24,G.y+23,{size:14,color:dye?C.green:C.fg,upper:false});
+  }
+  ctx.globalAlpha=1;
+}
+
+/* ---------- flow ---------- */
+function stepFlyers(now){
+  const keep=[];for(const f of flyers){if(now-f.t0>=f.dur)land(f.e);else keep.push(f);}flyers=keep;
+}
+
+/* ---------- sizing ---------- */
+function resize(){
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  if(document.body.classList.contains('present')){const r=stage.parentElement.getBoundingClientRect();const fw=Math.max(200,Math.min(r.width,r.height*W/H));stage.style.width=fw+'px';stage.style.height=(fw*H/W)+'px';}
+  else{stage.style.width='';stage.style.height='';}
+  const w=stage.getBoundingClientRect().width||1000;
+  S=w/W*dpr;stage.width=off.width=Math.round(W*S);stage.height=off.height=Math.round(H*S);
+  events.forEach(plotDot);
+}
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(resize,80);});
+
+/* ---------- step UI ---------- */
+const stepsEl=$('steps');
+CH.forEach((c,i)=>{const li=document.createElement('li');const b=document.createElement('button');b.type='button';b.id='step-'+(i+1);
+  b.innerHTML=`<span class="n">Step ${i+1}</span><span class="t">${c.t}</span>`;b.addEventListener('click',()=>go(i));li.appendChild(b);stepsEl.appendChild(li);});
+function go(i){
+  const prev=ch;ch=cl(i,0,CH.length-1);
+  [...stepsEl.querySelectorAll('button')].forEach((b,j)=>{b.toggleAttribute('aria-current',false);if(j===ch)b.setAttribute('aria-current','step');b.classList.toggle('done',j<ch);});
+  $('capTitle').textContent=CH[ch].big;$('capText').textContent=CH[ch].txt;
+  $('back').disabled=ch===0;$('next').disabled=ch===CH.length-1;
+  $('dye').hidden=ch!==INTRO.glow;
+  if(ch!==INTRO.groups||prev===INTRO.glow)clearGraph();
+  if(ch<INTRO.size)hold={f:-1,s:-1,g:-1,t:0};
+  if(ch>=INTRO.glow){dye=true;setDye(true);}
+}
+$('back').addEventListener('click',()=>go(ch-1));
+$('next').addEventListener('click',()=>go(ch+1));
+const setPlay=v=>{playing=v;$('play').textContent=v?'Pause':'Play';};
+$('play').addEventListener('click',()=>setPlay(!playing));
+const fsBtn=$('fs');
+function setPresent(v){document.body.classList.toggle('present',v);fsBtn.textContent=v?'Exit full screen':'Full screen';resize();}
+fsBtn.addEventListener('click',async()=>{
+  if(document.body.classList.contains('present')){if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){}}setPresent(false);return;}
+  setPresent(true);
+  try{if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();}catch(e){}
+});
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('present'))setPresent(false);else resize();});
+function setDye(v){dye=v;const b=$('dye');b.setAttribute('aria-pressed',String(v));b.textContent=v?'Dye: on':'Dye: off';}
+$('dye').addEventListener('click',()=>{setDye(!dye);clearGraph();});
+document.addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('button'))return;if(e.key==='ArrowRight')go(ch+1);else if(e.key==='ArrowLeft')go(ch-1);else if(e.key===' '){e.preventDefault();setPlay(!playing);}});
+
+/* ---------- run ---------- */
+resize();go(0);
+for(let i=0;i<60*6;i++){const sd=CH[0].speed/60;simT+=sd;update(sd);}
+setPlay(playing);
+let lastT=performance.now();
+function frame(now){
+  const dt=Math.min(0.05,(now-lastT)/1000);lastT=now;
+  if(playing){const sd=dt*CH[ch].speed;simT+=sd;update(sd);stepFlyers(now);const pd=dt*Math.min(1,CH[ch].speed*1.5);scatterLight(pd);moveLight(pd);}
+  draw(now);requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+
+</body></html>

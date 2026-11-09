@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="author" content="Fernando Ortiz">
+<meta name="creator" content="Fernando Ortiz">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Flow Cytometry Sees Cells</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* One visual world: a dark lab bench so fluorescent colors glow. Stage on top, caption below, step nav at the bottom. */
+  --bg: #0c1222;
+  --panel: #141c33;
+  --ink: #eef1ff;
+  --muted: #9aa5c8;
+  --line: #2a3558;
+  --accent: #7c8cff;
+  --green: #5be37d;   /* FITC-like dye */
+  --pink: #ff5fa8;    /* PE-like dye */
+  --laser: #4fb6ff;   /* 488 nm laser */
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); }
+body { min-height: 100%; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 20px 20px 28px; display: grid; gap: 16px; }
+header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+header h1 { font-family: var(--display); font-weight: 800; font-size: clamp(20px, 2.6vw, 28px); margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+header .step { color: var(--muted); font-size: 15px; font-variant-numeric: tabular-nums; }
+.stage { background: radial-gradient(120% 120% at 50% 0%, #17213f 0%, var(--panel) 55%, #10172b 100%); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.stage svg { display: block; width: 100%; height: auto; }
+.caption { display: grid; gap: 6px; min-height: 108px; }
+.caption h2 { font-family: var(--display); font-weight: 800; font-size: clamp(22px, 3vw, 32px); margin: 0; text-wrap: balance; }
+.caption p { margin: 0; font-size: clamp(16px, 1.8vw, 19px); line-height: 1.5; color: #cdd3ee; max-width: 68ch; }
+nav { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+nav button { font: 700 16px var(--body); color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 10px 18px; cursor: pointer; }
+nav button:hover { border-color: var(--accent); }
+nav button:disabled { opacity: .4; cursor: default; }
+nav button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.dots { display: flex; gap: 8px; flex: 1; flex-wrap: wrap; }
+.dots button { padding: 8px 14px; font-weight: 400; color: var(--muted); }
+.dots button[aria-current="step"] { color: var(--ink); border-color: var(--accent); background: #1c2650; font-weight: 700; }
+.hint { color: var(--muted); font-size: 14px; }
+.head-right { display: flex; align-items: center; gap: 12px; }
+.fs { font: 700 14px var(--body); color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+.fs:hover { border-color: var(--accent); }
+.fs:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+/* full screen: everything fits one screen, the drawing grows into the space left */
+body.present .wrap { max-width: none; height: 100vh; height: 100dvh; display: flex; flex-direction: column; gap: 10px; padding: 12px 20px; }
+body.present .stage { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; }
+body.present .stage svg { width: 100%; height: 100%; }
+body.present .caption { min-height: 0; }
+body.present .hint { display: none; }
+svg text { font-family: var(--body); }
+.lbl { fill: var(--ink); font-size: 21px; font-weight: 700; }
+.sub { fill: var(--muted); font-size: 16px; }
+.tiny { fill: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>How flow cytometry sees cells</h1>
+    <div class="head-right">
+      <span class="step" id="stepLabel">Step 1 of 4</span>
+      <button class="fs" id="fs" type="button">Full screen</button>
+    </div>
+  </header>
+
+  <div class="stage">
+    <svg id="svg" viewBox="0 0 1000 560" role="img" aria-labelledby="capTitle capText">
+      <defs>
+        <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="3.5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="softglow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="10"/>
+        </filter>
+        <radialGradient id="cyto" cx="45%" cy="40%" r="65%">
+          <stop offset="0%" stop-color="#3a3f7a"/>
+          <stop offset="100%" stop-color="#252a57"/>
+        </radialGradient>
+      </defs>
+      <g id="scene"></g>
+    </svg>
+  </div>
+
+  <section class="caption" aria-live="polite">
+    <h2 id="capTitle"></h2>
+    <p id="capText"></p>
+  </section>
+
+  <nav aria-label="Steps">
+    <button id="prev" type="button">← Back</button>
+    <div class="dots" id="dots"></div>
+    <button id="next" type="button">Next →</button>
+  </nav>
+  <div class="hint">Tip: use the ← → arrow keys while presenting, and Full screen for the projector.</div>
+</div>
+
+<script>
+(() => {
+const NS = "http://www.w3.org/2000/svg";
+const C = {
+  ink: "#eef1ff", muted: "#9aa5c8", membrane: "#c9c3ff", nucleus: "#5b4bc4",
+  marker: "#e9e6ff", green: "#5be37d", pink: "#ff5fa8", laser: "#4fb6ff", line: "#2a3558"
+};
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const root = document.getElementById("scene");
+
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function txt(x, y, s, cls, parent, extra) {
+  const t = el("text", Object.assign({ x, y, class: cls }, extra || {}), parent);
+  t.textContent = s; return t;
+}
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, p) => a + (b - a) * p;
+const ease = p => p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+const rad = d => d * Math.PI / 180;
+function gauss(m, s) {
+  const u = 1 - Math.random(), v = Math.random();
+  return m + s * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+function radiusAt(a, t, R, amp, seed) {
+  return R + amp * (Math.sin(3 * a + t * 1.3 + seed) + 0.6 * Math.sin(5 * a - t * 0.9 + seed * 2));
+}
+function blobPath(cx, cy, R, t, amp, seed) {
+  const N = 48, pts = [];
+  for (let i = 0; i < N; i++) {
+    const a = i / N * Math.PI * 2, r = radiusAt(a, t, R, amp, seed);
+    pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]);
+  }
+  const mid = (p, q) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
+  let m = mid(pts[0], pts[1]);
+  let d = `M${m[0].toFixed(1)},${m[1].toFixed(1)}`;
+  for (let i = 1; i <= N; i++) {
+    const p = pts[i % N], q = pts[(i + 1) % N], mm = mid(p, q);
+    d += `Q${p[0].toFixed(1)},${p[1].toFixed(1)} ${mm[0].toFixed(1)},${mm[1].toFixed(1)}`;
+  }
+  return d + "Z";
+}
+function marker(shape, x, y, angDeg, size, parent, fill) {
+  const g = el("g", { transform: `translate(${x} ${y}) rotate(${angDeg})` }, parent);
+  const s = size, f = fill || C.marker;
+  if (shape === "square") el("rect", { x: -s / 2, y: -s / 2, width: s, height: s, fill: f }, g);
+  else if (shape === "tri") el("path", { d: `M0,${-s * .65} L${s * .6},${s * .45} L${-s * .6},${s * .45}Z`, fill: f }, g);
+  else if (shape === "circle") el("circle", { r: s * .52, fill: f }, g);
+  else if (shape === "diamond") el("path", { d: `M0,${-s * .7} L${s * .5},0 L0,${s * .7} L${-s * .5},0Z`, fill: f }, g);
+  return g;
+}
+
+/* ---------- Scene 1: what is a cell ---------- */
+function sceneCell(g) {
+  const cx = 380, cy = 265, R = 165;
+  const memb = el("path", { fill: "url(#cyto)", stroke: C.membrane, "stroke-width": 4 }, g);
+  // organelles
+  const org = el("g", {}, g);
+  // free ribosomes: tiny dots scattered through the cytoplasm
+  for (let i = 0; i < 70; i++) {
+    const a = Math.random() * Math.PI * 2, d = 82 + Math.random() * 68;
+    el("circle", { cx: cx + d * Math.cos(a), cy: cy + d * Math.sin(a), r: 1.8, fill: "#c9d4ff", opacity: .55 }, org);
+  }
+  // rough ER: folded bands wrapped around the nucleus, studded with ribosomes
+  [84, 96, 108].forEach((r, k) => {
+    const a0 = rad(105 + k * 6), a1 = rad(235 - k * 4);
+    let d = "";
+    for (let j = 0; j <= 40; j++) {
+      const a = a0 + (a1 - a0) * j / 40, rr = r + 3 * Math.sin(j * 1.3);
+      d += (j ? "L" : "M") + (385 + rr * Math.cos(a)).toFixed(1) + "," + (262 + rr * Math.sin(a)).toFixed(1);
+      if (j % 4 === 2) el("circle", { cx: 385 + (rr + 4) * Math.cos(a), cy: 262 + (rr + 4) * Math.sin(a), r: 1.9, fill: "#c9d4ff" }, org);
+    }
+    el("path", { d, fill: "none", stroke: "#7fb3ff", "stroke-width": 3.5, "stroke-linecap": "round", opacity: .8 }, org);
+  });
+  // Golgi: stacked curved sacs, with vesicles budding off
+  for (let k = 0; k < 4; k++) {
+    const y = 300 + k * 9, w = 28 - k * 2;
+    el("path", { d: `M${478 - w},${y} Q478,${y - 14} ${478 + w},${y}`, fill: "none", stroke: "#f2c14e", "stroke-width": 4.5, "stroke-linecap": "round" }, org);
+  }
+  [[516, 300], [520, 318], [440, 296]].forEach(([x, y]) => el("circle", { cx: x, cy: y, r: 4, fill: "#f2c14e" }, org));
+  // mitochondria with inner folds
+  [[300, 352, -30], [470, 192, 60], [262, 232, 80], [330, 158, -15], [425, 388, 20], [505, 250, 95]].forEach(([x, y, r]) => {
+    const m = el("g", { transform: `rotate(${r} ${x} ${y})` }, org);
+    el("ellipse", { cx: x, cy: y, rx: 24, ry: 10, fill: "#f4a259", opacity: .85 }, m);
+    el("path", { d: `M${x - 15},${y + 5} l5,-9 l5,9 l5,-9 l5,9 l5,-9 l5,9`, fill: "none", stroke: "#b8692a", "stroke-width": 1.6 }, m);
+  });
+  // lysosomes and vesicles
+  [[240, 300], [350, 420], [500, 360]].forEach(([x, y]) => el("circle", { cx: x, cy: y, r: 9, fill: "#e86f9a", opacity: .8 }, org));
+  [[320, 190], [270, 330], [455, 150], [390, 145], [545, 300]].forEach(([x, y]) =>
+    el("circle", { cx: x, cy: y, r: 6, fill: "none", stroke: "#8fd3c7", "stroke-width": 2, opacity: .8 }, org));
+  const nuc = el("path", { fill: C.nucleus, stroke: "#a99cff", "stroke-width": 2 }, g);
+  el("circle", { cx: 362, cy: 252, r: 16, fill: "#3b2d8c" }, g);
+
+  const N = 22, prot = [];
+  for (let i = 0; i < N; i++) {
+    const a = i / N * Math.PI * 2 + .1;
+    prot.push({ a, line: el("line", { stroke: C.marker, "stroke-width": 3, "stroke-linecap": "round" }, g),
+      dot: el("circle", { r: 5.5, fill: C.marker }, g) });
+  }
+  // labels
+  function label(px, py, lx, ly, title, sub) {
+    el("line", { x1: px, y1: py, x2: lx - 10, y2: ly - 6, stroke: C.muted, "stroke-width": 1.5, "stroke-dasharray": "4 4" }, g);
+    el("circle", { cx: px, cy: py, r: 4, fill: C.ink }, g);
+    txt(lx, ly, title, "lbl", g);
+    txt(lx, ly + 22, sub, "sub", g);
+  }
+  const pa = rad(-58);
+  label(cx + (R + 21) * Math.cos(pa), cy + (R + 21) * Math.sin(pa), 660, 82, "Surface proteins", "the cell's \"name tags\"");
+  const ma = rad(-18);
+  label(cx + R * Math.cos(ma), cy + R * Math.sin(ma), 660, 180, "Membrane", "the cell's outer skin");
+  label(395, 290, 660, 278, "Nucleus", "holds the DNA instructions");
+  label(470, 380, 660, 376, "Cytoplasm", "jelly packed with organelles");
+  // scale bar
+  el("line", { x1: cx - R, y1: 495, x2: cx + R, y2: 495, stroke: C.muted, "stroke-width": 2 }, g);
+  el("line", { x1: cx - R, y1: 487, x2: cx - R, y2: 503, stroke: C.muted, "stroke-width": 2 }, g);
+  el("line", { x1: cx + R, y1: 487, x2: cx + R, y2: 503, stroke: C.muted, "stroke-width": 2 }, g);
+  txt(cx, 525, "≈ 10 µm across, about a tenth the width of a hair", "tiny", g, { "text-anchor": "middle" });
+
+  function update(t) {
+    memb.setAttribute("d", blobPath(cx, cy, R, t, 5, 0));
+    nuc.setAttribute("d", blobPath(385, 262, 64, t * .8, 3, 2));
+    for (const p of prot) {
+      const r = radiusAt(p.a, t, R, 5, 0), c = Math.cos(p.a), s = Math.sin(p.a);
+      p.line.setAttribute("x1", cx + r * c); p.line.setAttribute("y1", cy + r * s);
+      p.line.setAttribute("x2", cx + (r + 15) * c); p.line.setAttribute("y2", cy + (r + 15) * s);
+      p.dot.setAttribute("cx", cx + (r + 20) * c); p.dot.setAttribute("cy", cy + (r + 20) * s);
+    }
+  }
+  return { update, still: () => update(1) };
+}
+
+/* ---------- Scene 2: types of blood cells ---------- */
+function sceneTypes(g) {
+  const cy = 235;
+  const cells = [
+    { x: 105, type: "rbc", R: 34, name: "Red blood cell", tag: "no nucleus", size: "~7.5 µm" },
+    { x: 255, type: "t", R: 40, name: "T cell", tag: "wears", size: "~9 µm", shape: "square" },
+    { x: 415, type: "b", R: 42, name: "B cell", tag: "wears", size: "~9.5 µm", shape: "tri" },
+    { x: 600, type: "neut", R: 56, name: "Neutrophil", tag: "wears", size: "~12 µm", shape: "diamond" },
+    { x: 840, type: "mono", R: 80, name: "Monocyte", tag: "wears", size: "~18 µm", shape: "circle" }
+  ];
+  const items = cells.map((c, i) => {
+    const grp = el("g", {}, g);
+    const inner = el("g", {}, grp);
+    let memb = null;
+    if (c.type === "rbc") {
+      el("ellipse", { cx: c.x, cy, rx: c.R, ry: c.R * .92, fill: "#c8344a", stroke: "#ff8a96", "stroke-width": 3 }, inner);
+      el("ellipse", { cx: c.x, cy, rx: c.R * .45, ry: c.R * .4, fill: "#e0606f", opacity: .8 }, inner);
+    } else {
+      memb = el("path", { fill: "url(#cyto)", stroke: C.membrane, "stroke-width": 3 }, inner);
+      const R = c.R;
+      if (c.type === "t") el("circle", { cx: c.x - 3, cy: cy - 2, r: R * .68, fill: C.nucleus }, inner);
+      if (c.type === "b") el("circle", { cx: c.x + 4, cy: cy + 1, r: R * .64, fill: C.nucleus }, inner);
+      if (c.type === "mono") el("path", {
+        d: "M-0.5,0 C-0.5,-0.45 -0.1,-0.5 0,-0.22 C0.1,-0.5 0.5,-0.45 0.5,0 C0.5,0.42 -0.5,0.42 -0.5,0Z",
+        transform: `translate(${c.x} ${cy + 6}) scale(${R * 1.15})`, fill: C.nucleus }, inner);
+      if (c.type === "neut") {
+        const L = [[-.32, .08], [0, -.2], [.32, .1]];
+        el("path", { d: `M${c.x + L[0][0] * R},${cy + L[0][1] * R} L${c.x + L[1][0] * R},${cy + L[1][1] * R} L${c.x + L[2][0] * R},${cy + L[2][1] * R}`,
+          stroke: C.nucleus, "stroke-width": 7, fill: "none" }, inner);
+        L.forEach(([a, b]) => el("circle", { cx: c.x + a * R, cy: cy + b * R, r: R * .24, fill: C.nucleus }, inner));
+      }
+      for (let k = 0; k < 12; k++) {
+        const a = k / 12 * Math.PI * 2 + i;
+        marker(c.shape, c.x + (R + 8) * Math.cos(a), cy + (R + 8) * Math.sin(a), a * 180 / Math.PI + 90, R < 50 ? 8 : 10, inner);
+      }
+    }
+    txt(c.x, 385, c.name, "lbl", g, { "text-anchor": "middle" });
+    if (c.shape) { txt(c.x + 4, 410, c.tag, "sub", g, { "text-anchor": "end" }); marker(c.shape, c.x + 18, 405, 0, 13, g); }
+    else txt(c.x, 410, c.tag, "sub", g, { "text-anchor": "middle" });
+    txt(c.x, 432, c.size, "tiny", g, { "text-anchor": "middle" });
+    return { c, inner, memb, i };
+  });
+  // key
+  // scale bar: 10 µm at 9 px per µm
+  el("line", { x1: 840, y1: 480, x2: 930, y2: 480, stroke: C.muted, "stroke-width": 2 }, g);
+  el("line", { x1: 840, y1: 473, x2: 840, y2: 487, stroke: C.muted, "stroke-width": 2 }, g);
+  el("line", { x1: 930, y1: 473, x2: 930, y2: 487, stroke: C.muted, "stroke-width": 2 }, g);
+  txt(885, 470, "10 µm", "tiny", g, { "text-anchor": "middle" });
+  txt(500, 530, "Cells drawn to scale. Under a plain microscope many white blood cells look alike; their surface protein shapes differ.", "tiny", g, { "text-anchor": "middle" });
+
+  function update(t) {
+    for (const it of items) {
+      const dy = Math.sin(t * 1.2 + it.i * 1.3) * 5;
+      it.inner.setAttribute("transform", `translate(0 ${dy.toFixed(2)})`);
+      if (it.memb) it.memb.setAttribute("d", blobPath(it.c.x, cy, it.c.R, t + it.i, 2.5, it.i));
+    }
+  }
+  return { update, still: () => update(0) };
+}
+
+/* ---------- Antibody drawing ---------- */
+function antibody(parent, color, tipShape) {
+  const g = el("g", {}, parent);
+  const halo = el("circle", { cx: 0, cy: 26, r: 13, fill: color, opacity: 0, filter: "url(#softglow)" }, g);
+  el("path", { d: "M-11,-15 L0,0 L11,-15 M0,0 L0,17", stroke: "#dfe3ff", "stroke-width": 5, "stroke-linecap": "round", "stroke-linejoin": "round", fill: "none" }, g);
+  [[-11, -15], [11, -15]].forEach(([x, y]) => {
+    if (tipShape === "square") el("rect", { x: x - 4, y: y - 8, width: 8, height: 8, fill: "none", stroke: color, "stroke-width": 2.5 }, g);
+    else el("path", { d: `M${x},${y - 9} L${x + 5},${y - 1} L${x - 5},${y - 1}Z`, fill: "none", stroke: color, "stroke-width": 2.5 }, g);
+  });
+  const dye = el("circle", { cx: 0, cy: 25, r: 6.5, fill: color, filter: "url(#glow)" }, g);
+  return { g, halo, dye };
+}
+
+/* ---------- Scene 3: what fluorescence is ---------- */
+function sceneFluor(g) {
+  const defs = el("defs", {}, g);
+  const grad = el("linearGradient", { id: "spectrum", x1: "0", x2: "1", y1: "0", y2: "0" }, defs);
+  [[0, "#7a3cff"], [.17, "#3b6bff"], [.29, "#2fb6ff"], [.4, "#5be37d"], [.57, "#ffe14d"], [.7, "#ff9a3d"], [.83, "#ff3d3d"], [1, "#8a1020"]]
+    .forEach(([o, c]) => el("stop", { offset: o, "stop-color": c }, grad));
+
+  const rows = [
+    { y: 150, col: C.green, lam: 30, dye: "green dye", out: "green light out", nm: "(~520 nm)", delay: 0 },
+    { y: 345, col: C.pink, lam: 38, dye: "pink dye", out: "pink light out", nm: "(~575 nm)", delay: 1.6 }
+  ];
+  const DX = 450, LX = 560, LAMIN = 20;
+  rows.forEach(r => {
+    // laser source
+    el("rect", { x: 30, y: r.y - 16, width: 56, height: 32, rx: 5, fill: "#22305e", stroke: C.laser, "stroke-width": 2 }, g);
+    txt(58, r.y + 38, "laser", "tiny", g, { "text-anchor": "middle" });
+    txt(250, r.y - 48, "blue light in (488 nm)", "sub", g, { "text-anchor": "middle" });
+    txt(800, r.y - 48, r.out + " " + r.nm, "sub", g, { "text-anchor": "middle", fill: r.col });
+    r.inWave = el("path", { fill: "none", stroke: C.laser, "stroke-width": 3.5, filter: "url(#glow)" }, g);
+    r.outWave = el("path", { fill: "none", stroke: r.col, "stroke-width": 3.5, filter: "url(#glow)" }, g);
+    // dye molecule
+    r.halo = el("circle", { cx: DX, cy: r.y, r: 40, fill: r.col, opacity: 0, filter: "url(#softglow)" }, g);
+    el("circle", { cx: DX, cy: r.y, r: 24, fill: "#1d2547", stroke: r.col, "stroke-width": 3 }, g);
+    [[-9, -6], [8, -8], [0, 9], [-11, 9], [11, 6]].forEach(([dx, dy]) => el("circle", { cx: DX + dx, cy: r.y + dy, r: 4, fill: r.col, opacity: .7 }, g));
+    txt(DX, r.y + 52, r.dye + " molecule", "tiny", g, { "text-anchor": "middle" });
+    // energy ladder
+    el("line", { x1: LX - 26, y1: r.y - 34, x2: LX + 26, y2: r.y - 34, stroke: C.muted, "stroke-width": 2 }, g);
+    el("line", { x1: LX - 26, y1: r.y + 34, x2: LX + 26, y2: r.y + 34, stroke: C.muted, "stroke-width": 2 }, g);
+    txt(LX, r.y - 42, "high energy", "tiny", g, { "text-anchor": "middle" });
+    txt(LX, r.y + 54, "resting", "tiny", g, { "text-anchor": "middle" });
+    r.e = el("circle", { cx: LX, cy: r.y + 26, r: 7, fill: "#fff", filter: "url(#glow)" }, g);
+  });
+  // emission curves: how much light each dye gives off at each wavelength (400–700 nm)
+  const SX0 = 150, SW = 700, BASE = 520, HT = 82, nmX = nm => SX0 + (nm - 400) / 300 * SW;
+  el("rect", { x: SX0, y: BASE + 2, width: SW, height: 5, rx: 2.5, fill: "url(#spectrum)" }, g);
+  [400, 450, 500, 550, 600, 650, 700].forEach(nm => {
+    el("line", { x1: nmX(nm), y1: BASE + 7, x2: nmX(nm), y2: BASE + 12, stroke: C.muted, "stroke-width": 1.5 }, g);
+    txt(nmX(nm), BASE + 26, nm === 400 ? "400 nm" : String(nm), "tiny", g, { "text-anchor": "middle", style: "font-size:12px" });
+  });
+  txt(SX0 - 10, BASE - HT + 8, "light given off", "tiny", g, { "text-anchor": "end", style: "font-size:12px" });
+  txt(SX0 - 10, BASE - HT + 24, "(brightness)", "tiny", g, { "text-anchor": "end", style: "font-size:12px" });
+  el("line", { x1: SX0, y1: BASE, x2: SX0, y2: BASE - HT - 4, stroke: C.muted, "stroke-width": 1.5 }, g);
+  // laser line at 488 nm
+  el("line", { x1: nmX(488), y1: BASE, x2: nmX(488), y2: BASE - HT - 6, stroke: C.laser, "stroke-width": 2.5, "stroke-dasharray": "5 4" }, g);
+  txt(nmX(488) - 6, BASE - HT + 4, "laser 488", "tiny", g, { "text-anchor": "end", fill: C.laser, style: "font-size:13px" });
+  // skewed peaks: a steep blue side and a long red tail, like real dye spectra
+  const curve = (peak, sl, sr, extra) => nm => {
+    const s = nm < peak ? sl : sr, v = Math.exp(-0.5 * Math.pow((nm - peak) / s, 2));
+    return Math.min(1, v + (extra ? extra(nm) : 0));
+  };
+  const dyes = [
+    { f: curve(519, 11, 27), col: C.green, label: "green dye", peak: 519 },
+    { f: curve(576, 11, 22, nm => .28 * Math.exp(-0.5 * Math.pow((nm - 622) / 16, 2))), col: C.pink, label: "pink dye", peak: 576 }
+  ];
+  dyes.forEach((d, k) => {
+    let line = "";
+    for (let nm = 440; nm <= 700; nm += 2) line += (nm === 440 ? "M" : "L") + nmX(nm).toFixed(1) + "," + (BASE - HT * d.f(nm)).toFixed(1);
+    const area = line + `L${nmX(700)},${BASE}L${nmX(440)},${BASE}Z`;
+    d.fill = el("path", { d: area, fill: d.col, opacity: .15 }, g);
+    d.line = el("path", { d: line, fill: "none", stroke: d.col, "stroke-width": 3, filter: "url(#glow)" }, g);
+    txt(k ? nmX(600) + 20 : nmX(d.peak) + 8, k ? BASE - HT + 12 : BASE - HT - 2, `${d.label} peak ~${d.peak} nm`, "tiny", g, { fill: d.col, style: "font-size:13px" });
+    rows[k].curve = d;
+  });
+
+  function wave(x0, y, len, lam, head) {
+    // a wave packet whose front is at `head`, `len` px long, clipped to start at x0
+    let d = "", first = true;
+    for (let x = head - len; x <= head; x += 2) {
+      if (x < x0) continue;
+      const u = (x - (head - len)) / len, env = Math.sin(Math.PI * u);
+      const yy = y + 14 * env * Math.sin((x - head) / lam * Math.PI * 2);
+      d += (first ? "M" : "L") + x.toFixed(1) + "," + yy.toFixed(1); first = false;
+    }
+    return d;
+  }
+  const T = 3.2;
+  function frame(t) {
+    rows.forEach(r => {
+      const p = ((t - r.delay) % T + T) % T;
+      // incoming blue packet 0–1.0 s
+      if (p < 1.0) {
+        const head = lerp(90, DX - 22 + 60, p / 1.0);
+        r.inWave.setAttribute("d", wave(90, r.y, 120, LAMIN, Math.min(head, DX - 24)));
+        r.inWave.setAttribute("opacity", p > .85 ? ((1 - p) / .15).toFixed(2) : "1");
+      } else r.inWave.setAttribute("d", "");
+      // electron: rest → jump up → relax a little → fall and emit
+      let ey = r.y + 26, glow = 0;
+      if (p >= 1.0 && p < 1.25) { ey = lerp(r.y + 26, r.y - 26, ease((p - 1) / .25)); glow = (p - 1) / .25; }
+      else if (p >= 1.25 && p < 1.7) { ey = r.y - 26 + 8 * ((p - 1.25) / .45) + Math.sin(p * 60) * 1.5; glow = 1; }
+      else if (p >= 1.7 && p < 1.85) { ey = lerp(r.y - 18, r.y + 26, (p - 1.7) / .15); glow = 1; }
+      else if (p >= 1.85 && p < 2.3) glow = 1 - (p - 1.85) / .45;
+      r.e.setAttribute("cy", ey.toFixed(1));
+      r.halo.setAttribute("opacity", (glow * .9).toFixed(2));
+      if (r.curve) r.curve.fill.setAttribute("opacity", (.15 + .4 * glow).toFixed(2));
+      // outgoing packet 1.75–2.9 s
+      if (p >= 1.75 && p < 2.9) {
+        const q = (p - 1.75) / 1.15;
+        r.outWave.setAttribute("d", wave(LX + 40, r.y, 150, r.lam, lerp(LX + 40, 1060, q)));
+        r.outWave.setAttribute("opacity", "1");
+      } else r.outWave.setAttribute("d", "");
+    });
+  }
+  return { update: t => frame(t), still: () => { rows.forEach(r => r.delay = 0); frame(1.9); } };
+}
+
+/* ---------- Scene 4: antibodies + dyes ---------- */
+function sceneAntibodies(g) {
+  const cells = [
+    { x: 250, y: 300, R: 118, shape: "square", color: C.green, name: "T cell", tag: "has" },
+    { x: 750, y: 300, R: 118, shape: "tri", color: C.pink, name: "B cell", tag: "has" }
+  ];
+  const NM = 16, STEP = Math.PI * 2 / NM, OFF = STEP / 2;
+  const angles = []; for (let k = 0; k < NM; k++) angles.push(k * STEP + OFF);
+  const halos = [], membs = [];
+  cells.forEach(c => {
+    halos.push(el("circle", { cx: c.x, cy: c.y, r: c.R + 34, fill: "none", stroke: c.color, "stroke-width": 26, opacity: 0, filter: "url(#softglow)" }, g));
+    membs.push(el("path", { fill: "url(#cyto)", stroke: C.membrane, "stroke-width": 3 }, g));
+    el("circle", { cx: c.x, cy: c.y + 8, r: c.R * .62, fill: C.nucleus }, g);
+    angles.forEach(a => marker(c.shape, c.x + (c.R + 8) * Math.cos(a), c.y + (c.R + 8) * Math.sin(a), a * 180 / Math.PI + 90, 11, g));
+    txt(c.x, c.y + 6, c.name, "lbl", g, { "text-anchor": "middle" });
+    txt(c.x + 4, c.y + 28, c.tag, "sub", g, { "text-anchor": "end" }); marker(c.shape, c.x + 17, c.y + 23, 0, 12, g);
+  });
+  // legend along the bottom
+  const a1 = antibody(g, C.green, "square"); a1.g.setAttribute("transform", "translate(300 486) scale(.85)");
+  txt(326, 490, "grabs", "lbl", g); marker("square", 398, 483, 0, 15, g); txt(326, 512, "+ green dye", "sub", g);
+  const a2 = antibody(g, C.pink, "tri"); a2.g.setAttribute("transform", "translate(570 486) scale(.85)");
+  txt(596, 490, "grabs", "lbl", g); marker("tri", 668, 483, 0, 15, g); txt(596, 512, "+ pink dye", "sub", g);
+  const noMatch = txt(750, 80, "Wrong shape: no grip, floats away", "sub", g, { "text-anchor": "middle", opacity: 0 });
+  const letGo = txt(250, 80, "Wrong antibody sticks loosely, then lets go", "sub", g, { "text-anchor": "middle", opacity: 0 });
+
+  const layer = el("g", {}, g);
+  const abs = [];
+  const targets = angles.filter(a => Math.sin(a) < 0.55);
+  const R = (a, b) => a + Math.random() * (b - a);
+  cells.forEach((c, ci) => {
+    targets.forEach((a, j) => {
+      if (ci === 0 && [-135, -45].some(d => Math.abs(a * 180 / Math.PI - 360 - d) < 20 || Math.abs(a * 180 / Math.PI - d) < 20)) return;
+      const tx = c.x + (c.R + 34) * Math.cos(a), ty = c.y + (c.R + 34) * Math.sin(a);
+      const ab = antibody(layer, c.color, c.shape);
+      abs.push({ ab, kind: "bind", cell: ci, sx: tx + R(-160, 160), sy: R(-110, -40),
+        tx, ty, rot: a * 180 / Math.PI - 90, delay: R(.2, 5.5), dur: R(2, 2.8) });
+    });
+  });
+  // anti-CD19 (pink) sticking loosely to the T cell between its CD3 markers, then letting go
+  [rad(-135), rad(-45)].forEach((a0, j) => {
+    const c = cells[0], a = a0;
+    const ab = antibody(layer, C.pink, "tri");
+    abs.push({ ab, kind: "unbind", cell: 0, sx: c.x + (j ? 140 : -140), sy: -60,
+      tx: c.x + (c.R + 42) * Math.cos(a), ty: c.y + (c.R + 42) * Math.sin(a),
+      rot: a * 180 / Math.PI - 90, delay: 1.2 + j * 1.4, dur: 2.4, hold: 3.2 });
+  });
+  // anti-CD3 (green) that cannot grip the B cell at all
+  [rad(-112), rad(-68)].forEach((a, j) => {
+    const c = cells[1];
+    const ab = antibody(layer, C.green, "square");
+    abs.push({ ab, kind: "miss", cell: 1, sx: c.x + (j ? 130 : -130), sy: -50,
+      tx: c.x + (c.R + 64) * Math.cos(a), ty: c.y + (c.R + 64) * Math.sin(a),
+      rot: a * 180 / Math.PI - 90, delay: 2.2 + j * 1.2, dur: 2.2 });
+  });
+  // a few extra antibodies drifting through the middle, still unbound
+  for (let k = 0; k < 6; k++) {
+    const pink = k % 2 === 1;
+    const ab = antibody(layer, pink ? C.pink : C.green, pink ? "tri" : "square");
+    abs.push({ ab, kind: "drift", sx: R(420, 580), sy: -40, delay: k * 1.7 + R(0, .6), dur: 5.5, spin: R(-60, 60), sway: R(0, 6) });
+  }
+  // bound antibodies are drawn above loose ones
+  const CYCLE = 14;
+  function frame(t, tau) {
+    membs.forEach((m, i) => m.setAttribute("d", blobPath(cells[i].x, cells[i].y, cells[i].R, t + i * 2, 3, i)));
+    const bound = [0, 0]; let missShow = 0, letShow = 0;
+    for (const s of abs) {
+      let x = s.sx, y = s.sy, op = 1, glow = 0, rot = s.rot;
+      const p = clamp((tau - s.delay) / s.dur, 0, 1), e = ease(p);
+      const after = tau - s.delay - s.dur;
+      if (s.kind === "bind") {
+        x = lerp(s.sx, s.tx, e); y = lerp(s.sy, s.ty, e);
+        if (p >= 1) { bound[s.cell]++; glow = clamp(after / .6, 0, 1); }
+      } else if (s.kind === "unbind") {
+        x = lerp(s.sx, s.tx, e); y = lerp(s.sy, s.ty, e);
+        if (after > 0 && after < s.hold) glow = .35 * clamp(after / .6, 0, 1);
+        if (after > s.hold - .8) letShow = Math.max(letShow, clamp(1 - Math.abs(after - s.hold - .6) / 1.6, 0, 1));
+        const rel = after - s.hold;
+        if (rel > 0 && rel < .7) x += Math.sin(rel * 32) * 4;
+        if (rel >= .7) { const q = ease(clamp((rel - .7) / 2.2, 0, 1)); y = lerp(s.ty, -70, q); x = lerp(s.tx, s.sx, q); op = 1 - q; }
+      } else if (s.kind === "miss") {
+        x = lerp(s.sx, s.tx, e); y = lerp(s.sy, s.ty, e);
+        if (after > 0) {
+          missShow = Math.max(missShow, clamp(1 - Math.abs(after - 1.2) / 1.4, 0, 1));
+          if (after < .8) x += Math.sin(after * 30) * 5;
+          else { const q = ease(clamp((after - .8) / 2, 0, 1)); y = lerp(s.ty, -60, q); x = lerp(s.tx, s.sx, q); op = 1 - q; }
+        }
+      } else {
+        const q = clamp((tau - s.delay) / s.dur, 0, 1);
+        y = lerp(-40, 440, q); x = s.sx + Math.sin(q * 6 + s.sway) * 22;
+        rot = s.spin * q * 3; op = q <= 0 || q >= 1 ? 0 : Math.min(1, (1 - q) / .25);
+      }
+      s.ab.g.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${rot.toFixed(1)})`);
+      s.ab.g.setAttribute("opacity", op.toFixed(2));
+      s.ab.halo.setAttribute("opacity", (glow * (.75 + .25 * Math.sin(t * 4 + s.sx))).toFixed(2));
+    }
+    halos.forEach((h, i) => h.setAttribute("opacity", (bound[i] / targets.length * .6).toFixed(2)));
+    noMatch.setAttribute("opacity", missShow.toFixed(2));
+    letGo.setAttribute("opacity", letShow.toFixed(2));
+    const fade = tau > CYCLE - .8 ? (CYCLE - tau) / .8 : 1;
+    layer.setAttribute("opacity", fade.toFixed(2));
+  }
+  return { update: t => frame(t, t % CYCLE), still: () => frame(0, 9) };
+}
+
+/* ---------- Step manager ---------- */
+const steps = [
+  { id: "cell", nav: "1 · A cell", title: "A cell is the smallest living unit",
+    text: "Your body is built from roughly 37 trillion cells. Each one is wrapped in a membrane covered with proteins. Those surface proteins work like name tags, and they are how we tell one kind of cell from another.",
+    make: sceneCell },
+  { id: "cell-types", nav: "2 · Cell types", title: "Blood holds many kinds of cells",
+    text: "Red blood cells carry oxygen. White blood cells, like T cells, B cells, monocytes and neutrophils, fight infection. They also come in different sizes: a monocyte is about twice as wide as a red blood cell. Each type wears its own kind of surface protein, drawn here as a different shape: squares on T cells, triangles on B cells.",
+    make: sceneTypes },
+  { id: "fluorescence", nav: "3 · Fluorescence", title: "Fluorescence: one color of light in, another color out",
+    text: "A fluorescent dye soaks up light of one color and almost instantly gives off a different color. The blue laser light kicks an electron in the dye up to high energy. It loses a little of that energy, then drops back down and releases the rest as light. Because a bit was lost, the light coming out has a longer wavelength: greener or redder. Different dyes glow different colors under the same laser, like highlighters under a black light.",
+    make: sceneFluor },
+  { id: "antibodies", nav: "4 · Glowing antibodies", title: "Antibodies grab one protein, and dyes make them glow",
+    text: "An antibody is a Y-shaped protein that fits only one target, like a key in a lock. Scientists attach a fluorescent dye to it. The green antibody grabs only squares, so it sticks to T cells; the pink antibody grabs only triangles, so it sticks to B cells. Now each cell type glows its own color. Antibodies that stick loosely to the wrong cell let go and get washed away. The labeled cells are now ready for the flow cytometer.",
+    make: sceneAntibodies }
+];
+
+const dotsEl = document.getElementById("dots");
+steps.forEach((s, i) => {
+  const b = document.createElement("button");
+  b.type = "button"; b.id = "step-" + s.id; b.textContent = s.nav;
+  b.addEventListener("click", () => go(i));
+  dotsEl.appendChild(b);
+});
+let cur = -1, scene = null, t0 = 0, last = 0;
+function go(i, fromHash) {
+  i = clamp(i, 0, steps.length - 1);
+  if (i === cur) return;
+  cur = i;
+  root.replaceChildren();
+  const g = el("g", {}, root);
+  scene = steps[i].make(g);
+  document.getElementById("capTitle").textContent = steps[i].title;
+  document.getElementById("capText").textContent = steps[i].text;
+  document.getElementById("stepLabel").textContent = `Step ${i + 1} of ${steps.length}`;
+  [...dotsEl.children].forEach((b, j) => { if (j === i) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); });
+  document.getElementById("prev").disabled = i === 0;
+  document.getElementById("next").disabled = i === steps.length - 1;
+  t0 = performance.now(); last = t0;
+  if (reduce) scene.still(); else scene.update(0, 0);
+  if (!fromHash && location.hash !== "#" + steps[i].id) history.replaceState(null, "", "#" + steps[i].id);
+}
+document.getElementById("prev").addEventListener("click", () => go(cur - 1));
+document.getElementById("next").addEventListener("click", () => go(cur + 1));
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowRight" || e.key === "PageDown") { go(cur + 1); e.preventDefault(); }
+  if (e.key === "ArrowLeft" || e.key === "PageUp") { go(cur - 1); e.preventDefault(); }
+});
+function fromHash() {
+  const id = location.hash.replace("#", "");
+  const i = steps.findIndex(s => s.id === id);
+  go(i >= 0 ? i : 0, true);
+}
+window.addEventListener("hashchange", fromHash);
+const fsBtn = document.getElementById("fs");
+function setPresent(v) { document.body.classList.toggle("present", v); fsBtn.textContent = v ? "Exit full screen" : "Full screen"; }
+fsBtn.addEventListener("click", async () => {
+  if (document.body.classList.contains("present")) {
+    if (document.fullscreenElement) { try { await document.exitFullscreen(); } catch (e) {} }
+    setPresent(false); return;
+  }
+  setPresent(true);
+  try { if (document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen(); } catch (e) {}
+});
+document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && document.body.classList.contains("present")) setPresent(false); });
+fromHash();
+function loop(now) {
+  if (!reduce && scene) {
+    const dt = (now - last) / 1000; last = now;
+    scene.update((now - t0) / 1000, dt);
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

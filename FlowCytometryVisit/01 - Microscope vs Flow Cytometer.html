@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="author" content="Fernando Ortiz">
+<meta name="creator" content="Fernando Ortiz">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Microscope vs Flow Cytometer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Same dark lab-bench world as "How flow cytometry sees cells". Two panels race side by side; a comparison table sits below. */
+  --bg: #0c1222;
+  --panel: #141c33;
+  --ink: #eef1ff;
+  --muted: #9aa5c8;
+  --line: #2a3558;
+  --accent: #7c8cff;
+  --green: #5be37d;
+  --pink: #ff5fa8;
+  --amber: #f2c14e;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 20px 20px 28px; display: grid; gap: 16px; }
+header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+header h1 { font-family: var(--display); font-weight: 800; font-size: clamp(20px, 2.6vw, 28px); margin: 0; text-wrap: balance; }
+.controls { display: flex; gap: 8px; }
+button { font: 700 14px var(--body); color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.stage { background: radial-gradient(120% 120% at 50% 0%, #17213f 0%, var(--panel) 55%, #10172b 100%); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.stage svg { display: block; width: 100%; height: auto; }
+.caption h2 { font-family: var(--display); font-weight: 800; font-size: clamp(22px, 3vw, 30px); margin: 0 0 6px; text-wrap: balance; }
+.caption p { margin: 0; font-size: clamp(16px, 1.8vw, 19px); line-height: 1.5; color: #cdd3ee; max-width: 70ch; }
+table { width: 100%; border-collapse: collapse; font-size: clamp(15px, 1.6vw, 17px); }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+thead th { font-family: var(--display); font-size: clamp(16px, 1.8vw, 19px); color: var(--ink); }
+thead th:nth-child(2) { color: var(--amber); }
+thead th:nth-child(3) { color: var(--green); }
+tbody th { color: var(--muted); font-weight: 400; width: 22%; }
+.tablewrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+svg text { font-family: var(--body); }
+.lbl { fill: var(--ink); font-size: 22px; font-weight: 700; }
+.sub { fill: var(--muted); font-size: 15px; }
+.tiny { fill: var(--muted); font-size: 13px; }
+.num { fill: var(--ink); font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+body.present .wrap { max-width: none; height: 100vh; height: 100dvh; display: flex; flex-direction: column; gap: 10px; padding: 12px 20px; }
+body.present .stage { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; }
+body.present .stage svg { width: 100%; height: 100%; }
+body.present .tablewrap { display: none; }
+nav { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+nav button:disabled { opacity: .4; cursor: default; }
+.dots { display: flex; gap: 8px; flex: 1; flex-wrap: wrap; }
+.dots button { font-weight: 400; color: var(--muted); }
+.dots button[aria-current="step"] { color: var(--ink); border-color: var(--accent); background: #1c2650; font-weight: 700; }
+.tablewrap[hidden] { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Microscope vs flow cytometer</h1>
+    <div class="controls">
+      <button id="play" type="button">Pause</button>
+      <button id="restart" type="button">Restart</button>
+      <button id="fs" type="button">Full screen</button>
+    </div>
+  </header>
+
+  <div class="stage">
+    <svg id="svg" viewBox="0 0 1000 560" role="img" aria-label="Side by side: a microscope checks stained cells one at a time on a slide while a flow cytometer measures cells streaming past a laser and plots each as a dot. A race bar shows the flow cytometer counting far more cells in the same time.">
+      <defs>
+        <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="3" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="softglow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
+        <clipPath id="field"><circle cx="250" cy="250" r="168"/></clipPath>
+      </defs>
+      <g id="scene"></g>
+    </svg>
+  </div>
+
+  <section class="caption">
+    <h2 id="capTitle">Same cells, two ways of looking</h2>
+    <p id="capText">A microscope gives you a picture: you can see each cell's shape and where the glowing tags sit, but someone has to look at cells one by one. A flow cytometer never makes a picture. It measures how big, how grainy and how bright each cell is as it zooms past the laser, so it can check thousands of cells every second and count each type.</p>
+  </section>
+
+  <nav aria-label="Steps">
+    <button id="prev" type="button">← Back</button>
+    <div class="dots" id="dots"></div>
+    <button id="next" type="button">Next →</button>
+  </nav>
+
+  <div class="tablewrap" id="table">
+    <table>
+      <thead><tr><th></th><th>Microscope</th><th>Flow cytometer</th></tr></thead>
+      <tbody>
+        <tr><th>What you get</th><td>A picture of each cell</td><td>Numbers for each cell, shown as dots on a graph</td></tr>
+        <tr><th>Cells are</th><td>Still, stuck on a glass slide</td><td>Floating in liquid, flowing single file</td></tr>
+        <tr><th>Speed</th><td>Tens to hundreds of cells</td><td>Thousands of cells every second</td></tr>
+        <tr><th>Best for</th><td>Seeing shape, and where things are inside the cell</td><td>Counting how many cells of each type are in a sample</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+(() => {
+const NS = "http://www.w3.org/2000/svg";
+const C = { ink: "#eef1ff", muted: "#9aa5c8", line: "#2a3558", membrane: "#c9c3ff", nucleus: "#5b4bc4", cyto: "#2e3468",
+  green: "#5be37d", pink: "#ff5fa8", grey: "#b8c0e0", laser: "#4fb6ff", amber: "#f2c14e" };
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function txt(x, y, s, cls, parent, extra) { const t = el("text", Object.assign({ x, y, class: cls }, extra || {}), parent); t.textContent = s; return t; }
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, p) => a + (b - a) * p;
+const ease = p => p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+function gauss(m, s) { const u = 1 - Math.random(), v = Math.random(); return m + s * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+function marker(shape, x, y, ang, s, parent, fill) {
+  const g = el("g", { transform: `translate(${x} ${y}) rotate(${ang})` }, parent), f = fill || C.ink;
+  if (shape === "square") el("rect", { x: -s / 2, y: -s / 2, width: s, height: s, fill: f }, g);
+  else if (shape === "tri") el("path", { d: `M0,${-s * .65} L${s * .6},${s * .45} L${-s * .6},${s * .45}Z`, fill: f }, g);
+  else el("circle", { r: s * .5, fill: f }, g);
+  return g;
+}
+const TYPES = {
+  T: { shape: "square", dye: C.green, p: .45 },
+  B: { shape: "tri", dye: C.pink, p: .25 },
+  O: { shape: "circle", dye: null, p: .30 }
+};
+function pick() { const r = Math.random(); return r < .45 ? "T" : r < .70 ? "B" : "O"; }
+
+const root = document.getElementById("scene");
+let S = null;
+
+function buildRace() {
+  root.replaceChildren();
+  const g = el("g", {}, root);
+  // divider and titles
+  el("line", { x1: 500, y1: 24, x2: 500, y2: 440, stroke: C.line, "stroke-width": 2 }, g);
+  txt(30, 44, "Microscope", "lbl", g, { fill: C.amber });
+  txt(30, 66, "a person looks at a picture, one cell at a time", "sub", g);
+  txt(530, 44, "Flow cytometer", "lbl", g, { fill: C.green });
+  txt(530, 66, "a laser measures each cell as it flows past", "sub", g);
+
+  /* ---------- microscope field of view ---------- */
+  const FX = 250, FY = 250, FR = 168;
+  el("circle", { cx: FX, cy: FY, r: FR + 10, fill: "#0a0f1d", stroke: "#3a4570", "stroke-width": 6 }, g);
+  el("circle", { cx: FX, cy: FY, r: FR, fill: "#121a35" }, g);
+  const field = el("g", { "clip-path": "url(#field)" }, g);
+  // place cells without overlap
+  const mcells = [];
+  let tries = 0;
+  while (mcells.length < 24 && tries < 4000) {
+    tries++;
+    const a = Math.random() * Math.PI * 2, d = Math.sqrt(Math.random()) * (FR - 26);
+    const x = FX + d * Math.cos(a), y = FY + d * Math.sin(a);
+    if (mcells.every(c => Math.hypot(c.x - x, c.y - y) > 50)) mcells.push({ x, y, k: pick() });
+  }
+  mcells.forEach(c => {
+    const t = TYPES[c.k], cg = el("g", {}, field);
+    if (t.dye) el("circle", { cx: c.x, cy: c.y, r: 22, fill: t.dye, opacity: .22, filter: "url(#softglow)" }, cg);
+    el("circle", { cx: c.x, cy: c.y, r: 15, fill: C.cyto, stroke: C.membrane, "stroke-width": 1.6 }, cg);
+    el("circle", { cx: c.x - 1, cy: c.y + 1, r: 8.5, fill: C.nucleus }, cg);
+    for (let i = 0; i < 6; i++) {
+      const a = i / 6 * Math.PI * 2 + c.x;
+      marker(t.shape, c.x + 18 * Math.cos(a), c.y + 18 * Math.sin(a), a * 57.3 + 90, 5.5, cg, t.dye || C.grey);
+    }
+    c.check = el("circle", { cx: c.x, cy: c.y, r: 21, fill: "none", stroke: C.amber, "stroke-width": 2, opacity: 0 }, field);
+  });
+  // visiting order: nearest neighbour from the top-left
+  const order = []; const left = mcells.slice();
+  let cur = left.reduce((b, c) => (c.x + c.y < b.x + b.y ? c : b), left[0]);
+  while (left.length) { left.splice(left.indexOf(cur), 1); order.push(cur); if (!left.length) break;
+    cur = left.reduce((b, c) => (Math.hypot(c.x - cur.x, c.y - cur.y) < Math.hypot(b.x - cur.x, b.y - cur.y) ? c : b), left[0]); }
+  const reticle = el("g", {}, field);
+  el("circle", { r: 26, fill: "none", stroke: C.amber, "stroke-width": 2.5, "stroke-dasharray": "6 5" }, reticle);
+  el("line", { x1: -34, y1: 0, x2: -28, y2: 0, stroke: C.amber, "stroke-width": 2 }, reticle);
+  el("line", { x1: 28, y1: 0, x2: 34, y2: 0, stroke: C.amber, "stroke-width": 2 }, reticle);
+  const mCount = txt(250, 452, "", "num", g, { "text-anchor": "middle" });
+
+  /* ---------- flow cytometer ---------- */
+  const SX = 600, LY = 250;
+  el("rect", { x: SX - 16, y: 84, width: 32, height: 346, rx: 6, fill: "#18234a", stroke: C.line, "stroke-width": 2 }, g);
+  el("rect", { x: 520, y: LY - 14, width: 40, height: 28, rx: 5, fill: "#22305e", stroke: C.laser, "stroke-width": 2 }, g);
+  txt(540, LY + 34, "laser", "tiny", g, { "text-anchor": "middle" });
+  el("line", { x1: 560, y1: LY, x2: SX + 16, y2: LY, stroke: C.laser, "stroke-width": 7, opacity: .35, filter: "url(#softglow)" }, g);
+  el("line", { x1: 560, y1: LY, x2: SX + 16, y2: LY, stroke: C.laser, "stroke-width": 2.5 }, g);
+  el("line", { x1: SX + 22, y1: LY, x2: 668, y2: LY, stroke: C.muted, "stroke-width": 1.5, "stroke-dasharray": "4 5" }, g);
+  const PX = 675, PY = 90, PW = 290, PH = 300;
+  el("rect", { x: PX, y: PY, width: PW, height: PH, rx: 6, fill: "#10182f", stroke: C.line, "stroke-width": 2 }, g);
+  txt(PX + PW, PY + PH + 24, "green glow (■) →", "tiny", g, { "text-anchor": "end", fill: C.green });
+  txt(PX, PY + PH + 24, "↑ pink glow (▲)", "tiny", g, { fill: C.pink });
+  const gx = v => PX + 16 + v * (PW - 32), gy = v => PY + PH - 16 - v * (PH - 40);
+  const gates = el("g", { opacity: 0 }, g);
+  [[.6, 1, -.04, .36, "T cells", C.green], [-.04, .38, .58, 1, "B cells", C.pink], [-.04, .38, -.04, .36, "Others", C.muted]].forEach(([x0, x1, y0, y1, n, col]) => {
+    el("rect", { x: gx(x0), y: gy(y1), width: gx(x1) - gx(x0), height: gy(y0) - gy(y1), rx: 8, fill: "none", stroke: col, "stroke-width": 1.6, "stroke-dasharray": "5 4" }, gates);
+    txt(gx(x0) + 6, gy(y1) - 6, n, "tiny", gates, { fill: col, style: "font-weight:700" });
+  });
+  const dots = el("g", {}, g);
+  const stream = el("g", {}, g);
+  const fCount = txt(750, 452, "", "num", g, { "text-anchor": "middle" });
+
+  /* ---------- race bars ---------- */
+  const BX = 190, BW = 640, MAX = 220;
+  txt(30, 497, "Microscope", "sub", g, { fill: C.amber });
+  txt(30, 535, "Flow cytometer", "sub", g, { fill: C.green });
+  txt(BX + BW + 10, 470, "cells checked", "tiny", g);
+  [480, 518].forEach(y => el("rect", { x: BX, y, width: BW, height: 22, rx: 11, fill: "#1a2342" }, g));
+  const mBar = el("rect", { x: BX, y: 480, width: 0, height: 22, rx: 11, fill: C.amber }, g);
+  const fBar = el("rect", { x: BX, y: 518, width: 0, height: 22, rx: 11, fill: C.green }, g);
+  const mNum = txt(BX + BW + 10, 497, "0", "num", g);
+  const fNum = txt(BX + BW + 10, 535, "0", "num", g);
+  const note = txt(500, 465, "A real flow cytometer is about 1,000 times faster than shown here.", "tiny", g, { "text-anchor": "middle", opacity: 0 });
+
+  S = { order, reticle, mCount, FX, FY, stream, dots, gates, fCount, mBar, fBar, mNum, fNum, note, gx, gy, SX, LY, BW, MAX,
+    t: 0, mDone: 0, fDone: 0, fcells: [], spawn: 0, fade: 1, g };
+  reticle.setAttribute("transform", `translate(${FX} ${FY})`);
+}
+
+function addDot(k) {
+  const m = { T: [[.78, .06], [.13, .05]], B: [[.13, .05], [.78, .06]], O: [[.12, .05], [.12, .05]] }[k];
+  const vx = clamp(gauss(m[0][0], m[0][1]), 0, 1), vy = clamp(gauss(m[1][0], m[1][1]), 0, 1);
+  el("circle", { cx: S.gx(vx).toFixed(1), cy: S.gy(vy).toFixed(1), r: 2.4, fill: TYPES[k].dye || C.grey, opacity: .85 }, S.dots);
+  S.fDone++;
+  if (S.fDone > 30) S.gates.setAttribute("opacity", "1");
+}
+function spawn(y) {
+  const k = pick(), t = TYPES[k], grp = el("g", {}, S.stream);
+  el("circle", { r: 8, fill: C.cyto, stroke: C.membrane, "stroke-width": 1.5 }, grp);
+  const tags = [];
+  if (t.dye) for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2; tags.push(el("circle", { cx: 10.5 * Math.cos(a), cy: 10.5 * Math.sin(a), r: 2.2, fill: t.dye, opacity: .45 }, grp)); }
+  const flash = el("circle", { r: 18, fill: t.dye || "#cfd6ff", opacity: 0, filter: "url(#softglow)" }, grp);
+  S.fcells.push({ k, grp, tags, flash, y, read: false });
+}
+
+const STEP = 0.95, CYCLE = 16;   // microscope: ~1 cell per second; whole race lasts 16 s
+function updateRace(dt) {
+  S.t += dt;
+  const t = S.t;
+  // microscope: glide to a cell, look, tick it off
+  const idx = Math.floor(t / STEP), ph = (t % STEP) / STEP;
+  if (idx < S.order.length) {
+    const from = idx ? S.order[idx - 1] : { x: S.FX, y: S.FY }, to = S.order[idx], e = ease(clamp(ph / .55, 0, 1));
+    S.reticle.setAttribute("transform", `translate(${lerp(from.x, to.x, e).toFixed(1)} ${lerp(from.y, to.y, e).toFixed(1)})`);
+    if (ph > .8 && !to.done) { to.done = true; to.check.setAttribute("opacity", "1"); S.mDone++; }
+  }
+  // flow: cells stream past the laser
+  S.spawn += dt;
+  if (S.spawn > .075) { S.spawn = 0; spawn(76); }
+  S.fcells = S.fcells.filter(c => {
+    c.y += 300 * dt;
+    const lit = clamp(1 - Math.abs(c.y - S.LY) / 14, 0, 1);
+    c.grp.setAttribute("transform", `translate(${S.SX} ${c.y.toFixed(1)})`);
+    c.flash.setAttribute("opacity", (lit * (TYPES[c.k].dye ? 1 : .4)).toFixed(2));
+    c.tags.forEach(tg => tg.setAttribute("opacity", (.45 + .55 * lit).toFixed(2)));
+    if (!c.read && c.y >= S.LY) { c.read = true; addDot(c.k); }
+    if (c.y > 422) { c.grp.remove(); return false; }
+    return true;
+  });
+  render();
+  // end of race: hold, fade, restart
+  if (t > CYCLE) {
+    S.note.setAttribute("opacity", "1");
+    S.fade = clamp(1 - (t - CYCLE - 3) / .8, 0, 1);
+    S.g.setAttribute("opacity", S.fade.toFixed(2));
+    if (t > CYCLE + 3.8) { buildRace(); }
+  }
+}
+function render() {
+  S.mCount.textContent = `${S.mDone} cells looked at`;
+  S.fCount.textContent = `${S.fDone} cells measured`;
+  S.mNum.textContent = S.mDone; S.fNum.textContent = S.fDone;
+  S.mBar.setAttribute("width", (S.BW * Math.min(1, S.mDone / S.MAX)).toFixed(1));
+  S.fBar.setAttribute("width", (S.BW * Math.min(1, S.fDone / S.MAX)).toFixed(1));
+}
+function stillRace() {
+  S.order.slice(0, 12).forEach(c => { c.done = true; c.check.setAttribute("opacity", "1"); });
+  S.mDone = 12;
+  for (let i = 0; i < 200; i++) addDot(pick());
+  [100, 150, 200, 300, 350, 400].forEach(y => spawn(y));
+  S.fcells.forEach(c => c.grp.setAttribute("transform", `translate(${S.SX} ${c.y})`));
+  S.reticle.setAttribute("transform", `translate(${S.order[11].x} ${S.order[11].y})`);
+  S.note.setAttribute("opacity", "1");
+  render();
+}
+
+/* ---------- Step 1: what a flow cytometer is, and what it's for ---------- */
+let K = null;
+function buildScheme() {
+  root.replaceChildren();
+  const g = el("g", {}, root);
+  const box = (x, y, w, h, title, sub, stroke) => {
+    const r = el("rect", { x, y, width: w, height: h, rx: 8, fill: "#18234a", stroke: stroke || C.line, "stroke-width": 2 }, g);
+    txt(x + w / 2, y + (sub ? h / 2 - 2 : h / 2 + 7), title, "num", g, { "text-anchor": "middle", style: "font-size:17px" });
+    if (sub) txt(x + w / 2, y + h / 2 + 17, sub, "tiny", g, { "text-anchor": "middle" });
+    return r;
+  };
+  const SX = 205, LY = 206;
+  // sample and stream
+  box(145, 16, 120, 50, "Sample", "stained cells");
+  el("rect", { x: SX - 12, y: 72, width: 24, height: 400, rx: 6, fill: "#18234a", stroke: C.line, "stroke-width": 2 }, g);
+  txt(SX - 22, 110, "fluid stream:", "tiny", g, { "text-anchor": "end" });
+  txt(SX - 22, 127, "cells in single file", "tiny", g, { "text-anchor": "end" });
+  txt(SX, 494, "waste", "tiny", g, { "text-anchor": "middle" });
+  // laser
+  box(20, LY - 22, 110, 44, "Laser", null, C.laser);
+  el("line", { x1: 130, y1: LY, x2: 300, y2: LY, stroke: C.laser, "stroke-width": 7, opacity: .3, filter: "url(#softglow)" }, g);
+  el("line", { x1: 130, y1: LY, x2: 300, y2: LY, stroke: C.laser, "stroke-width": 2.5 }, g);
+  el("rect", { x: 300, y: LY - 12, width: 6, height: 24, fill: C.ink }, g);
+  // forward scatter detector
+  const fsc = box(318, LY - 27, 124, 54, "FSC", "forward: size");
+  // side light: lens, then mirrors split colours to three detectors
+  const sidePath = `M${SX + 4},${LY + 6} L252,292 M266,316 L290,345 L560,345`;
+  el("path", { d: sidePath, fill: "none", stroke: C.muted, "stroke-width": 1.5, "stroke-dasharray": "4 5" }, g);
+  const sideGlow = el("path", { d: sidePath, fill: "none", stroke: C.ink, "stroke-width": 3.5, opacity: 0, filter: "url(#glow)" }, g);
+  el("ellipse", { cx: 259, cy: 304, rx: 7, ry: 22, transform: "rotate(-35 259 304)", fill: "rgba(79,182,255,.15)", stroke: C.ink, "stroke-width": 1.5 }, g);
+  txt(274, 296, "lens", "tiny", g);
+  const det = [[320, "SSC", "side: grainy", C.ink], [430, "Green", "has ■", C.green], [540, "Pink", "has ▲", C.pink]].map(([x, t, s, col]) => {
+    el("line", { x1: x - 12, y1: 357, x2: x + 12, y2: 333, stroke: C.ink, "stroke-width": 2.5 }, g);
+    el("line", { x1: x, y1: 357, x2: x, y2: 372, stroke: C.muted, "stroke-width": 1.5, "stroke-dasharray": "3 4" }, g);
+    const r = box(x - 50, 374, 100, 52, t, s, col === C.ink ? null : col);
+    return { r, col };
+  });
+  txt(430, 322, "mirrors split light by color", "tiny", g, { "text-anchor": "middle" });
+  // computer
+  [320, 430, 540].forEach(x => el("line", { x1: x, y1: 426, x2: x, y2: 452, stroke: C.muted, "stroke-width": 1.5 }, g));
+  el("path", { d: `M442,${LY} L596,${LY} L596,480 L582,480`, fill: "none", stroke: C.muted, "stroke-width": 1.5 }, g);
+  box(270, 454, 312, 54, "Computer", "each cell becomes one dot");
+
+  // uses panel
+  el("rect", { x: 630, y: 16, width: 350, height: 510, rx: 14, fill: "#111830", stroke: C.line, "stroke-width": 1.5 }, g);
+  txt(652, 56, "What do we use it for?", "lbl", g);
+  const uses = [
+    ["Count immune cells", "how many T cells, B cells and others", C.green],
+    ["Diagnose disease", "leukemia, lymphoma, HIV checkups", C.pink],
+    ["Check treatments", "find leftover cancer cells, test vaccines", C.amber],
+    ["Sort cells", "pull out one cell type, still alive", C.laser],
+    ["Beyond medicine", "bacteria in water, milk and food safety", C.muted]
+  ];
+  uses.forEach(([t, s, col], i) => {
+    const y = 108 + i * 84;
+    el("circle", { cx: 664, cy: y - 6, r: 7, fill: col }, g);
+    txt(682, y, t, "num", g);
+    txt(682, y + 24, s, "sub", g);
+  });
+
+  // moving cells
+  const stream = el("g", {}, g);
+  K = { g, stream, cells: [], spawn: 0, fsc, det, sideGlow, SX, LY, glow: { f: 0, d: [0, 0, 0], side: 0, col: C.ink } };
+}
+function updateScheme(dt) {
+  K.spawn += dt;
+  if (K.spawn > .55) {
+    K.spawn = 0;
+    const k = pick(), t = TYPES[k], grp = el("g", {}, K.stream);
+    el("circle", { r: 7, fill: C.cyto, stroke: C.membrane, "stroke-width": 1.5 }, grp);
+    const tags = [];
+    if (t.dye) for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2; tags.push(el("circle", { cx: 9.5 * Math.cos(a), cy: 9.5 * Math.sin(a), r: 2, fill: t.dye, opacity: .45 }, grp)); }
+    const flash = el("circle", { r: 16, fill: t.dye || "#cfd6ff", opacity: 0, filter: "url(#softglow)" }, grp);
+    K.cells.push({ k, grp, tags, flash, y: 74, read: false });
+  }
+  K.cells = K.cells.filter(c => {
+    c.y += 80 * dt;
+    const lit = clamp(1 - Math.abs(c.y - K.LY) / 12, 0, 1);
+    c.grp.setAttribute("transform", `translate(${K.SX} ${c.y.toFixed(1)})`);
+    c.flash.setAttribute("opacity", (lit * (TYPES[c.k].dye ? 1 : .45)).toFixed(2));
+    c.tags.forEach(tg => tg.setAttribute("opacity", (.45 + .55 * lit).toFixed(2)));
+    if (!c.read && c.y >= K.LY) {
+      c.read = true; K.glow.f = 1; K.glow.d[0] = 1; K.glow.side = 1;
+      if (c.k === "T") K.glow.d[1] = 1;
+      if (c.k === "B") K.glow.d[2] = 1;
+      K.glow.col = TYPES[c.k].dye || C.ink;
+    }
+    if (c.y > 466) { c.grp.remove(); return false; }
+    return true;
+  });
+  const G = K.glow, fade = v => Math.max(0, v - dt * 2.2);
+  G.f = fade(G.f); G.side = fade(G.side); G.d = G.d.map(fade);
+  K.fsc.setAttribute("fill", `rgba(238,241,255,${(G.f * .35).toFixed(2)})`);
+  K.sideGlow.setAttribute("opacity", (G.side * .8).toFixed(2)); K.sideGlow.setAttribute("stroke", G.col);
+  K.det.forEach((d, i) => {
+    const hex = d.col.replace("#", ""), n = parseInt(hex, 16);
+    d.r.setAttribute("fill", G.d[i] > .02 ? `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${(G.d[i] * .45).toFixed(2)})` : "#18234a");
+  });
+}
+function stillScheme() { [100, 160, 206, 260, 330, 400].forEach(y => { K.spawn = 1; updateScheme(0); K.cells[K.cells.length - 1].y = y; }); updateScheme(0); }
+
+/* ---------- steps ---------- */
+const steps = [
+  { id: "cytometer", nav: "1 · The flow cytometer", title: "What is a flow cytometer?",
+    text: "A machine that checks cells one at a time as they flow past a laser. Fluid lines the cells up in single file. When the laser hits a cell, light scattered forward tells its size, light scattered to the side tells how grainy it is, and glowing dyes tell which name tags it wears. A computer turns every cell into one dot.",
+    build: buildScheme, update: updateScheme, still: stillScheme, table: false },
+  { id: "compare", nav: "2 · Microscope vs flow", title: "Same cells, two ways of looking",
+    text: "A microscope gives you a picture: you can see each cell's shape and where the glowing tags sit, but someone has to look at cells one by one. A flow cytometer never makes a picture. It measures how big, how grainy and how bright each cell is as it zooms past the laser, so it can check thousands of cells every second and count each type.",
+    build: buildRace, update: updateRace, still: stillRace, table: true }
+];
+const dotsEl = document.getElementById("dots");
+steps.forEach((st, i) => { const b = document.createElement("button"); b.type = "button"; b.textContent = st.nav; b.addEventListener("click", () => go(i)); dotsEl.appendChild(b); });
+let cur = -1;
+function start() { steps[cur].build(); if (reduce) steps[cur].still(); }
+function go(i, fromHash) {
+  i = clamp(i, 0, steps.length - 1); if (i === cur) return; cur = i;
+  const st = steps[i];
+  document.getElementById("capTitle").textContent = st.title;
+  document.getElementById("capText").textContent = st.text;
+  document.getElementById("table").hidden = !st.table;
+  [...dotsEl.children].forEach((b, j) => { if (j === i) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); });
+  document.getElementById("prev").disabled = i === 0;
+  document.getElementById("next").disabled = i === steps.length - 1;
+  start();
+  if (!fromHash && location.hash !== "#" + st.id) history.replaceState(null, "", "#" + st.id);
+}
+document.getElementById("prev").addEventListener("click", () => go(cur - 1));
+document.getElementById("next").addEventListener("click", () => go(cur + 1));
+function fromHash() { const i = steps.findIndex(st => st.id === location.hash.slice(1)); go(i >= 0 ? i : 0, true); }
+window.addEventListener("hashchange", fromHash);
+fromHash();
+
+let playing = !reduce, last = performance.now();
+const playBtn = document.getElementById("play");
+function setPlay(v) { playing = v; playBtn.textContent = v ? "Pause" : "Play"; }
+setPlay(playing);
+playBtn.addEventListener("click", () => setPlay(!playing));
+document.getElementById("restart").addEventListener("click", start);
+document.addEventListener("keydown", e => {
+  if (e.target.closest && e.target.closest("button")) return;
+  if (e.key === " ") { e.preventDefault(); setPlay(!playing); }
+  if (e.key === "ArrowRight") go(cur + 1);
+  if (e.key === "ArrowLeft") go(cur - 1);
+});
+const fsBtn = document.getElementById("fs");
+function setPresent(v) { document.body.classList.toggle("present", v); fsBtn.textContent = v ? "Exit full screen" : "Full screen"; }
+fsBtn.addEventListener("click", async () => {
+  if (document.body.classList.contains("present")) { if (document.fullscreenElement) { try { await document.exitFullscreen(); } catch (e) {} } setPresent(false); return; }
+  setPresent(true);
+  try { if (document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen(); } catch (e) {}
+});
+document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && document.body.classList.contains("present")) setPresent(false); });
+function loop(now) {
+  const dt = clamp((now - last) / 1000, 0, .05); last = now;
+  if (playing) steps[cur].update(dt);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
